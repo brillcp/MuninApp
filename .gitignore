@@ -1,0 +1,11 @@
+.DS_Store
+/.build
+/Packages
+xcuserdata/
+DerivedData/
+.swiftpm/configuration/registries.json
+.netrc
+.env
+xcuserdata/
+*.xcuserstate
+_to_delete/
