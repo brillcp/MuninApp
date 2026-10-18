@@ -11,10 +11,10 @@ struct MainView: View {
 
     var body: some View {
         TabView(selection: $selection) {
-            Tab("Vault", systemImage: "lock.rectangle.stack", value: Section.vault) {
+            Tab("main.tab.vault", systemImage: "lock.rectangle.stack", value: Section.vault) {
                 VaultView()
             }
-            Tab("Codes", systemImage: "key.viewfinder", value: Section.codes) {
+            Tab("main.tab.codes", systemImage: "key.viewfinder", value: Section.codes) {
                 CodesView()
             }
         }

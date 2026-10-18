@@ -44,11 +44,11 @@ private struct SignedInContent: View {
             }
         case .failed(let message):
             ContentUnavailableView {
-                Label("Couldn't open your vault", systemImage: "exclamationmark.triangle")
+                Label("errors.openVault.title", systemImage: "exclamationmark.triangle")
             } description: {
                 Text(message)
             } actions: {
-                Button("Try Again") { Task { await keyManager.prepare(auth: auth) } }
+                Button("global.tryAgain") { Task { await keyManager.prepare(auth: auth) } }
             }
         }
     }

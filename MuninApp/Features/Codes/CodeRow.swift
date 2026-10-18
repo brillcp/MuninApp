@@ -30,7 +30,7 @@ struct CodeRow: View {
         .sensoryFeedback(.success, trigger: didCopy) { _, new in new }
         .animation(.default, value: didCopy)
         .accessibilityElement(children: .combine)
-        .accessibilityHint("Copies the code")
+        .accessibilityHint("codes.row.copyHint")
     }
 
     private func copy() {
@@ -80,7 +80,7 @@ private struct CodeText: View, Equatable {
     let didCopy: Bool
 
     var body: some View {
-        Text(didCopy ? "Copied" : CodeRow.formatted(code))
+        (didCopy ? Text("global.copied") : Text(verbatim: CodeRow.formatted(code)))
             .font(.system(.title2, design: .monospaced, weight: .semibold))
             .foregroundStyle(didCopy ? Color.accentColor : .primary)
             .monospacedDigit()
@@ -95,14 +95,14 @@ private struct CountdownGauge: View, Equatable {
 
     var body: some View {
         Gauge(value: Double(remaining), in: 0...Double(max(period, 1))) {
-            Text("\(remaining)")
+            Text(remaining, format: .number)
                 .monospacedDigit()
                 .contentTransition(.numericText())
         }
         .gaugeStyle(.accessoryCircularCapacity)
         .tint(remaining <= 5 ? Color.red : Color.mint)
         .scaleEffect(0.6)
-        .accessibilityLabel("\(remaining) seconds left")
+        .accessibilityLabel(LocalizedKey("codes.row.secondsLeft", remaining))
         .animation(.bouncy, value: remaining)
     }
 }

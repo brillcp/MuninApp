@@ -12,11 +12,11 @@ struct ScannerSheet: View {
         NavigationStack {
             QRScannerView(onFound: onFound)
                 .ignoresSafeArea()
-                .navigationTitle("Scan QR Code")
+                .navigationTitle("scanner.title")
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .cancellationAction) {
-                        Button("Cancel") { dismiss() }
+                        Button("global.cancel") { dismiss() }
                     }
                 }
         }

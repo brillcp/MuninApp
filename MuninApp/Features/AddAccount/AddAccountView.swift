@@ -39,12 +39,12 @@ struct AddAccountView: View {
             .formStyle(.grouped)
             .disabled(isSaving)
             .overlay {
-                if isSaving { ProgressView("Encrypting…") }
+                if isSaving { ProgressView("addAccount.encrypting") }
             }
-            .navigationTitle("Add Account")
+            .navigationTitle("addAccount.title")
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
+                    Button("global.cancel") { dismiss() }
                 }
             }
             #if os(iOS)
@@ -96,7 +96,7 @@ struct AddAccountView: View {
     private func submit(imageData: Data) {
         let messages = QRCodeReader.messages(in: imageData)
         guard !messages.isEmpty else {
-            errorMessage = "No QR code found in that image."
+            errorMessage = Localized("addAccount.error.noQRCode")
             return
         }
         for message in messages {
@@ -112,7 +112,7 @@ struct AddAccountView: View {
     private func loadPhoto(_ item: PhotosPickerItem) async {
         defer { photoItem = nil }
         guard let data = try? await item.loadTransferable(type: Data.self) else {
-            errorMessage = "Couldn't load that image."
+            errorMessage = Localized("addAccount.error.loadImage")
             return
         }
         submit(imageData: data)
@@ -123,7 +123,7 @@ struct AddAccountView: View {
         let accessing = url.startAccessingSecurityScopedResource()
         defer { if accessing { url.stopAccessingSecurityScopedResource() } }
         guard let data = try? Data(contentsOf: url) else {
-            errorMessage = "Couldn't read that image."
+            errorMessage = Localized("addAccount.error.readImage")
             return
         }
         submit(imageData: data)
@@ -141,8 +141,8 @@ struct AddAccountView: View {
                 let added = try await onAdd(accounts)
                 if added == 0 {
                     errorMessage = accounts.count == 1
-                        ? "That account is already in your vault."
-                        : "Those accounts are already in your vault."
+                        ? Localized("addAccount.error.alreadyAddedOne")
+                        : Localized("addAccount.error.alreadyAddedMany")
                 } else {
                     dismiss()
                 }
@@ -168,23 +168,23 @@ private struct QRCodeSection: View {
                 Button {
                     isScanning = true
                 } label: {
-                    Label("Scan QR Code", systemImage: "qrcode.viewfinder")
+                    Label("addAccount.scanQRCode", systemImage: "qrcode.viewfinder")
                 }
             }
             PhotosPicker(selection: $photoItem, matching: .images) {
-                Label("Choose Screenshot…", systemImage: "photo")
+                Label("addAccount.chooseScreenshot", systemImage: "photo")
             }
             #else
             Button {
                 isImportingFile = true
             } label: {
-                Label("Choose Image…", systemImage: "photo")
+                Label("addAccount.chooseImage", systemImage: "photo")
             }
             #endif
         } header: {
-            Text("QR code")
+            Text("addAccount.qr.header")
         } footer: {
-            Text("A site's 2FA setup QR code, or Google Authenticator's Transfer accounts → Export accounts QR code to import everything at once.")
+            Text("addAccount.qr.footer")
         }
     }
 }
@@ -196,17 +196,17 @@ private struct LinkSection: View {
 
     var body: some View {
         Section {
-            TextField("otpauth://…", text: $link, axis: .vertical)
+            TextField("addAccount.link.placeholder", text: $link, axis: .vertical)
                 .lineLimit(1...4)
                 .font(.body.monospaced())
                 .autocorrectionDisabled()
                 #if os(iOS)
                 .textInputAutocapitalization(.never)
                 #endif
-            Button("Add from Link") { onSubmit(link) }
+            Button("addAccount.link.add") { onSubmit(link) }
                 .disabled(link.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
         } header: {
-            Text("Link")
+            Text("addAccount.link.header")
         }
     }
 }
@@ -221,28 +221,28 @@ private struct ManualEntrySection: View {
 
     var body: some View {
         Section {
-            TextField("Issuer, e.g. GitHub", text: $issuer)
-            TextField("Account, e.g. you@example.com", text: $name)
+            TextField("addAccount.manual.issuer", text: $issuer)
+            TextField("addAccount.manual.account", text: $name)
                 .autocorrectionDisabled()
                 #if os(iOS)
                 .textInputAutocapitalization(.never)
                 #endif
-            TextField("Setup key", text: $secret)
+            TextField("addAccount.manual.setupKey", text: $secret)
                 .font(.body.monospaced())
                 .autocorrectionDisabled()
                 #if os(iOS)
                 .textInputAutocapitalization(.characters)
                 #endif
-            Picker("Digits", selection: $digits) {
-                Text("6").tag(6)
-                Text("8").tag(8)
+            Picker("addAccount.manual.digits", selection: $digits) {
+                Text(6, format: .number).tag(6)
+                Text(8, format: .number).tag(8)
             }
-            Button("Add Account") { onSubmit(issuer, name, secret, digits) }
+            Button("addAccount.manual.add") { onSubmit(issuer, name, secret, digits) }
                 .disabled(secret.isEmpty || (issuer.isEmpty && name.isEmpty))
         } header: {
-            Text("Enter manually")
+            Text("addAccount.manual.header")
         } footer: {
-            Text("Sites show the setup key under \"Can't scan the QR code?\".")
+            Text("addAccount.manual.footer")
         }
     }
 }

@@ -55,14 +55,14 @@ final class AuthManager {
 
         case .success(let authorization):
             guard APIConfig.isAnonKeyConfigured else {
-                signInError = "Set APIConfig.anonKey to your Supabase publishable key."
+                signInError = Localized("signIn.error.missingAnonKey")
                 return
             }
             guard let credential = authorization.credential as? ASAuthorizationAppleIDCredential,
                   let tokenData = credential.identityToken,
                   let idToken = String(data: tokenData, encoding: .utf8),
                   let nonce = currentNonce else {
-                signInError = "Apple didn't return an identity token. Try again."
+                signInError = Localized("signIn.error.noIdentityToken")
                 return
             }
 
@@ -74,7 +74,7 @@ final class AuthManager {
                 isSignedIn = true
                 signInError = nil
             } catch {
-                signInError = "Supabase sign-in failed. \(error.localizedDescription)"
+                signInError = Localized("signIn.error.supabase", error.localizedDescription)
             }
         }
     }

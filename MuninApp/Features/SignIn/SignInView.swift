@@ -14,9 +14,9 @@ struct SignInView: View {
                 .foregroundStyle(.tint)
 
             VStack(spacing: 6) {
-                Text("Munin")
+                Text("signIn.title")
                     .font(.largeTitle.bold())
-                Text("Secure and safe vault for passwords and codes.")
+                Text("signIn.subtitle")
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
             }

@@ -63,7 +63,7 @@ final class VaultViewModel {
                 }
             }
             items = decrypted
-            errorMessage = failures > 0 ? "\(failures) items couldn't be decrypted with this device's key." : nil
+            errorMessage = failures > 0 ? Localized("vault.undecryptable", failures) : nil
         } catch is CancellationError {
             return
         } catch {

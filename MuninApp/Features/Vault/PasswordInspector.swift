@@ -20,26 +20,26 @@ struct PasswordInspector: View {
                         .font(.title2.bold())
                         .textSelection(.enabled)
                     Spacer()
-                    Button("Edit", action: onEdit)
+                    Button("global.edit", action: onEdit)
                 }
             }
 
             Section {
-                LabeledContent("URL") {
+                LabeledContent("password.field.url") {
                     Text(item.url).textSelection(.enabled)
                 }
-                LabeledContent("Username") {
+                LabeledContent("password.field.username") {
                     Text(item.username).textSelection(.enabled)
                 }
             }
 
-            Section("Password") {
+            Section("password.field.password") {
                 HStack {
                     Text(revealedPassword ?? "••••••••")
                         .font(.body.monospaced())
                         .textSelection(.enabled)
                     Spacer()
-                    Button(revealedPassword == nil ? "Show" : "Hide",
+                    Button(LocalizedStringKey(revealedPassword == nil ? "passwordInspector.show" : "passwordInspector.hide"),
                            systemImage: revealedPassword == nil ? "eye" : "eye.slash") {
                         if revealedPassword == nil {
                             revealedPassword = try? decrypt(item.encryptedPassword, "password")
@@ -48,19 +48,19 @@ struct PasswordInspector: View {
                         }
                     }
                     .labelStyle(.iconOnly)
-                    Button("Copy", systemImage: "doc.on.doc", action: onCopyPassword)
+                    Button("global.copy", systemImage: "doc.on.doc", action: onCopyPassword)
                         .labelStyle(.iconOnly)
                 }
             }
 
-            Section("Note") {
+            Section("password.field.note") {
                 Text(note ?? "")
                     .textSelection(.enabled)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
 
             Section {
-                LabeledContent("Last Updated") {
+                LabeledContent("password.field.lastUpdated") {
                     Text(item.lastUpdated, format: .dateTime)
                 }
             }

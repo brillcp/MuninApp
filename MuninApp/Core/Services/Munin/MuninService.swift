@@ -59,16 +59,16 @@ extension Error {
             switch networkError {
             case .badServerResponse(let status, _):
                 switch status {
-                case .notFound: return "No Munin API at \(APIConfig.apiBaseURL.absoluteString)."
-                case .unprocessableEntity: return "Your vault is full (50 accounts)."
-                default:        return "Munin responded with HTTP \(status.rawValue)."
+                case .notFound: return Localized("errors.munin.notFound", APIConfig.apiBaseURL.absoluteString)
+                case .unprocessableEntity: return Localized("errors.munin.vaultFull")
+                default:        return Localized("errors.munin.http", status.rawValue)
                 }
             case .decodingError:
-                return "Unexpected response from the server. Is \(APIConfig.apiBaseURL.absoluteString) Munin?"
+                return Localized("errors.munin.unexpectedResponse", APIConfig.apiBaseURL.absoluteString)
             case .networkError(let underlying):
-                return "Can't reach Munin. \(underlying.localizedDescription)"
+                return Localized("errors.munin.unreachable", underlying.localizedDescription)
             case .encodingError:
-                return "Couldn't build the request."
+                return Localized("errors.munin.badRequest")
             }
         }
         return localizedDescription

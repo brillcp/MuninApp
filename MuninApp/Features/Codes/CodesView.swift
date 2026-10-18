@@ -15,15 +15,15 @@ struct CodesView: View {
                 ForEach(viewModel.items) { item in
                     CodeRow(account: item.account, now: now)
                         .contextMenu {
-                            Button("Delete", systemImage: "trash", role: .destructive) { pendingDeletion = item }
+                            Button("global.delete", systemImage: "trash", role: .destructive) { pendingDeletion = item }
                         }
                         .swipeActions {
-                            Button("Delete", systemImage: "trash", role: .destructive) { pendingDeletion = item }
+                            Button("global.delete", systemImage: "trash", role: .destructive) { pendingDeletion = item }
                         }
                 }
                 if viewModel.undecryptableCount > 0 {
                     Section {
-                        Label("\(viewModel.undecryptableCount) entries couldn't be decrypted with this device's key.",
+                        Label(LocalizedKey("codes.undecryptable", viewModel.undecryptableCount),
                               systemImage: "exclamationmark.lock")
                             .font(.footnote)
                             .foregroundStyle(.secondary)
@@ -39,34 +39,34 @@ struct CodesView: View {
                     onAdd: { isAdding = true }
                 )
             }
-            .navigationTitle("Codes")
+            .navigationTitle("codes.title")
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
-                    Button("Add", systemImage: "plus") { isAdding = true }
+                    Button("codes.add", systemImage: "plus") { isAdding = true }
                         .disabled(!viewModel.hasLoaded)
                         .keyboardShortcut("n")
                 }
                 #if os(iOS)
                 ToolbarItem(placement: .primaryAction) {
-                    Menu("Account", systemImage: "person.crop.circle") {
+                    Menu("account.menu.title", systemImage: "person.crop.circle") {
                         if let email = auth.email {
                             Text(email)
                         }
-                        Button("Refresh", systemImage: "arrow.clockwise") {
+                        Button("global.refresh", systemImage: "arrow.clockwise") {
                             Task { await viewModel.refresh(auth: auth) }
                         }
                         .keyboardShortcut("r")
-                        Button("Show Recovery Key", systemImage: "key") { isShowingRecoveryKey = true }
+                        Button("account.showRecoveryKey", systemImage: "key") { isShowingRecoveryKey = true }
                             .disabled(viewModel.recoveryKey == nil)
                         Divider()
-                        Button("Sign Out", systemImage: "rectangle.portrait.and.arrow.right", role: .destructive) {
+                        Button("account.signOut", systemImage: "rectangle.portrait.and.arrow.right", role: .destructive) {
                             auth.signOut()
                         }
                     }
                 }
                 #else
                 ToolbarItem(placement: .primaryAction) {
-                    Button("Refresh", systemImage: "arrow.clockwise") {
+                    Button("global.refresh", systemImage: "arrow.clockwise") {
                         Task { await viewModel.refresh(auth: auth) }
                     }
                     .keyboardShortcut("r")
@@ -84,12 +84,12 @@ struct CodesView: View {
             .sheet(isPresented: $isShowingRecoveryKey) {
                 RecoveryKeyView(recoveryKey: viewModel.recoveryKey ?? "")
             }
-            .confirmationDialog("Delete Account?", item: $pendingDeletion, titleVisibility: .visible) { item in
-                Button("Delete \(item.account.title)", role: .destructive) {
+            .confirmationDialog("codes.delete.title", item: $pendingDeletion, titleVisibility: .visible) { item in
+                Button(LocalizedKey("codes.delete.button", item.account.title), role: .destructive) {
                     Task { await viewModel.delete(item, auth: auth) }
                 }
             } message: { item in
-                Text("Make sure 2FA is turned off for \(item.account.title), or you have another way to sign in. This can't be undone.")
+                Text(LocalizedKey("codes.delete.message", item.account.title))
             }
         }
         .tint(.mint)
@@ -116,20 +116,20 @@ private struct CodesEmptyState: View {
     var body: some View {
         if let errorMessage {
             ContentUnavailableView {
-                Label("Couldn't load your vault", systemImage: "wifi.exclamationmark")
+                Label("errors.loadVault.title", systemImage: "wifi.exclamationmark")
             } description: {
                 Text(errorMessage)
             } actions: {
-                Button("Try Again", action: onRetry)
+                Button("global.tryAgain", action: onRetry)
             }
         } else if isEmpty {
             if hasLoaded {
                 ContentUnavailableView {
-                    Label("No accounts yet", systemImage: "lock.shield")
+                    Label("codes.empty.title", systemImage: "lock.shield")
                 } description: {
-                    Text("Scan a 2FA QR code or import from Google Authenticator.")
+                    Text("codes.empty.message")
                 } actions: {
-                    Button("Add Account", action: onAdd)
+                    Button("codes.empty.add", action: onAdd)
                         .buttonStyle(.borderedProminent)
                 }
             } else {

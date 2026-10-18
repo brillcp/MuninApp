@@ -19,9 +19,9 @@ struct PasswordGeneratorView: View {
                     Label(strength.title, systemImage: "checkmark.shield.fill")
                         .foregroundStyle(strength.color)
                     Spacer()
-                    Button("Regenerate", systemImage: "arrow.counterclockwise", action: regenerate)
+                    Button("passwordGenerator.regenerate", systemImage: "arrow.counterclockwise", action: regenerate)
                         .labelStyle(.iconOnly)
-                    Button("Copy", systemImage: "doc.on.doc") { Pasteboard.copy(password) }
+                    Button("global.copy", systemImage: "doc.on.doc") { Pasteboard.copy(password) }
                         .labelStyle(.iconOnly)
                 }
                 .buttonStyle(.borderless)
@@ -29,7 +29,7 @@ struct PasswordGeneratorView: View {
                 Button {
                     onFill(password)
                 } label: {
-                    Text("Fill Password").frame(maxWidth: .infinity)
+                    Text("passwordGenerator.fillPassword").frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.borderedProminent)
                 .controlSize(.large)
@@ -37,17 +37,17 @@ struct PasswordGeneratorView: View {
             .padding()
 
             Form {
-                LabeledContent("Length") {
+                LabeledContent("passwordGenerator.length") {
                     HStack {
                         Slider(value: $generator.sliderLength, in: 8...64, step: 1)
-                        Text("\(generator.length)")
+                        Text(generator.length, format: .number)
                             .monospacedDigit()
                             .frame(width: 28, alignment: .trailing)
                     }
                 }
-                Toggle("Use capital letters (A-Z)", isOn: $generator.useCapitals)
-                Toggle("Use digits (0-9)", isOn: $generator.useDigits)
-                Toggle("Use symbols (@!$%&*)", isOn: $generator.useSymbols)
+                Toggle("passwordGenerator.useCapitals", isOn: $generator.useCapitals)
+                Toggle("passwordGenerator.useDigits", isOn: $generator.useDigits)
+                Toggle("passwordGenerator.useSymbols", isOn: $generator.useSymbols)
             }
             .formStyle(.grouped)
         }
@@ -66,11 +66,11 @@ struct PasswordGeneratorView: View {
         password = generator.generate()
     }
 
-    private var strength: (title: String, color: Color) {
+    private var strength: (title: LocalizedStringKey, color: Color) {
         switch generator.entropy {
-        case ..<60:  return ("Weak Password", .red)
-        case ..<80:  return ("Good Password", .orange)
-        default:     return ("Strong Password", .green)
+        case ..<60:  return ("passwordGenerator.strength.weak", .red)
+        case ..<80:  return ("passwordGenerator.strength.good", .orange)
+        default:     return ("passwordGenerator.strength.strong", .green)
         }
     }
 }

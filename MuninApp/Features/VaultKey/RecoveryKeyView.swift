@@ -14,8 +14,8 @@ struct RecoveryKeyView: View {
     var body: some View {
         NavigationStack {
             VStack(alignment: .leading, spacing: 20) {
-                Text("Your accounts are end-to-end encrypted with this key. Munin can't read them, and can't recover them for you.")
-                Text("iCloud Keychain syncs the key to your other Apple devices. Save a copy in your password manager too: without it, losing your devices means losing your accounts.")
+                Text("vaultKey.recovery.explanation")
+                Text("vaultKey.recovery.backup")
                     .foregroundStyle(.secondary)
 
                 Text(recoveryKey)
@@ -25,7 +25,7 @@ struct RecoveryKeyView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background(.quaternary, in: RoundedRectangle(cornerRadius: 10))
 
-                Button(didCopy ? "Copied" : "Copy Recovery Key", systemImage: didCopy ? "checkmark" : "doc.on.doc") {
+                Button(LocalizedStringKey(didCopy ? "global.copied" : "vaultKey.recovery.copy"), systemImage: didCopy ? "checkmark" : "doc.on.doc") {
                     #if os(iOS)
                     UIPasteboard.general.string = recoveryKey
                     #else
@@ -39,13 +39,13 @@ struct RecoveryKeyView: View {
                 Spacer()
             }
             .padding()
-            .navigationTitle("Recovery Key")
+            .navigationTitle("vaultKey.recovery.title")
             #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Done") { dismiss() }
+                    Button("global.done") { dismiss() }
                 }
             }
         }

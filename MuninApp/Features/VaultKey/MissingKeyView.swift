@@ -10,12 +10,12 @@ struct MissingKeyView: View {
 
     var body: some View {
         ContentUnavailableView {
-            Label("Vault key not on this device", systemImage: "key.slash")
+            Label("vaultKey.missing.title", systemImage: "key.slash")
         } description: {
-            Text("Your vault is encrypted with a key from your other device. Turn on iCloud Keychain on both devices and check again, or paste your recovery key.")
+            Text("vaultKey.missing.message")
         } actions: {
             VStack(spacing: 12) {
-                TextField("Recovery key", text: $recoveryKey, axis: .vertical)
+                TextField("vaultKey.missing.placeholder", text: $recoveryKey, axis: .vertical)
                     .textFieldStyle(.roundedBorder)
                     .font(.body.monospaced())
                     .autocorrectionDisabled()
@@ -24,13 +24,13 @@ struct MissingKeyView: View {
                     #endif
                     .frame(maxWidth: 360)
                 if didFail {
-                    Text("That isn't a valid recovery key.")
+                    Text("vaultKey.missing.invalid")
                         .font(.footnote)
                         .foregroundStyle(.red)
                 }
                 HStack {
-                    Button("Check Again") { Task { await onRetry() } }
-                    Button("Restore") { didFail = !onRestore(recoveryKey) }
+                    Button("vaultKey.missing.checkAgain") { Task { await onRetry() } }
+                    Button("vaultKey.missing.restore") { didFail = !onRestore(recoveryKey) }
                         .buttonStyle(.borderedProminent)
                         .disabled(recoveryKey.isEmpty)
                 }

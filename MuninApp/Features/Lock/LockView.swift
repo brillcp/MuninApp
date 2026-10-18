@@ -10,10 +10,10 @@ struct LockView: View {
             Image(systemName: "lock.fill")
                 .font(.system(size: 48))
                 .foregroundStyle(.tint)
-            Text("Munin is locked")
+            Text("lock.title")
                 .font(.title2.bold())
             Spacer()
-            Button("Unlock") {
+            Button("lock.unlock") {
                 Task { await appLock.unlock() }
             }
             .buttonStyle(.borderedProminent)

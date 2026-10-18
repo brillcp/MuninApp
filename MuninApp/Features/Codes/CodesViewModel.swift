@@ -109,8 +109,8 @@ enum VaultError: LocalizedError {
 
     var errorDescription: String? {
         switch self {
-        case .notSignedIn: return "Sign in again to add accounts."
-        case .keyMissing:  return "This device doesn't have your vault key yet."
+        case .notSignedIn: return Localized("errors.notSignedIn")
+        case .keyMissing:  return Localized("errors.keyMissing")
         }
     }
 }

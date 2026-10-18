@@ -1,0 +1,136 @@
+/* Localizable.strings */
+
+/** Account **/
+"account.menu.title" = "Account";
+"account.showRecoveryKey" = "Show Recovery Key";
+"account.signOut" = "Sign Out";
+
+/** Add Account **/
+"addAccount.chooseImage" = "Choose Image…";
+"addAccount.chooseScreenshot" = "Choose Screenshot…";
+"addAccount.encrypting" = "Encrypting…";
+"addAccount.error.alreadyAddedMany" = "Those accounts are already in your vault.";
+"addAccount.error.alreadyAddedOne" = "That account is already in your vault.";
+"addAccount.error.loadImage" = "Couldn't load that image.";
+"addAccount.error.noQRCode" = "No QR code found in that image.";
+"addAccount.error.readImage" = "Couldn't read that image.";
+"addAccount.link.add" = "Add from Link";
+"addAccount.link.header" = "Link";
+"addAccount.link.placeholder" = "otpauth://…";
+"addAccount.manual.account" = "Account, e.g. you@example.com";
+"addAccount.manual.add" = "Add Account";
+"addAccount.manual.digits" = "Digits";
+"addAccount.manual.footer" = "Sites show the setup key under \"Can't scan the QR code?\".";
+"addAccount.manual.header" = "Enter manually";
+"addAccount.manual.issuer" = "Issuer, e.g. GitHub";
+"addAccount.manual.setupKey" = "Setup key";
+"addAccount.qr.footer" = "A site's 2FA setup QR code, or Google Authenticator's Transfer accounts → Export accounts QR code to import everything at once.";
+"addAccount.qr.header" = "QR code";
+"addAccount.scanQRCode" = "Scan QR Code";
+"addAccount.title" = "Add Account";
+
+/** Codes **/
+"codes.add" = "Add";
+"codes.delete.button" = "Delete %@";
+"codes.delete.message" = "Make sure 2FA is turned off for %@, or you have another way to sign in. This can't be undone.";
+"codes.delete.title" = "Delete Account?";
+"codes.empty.add" = "Add Account";
+"codes.empty.message" = "Scan a 2FA QR code or import from Google Authenticator.";
+"codes.empty.title" = "No accounts yet";
+"codes.row.copyHint" = "Copies the code";
+"codes.title" = "Codes";
+
+/** Errors **/
+"errors.keyMissing" = "This device doesn't have your vault key yet.";
+"errors.loadVault.title" = "Couldn't load your vault";
+"errors.munin.badRequest" = "Couldn't build the request.";
+"errors.munin.http" = "Munin responded with HTTP %lld.";
+"errors.munin.notFound" = "No Munin API at %@.";
+"errors.munin.unexpectedResponse" = "Unexpected response from the server. Is %@ Munin?";
+"errors.munin.unreachable" = "Can't reach Munin. %@";
+"errors.munin.vaultFull" = "Your vault is full (50 accounts).";
+"errors.notSignedIn" = "Sign in again to add accounts.";
+"errors.openVault.title" = "Couldn't open your vault";
+"errors.parser.hotpNotSupported" = "Counter-based (HOTP) codes aren't supported.";
+"errors.parser.invalidMigrationData" = "Couldn't read the Google Authenticator export.";
+"errors.parser.invalidSecret" = "The secret isn't valid Base32.";
+"errors.parser.missingSecret" = "The link has no secret.";
+"errors.parser.unsupported" = "That isn't an authenticator link or QR code.";
+
+/** Global **/
+"global.cancel" = "Cancel";
+"global.copied" = "Copied";
+"global.copy" = "Copy";
+"global.delete" = "Delete";
+"global.done" = "Done";
+"global.edit" = "Edit";
+"global.refresh" = "Refresh";
+"global.save" = "Save";
+"global.tryAgain" = "Try Again";
+
+/** Lock **/
+"lock.reason" = "Unlock your authenticator codes";
+"lock.title" = "Munin is locked";
+"lock.unlock" = "Unlock";
+
+/** Main **/
+"main.tab.codes" = "Codes";
+"main.tab.vault" = "Vault";
+
+/** Password **/
+"password.field.lastUpdated" = "Last Updated";
+"password.field.name" = "Name";
+"password.field.note" = "Note";
+"password.field.password" = "Password";
+"password.field.url" = "URL";
+"password.field.username" = "Username";
+
+/** Password Editor **/
+"passwordEditor.editTitle" = "Edit Password";
+"passwordEditor.generate" = "Generate";
+"passwordEditor.newTitle" = "New Password";
+
+/** Password Generator **/
+"passwordGenerator.fillPassword" = "Fill Password";
+"passwordGenerator.length" = "Length";
+"passwordGenerator.regenerate" = "Regenerate";
+"passwordGenerator.strength.good" = "Good Password";
+"passwordGenerator.strength.strong" = "Strong Password";
+"passwordGenerator.strength.weak" = "Weak Password";
+"passwordGenerator.useCapitals" = "Use capital letters (A-Z)";
+"passwordGenerator.useDigits" = "Use digits (0-9)";
+"passwordGenerator.useSymbols" = "Use symbols (@!$%&*)";
+
+/** Password Inspector **/
+"passwordInspector.hide" = "Hide";
+"passwordInspector.show" = "Show";
+
+/** Scanner **/
+"scanner.title" = "Scan QR Code";
+
+/** Sign In **/
+"signIn.error.missingAnonKey" = "Set APIConfig.anonKey to your Supabase publishable key.";
+"signIn.error.noIdentityToken" = "Apple didn't return an identity token. Try again.";
+"signIn.error.supabase" = "Supabase sign-in failed. %@";
+"signIn.subtitle" = "Secure and safe vault for passwords and codes.";
+"signIn.title" = "Munin";
+
+/** Vault **/
+"vault.column.title" = "Title";
+"vault.copyPassword" = "Copy Password";
+"vault.createItem" = "Create Item";
+"vault.empty.title" = "No items";
+"vault.search.prompt" = "Search all items";
+"vault.title" = "Vault";
+
+/** Vault Key **/
+"vaultKey.missing.checkAgain" = "Check Again";
+"vaultKey.missing.invalid" = "That isn't a valid recovery key.";
+"vaultKey.missing.message" = "Your vault is encrypted with a key from your other device. Turn on iCloud Keychain on both devices and check again, or paste your recovery key.";
+"vaultKey.missing.placeholder" = "Recovery key";
+"vaultKey.missing.restore" = "Restore";
+"vaultKey.missing.title" = "Vault key not on this device";
+"vaultKey.recovery.backup" = "iCloud Keychain syncs the key to your other Apple devices. Save a copy in your password manager too: without it, losing your devices means losing your accounts.";
+"vaultKey.recovery.copy" = "Copy Recovery Key";
+"vaultKey.recovery.explanation" = "Your accounts are end-to-end encrypted with this key. Munin can't read them, and can't recover them for you.";
+"vaultKey.recovery.title" = "Recovery Key";

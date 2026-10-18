@@ -10,20 +10,20 @@ struct VaultView: View {
     var body: some View {
         NavigationStack {
             Table(viewModel.visibleItems, selection: $viewModel.selection, sortOrder: $viewModel.sortOrder) {
-                TableColumn("Title", value: \.name) { item in
+                TableColumn("vault.column.title", value: \.name) { item in
                     PasswordTitleCell(name: item.name, username: item.username)
                 }
-                TableColumn("Last Updated", value: \.lastUpdated) { item in
+                TableColumn("password.field.lastUpdated", value: \.lastUpdated) { item in
                     Text(item.lastUpdated, format: .relative(presentation: .named))
                         .foregroundStyle(.secondary)
                 }
             }
             .contextMenu(forSelectionType: PasswordItem.ID.self) { ids in
                 if ids.count == 1, let id = ids.first, let item = viewModel.items.first(where: { $0.id == id }) {
-                    Button("Copy Password", systemImage: "doc.on.doc") {
+                    Button("vault.copyPassword", systemImage: "doc.on.doc") {
                         Task { await viewModel.copyPassword(item, auth: auth) }
                     }
-                    Button("Edit", systemImage: "pencil") { startEditing(item) }
+                    Button("global.edit", systemImage: "pencil") { startEditing(item) }
                 }
             }
             .overlay {
@@ -35,11 +35,11 @@ struct VaultView: View {
                     onRetry: { Task { await viewModel.refresh(auth: auth) } }
                 )
             }
-            .navigationTitle("Vault")
-            .searchable(text: $viewModel.searchText, prompt: "Search all items")
+            .navigationTitle("vault.title")
+            .searchable(text: $viewModel.searchText, prompt: "vault.search.prompt")
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
-                    Button("Create Item", systemImage: "plus.square.on.square") {
+                    Button("vault.createItem", systemImage: "plus.square.on.square") {
                         isCreating = true
                     }
                 }
@@ -115,15 +115,15 @@ private struct VaultEmptyState: View {
     var body: some View {
         if let errorMessage {
             ContentUnavailableView {
-                Label("Couldn't load your vault", systemImage: "exclamationmark.triangle")
+                Label("errors.loadVault.title", systemImage: "exclamationmark.triangle")
             } description: {
                 Text(errorMessage)
             } actions: {
-                Button("Try Again", action: onRetry)
+                Button("global.tryAgain", action: onRetry)
             }
         } else if isEmpty {
             if hasLoaded {
-                ContentUnavailableView("No items", systemImage: "lock.rectangle.stack")
+                ContentUnavailableView("vault.empty.title", systemImage: "lock.rectangle.stack")
             } else {
                 ProgressView()
             }

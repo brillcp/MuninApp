@@ -16,7 +16,7 @@ final class AppLock {
         do {
             isUnlocked = try await LAContext().evaluatePolicy(
                 .deviceOwnerAuthentication,
-                localizedReason: "Unlock your authenticator codes"
+                localizedReason: Localized("lock.reason")
             )
             errorMessage = nil
         } catch {

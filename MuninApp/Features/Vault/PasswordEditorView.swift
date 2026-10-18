@@ -21,21 +21,21 @@ struct PasswordEditorView: View {
     var body: some View {
         NavigationStack {
             Form {
-                TextField("Name", text: $fields.name)
-                TextField("URL", text: $fields.url)
+                TextField("password.field.name", text: $fields.name)
+                TextField("password.field.url", text: $fields.url)
                     .autocorrectionDisabled()
                     #if os(iOS)
                     .keyboardType(.URL)
                     .textInputAutocapitalization(.never)
                     #endif
-                TextField("Username", text: $fields.username)
+                TextField("password.field.username", text: $fields.username)
                     .autocorrectionDisabled()
                     #if os(iOS)
                     .textInputAutocapitalization(.never)
                     #endif
                 HStack {
-                    SecureField("Password", text: $fields.password)
-                    Button("Generate", systemImage: "wand.and.stars") { isGenerating = true }
+                    SecureField("password.field.password", text: $fields.password)
+                    Button("passwordEditor.generate", systemImage: "wand.and.stars") { isGenerating = true }
                         .labelStyle(.iconOnly)
                         .popover(isPresented: $isGenerating) {
                             PasswordGeneratorView { generated in
@@ -44,7 +44,7 @@ struct PasswordEditorView: View {
                             }
                         }
                 }
-                TextField("Note", text: $fields.note, axis: .vertical)
+                TextField("password.field.note", text: $fields.note, axis: .vertical)
                     .lineLimit(3...8)
 
                 if let errorMessage {
@@ -54,16 +54,16 @@ struct PasswordEditorView: View {
             }
             .formStyle(.grouped)
             .disabled(isSaving)
-            .navigationTitle(isEditing ? "Edit Password" : "New Password")
+            .navigationTitle(LocalizedStringKey(isEditing ? "passwordEditor.editTitle" : "passwordEditor.newTitle"))
             #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
+                    Button("global.cancel") { dismiss() }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Save", action: save)
+                    Button("global.save", action: save)
                         .disabled(fields.name.trimmingCharacters(in: .whitespaces).isEmpty || isSaving)
                 }
             }

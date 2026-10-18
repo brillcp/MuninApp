@@ -10,17 +10,25 @@ struct AccountMenu: View {
             if let email = auth.email {
                 Text(email)
             }
-            Button("Show Recovery Key", systemImage: "key") {
+            Button("account.showRecoveryKey", systemImage: "key") {
                 recoveryKey = auth.userID
                     .flatMap { VaultKeyStore.load(userID: $0) }
                     .map { RecoveryKeySheetItem(key: VaultKeyStore.recoveryString(for: $0)) }
             }
             Divider()
-            Button("Sign Out", systemImage: "rectangle.portrait.and.arrow.right", role: .destructive) {
+            Button("account.signOut", systemImage: "rectangle.portrait.and.arrow.right", role: .destructive) {
                 auth.signOut()
             }
         } label: {
-            Label(auth.email ?? "Account", systemImage: "person.crop.circle")
+            Label {
+                if let email = auth.email {
+                    Text(email)
+                } else {
+                    Text("account.menu.title")
+                }
+            } icon: {
+                Image(systemName: "person.crop.circle")
+            }
         }
         .sheet(item: $recoveryKey) { item in
             RecoveryKeyView(recoveryKey: item.key)

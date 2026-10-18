@@ -13,11 +13,11 @@ enum OTPAuthParser {
 
         var errorDescription: String? {
             switch self {
-            case .unsupported:          return "That isn't an authenticator link or QR code."
-            case .hotpNotSupported:     return "Counter-based (HOTP) codes aren't supported."
-            case .missingSecret:        return "The link has no secret."
-            case .invalidSecret:        return "The secret isn't valid Base32."
-            case .invalidMigrationData: return "Couldn't read the Google Authenticator export."
+            case .unsupported:          return Localized("errors.parser.unsupported")
+            case .hotpNotSupported:     return Localized("errors.parser.hotpNotSupported")
+            case .missingSecret:        return Localized("errors.parser.missingSecret")
+            case .invalidSecret:        return Localized("errors.parser.invalidSecret")
+            case .invalidMigrationData: return Localized("errors.parser.invalidMigrationData")
             }
         }
     }
