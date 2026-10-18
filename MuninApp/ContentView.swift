@@ -58,7 +58,3 @@ private struct SignedInContent: View {
     ContentView()
         .environment(AuthManager())
 }
-
-#Playground {
-    _ = 1 + 2
-}
