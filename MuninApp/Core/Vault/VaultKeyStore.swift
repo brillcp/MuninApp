@@ -1,26 +1,71 @@
 import CryptoKit
 import Foundation
+import LocalAuthentication
 
-/// The per-user vault key. Lives in iCloud Keychain (synchronizable), so it
-/// reaches the user's other Apple devices without ever touching Munin.
-enum VaultKeyStore {
-    private static func account(userID: String) -> String { "vault.key.\(userID.lowercased())" }
+/// Where the vault key lives on a device.
+///
+/// - Unlocked: in memory only (`UnlockedVault`).
+/// - Face ID / Touch ID: a copy of the key and proof in this device's Keychain,
+///   readable only after biometrics (`.biometryCurrentSet`), never synced.
+/// - Legacy: before master passwords the key synced through iCloud Keychain.
+///   It's read once to set up the master password, then deleted.
+nonisolated enum VaultKeyStore {
+    enum BiometricResult: Sendable {
+        case unlocked(UnlockedVault)
+        /// No copy on this device yet, or biometrics changed since it was saved.
+        case notAvailable
+        case canceled
+        case failed
+    }
 
-    static func load(userID: String) -> SymmetricKey? {
-        guard let data = KeychainService.loadSynced(account: account(userID: userID)), data.count == 32 else {
+    private static func legacyAccount(userID: String) -> String { "vault.key.\(userID.lowercased())" }
+    private static func biometricAccount(userID: String) -> String { "vault.unlock.\(userID.lowercased())" }
+
+    // MARK: - Legacy (iCloud Keychain)
+
+    static func loadLegacy(userID: String) -> SymmetricKey? {
+        guard let data = KeychainService.loadSynced(account: legacyAccount(userID: userID)), data.count == 32 else {
             return nil
         }
         return SymmetricKey(data: data)
     }
 
-    static func save(_ key: SymmetricKey, userID: String) {
-        KeychainService.saveSynced(key.withUnsafeBytes { Data($0) }, account: account(userID: userID))
+    static func deleteLegacy(userID: String) {
+        KeychainService.deleteSynced(account: legacyAccount(userID: userID))
     }
 
-    static func generate(userID: String) -> SymmetricKey {
-        let key = SymmetricKey(size: .bits256)
-        save(key, userID: userID)
-        return key
+    // MARK: - Biometrics
+
+    private struct StoredVault: Codable {
+        let key: String
+        let proof: String
+    }
+
+    @discardableResult
+    static func saveForBiometrics(_ vault: UnlockedVault) -> Bool {
+        let stored = StoredVault(key: vault.key.withUnsafeBytes { Data($0) }.base64EncodedString(), proof: vault.proof)
+        guard let data = try? JSONEncoder().encode(stored) else { return false }
+        return KeychainService.saveBiometric(data, account: biometricAccount(userID: vault.userID))
+    }
+
+    /// Shows the Face ID / Touch ID prompt. Blocks, so call off the main actor.
+    static func loadWithBiometrics(userID: String, reason: String) -> BiometricResult {
+        switch KeychainService.loadBiometric(account: biometricAccount(userID: userID), reason: reason) {
+        case .success(let data):
+            guard let stored = try? JSONDecoder().decode(StoredVault.self, from: data),
+                  let keyData = Data(base64Encoded: stored.key), keyData.count == 32 else { return .failed }
+            return .unlocked(UnlockedVault(userID: userID, key: SymmetricKey(data: keyData), proof: stored.proof))
+        case .notFound:
+            return .notAvailable
+        case .canceled:
+            return .canceled
+        case .failed:
+            return .failed
+        }
+    }
+
+    static func deleteBiometric(userID: String) {
+        KeychainService.deleteBiometric(account: biometricAccount(userID: userID))
     }
 
     // MARK: - Recovery key

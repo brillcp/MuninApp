@@ -8,10 +8,12 @@
 
 /* Begin PBXBuildFile section */
 		000000000000000150000001 /* Networking in Frameworks */ = {isa = PBXBuildFile; productRef = 000000000000000150000002 /* Networking */; };
+		D50F658C308502BF002F5A73 /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = D50F658B308502BF002F5A73 /* AppIcon.icon */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		000000000000000000000120 /* MuninApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MuninApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D50F658B308502BF002F5A73 /* AppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = AppIcon.icon; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -48,6 +50,7 @@
 		000000000000000000000001 = {
 			isa = PBXGroup;
 			children = (
+				D50F658B308502BF002F5A73 /* AppIcon.icon */,
 				000000000000000000000010 /* MuninApp */,
 				000000000000000000000020 /* Products */,
 			);
@@ -126,6 +129,7 @@
 		000000000000000140000000 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			files = (
+				D50F658C308502BF002F5A73 /* AppIcon.icon in Resources */,
 			);
 		};
 /* End PBXResourcesBuildPhase section */
@@ -274,6 +278,8 @@
 		000000000000000111000000 /* Debug configuration for PBXNativeTarget "MuninApp" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = MuninApp/MuninApp.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
@@ -286,6 +292,10 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = MuninApp/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Munin;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Scan the QR code a site shows when you set up two-factor authentication.";
+				INFOPLIST_KEY_NSFaceIDUsageDescription = "Unlock your authenticator codes with Face ID.";
+				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "Munin connects to your Munin server on the local network during development.";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -297,8 +307,8 @@
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
-				LOCALIZATION_PREFERS_STRING_CATALOGS = NO;
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
+				LOCALIZATION_PREFERS_STRING_CATALOGS = NO;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = dev.gidlof.Munin;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -320,6 +330,8 @@
 		000000000000000112000000 /* Release configuration for PBXNativeTarget "MuninApp" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = MuninApp/MuninApp.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
@@ -332,6 +344,10 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = MuninApp/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Munin;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Scan the QR code a site shows when you set up two-factor authentication.";
+				INFOPLIST_KEY_NSFaceIDUsageDescription = "Unlock your authenticator codes with Face ID.";
+				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "Munin connects to your Munin server on the local network during development.";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -343,8 +359,8 @@
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
-				LOCALIZATION_PREFERS_STRING_CATALOGS = NO;
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
+				LOCALIZATION_PREFERS_STRING_CATALOGS = NO;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = dev.gidlof.Munin;
 				PRODUCT_NAME = "$(TARGET_NAME)";

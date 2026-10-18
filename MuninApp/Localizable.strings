@@ -38,7 +38,7 @@
 "codes.empty.message" = "Scan a 2FA QR code or import from Google Authenticator.";
 "codes.empty.title" = "No accounts yet";
 "codes.row.copyHint" = "Copies the code";
-"codes.title" = "Codes";
+"codes.title" = "2FA";
 
 /** Errors **/
 "errors.keyMissing" = "This device doesn't have your vault key yet.";
@@ -46,6 +46,8 @@
 "errors.munin.badRequest" = "Couldn't build the request.";
 "errors.munin.http" = "Munin responded with HTTP %lld.";
 "errors.munin.notFound" = "No Munin API at %@.";
+"errors.munin.proof" = "Munin couldn't verify your master password. Lock Munin, unlock with your master password and try again.";
+"errors.munin.tooManyAttempts" = "Too many attempts. Try again in an hour.";
 "errors.munin.unexpectedResponse" = "Unexpected response from the server. Is %@ Munin?";
 "errors.munin.unreachable" = "Can't reach Munin. %@";
 "errors.munin.vaultFull" = "Your vault is full (50 accounts).";
@@ -69,13 +71,31 @@
 "global.tryAgain" = "Try Again";
 
 /** Lock **/
-"lock.reason" = "Unlock your authenticator codes";
-"lock.title" = "Munin is locked";
+"lock.command" = "Lock";
+"lock.biometrics.failed" = "Biometrics didn't work. Use your master password.";
+"lock.biometrics.notSetUp" = "Unlock with your master password once to use biometrics on this device.";
+"lock.forgotMasterPassword" = "Forgot master password?";
+"lock.masterPassword.placeholder" = "Master password";
+"lock.reason" = "Unlock your vault";
+"lock.recovery.continue" = "Continue";
+"lock.recovery.message" = "Enter your recovery key to choose a new master password.";
+"lock.switchAccount" = "Switch account";
+"lock.title" = "Unlock your vault";
 "lock.unlock" = "Unlock";
+"lock.unlockWithBiometrics" = "Unlock with biometrics";
+"lock.useBiometrics" = "Use Biometrics";
+"lock.useMasterPassword" = "Use Master Password";
+"lock.version" = "Version %@";
+"lock.wrongMasterPassword" = "That master password isn't right.";
 
 /** Main **/
-"main.tab.codes" = "Codes";
+"main.tab.codes" = "2FA";
 "main.tab.vault" = "Vault";
+"main.window.title" = "Munin";
+
+/** Menu Bar **/
+"menuBar.open" = "Open Munin";
+"menuBar.quit" = "Quit Munin";
 
 /** Password **/
 "password.field.lastUpdated" = "Last Updated";
@@ -119,6 +139,9 @@
 "vault.column.title" = "Title";
 "vault.copyPassword" = "Copy Password";
 "vault.createItem" = "Create Item";
+"vault.delete.button" = "Delete %@";
+"vault.delete.message" = "%@ will be removed from all of your devices. This can't be undone.";
+"vault.delete.title" = "Delete Password?";
 "vault.empty.title" = "No items";
 "vault.search.prompt" = "Search all items";
 "vault.title" = "Vault";
@@ -130,7 +153,17 @@
 "vaultKey.missing.placeholder" = "Recovery key";
 "vaultKey.missing.restore" = "Restore";
 "vaultKey.missing.title" = "Vault key not on this device";
-"vaultKey.recovery.backup" = "iCloud Keychain syncs the key to your other Apple devices. Save a copy in your password manager too: without it, losing your devices means losing your accounts.";
+"vaultKey.recovery.backup" = "Save a copy somewhere safe. If you forget your master password, the recovery key is the only way back into your vault.";
 "vaultKey.recovery.copy" = "Copy Recovery Key";
 "vaultKey.recovery.explanation" = "Your accounts are end-to-end encrypted with this key. Munin can't read them, and can't recover them for you.";
 "vaultKey.recovery.title" = "Recovery Key";
+
+/** Master password **/
+"masterPassword.confirm" = "Confirm master password";
+"masterPassword.create.message" = "It unlocks Munin on all your devices. Munin never sees it and can't reset it; if you forget it, your recovery key is the only way back.";
+"masterPassword.create.title" = "Create a master password";
+"masterPassword.exists" = "A master password was just set up on another device. Unlock with that one.";
+"masterPassword.field" = "Master password";
+"masterPassword.mismatch" = "The passwords don't match.";
+"masterPassword.reset.title" = "Choose a new master password";
+"masterPassword.tooShort" = "Use at least %lld characters.";

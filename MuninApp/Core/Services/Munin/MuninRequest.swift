@@ -16,20 +16,28 @@ enum MuninRequest: Requestable {
     case updatePassword(UUID, PasswordFieldsBody)
     /// Bump an item's last updated time (the password was copied).
     case touchPassword(UUID)
+    /// Delete one of the user's password items.
+    case deletePassword(UUID)
+    /// The user's wrapped vault key and KDF settings.
+    case vaultKey
+    /// First master password setup.
+    case createVaultKey(VaultKeyRequestBody)
+    /// New master password; needs `currentProof`.
+    case replaceVaultKey(VaultKeyRequestBody)
 
     var httpMethod: HTTP.Method {
         switch self {
-        case .entries, .passwords:                    return .get
-        case .createEntry, .createPassword, .touchPassword: return .post
-        case .deleteEntry:                            return .delete
-        case .updatePassword:                         return .put
+        case .entries, .passwords, .vaultKey:         return .get
+        case .createEntry, .createPassword, .touchPassword, .createVaultKey: return .post
+        case .deleteEntry, .deletePassword:           return .delete
+        case .updatePassword, .replaceVaultKey:       return .put
         }
     }
 
     var encoding: Request.Encoding {
         switch self {
-        case .entries, .deleteEntry, .passwords, .touchPassword: return .query
-        case .createEntry, .createPassword, .updatePassword:     return .json
+        case .entries, .deleteEntry, .passwords, .touchPassword, .deletePassword, .vaultKey: return .query
+        case .createEntry, .createPassword, .updatePassword, .createVaultKey, .replaceVaultKey: return .json
         }
     }
 
@@ -41,7 +49,8 @@ enum MuninRequest: Requestable {
         case .createEntry(let body):    return body
         case .createPassword(let body): return body
         case .updatePassword(_, let body): return body
-        case .entries, .deleteEntry, .passwords, .touchPassword: return nil
+        case .createVaultKey(let body), .replaceVaultKey(let body): return body
+        case .entries, .deleteEntry, .passwords, .touchPassword, .deletePassword, .vaultKey: return nil
         }
     }
 
@@ -52,6 +61,8 @@ enum MuninRequest: Requestable {
         case .passwords, .createPassword: return MuninEndpoint.passwords
         case .touchPassword(let id):     return MuninEndpoint.passwordTouch(id)
         case .updatePassword(let id, _): return MuninEndpoint.password(id)
+        case .deletePassword(let id):    return MuninEndpoint.password(id)
+        case .vaultKey, .createVaultKey, .replaceVaultKey: return MuninEndpoint.vaultKey
         }
     }
 }
@@ -99,4 +110,25 @@ nonisolated struct EncryptedPassword: Sendable, Decodable {
     let password: String
     let note: String
     let updatedAt: Date
+}
+
+// MARK: - Vault key
+
+/// Response from `GET /v1/vault-key`. The wrapped keys are AES-GCM ciphertext;
+/// `kdf` is `KDFParameters` as JSON.
+nonisolated struct VaultKeyRecord: Sendable, Decodable {
+    let passwordWrappedKey: String
+    let recoveryWrappedKey: String
+    let kdf: String
+}
+
+/// POST / PUT /v1/vault-key.
+nonisolated struct VaultKeyRequestBody: Encodable, Sendable {
+    let passwordWrappedKey: String
+    let recoveryWrappedKey: String
+    let kdf: String
+    let passwordProof: String
+    let recoveryProof: String
+    /// PUT only: proof from the current master password or the recovery key.
+    let currentProof: String?
 }

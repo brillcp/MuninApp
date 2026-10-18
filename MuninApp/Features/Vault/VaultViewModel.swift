@@ -4,6 +4,12 @@ import Observation
 
 @Observable
 final class VaultViewModel {
+    private let vault: UnlockedVault
+
+    init(vault: UnlockedVault) {
+        self.vault = vault
+    }
+
     private(set) var items: [PasswordItem] = [] {
         didSet {
             recomputeVisibleItems()
@@ -51,7 +57,7 @@ final class VaultViewModel {
         guard auth.isSignedIn else { return }
         defer { hasLoaded = true }
         do {
-            let (key, userID) = try vaultKey(auth: auth)
+            let (key, userID) = (vault.key, vault.userID)
             let encrypted = try await MuninService(tokenProvider: auth.tokenProvider).passwords()
             var decrypted: [PasswordItem] = []
             var failures = 0
@@ -74,7 +80,7 @@ final class VaultViewModel {
     // MARK: - Create
 
     func create(_ fields: PasswordFields, auth: AuthManager) async throws {
-        let (key, userID) = try vaultKey(auth: auth)
+        let (key, userID) = (vault.key, vault.userID)
         let body = try Self.seal(fields, key: key, userID: userID)
         let saved = try await MuninService(tokenProvider: auth.tokenProvider).createPassword(body)
         items.append(try Self.item(from: saved, key: key, userID: userID))
@@ -83,12 +89,24 @@ final class VaultViewModel {
     // MARK: - Edit
 
     func update(_ item: PasswordItem, with fields: PasswordFields, auth: AuthManager) async throws {
-        let (key, userID) = try vaultKey(auth: auth)
+        let (key, userID) = (vault.key, vault.userID)
         let body = try Self.seal(fields, key: key, userID: userID)
-        let saved = try await MuninService(tokenProvider: auth.tokenProvider).updatePassword(id: item.id, body)
+        let saved = try await MuninService(tokenProvider: auth.tokenProvider, proof: vault.proof).updatePassword(id: item.id, body)
         let updated = try Self.item(from: saved, key: key, userID: userID)
         if let index = items.firstIndex(where: { $0.id == item.id }) {
             items[index] = updated
+        }
+    }
+
+    // MARK: - Delete
+
+    func delete(_ item: PasswordItem, auth: AuthManager) async {
+        do {
+            try await MuninService(tokenProvider: auth.tokenProvider, proof: vault.proof).deletePassword(id: item.id)
+            if selection == item.id { selection = nil }
+            items.removeAll { $0.id == item.id }
+        } catch {
+            errorMessage = error.muninDescription
         }
     }
 
@@ -97,8 +115,8 @@ final class VaultViewModel {
     /// Decrypts the password just long enough to copy it, then bumps last updated.
     func copyPassword(_ item: PasswordItem, auth: AuthManager) async {
         do {
-            let (key, userID) = try vaultKey(auth: auth)
-            Pasteboard.copy(try VaultCrypto.open(item.encryptedPassword, field: "password", key: key, userID: userID))
+            let (key, userID) = (vault.key, vault.userID)
+            Pasteboard.copySensitive(try VaultCrypto.open(item.encryptedPassword, field: "password", key: key, userID: userID))
 
             let touched = try await MuninService(tokenProvider: auth.tokenProvider).touchPassword(id: item.id)
             if let index = items.firstIndex(where: { $0.id == item.id }) {
@@ -113,17 +131,11 @@ final class VaultViewModel {
 
     /// Decrypts one encrypted field (password or note) for display.
     func decrypt(_ ciphertext: String, field: String, auth: AuthManager) throws -> String {
-        let (key, userID) = try vaultKey(auth: auth)
+        let (key, userID) = (vault.key, vault.userID)
         return try VaultCrypto.open(ciphertext, field: field, key: key, userID: userID)
     }
 
     // MARK: - Helpers
-
-    private func vaultKey(auth: AuthManager) throws -> (SymmetricKey, String) {
-        guard let userID = auth.userID else { throw VaultError.notSignedIn }
-        guard let key = VaultKeyStore.load(userID: userID) else { throw VaultError.keyMissing }
-        return (key, userID)
-    }
 
     private static func seal(_ fields: PasswordFields, key: SymmetricKey, userID: String) throws -> PasswordFieldsBody {
         func seal(_ value: String, _ field: String) throws -> String {

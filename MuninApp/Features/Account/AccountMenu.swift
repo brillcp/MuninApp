@@ -3,6 +3,7 @@ import SwiftUI
 /// Profile menu: who's signed in, the recovery key, and sign out.
 struct AccountMenu: View {
     @Environment(AuthManager.self) private var auth
+    @Environment(VaultSession.self) private var session
     @State private var recoveryKey: RecoveryKeySheetItem?
 
     var body: some View {
@@ -11,9 +12,8 @@ struct AccountMenu: View {
                 Text(email)
             }
             Button("account.showRecoveryKey", systemImage: "key") {
-                recoveryKey = auth.userID
-                    .flatMap { VaultKeyStore.load(userID: $0) }
-                    .map { RecoveryKeySheetItem(key: VaultKeyStore.recoveryString(for: $0)) }
+                recoveryKey = session.vault
+                    .map { RecoveryKeySheetItem(key: VaultKeyStore.recoveryString(for: $0.key)) }
             }
             Divider()
             Button("account.signOut", systemImage: "rectangle.portrait.and.arrow.right", role: .destructive) {

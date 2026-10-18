@@ -2,9 +2,9 @@ import CryptoKit
 import Foundation
 import Observation
 
-/// Loads the user's encrypted entries from Munin, decrypts them with the vault
-/// key from iCloud Keychain, and adds/removes entries. Codes are calculated in
-/// the views from the decrypted accounts.
+/// Loads the user's encrypted entries from Munin, decrypts them with the
+/// unlocked vault key, and adds/removes entries. Codes are calculated in the
+/// views from the decrypted accounts.
 @Observable
 final class CodesViewModel {
     private(set) var items: [VaultItem] = []
@@ -14,12 +14,16 @@ final class CodesViewModel {
     /// Entries that didn't decrypt with this device's key.
     private(set) var undecryptableCount = 0
 
-    private var key: SymmetricKey?
+    private let vault: UnlockedVault
+
+    init(vault: UnlockedVault) {
+        self.vault = vault
+    }
 
     // MARK: - Loading
 
     func refresh(auth: AuthManager) async {
-        guard auth.isSignedIn, let userID = auth.userID else {
+        guard auth.isSignedIn else {
             reset()
             return
         }
@@ -29,11 +33,8 @@ final class CodesViewModel {
             hasLoaded = true
         }
         do {
-            // VaultKeyManager makes sure the key exists before this screen loads.
-            guard let key = VaultKeyStore.load(userID: userID) else { throw VaultError.keyMissing }
             let entries = try await MuninService(tokenProvider: auth.tokenProvider).entries()
-            self.key = key
-            decrypt(entries, key: key, userID: userID)
+            decrypt(entries, key: vault.key, userID: vault.userID)
             errorMessage = nil
         } catch is CancellationError {
             return
@@ -64,10 +65,8 @@ final class CodesViewModel {
     /// Encrypts and uploads accounts, skipping exact duplicates. Returns how many were added.
     @discardableResult
     func add(_ accounts: [OTPAccount], auth: AuthManager) async throws -> Int {
-        guard let userID = auth.userID else { throw VaultError.notSignedIn }
-        guard let key = self.key ?? VaultKeyStore.load(userID: userID) else { throw VaultError.keyMissing }
-        self.key = key
-
+        let key = vault.key
+        let userID = vault.userID
         let service = MuninService(tokenProvider: auth.tokenProvider)
         var added = 0
         for account in accounts where !items.contains(where: { $0.account == account }) {
@@ -81,7 +80,7 @@ final class CodesViewModel {
 
     func delete(_ item: VaultItem, auth: AuthManager) async {
         do {
-            try await MuninService(tokenProvider: auth.tokenProvider).deleteEntry(id: item.id)
+            try await MuninService(tokenProvider: auth.tokenProvider, proof: vault.proof).deleteEntry(id: item.id)
             items.removeAll { $0.id == item.id }
         } catch {
             errorMessage = error.muninDescription
@@ -91,12 +90,11 @@ final class CodesViewModel {
     // MARK: - Key
 
     var recoveryKey: String? {
-        key.map(VaultKeyStore.recoveryString(for:))
+        VaultKeyStore.recoveryString(for: vault.key)
     }
 
     private func reset() {
         items = []
-        key = nil
         errorMessage = nil
         undecryptableCount = 0
         hasLoaded = false

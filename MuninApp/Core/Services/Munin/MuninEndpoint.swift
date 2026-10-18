@@ -8,6 +8,7 @@ enum MuninEndpoint: EndpointType {
     case passwords
     case password(UUID)
     case passwordTouch(UUID)
+    case vaultKey
 
     var path: String {
         switch self {
@@ -16,6 +17,7 @@ enum MuninEndpoint: EndpointType {
         case .passwords:              return "passwords"
         case .password(let id):       return "passwords/\(id.uuidString)"
         case .passwordTouch(let id):  return "passwords/\(id.uuidString)/touch"
+        case .vaultKey:               return "vault-key"
         }
     }
 }

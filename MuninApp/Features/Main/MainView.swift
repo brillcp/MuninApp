@@ -2,6 +2,8 @@ import SwiftUI
 
 /// Sidebar on Mac and iPad, tab bar on iPhone.
 struct MainView: View {
+    let vault: UnlockedVault
+
     enum Section: Hashable {
         case vault
         case codes
@@ -12,13 +14,12 @@ struct MainView: View {
     var body: some View {
         TabView(selection: $selection) {
             Tab("main.tab.vault", systemImage: "lock.rectangle.stack", value: Section.vault) {
-                VaultView()
+                VaultView(vault: vault)
             }
             Tab("main.tab.codes", systemImage: "key.viewfinder", value: Section.codes) {
-                CodesView()
+                CodesView(vault: vault)
             }
         }
-        .tint(.mint)
         .tabViewStyle(.sidebarAdaptable)
         #if os(macOS)
         .tabViewSidebarBottomBar {
@@ -32,6 +33,7 @@ struct MainView: View {
 }
 
 #Preview {
-    MainView()
+    MainView(vault: .preview)
         .environment(AuthManager())
+        .environment(VaultSession())
 }

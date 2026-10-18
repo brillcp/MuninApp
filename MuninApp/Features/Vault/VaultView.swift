@@ -2,10 +2,15 @@ import SwiftUI
 
 struct VaultView: View {
     @Environment(AuthManager.self) private var auth
-    @State private var viewModel = VaultViewModel()
+    @State private var viewModel: VaultViewModel
     @State private var isCreating = false
     /// The item being edited, with its password and note decrypted for the editor.
     @State private var editing: EditDraft?
+    @State private var pendingDeletion: PasswordItem?
+
+    init(vault: UnlockedVault) {
+        _viewModel = State(initialValue: VaultViewModel(vault: vault))
+    }
 
     var body: some View {
         NavigationStack {
@@ -18,12 +23,17 @@ struct VaultView: View {
                         .foregroundStyle(.secondary)
                 }
             }
+            #if os(macOS)
+            .tableStyle(.bordered)
+            #endif
             .contextMenu(forSelectionType: PasswordItem.ID.self) { ids in
                 if ids.count == 1, let id = ids.first, let item = viewModel.items.first(where: { $0.id == id }) {
                     Button("vault.copyPassword", systemImage: "doc.on.doc") {
                         Task { await viewModel.copyPassword(item, auth: auth) }
                     }
-                    Button("global.edit", systemImage: "pencil") { startEditing(item) }
+                    Button("global.edit", systemImage: "square.and.pencil") { startEditing(item) }
+                    Divider()
+                    Button("global.delete", systemImage: "trash", role: .destructive) { pendingDeletion = item }
                 }
             }
             .overlay {
@@ -36,9 +46,10 @@ struct VaultView: View {
                 )
             }
             .navigationTitle("vault.title")
+            .barkToolbar(title: "vault.title")
             .searchable(text: $viewModel.searchText, prompt: "vault.search.prompt")
             .toolbar {
-                ToolbarItem(placement: .primaryAction) {
+                ToolbarItem(placement: .confirmationAction) {
                     Button("vault.createItem", systemImage: "plus.square.on.square") {
                         isCreating = true
                     }
@@ -52,6 +63,8 @@ struct VaultView: View {
                         Task { await viewModel.copyPassword(item, auth: auth) }
                     } onEdit: {
                         startEditing(item)
+                    } onDelete: {
+                        pendingDeletion = item
                     }
                     .id(item.id)
                 }
@@ -61,6 +74,13 @@ struct VaultView: View {
                 PasswordEditorView { fields in
                     try await viewModel.create(fields, auth: auth)
                 }
+            }
+            .confirmationDialog("vault.delete.title", item: $pendingDeletion, titleVisibility: .visible) { item in
+                Button(LocalizedKey("vault.delete.button", item.name), role: .destructive) {
+                    Task { await viewModel.delete(item, auth: auth) }
+                }
+            } message: { item in
+                Text(LocalizedKey("vault.delete.message", item.name))
             }
             .sheet(item: $editing) { draft in
                 PasswordEditorView(fields: draft.fields, isEditing: true) { fields in
@@ -134,6 +154,6 @@ private struct VaultEmptyState: View {
 }
 
 #Preview {
-    VaultView()
+    VaultView(vault: .preview)
         .environment(AuthManager())
 }

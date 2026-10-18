@@ -1,7 +1,8 @@
 import Foundation
+import LocalAuthentication
 import Security
 
-enum KeychainService {
+nonisolated enum KeychainService {
     private static let service = Bundle.main.bundleIdentifier ?? "dev.gidlof.Munin"
     private static let supabaseAccount = "supabase.token"
     private static let supabaseRefreshAccount = "supabase.refresh_token"
@@ -49,6 +50,67 @@ enum KeychainService {
         // Synced items can't be ThisDeviceOnly.
         query[kSecAttrAccessible as String] = kSecAttrAccessibleAfterFirstUnlock
         SecItemAdd(query as CFDictionary, nil)
+    }
+
+    static func deleteSynced(account: String) {
+        var query = baseQuery(account: account)
+        query[kSecAttrSynchronizable as String] = true
+        SecItemDelete(query as CFDictionary)
+    }
+
+    // MARK: - Biometrics (this device only)
+
+    enum BiometricRead {
+        case success(Data)
+        case notFound
+        case canceled
+        case failed
+    }
+
+    /// Saves an item that can only be read after Face ID / Touch ID, and stops
+    /// working if the enrolled fingers or faces change. Never synced.
+    static func saveBiometric(_ data: Data, account: String) -> Bool {
+        deleteBiometric(account: account)
+        guard let access = SecAccessControlCreateWithFlags(
+            nil,
+            kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly,
+            .biometryCurrentSet,
+            nil
+        ) else { return false }
+        var query = baseQuery(account: account)
+        query[kSecValueData as String] = data
+        query[kSecAttrAccessControl as String] = access
+        return SecItemAdd(query as CFDictionary, nil) == errSecSuccess
+    }
+
+    /// Shows the biometric prompt with `reason`. Blocks until the user responds.
+    static func loadBiometric(account: String, reason: String) -> BiometricRead {
+        let context = LAContext()
+        context.localizedReason = reason
+        // The lock screen has its own "Use Master Password" button.
+        context.localizedFallbackTitle = ""
+
+        var query = baseQuery(account: account)
+        query[kSecReturnData as String] = true
+        query[kSecMatchLimit as String] = kSecMatchLimitOne
+        query[kSecUseAuthenticationContext as String] = context
+
+        var result: CFTypeRef?
+        switch SecItemCopyMatching(query as CFDictionary, &result) {
+        case errSecSuccess:
+            guard let data = result as? Data else { return .failed }
+            return .success(data)
+        case errSecItemNotFound:
+            return .notFound
+        case errSecUserCanceled:
+            return .canceled
+        default:
+            return .failed
+        }
+    }
+
+    static func deleteBiometric(account: String) {
+        delete(account: account)
     }
 
     // MARK: - Private

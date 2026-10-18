@@ -21,7 +21,7 @@ struct PasswordGeneratorView: View {
                     Spacer()
                     Button("passwordGenerator.regenerate", systemImage: "arrow.counterclockwise", action: regenerate)
                         .labelStyle(.iconOnly)
-                    Button("global.copy", systemImage: "doc.on.doc") { Pasteboard.copy(password) }
+                    Button("global.copy", systemImage: "doc.on.doc") { Pasteboard.copySensitive(password) }
                         .labelStyle(.iconOnly)
                 }
                 .buttonStyle(.borderless)

@@ -2,12 +2,16 @@ import SwiftUI
 
 struct CodesView: View {
     @Environment(AuthManager.self) private var auth
-    @State private var viewModel = CodesViewModel()
+    @State private var viewModel: CodesViewModel
     @State private var isAdding = false
     @State private var isShowingRecoveryKey = false
     @State private var pendingDeletion: VaultItem?
     /// One clock for the whole list, ticking on whole seconds.
     @State private var now = Date.now
+
+    init(vault: UnlockedVault) {
+        _viewModel = State(initialValue: CodesViewModel(vault: vault))
+    }
 
     var body: some View {
         NavigationStack {
@@ -40,6 +44,7 @@ struct CodesView: View {
                 )
             }
             .navigationTitle("codes.title")
+            .barkToolbar(title: "codes.title")
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
                     Button("codes.add", systemImage: "plus") { isAdding = true }
@@ -140,6 +145,7 @@ private struct CodesEmptyState: View {
 }
 
 #Preview {
-    CodesView()
+    CodesView(vault: .preview)
         .environment(AuthManager())
+        .environment(VaultSession())
 }
