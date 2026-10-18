@@ -13,11 +13,6 @@ struct AddAccountView: View {
 
     @Environment(\.dismiss) private var dismiss
 
-    @State private var link = ""
-    @State private var issuer = ""
-    @State private var name = ""
-    @State private var secret = ""
-    @State private var digits = 6
     @State private var errorMessage: String?
     @State private var isSaving = false
     @State private var isScanning = false
@@ -27,9 +22,13 @@ struct AddAccountView: View {
     var body: some View {
         NavigationStack {
             Form {
-                qrSection
-                linkSection
-                manualSection
+                QRCodeSection(
+                    isScanning: $isScanning,
+                    isImportingFile: $isImportingFile,
+                    photoItem: $photoItem
+                )
+                LinkSection(onSubmit: submit(text:))
+                ManualEntrySection(onSubmit: submitManual)
                 if let errorMessage {
                     Section {
                         Label(errorMessage, systemImage: "exclamationmark.triangle")
@@ -71,78 +70,6 @@ struct AddAccountView: View {
         #endif
     }
 
-    // MARK: - Sections
-
-    private var qrSection: some View {
-        Section {
-            #if os(iOS)
-            if DataScannerViewController.isSupported {
-                Button {
-                    isScanning = true
-                } label: {
-                    Label("Scan QR Code", systemImage: "qrcode.viewfinder")
-                }
-            }
-            PhotosPicker(selection: $photoItem, matching: .images) {
-                Label("Choose Screenshot…", systemImage: "photo")
-            }
-            #else
-            Button {
-                isImportingFile = true
-            } label: {
-                Label("Choose Image…", systemImage: "photo")
-            }
-            #endif
-        } header: {
-            Text("QR code")
-        } footer: {
-            Text("A site's 2FA setup QR code, or Google Authenticator's Transfer accounts → Export accounts QR code to import everything at once.")
-        }
-    }
-
-    private var linkSection: some View {
-        Section {
-            TextField("otpauth://…", text: $link, axis: .vertical)
-                .lineLimit(1...4)
-                .font(.body.monospaced())
-                .autocorrectionDisabled()
-                #if os(iOS)
-                .textInputAutocapitalization(.never)
-                #endif
-            Button("Add from Link") { submit(text: link) }
-                .disabled(link.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-        } header: {
-            Text("Link")
-        }
-    }
-
-    private var manualSection: some View {
-        Section {
-            TextField("Issuer, e.g. GitHub", text: $issuer)
-            TextField("Account, e.g. you@example.com", text: $name)
-                .autocorrectionDisabled()
-                #if os(iOS)
-                .textInputAutocapitalization(.never)
-                #endif
-            TextField("Setup key", text: $secret)
-                .font(.body.monospaced())
-                .autocorrectionDisabled()
-                #if os(iOS)
-                .textInputAutocapitalization(.characters)
-                #endif
-            Picker("Digits", selection: $digits) {
-                Text("6").tag(6)
-                Text("8").tag(8)
-            }
-            Button("Add Account", action: submitManual)
-                .disabled(secret.isEmpty || (issuer.isEmpty && name.isEmpty))
-        } header: {
-            Text("Enter manually")
-        } footer: {
-            Text("Sites show the setup key under \"Can't scan the QR code?\".")
-        }
-    }
-
     // MARK: - Input
 
     private func submit(text: String) {
@@ -153,7 +80,7 @@ struct AddAccountView: View {
         }
     }
 
-    private func submitManual() {
+    private func submitManual(issuer: String, name: String, secret: String, digits: Int) {
         guard let secretData = Base32.decode(secret) else {
             errorMessage = OTPAuthParser.ParseError.invalidSecret.localizedDescription
             return
@@ -222,6 +149,100 @@ struct AddAccountView: View {
             } catch {
                 errorMessage = error.muninDescription
             }
+        }
+    }
+}
+
+// MARK: - Sections
+
+/// Camera scan (iPhone) or an image of a QR code.
+private struct QRCodeSection: View {
+    @Binding var isScanning: Bool
+    @Binding var isImportingFile: Bool
+    @Binding var photoItem: PhotosPickerItem?
+
+    var body: some View {
+        Section {
+            #if os(iOS)
+            if DataScannerViewController.isSupported {
+                Button {
+                    isScanning = true
+                } label: {
+                    Label("Scan QR Code", systemImage: "qrcode.viewfinder")
+                }
+            }
+            PhotosPicker(selection: $photoItem, matching: .images) {
+                Label("Choose Screenshot…", systemImage: "photo")
+            }
+            #else
+            Button {
+                isImportingFile = true
+            } label: {
+                Label("Choose Image…", systemImage: "photo")
+            }
+            #endif
+        } header: {
+            Text("QR code")
+        } footer: {
+            Text("A site's 2FA setup QR code, or Google Authenticator's Transfer accounts → Export accounts QR code to import everything at once.")
+        }
+    }
+}
+
+/// A pasted otpauth:// or otpauth-migration:// link.
+private struct LinkSection: View {
+    let onSubmit: (String) -> Void
+    @State private var link = ""
+
+    var body: some View {
+        Section {
+            TextField("otpauth://…", text: $link, axis: .vertical)
+                .lineLimit(1...4)
+                .font(.body.monospaced())
+                .autocorrectionDisabled()
+                #if os(iOS)
+                .textInputAutocapitalization(.never)
+                #endif
+            Button("Add from Link") { onSubmit(link) }
+                .disabled(link.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+        } header: {
+            Text("Link")
+        }
+    }
+}
+
+/// Issuer, account and setup key typed in by hand.
+private struct ManualEntrySection: View {
+    let onSubmit: (_ issuer: String, _ name: String, _ secret: String, _ digits: Int) -> Void
+    @State private var issuer = ""
+    @State private var name = ""
+    @State private var secret = ""
+    @State private var digits = 6
+
+    var body: some View {
+        Section {
+            TextField("Issuer, e.g. GitHub", text: $issuer)
+            TextField("Account, e.g. you@example.com", text: $name)
+                .autocorrectionDisabled()
+                #if os(iOS)
+                .textInputAutocapitalization(.never)
+                #endif
+            TextField("Setup key", text: $secret)
+                .font(.body.monospaced())
+                .autocorrectionDisabled()
+                #if os(iOS)
+                .textInputAutocapitalization(.characters)
+                #endif
+            Picker("Digits", selection: $digits) {
+                Text("6").tag(6)
+                Text("8").tag(8)
+            }
+            Button("Add Account") { onSubmit(issuer, name, secret, digits) }
+                .disabled(secret.isEmpty || (issuer.isEmpty && name.isEmpty))
+        } header: {
+            Text("Enter manually")
+        } footer: {
+            Text("Sites show the setup key under \"Can't scan the QR code?\".")
         }
     }
 }

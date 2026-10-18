@@ -9,7 +9,7 @@ struct ContentView: View {
     var body: some View {
         Group {
             if auth.isSignedIn {
-                signedIn
+                SignedInContent(keyManager: keyManager)
                     .overlay {
                         if !appLock.isUnlocked { LockView() }
                     }
@@ -22,8 +22,14 @@ struct ContentView: View {
         .environment(appLock)
     }
 
-    @ViewBuilder
-    private var signedIn: some View {
+}
+
+/// What a signed-in user sees, depending on whether the vault key is ready.
+private struct SignedInContent: View {
+    let keyManager: VaultKeyManager
+    @Environment(AuthManager.self) private var auth
+
+    var body: some View {
         switch keyManager.state {
         case .ready:
             MainView()

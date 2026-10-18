@@ -4,9 +4,46 @@ import Observation
 
 @Observable
 final class VaultViewModel {
-    private(set) var items: [PasswordItem] = []
+    private(set) var items: [PasswordItem] = [] {
+        didSet {
+            recomputeVisibleItems()
+            recomputeSelectedItem()
+        }
+    }
     private(set) var errorMessage: String?
     private(set) var hasLoaded = false
+
+    var searchText = "" {
+        didSet { recomputeVisibleItems() }
+    }
+    var sortOrder = [KeyPathComparator(\PasswordItem.lastUpdated, order: .reverse)] {
+        didSet { recomputeVisibleItems() }
+    }
+    var selection: PasswordItem.ID? {
+        didSet { recomputeSelectedItem() }
+    }
+
+    /// `items` filtered by `searchText` and sorted by `sortOrder`.
+    private(set) var visibleItems: [PasswordItem] = []
+    private(set) var selectedItem: PasswordItem?
+
+    /// The inspector shows while an item is selected; closing it deselects.
+    var isInspectorPresented: Bool {
+        get { selectedItem != nil }
+        set { if !newValue { selection = nil } }
+    }
+
+    private func recomputeVisibleItems() {
+        let filtered = searchText.isEmpty ? items : items.filter {
+            $0.name.localizedCaseInsensitiveContains(searchText)
+                || $0.username.localizedCaseInsensitiveContains(searchText)
+        }
+        visibleItems = filtered.sorted(using: sortOrder)
+    }
+
+    private func recomputeSelectedItem() {
+        selectedItem = selection.flatMap { id in items.first { $0.id == id } }
+    }
 
     // MARK: - Loading
 

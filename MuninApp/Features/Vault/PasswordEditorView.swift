@@ -15,7 +15,7 @@ struct PasswordEditorView: View {
     init(fields: PasswordFields = PasswordFields(), isEditing: Bool = false, onSave: @escaping (PasswordFields) async throws -> Void) {
         self.isEditing = isEditing
         self.onSave = onSave
-        _fields = State(initialValue: fields)
+        self.fields = fields
     }
 
     var body: some View {

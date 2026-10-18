@@ -3,35 +3,15 @@ import SwiftUI
 struct VaultView: View {
     @Environment(AuthManager.self) private var auth
     @State private var viewModel = VaultViewModel()
-    @State private var searchText = ""
-    @State private var selection: PasswordItem.ID?
-    @State private var sortOrder = [KeyPathComparator(\PasswordItem.lastUpdated, order: .reverse)]
     @State private var isCreating = false
     /// The item being edited, with its password and note decrypted for the editor.
     @State private var editing: EditDraft?
 
-    private var visibleItems: [PasswordItem] {
-        let filtered = searchText.isEmpty ? viewModel.items : viewModel.items.filter {
-            $0.name.localizedCaseInsensitiveContains(searchText)
-                || $0.username.localizedCaseInsensitiveContains(searchText)
-        }
-        return filtered.sorted(using: sortOrder)
-    }
-
-    private var selectedItem: PasswordItem? {
-        selection.flatMap { id in viewModel.items.first { $0.id == id } }
-    }
-
     var body: some View {
         NavigationStack {
-            Table(visibleItems, selection: $selection, sortOrder: $sortOrder) {
+            Table(viewModel.visibleItems, selection: $viewModel.selection, sortOrder: $viewModel.sortOrder) {
                 TableColumn("Title", value: \.name) { item in
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(item.name)
-                        Text(item.username)
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                    }
+                    PasswordTitleCell(name: item.name, username: item.username)
                 }
                 TableColumn("Last Updated", value: \.lastUpdated) { item in
                     Text(item.lastUpdated, format: .relative(presentation: .named))
@@ -47,26 +27,16 @@ struct VaultView: View {
                 }
             }
             .overlay {
-                if let error = viewModel.errorMessage, viewModel.items.isEmpty {
-                    ContentUnavailableView {
-                        Label("Couldn't load your vault", systemImage: "exclamationmark.triangle")
-                    } description: {
-                        Text(error)
-                    } actions: {
-                        Button("Try Again") { Task { await viewModel.refresh(auth: auth) } }
-                    }
-                } else if viewModel.items.isEmpty {
-                    if viewModel.hasLoaded {
-                        ContentUnavailableView("No items", systemImage: "lock.rectangle.stack")
-                    } else {
-                        ProgressView()
-                    }
-                } else if visibleItems.isEmpty {
-                    ContentUnavailableView.search(text: searchText)
-                }
+                VaultEmptyState(
+                    errorMessage: viewModel.items.isEmpty ? viewModel.errorMessage : nil,
+                    isEmpty: viewModel.items.isEmpty,
+                    hasLoaded: viewModel.hasLoaded,
+                    searchText: viewModel.visibleItems.isEmpty ? viewModel.searchText : nil,
+                    onRetry: { Task { await viewModel.refresh(auth: auth) } }
+                )
             }
             .navigationTitle("Vault")
-            .searchable(text: $searchText, prompt: "Search all items")
+            .searchable(text: $viewModel.searchText, prompt: "Search all items")
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
                     Button("Create Item", systemImage: "plus.square.on.square") {
@@ -74,11 +44,8 @@ struct VaultView: View {
                     }
                 }
             }
-            .inspector(isPresented: Binding(
-                get: { selectedItem != nil },
-                set: { if !$0 { selection = nil } }
-            )) {
-                if let item = selectedItem {
+            .inspector(isPresented: $viewModel.isInspectorPresented) {
+                if let item = viewModel.selectedItem {
                     PasswordInspector(item: item) { ciphertext, field in
                         try viewModel.decrypt(ciphertext, field: field, auth: auth)
                     } onCopyPassword: {
@@ -119,6 +86,51 @@ private struct EditDraft: Identifiable {
     let item: PasswordItem
     let fields: PasswordFields
     var id: UUID { item.id }
+}
+
+/// The Title column: name with the username underneath.
+private struct PasswordTitleCell: View {
+    let name: String
+    let username: String
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text(name)
+            Text(username)
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+        }
+    }
+}
+
+/// Error, empty, loading and no-search-results states for the vault table.
+private struct VaultEmptyState: View {
+    let errorMessage: String?
+    let isEmpty: Bool
+    let hasLoaded: Bool
+    /// Set when a search matches nothing.
+    let searchText: String?
+    let onRetry: () -> Void
+
+    var body: some View {
+        if let errorMessage {
+            ContentUnavailableView {
+                Label("Couldn't load your vault", systemImage: "exclamationmark.triangle")
+            } description: {
+                Text(errorMessage)
+            } actions: {
+                Button("Try Again", action: onRetry)
+            }
+        } else if isEmpty {
+            if hasLoaded {
+                ContentUnavailableView("No items", systemImage: "lock.rectangle.stack")
+            } else {
+                ProgressView()
+            }
+        } else if let searchText {
+            ContentUnavailableView.search(text: searchText)
+        }
+    }
 }
 
 #Preview {

@@ -11,7 +11,7 @@ struct PasswordGeneratorView: View {
         VStack(alignment: .leading, spacing: 0) {
             VStack(alignment: .leading, spacing: 16) {
                 Text(password)
-                    .font(.system(.title2, design: .monospaced).weight(.semibold))
+                    .font(.system(.title2, design: .monospaced, weight: .semibold))
                     .textSelection(.enabled)
                     .frame(maxWidth: .infinity, minHeight: 60, alignment: .topLeading)
 
@@ -39,7 +39,7 @@ struct PasswordGeneratorView: View {
             Form {
                 LabeledContent("Length") {
                     HStack {
-                        Slider(value: lengthBinding, in: 8...64, step: 1)
+                        Slider(value: $generator.sliderLength, in: 8...64, step: 1)
                         Text("\(generator.length)")
                             .monospacedDigit()
                             .frame(width: 28, alignment: .trailing)
@@ -60,10 +60,6 @@ struct PasswordGeneratorView: View {
         #if os(iOS)
         .presentationDetents([.medium, .large])
         #endif
-    }
-
-    private var lengthBinding: Binding<Double> {
-        Binding(get: { Double(generator.length) }, set: { generator.length = Int($0) })
     }
 
     private func regenerate() {

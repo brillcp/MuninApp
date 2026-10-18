@@ -81,7 +81,7 @@ private struct CodeText: View, Equatable {
 
     var body: some View {
         Text(didCopy ? "Copied" : CodeRow.formatted(code))
-            .font(.system(.title2, design: .monospaced).weight(.semibold))
+            .font(.system(.title2, design: .monospaced, weight: .semibold))
             .foregroundStyle(didCopy ? Color.accentColor : .primary)
             .monospacedDigit()
             .animation(.default, value: code)

@@ -30,7 +30,15 @@ struct CodesView: View {
                     }
                 }
             }
-            .overlay { emptyState }
+            .overlay {
+                CodesEmptyState(
+                    errorMessage: viewModel.items.isEmpty ? viewModel.errorMessage : nil,
+                    isEmpty: viewModel.items.isEmpty && viewModel.undecryptableCount == 0,
+                    hasLoaded: viewModel.hasLoaded,
+                    onRetry: { Task { await viewModel.refresh(auth: auth) } },
+                    onAdd: { isAdding = true }
+                )
+            }
             .navigationTitle("Codes")
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
@@ -76,19 +84,12 @@ struct CodesView: View {
             .sheet(isPresented: $isShowingRecoveryKey) {
                 RecoveryKeyView(recoveryKey: viewModel.recoveryKey ?? "")
             }
-            .confirmationDialog(
-                "Delete \(pendingDeletion?.account.title ?? "account")?",
-                isPresented: Binding(get: { pendingDeletion != nil }, set: { if !$0 { pendingDeletion = nil } }),
-                titleVisibility: .visible
-            ) {
-                Button("Delete", role: .destructive) {
-                    if let item = pendingDeletion {
-                        Task { await viewModel.delete(item, auth: auth) }
-                    }
-                    pendingDeletion = nil
+            .confirmationDialog("Delete Account?", item: $pendingDeletion, titleVisibility: .visible) { item in
+                Button("Delete \(item.account.title)", role: .destructive) {
+                    Task { await viewModel.delete(item, auth: auth) }
                 }
-            } message: {
-                Text("Make sure 2FA is turned off for this account, or you have another way to sign in. This can't be undone.")
+            } message: { item in
+                Text("Make sure 2FA is turned off for \(item.account.title), or you have another way to sign in. This can't be undone.")
             }
         }
         .tint(.mint)
@@ -102,24 +103,33 @@ struct CodesView: View {
         }
     }
 
-    @ViewBuilder
-    private var emptyState: some View {
-        if let error = viewModel.errorMessage, viewModel.items.isEmpty {
+}
+
+/// Error, empty and loading states for the codes list.
+private struct CodesEmptyState: View {
+    let errorMessage: String?
+    let isEmpty: Bool
+    let hasLoaded: Bool
+    let onRetry: () -> Void
+    let onAdd: () -> Void
+
+    var body: some View {
+        if let errorMessage {
             ContentUnavailableView {
                 Label("Couldn't load your vault", systemImage: "wifi.exclamationmark")
             } description: {
-                Text(error)
+                Text(errorMessage)
             } actions: {
-                Button("Try Again") { Task { await viewModel.refresh(auth: auth) } }
+                Button("Try Again", action: onRetry)
             }
-        } else if viewModel.items.isEmpty && viewModel.undecryptableCount == 0 {
-            if viewModel.hasLoaded {
+        } else if isEmpty {
+            if hasLoaded {
                 ContentUnavailableView {
                     Label("No accounts yet", systemImage: "lock.shield")
                 } description: {
                     Text("Scan a 2FA QR code or import from Google Authenticator.")
                 } actions: {
-                    Button("Add Account") { isAdding = true }
+                    Button("Add Account", action: onAdd)
                         .buttonStyle(.borderedProminent)
                 }
             } else {

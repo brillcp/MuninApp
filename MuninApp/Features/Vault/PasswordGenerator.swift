@@ -33,6 +33,12 @@ struct PasswordGenerator {
         return String(characters.prefix(max(length, sets.count)))
     }
 
+    /// `length` as a Double, for a Slider.
+    var sliderLength: Double {
+        get { Double(length) }
+        set { length = Int(newValue) }
+    }
+
     /// Bits of entropy for the current settings.
     var entropy: Double {
         Double(length) * log2(Double(sets.reduce(0) { $0 + $1.count }))
