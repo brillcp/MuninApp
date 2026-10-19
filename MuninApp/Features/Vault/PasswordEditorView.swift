@@ -12,6 +12,7 @@ struct PasswordEditorView: View {
     @State private var isGenerating = false
     @State private var errorMessage: String?
     @State private var hapticTaps = 0
+    @FocusState private var isNameFocused: Bool
 
     init(fields: PasswordFields = PasswordFields(), isEditing: Bool = false, onSave: @escaping (PasswordFields) async throws -> Void) {
         self.isEditing = isEditing
@@ -25,6 +26,7 @@ struct PasswordEditorView: View {
             Form {
                 Section {
                     TextField("password.field.name", text: $fields.name)
+                        .focused($isNameFocused)
                 }
 
                 Section {
@@ -71,6 +73,8 @@ struct PasswordEditorView: View {
                 }
             }
             .formStyle(.grouped)
+            // A new item starts typing in the name field; editing doesn't steal focus.
+            .onAppear { isNameFocused = !isEditing }
             .sensoryFeedback(.impact(weight: .light), trigger: hapticTaps)
             .disabled(isSaving)
             .navigationTitle(LocalizedStringKey(isEditing ? "passwordEditor.editTitle" : "passwordEditor.newTitle"))

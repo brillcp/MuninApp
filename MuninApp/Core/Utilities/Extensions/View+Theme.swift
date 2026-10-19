@@ -16,14 +16,13 @@ extension View {
                         .foregroundStyle(.white)
                 }
                 .sharedBackgroundVisibility(.hidden)
-                ToolbarItem(placement: .secondaryAction) {
-                    LockToolbarButton()
-                }
+                // The Lock button is placed by each screen on the Mac, so it
+                // can share a group with that screen's buttons.
             }
         #else
         barkNavigationBar()
             .toolbar {
-                ToolbarItem(placement: .secondaryAction) {
+                ToolbarItem(placement: .cancellationAction) {
                     LockToolbarButton()
                 }
             }
@@ -46,7 +45,7 @@ extension View {
 }
 
 /// Locks Munin (same as ⌘L). In the Vault and 2FA toolbars.
-private struct LockToolbarButton: View {
+struct LockToolbarButton: View {
     @Environment(VaultSession.self) private var session
     @State private var taps = 0
 

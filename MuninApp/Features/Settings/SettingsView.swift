@@ -24,12 +24,13 @@ struct SettingsView: View {
                         hapticTaps += 1
                         auth.signOut()
                     }
+                    .foregroundStyle(.red)
                     .tint(.red)
                 }
 
                 Section("settings.security") {
                     if let vault = session.vault {
-                        Button("settings.changeMasterPassword", systemImage: "key.horizontal") {
+                        Button("settings.changeMasterPassword", systemImage: "lock.shield") {
                             hapticTaps += 1
                             isChangingPassword = true
                         }

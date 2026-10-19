@@ -47,22 +47,29 @@ struct CodesView: View {
     @ToolbarContentBuilder
     private var toolbarContent: some ToolbarContent {
         #if os(macOS)
-        ToolbarItem(placement: .primaryAction) {
+        // Title ---> Add  [Refresh, Lock]
+        ToolbarItem(placement: .primaryAction) { addButton }
+        ToolbarSpacer(.flexible, placement: .primaryAction)
+        ToolbarItemGroup(placement: .primaryAction) {
             Button("global.refresh", systemImage: "arrow.clockwise") {
                 hapticTaps += 1
                 Task { await viewModel.refresh(auth: auth) }
             }
             .keyboardShortcut("r")
+            LockToolbarButton()
         }
+        #else
+        ToolbarItem(placement: .primaryAction) { addButton }
         #endif
-        ToolbarItem(placement: .primaryAction) {
-            Button("codes.add", systemImage: "plus") {
-                hapticTaps += 1
-                isAdding = true
-            }
-                .disabled(!viewModel.hasLoaded)
-                .keyboardShortcut("n")
+    }
+
+    private var addButton: some View {
+        Button("codes.add", systemImage: "plus") {
+            hapticTaps += 1
+            isAdding = true
         }
+        .disabled(!viewModel.hasLoaded)
+        .keyboardShortcut("n")
     }
 }
 

@@ -54,21 +54,24 @@ struct LockPanel: View {
             Text(step.title)
                 .font(.title.bold())
 
-            if auth.isSignedIn {
-                LockAccountRow(email: auth.email)
-                if step != .signIn {
-                    // Shows Sign in with Apple; the current account stays signed
-                    // in until another one signs in.
-                    LockSecondaryButton("lock.switchAccount") { go(to: .signIn) }
-                }
-            }
+            LockAccountRow(email: auth.email)
 
             if isWorking {
                 ProgressView()
+                    .controlSize(.large)
+                    .frame(maxWidth: .infinity, minHeight: 50)
+                    .transition(.blurReplace)
+                    .tint(.white)
+            } else {
+                stepView
+                    .transition(.blurReplace)
             }
 
-            stepView
-                .transition(.blurReplace)
+            if auth.isSignedIn {
+                if step != .signIn {
+                    LockSecondaryButton("lock.switchAccount") { go(to: .signIn) }
+                }
+            }
 
             if let errorMessage {
                 Text(errorMessage)
@@ -78,7 +81,10 @@ struct LockPanel: View {
         }
         .padding()
         .frame(maxWidth: .infinity, alignment: .leading)
+        #if os(iOS)
+        // The glass card sits on the artwork on iOS; the Mac shows it plain.
         .glassEffect(in: .rect(cornerRadius: 24))
+        #endif
         .disabled(isWorking)
         .animation(.bouncy, value: step)
         .animation(.bouncy, value: isWorking)

@@ -153,7 +153,7 @@
 "vault.delete.title" = "Delete Password?";
 "vault.empty.title" = "No items";
 "vault.search.prompt" = "Search all items";
-"vault.selectItem" = "Select an Item";
+"vault.selectItem" = "Select an item";
 "vault.title" = "Vault";
 
 /** Vault Key **/
