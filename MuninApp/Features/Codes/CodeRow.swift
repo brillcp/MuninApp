@@ -34,17 +34,21 @@ struct CodeRow: View {
     }
 
     private func copy() {
+        Self.copyCode(of: account)
+        didCopy = true
+        Task {
+            try? await Task.sleep(for: .seconds(1.2))
+            didCopy = false
+        }
+    }
+
+    static func copyCode(of account: OTPAccount) {
         #if os(iOS)
         UIPasteboard.general.string = account.code(at: .now)
         #else
         NSPasteboard.general.clearContents()
         NSPasteboard.general.setString(account.code(at: .now), forType: .string)
         #endif
-        didCopy = true
-        Task {
-            try? await Task.sleep(for: .seconds(1.2))
-            didCopy = false
-        }
     }
 
     /// "123456" → "123 456", "12345678" → "1234 5678".
@@ -56,7 +60,7 @@ struct CodeRow: View {
 }
 
 /// Issuer and account name. Never changes while the row is on screen.
-private struct AccountLabel: View, Equatable {
+struct AccountLabel: View, Equatable {
     let title: String
     let subtitle: String?
 
@@ -71,6 +75,35 @@ private struct AccountLabel: View, Equatable {
             }
         }
         .lineLimit(1)
+    }
+}
+
+/// The code and countdown for the Mac table's Code column. Click to copy.
+struct CodeCell: View {
+    let account: OTPAccount
+    let now: Date
+
+    @State private var didCopy = false
+
+    var body: some View {
+        HStack(spacing: 12) {
+            CodeText(code: account.code(at: now), didCopy: didCopy)
+                .equatable()
+            CountdownGauge(remaining: account.secondsRemaining(at: now), period: account.period)
+                .equatable()
+        }
+        .contentShape(Rectangle())
+        .onTapGesture {
+            CodeRow.copyCode(of: account)
+            didCopy = true
+            Task {
+                try? await Task.sleep(for: .seconds(1.2))
+                didCopy = false
+            }
+        }
+        .animation(.default, value: didCopy)
+        .accessibilityElement(children: .combine)
+        .accessibilityHint("codes.row.copyHint")
     }
 }
 
@@ -100,7 +133,7 @@ private struct CountdownGauge: View, Equatable {
                 .contentTransition(.numericText())
         }
         .gaugeStyle(.accessoryCircularCapacity)
-        .tint(remaining <= 5 ? Color.red : Color.mint)
+        .tint(remaining <= 5 ? Color.red : Color.green)
         .scaleEffect(0.6)
         .accessibilityLabel(LocalizedKey("codes.row.secondsLeft", remaining))
         .animation(.bouncy, value: remaining)

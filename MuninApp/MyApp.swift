@@ -19,6 +19,12 @@ import SwiftUI
         .defaultSize(width: 900, height: 600)
         .commands { LockCommands(session: session) }
 
+        Settings {
+            SettingsView()
+                .environment(auth)
+                .environment(session)
+        }
+
         MenuBarExtra("main.window.title", systemImage: "key.viewfinder") {
             MenuBarContent(session: session)
         }

@@ -4,10 +4,16 @@ import Observation
 
 @Observable
 final class VaultViewModel {
-    private let vault: UnlockedVault
+    /// Read at use time, so a changed master password (new proof) and a lock are picked up.
+    private let session: VaultSession
 
-    init(vault: UnlockedVault) {
-        self.vault = vault
+    init(session: VaultSession) {
+        self.session = session
+    }
+
+    private func unlockedVault() throws -> UnlockedVault {
+        guard let vault = session.vault else { throw VaultError.keyMissing }
+        return vault
     }
 
     private(set) var items: [PasswordItem] = [] {
@@ -33,12 +39,6 @@ final class VaultViewModel {
     private(set) var visibleItems: [PasswordItem] = []
     private(set) var selectedItem: PasswordItem?
 
-    /// The inspector shows while an item is selected; closing it deselects.
-    var isInspectorPresented: Bool {
-        get { selectedItem != nil }
-        set { if !newValue { selection = nil } }
-    }
-
     private func recomputeVisibleItems() {
         let filtered = searchText.isEmpty ? items : items.filter {
             $0.name.localizedCaseInsensitiveContains(searchText)
@@ -56,6 +56,7 @@ final class VaultViewModel {
     func refresh(auth: AuthManager) async {
         guard auth.isSignedIn else { return }
         do {
+            let vault = try unlockedVault()
             let (key, userID) = (vault.key, vault.userID)
             let encrypted = try await MuninService(tokenProvider: auth.tokenProvider).passwords()
             var decrypted: [PasswordItem] = []
@@ -84,6 +85,7 @@ final class VaultViewModel {
     // MARK: - Create
 
     func create(_ fields: PasswordFields, auth: AuthManager) async throws {
+        let vault = try unlockedVault()
         let (key, userID) = (vault.key, vault.userID)
         let body = try Self.seal(fields, key: key, userID: userID)
         let saved = try await MuninService(tokenProvider: auth.tokenProvider).createPassword(body)
@@ -93,6 +95,7 @@ final class VaultViewModel {
     // MARK: - Edit
 
     func update(_ item: PasswordItem, with fields: PasswordFields, auth: AuthManager) async throws {
+        let vault = try unlockedVault()
         let (key, userID) = (vault.key, vault.userID)
         let body = try Self.seal(fields, key: key, userID: userID)
         let saved = try await MuninService(tokenProvider: auth.tokenProvider, proof: vault.proof).updatePassword(id: item.id, body)
@@ -106,6 +109,7 @@ final class VaultViewModel {
 
     func delete(_ item: PasswordItem, auth: AuthManager) async {
         do {
+            let vault = try unlockedVault()
             try await MuninService(tokenProvider: auth.tokenProvider, proof: vault.proof).deletePassword(id: item.id)
             if selection == item.id { selection = nil }
             items.removeAll { $0.id == item.id }
@@ -119,6 +123,7 @@ final class VaultViewModel {
     /// Decrypts the password just long enough to copy it, then bumps last updated.
     func copyPassword(_ item: PasswordItem, auth: AuthManager) async {
         do {
+            let vault = try unlockedVault()
             let (key, userID) = (vault.key, vault.userID)
             Pasteboard.copySensitive(try VaultCrypto.open(item.encryptedPassword, field: "password", key: key, userID: userID))
 
@@ -135,6 +140,7 @@ final class VaultViewModel {
 
     /// Decrypts one encrypted field (password or note) for display.
     func decrypt(_ ciphertext: String, field: String, auth: AuthManager) throws -> String {
+        let vault = try unlockedVault()
         let (key, userID) = (vault.key, vault.userID)
         return try VaultCrypto.open(ciphertext, field: field, key: key, userID: userID)
     }

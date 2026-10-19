@@ -25,14 +25,12 @@ private struct SignedInContent: View {
     var body: some View {
         switch session.state {
         case .unlocked:
-            if let vault = session.vault {
-                MainView(vault: vault)
-                    .sheet(isPresented: isShowingNewRecoveryKey) {
-                        if let key = session.newRecoveryKey {
-                            RecoveryKeyView(recoveryKey: key)
-                        }
+            MainView()
+                .sheet(isPresented: isShowingNewRecoveryKey) {
+                    if let key = session.newRecoveryKey {
+                        RecoveryKeyView(recoveryKey: key)
                     }
-            }
+                }
         case .locked:
             LockView()
         case .needsMasterPassword:

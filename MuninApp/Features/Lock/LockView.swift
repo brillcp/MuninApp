@@ -20,24 +20,27 @@ struct LockView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(.background)
         } else {
-            content
-                .background(alignment: .trailing) {
-                    Image("munin")
-                        .resizable()
-                        .scaledToFill()
-                        .ignoresSafeArea()
+            Image("munin")
+                .resizable()
+                .scaledToFill()
+                .ignoresSafeArea()
+                .overlay(alignment: .bottom) {
+                    content
                 }
         }
     }
 
     private var content: some View {
-        VStack(alignment: .leading, spacing: 0) {
+        VStack(alignment: .leading, spacing: 16) {
             LockLogo()
             Spacer()
             LockUnlockSection()
                 .padding(showsArtworkPanel ? 0 : 24)
-                .background(showsArtworkPanel ? AnyShapeStyle(.clear) : AnyShapeStyle(.regularMaterial), in: .rect(cornerRadius: 24))
-            Spacer()
+                #if os(iOS)
+                .glassEffect(in: .rect(cornerRadius: 24))
+                #else
+                .background(.clear, in: .rect(cornerRadius: 24))
+                #endif
             LockVersionLabel()
         }
     }
@@ -61,6 +64,7 @@ private struct LockLogo: View {
                 .frame(width: 32, height: 32)
             Text("main.window.title")
                 .font(.title2.bold())
+                .foregroundStyle(.white)
         }
     }
 }
@@ -81,7 +85,7 @@ private struct LockUnlockSection: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
             Text("lock.title")
-                .font(.largeTitle.bold())
+                .font(.title.bold())
 
             LockAccountRow(email: auth.email)
 
@@ -90,11 +94,7 @@ private struct LockUnlockSection: View {
 
             switch currentMode {
             case .biometrics:
-                #if os(iOS)
-                HStack(spacing: 16.0) {
-                #else
-                VStack(spacing: 16.0) {
-                #endif
+                biometricsLayout {
                     Button { Task { await session.unlockWithBiometrics() } } label: {
                         Label("lock.unlockWithBiometrics", systemImage: "touchid")
                             .foregroundStyle(.white)
@@ -121,7 +121,7 @@ private struct LockUnlockSection: View {
                         .tint(Color(.bark))
                         .controlSize(.large)
                         .disabled(password.isEmpty)
-                    if session.canUseBiometrics {
+                    if session.offersBiometricUnlock {
                         Button("lock.useBiometrics") { mode = .biometrics }
                             .buttonStyle(.borderless)
                     }
@@ -161,9 +161,20 @@ private struct LockUnlockSection: View {
         .disabled(session.isWorking)
     }
 
+    /// Stacks the biometrics buttons vertically on iOS and side by side elsewhere.
+    private var biometricsLayout: AnyLayout {
+        #if os(iOS)
+        AnyLayout(
+            VStackLayout(alignment: .leading, spacing: 16)
+        )
+        #else
+        AnyLayout(HStackLayout(spacing: 16))
+        #endif
+    }
+
     /// Biometrics first when this device has them; otherwise the master password.
     private var currentMode: Mode {
-        mode ?? (session.canUseBiometrics ? .biometrics : .masterPassword)
+        mode ?? (session.offersBiometricUnlock ? .biometrics : .masterPassword)
     }
 
     private func unlockWithPassword() {

@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Every field of the selected password item.
+/// Every field of the selected password item (the vault's detail column).
 /// The password stays hidden until Show; the note is decrypted while the item is selected.
 struct PasswordInspector: View {
     let item: PasswordItem
@@ -14,67 +14,65 @@ struct PasswordInspector: View {
     @State private var note: String?
 
     var body: some View {
-        NavigationStack {
-            Form {
-                #if os(macOS)
-                // macOS has no navigation bar, so the name stays in the content there.
-                Section {
-                    Text(item.name)
-                        .font(.title2.bold())
-                        .textSelection(.enabled)
-                }
-                #endif
+        Form {
+            #if os(macOS)
+            // macOS has no navigation bar, so the name stays in the content there.
+            Section {
+                Text(item.name)
+                    .font(.title2.bold())
+                    .textSelection(.enabled)
+            }
+            #endif
 
-                Section {
-                    LabeledContent("password.field.url") {
-                        Text(item.url).textSelection(.enabled)
-                    }
-                    LabeledContent("password.field.username") {
-                        Text(item.username).textSelection(.enabled)
-                    }
+            Section {
+                LabeledContent("password.field.url") {
+                    Text(item.url).textSelection(.enabled)
                 }
-
-                Section("password.field.password") {
-                    HStack {
-                        Text(revealedPassword ?? "••••••••")
-                            .font(.body.monospaced())
-                            .textSelection(.enabled)
-                        Spacer()
-                        Button(LocalizedStringKey(revealedPassword == nil ? "passwordInspector.show" : "passwordInspector.hide"),
-                               systemImage: revealedPassword == nil ? "eye" : "eye.slash") {
-                            if revealedPassword == nil {
-                                revealedPassword = try? decrypt(item.encryptedPassword, "password")
-                            } else {
-                                revealedPassword = nil
-                            }
-                        }
-                        .labelStyle(.iconOnly)
-                        Button("global.copy", systemImage: "doc.on.doc", action: onCopyPassword)
-                            .labelStyle(.iconOnly)
-                    }
-                }
-
-                Section("password.field.note") {
-                    Text(note ?? "")
-                        .textSelection(.enabled)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                }
-
-                Section {
-                    LabeledContent("password.field.lastUpdated") {
-                        Text(item.lastUpdated, format: .dateTime)
-                    }
+                LabeledContent("password.field.username") {
+                    Text(item.username).textSelection(.enabled)
                 }
             }
-            .formStyle(.grouped)
-            .navigationTitle(item.name)
-            .toolbar {
-                ToolbarItem(placement: .primaryAction) {
-                    Button("global.edit", systemImage: "square.and.pencil", action: onEdit)
+
+            Section("password.field.password") {
+                HStack {
+                    Text(revealedPassword ?? "••••••••")
+                        .font(.body.monospaced())
+                        .textSelection(.enabled)
+                    Spacer()
+                    Button(LocalizedStringKey(revealedPassword == nil ? "passwordInspector.show" : "passwordInspector.hide"),
+                           systemImage: revealedPassword == nil ? "eye" : "eye.slash") {
+                        if revealedPassword == nil {
+                            revealedPassword = try? decrypt(item.encryptedPassword, "password")
+                        } else {
+                            revealedPassword = nil
+                        }
+                    }
+                    .labelStyle(.iconOnly)
+                    Button("global.copy", systemImage: "doc.on.doc", action: onCopyPassword)
+                        .labelStyle(.iconOnly)
                 }
-                ToolbarItem(placement: .primaryAction) {
-                    Button("global.delete", systemImage: "trash", role: .destructive, action: onDelete)
+            }
+
+            Section("password.field.note") {
+                Text(note ?? "")
+                    .textSelection(.enabled)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+
+            Section {
+                LabeledContent("password.field.lastUpdated") {
+                    Text(item.lastUpdated, format: .dateTime)
                 }
+            }
+        }
+        .formStyle(.grouped)
+        .navigationTitle(item.name)
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                Button("global.edit", systemImage: "square.and.pencil", action: onEdit)
+            }
+            ToolbarItem(placement: .primaryAction) {
+                Button("global.delete", systemImage: "trash", role: .destructive, action: onDelete)
             }
         }
         .task(id: item.id) {

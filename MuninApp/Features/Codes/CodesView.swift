@@ -4,36 +4,21 @@ struct CodesView: View {
     @Environment(AuthManager.self) private var auth
     @State private var viewModel: CodesViewModel
     @State private var isAdding = false
-    @State private var isShowingRecoveryKey = false
+    @State private var isShowingSettings = false
     @State private var pendingDeletion: VaultItem?
+    #if os(macOS)
+    @State private var selection: VaultItem.ID?
+    #endif
     /// One clock for the whole list, ticking on whole seconds.
     @State private var now = Date.now
 
-    init(vault: UnlockedVault) {
-        _viewModel = State(initialValue: CodesViewModel(vault: vault))
+    init(session: VaultSession) {
+        _viewModel = State(initialValue: CodesViewModel(session: session))
     }
 
     var body: some View {
         NavigationStack {
-            List {
-                ForEach(viewModel.items) { item in
-                    CodeRow(account: item.account, now: now)
-                        .contextMenu {
-                            Button("global.delete", systemImage: "trash", role: .destructive) { pendingDeletion = item }
-                        }
-                        .swipeActions {
-                            Button("global.delete", systemImage: "trash", role: .destructive) { pendingDeletion = item }
-                        }
-                }
-                if viewModel.undecryptableCount > 0 {
-                    Section {
-                        Label(LocalizedKey("codes.undecryptable", viewModel.undecryptableCount),
-                              systemImage: "exclamationmark.lock")
-                            .font(.footnote)
-                            .foregroundStyle(.secondary)
-                    }
-                }
-            }
+            codesList
             .overlay {
                 CodesEmptyState(
                     errorMessage: viewModel.items.isEmpty ? viewModel.errorMessage : nil,
@@ -45,39 +30,7 @@ struct CodesView: View {
             }
             .navigationTitle("codes.title")
             .barkToolbar(title: "codes.title")
-            .toolbar {
-                ToolbarItem(placement: .primaryAction) {
-                    Button("codes.add", systemImage: "plus") { isAdding = true }
-                        .disabled(!viewModel.hasLoaded)
-                        .keyboardShortcut("n")
-                }
-                #if os(iOS)
-                ToolbarItem(placement: .primaryAction) {
-                    Menu("account.menu.title", systemImage: "person.crop.circle") {
-                        if let email = auth.email {
-                            Text(email)
-                        }
-                        Button("global.refresh", systemImage: "arrow.clockwise") {
-                            Task { await viewModel.refresh(auth: auth) }
-                        }
-                        .keyboardShortcut("r")
-                        Button("account.showRecoveryKey", systemImage: "key") { isShowingRecoveryKey = true }
-                            .disabled(viewModel.recoveryKey == nil)
-                        Divider()
-                        Button("account.signOut", systemImage: "rectangle.portrait.and.arrow.right", role: .destructive) {
-                            auth.signOut()
-                        }
-                    }
-                }
-                #else
-                ToolbarItem(placement: .primaryAction) {
-                    Button("global.refresh", systemImage: "arrow.clockwise") {
-                        Task { await viewModel.refresh(auth: auth) }
-                    }
-                    .keyboardShortcut("r")
-                }
-                #endif
-            }
+            .toolbar { toolbarContent }
             .refreshable { await viewModel.refresh(auth: auth) }
             .task { await viewModel.refresh(auth: auth) }
             .task(tick)
@@ -86,9 +39,11 @@ struct CodesView: View {
                     try await viewModel.add(accounts, auth: auth)
                 }
             }
-            .sheet(isPresented: $isShowingRecoveryKey) {
-                RecoveryKeyView(recoveryKey: viewModel.recoveryKey ?? "")
+            #if os(iOS)
+            .sheet(isPresented: $isShowingSettings) {
+                SettingsSheet()
             }
+            #endif
             .confirmationDialog("codes.delete.title", item: $pendingDeletion, titleVisibility: .visible) { item in
                 Button(LocalizedKey("codes.delete.button", item.account.title), role: .destructive) {
                     Task { await viewModel.delete(item, auth: auth) }
@@ -97,7 +52,80 @@ struct CodesView: View {
                 Text(LocalizedKey("codes.delete.message", item.account.title))
             }
         }
-        .tint(.mint)
+    }
+
+    /// Mac: a bordered table like the vault. iOS: a list; tap a row to copy.
+    @ViewBuilder
+    private var codesList: some View {
+        #if os(macOS)
+        Table(viewModel.items, selection: $selection) {
+            TableColumn("codes.column.account") { item in
+                AccountLabel(title: item.account.title, subtitle: item.account.subtitle)
+                    .equatable()
+            }
+            TableColumn("codes.column.code") { item in
+                CodeCell(account: item.account, now: now)
+            }
+        }
+        .tableStyle(.bordered)
+        .contextMenu(forSelectionType: VaultItem.ID.self) { ids in
+            if ids.count == 1, let id = ids.first, let item = viewModel.items.first(where: { $0.id == id }) {
+                Button("codes.copyCode", systemImage: "doc.on.doc") { CodeRow.copyCode(of: item.account) }
+                Divider()
+                Button("global.delete", systemImage: "trash", role: .destructive) { pendingDeletion = item }
+            }
+        }
+        .safeAreaInset(edge: .bottom) {
+            if viewModel.undecryptableCount > 0 {
+                undecryptableLabel
+                    .padding(8)
+            }
+        }
+        #else
+        List {
+            ForEach(viewModel.items) { item in
+                CodeRow(account: item.account, now: now)
+                    .contextMenu {
+                        Button("global.delete", systemImage: "trash", role: .destructive) { pendingDeletion = item }
+                    }
+                    .swipeActions {
+                        Button("global.delete", systemImage: "trash", role: .destructive) { pendingDeletion = item }
+                    }
+            }
+            if viewModel.undecryptableCount > 0 {
+                Section {
+                    undecryptableLabel
+                }
+            }
+        }
+        #endif
+    }
+
+    private var undecryptableLabel: some View {
+        Label(LocalizedKey("codes.undecryptable", viewModel.undecryptableCount), systemImage: "exclamationmark.lock")
+            .font(.footnote)
+            .foregroundStyle(.secondary)
+    }
+
+    @ToolbarContentBuilder
+    private var toolbarContent: some ToolbarContent {
+        ToolbarItem(placement: .primaryAction) {
+            Button("codes.add", systemImage: "plus") { isAdding = true }
+                .disabled(!viewModel.hasLoaded)
+                .keyboardShortcut("n")
+        }
+        #if os(iOS)
+        ToolbarItem(placement: .primaryAction) {
+            Button("settings.title", systemImage: "gearshape") { isShowingSettings = true }
+        }
+        #else
+        ToolbarItem(placement: .primaryAction) {
+            Button("global.refresh", systemImage: "arrow.clockwise") {
+                Task { await viewModel.refresh(auth: auth) }
+            }
+            .keyboardShortcut("r")
+        }
+        #endif
     }
 
     private func tick() async {
@@ -145,7 +173,7 @@ private struct CodesEmptyState: View {
 }
 
 #Preview {
-    CodesView(vault: .preview)
+    CodesView(session: VaultSession())
         .environment(AuthManager())
         .environment(VaultSession())
 }

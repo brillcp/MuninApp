@@ -14,10 +14,16 @@ final class CodesViewModel {
     /// Entries that didn't decrypt with this device's key.
     private(set) var undecryptableCount = 0
 
-    private let vault: UnlockedVault
+    /// Read at use time, so a changed master password (new proof) and a lock are picked up.
+    private let session: VaultSession
 
-    init(vault: UnlockedVault) {
-        self.vault = vault
+    init(session: VaultSession) {
+        self.session = session
+    }
+
+    private func unlockedVault() throws -> UnlockedVault {
+        guard let vault = session.vault else { throw VaultError.keyMissing }
+        return vault
     }
 
     // MARK: - Loading
@@ -31,6 +37,7 @@ final class CodesViewModel {
         defer { isLoading = false }
         do {
             let entries = try await MuninService(tokenProvider: auth.tokenProvider).entries()
+            let vault = try unlockedVault()
             decrypt(entries, key: vault.key, userID: vault.userID)
             errorMessage = nil
             hasLoaded = true
@@ -67,6 +74,7 @@ final class CodesViewModel {
     /// Encrypts and uploads accounts, skipping exact duplicates. Returns how many were added.
     @discardableResult
     func add(_ accounts: [OTPAccount], auth: AuthManager) async throws -> Int {
+        let vault = try unlockedVault()
         let key = vault.key
         let userID = vault.userID
         let service = MuninService(tokenProvider: auth.tokenProvider)
@@ -82,17 +90,12 @@ final class CodesViewModel {
 
     func delete(_ item: VaultItem, auth: AuthManager) async {
         do {
+            let vault = try unlockedVault()
             try await MuninService(tokenProvider: auth.tokenProvider, proof: vault.proof).deleteEntry(id: item.id)
             items.removeAll { $0.id == item.id }
         } catch {
             errorMessage = error.muninDescription
         }
-    }
-
-    // MARK: - Key
-
-    var recoveryKey: String? {
-        VaultKeyStore.recoveryString(for: vault.key)
     }
 
     private func reset() {

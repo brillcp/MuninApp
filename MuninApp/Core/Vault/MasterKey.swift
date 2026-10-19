@@ -127,10 +127,3 @@ nonisolated struct UnlockedVault: Sendable {
     /// The master password proof, sent with deletes and edits.
     let proof: String
 }
-
-#if DEBUG
-extension UnlockedVault {
-    /// A throwaway vault for SwiftUI previews.
-    static let preview = UnlockedVault(userID: "preview", key: SymmetricKey(size: .bits256), proof: "")
-}
-#endif

@@ -9,6 +9,8 @@ extension View {
         toolbarBackground(Color(.bark), for: .windowToolbar)
             .toolbarBackgroundVisibility(.visible, for: .windowToolbar)
             .toolbar(removing: .title)
+            // The sidebar always shows.
+            .toolbar(removing: .sidebarToggle)
             .toolbar {
                 ToolbarItem(placement: .navigation) {
                     Text(title)

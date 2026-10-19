@@ -39,6 +39,13 @@ final class VaultSession {
         LAContext().canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: nil)
     }
 
+    /// The Settings switch. A preference only (UserDefaults); the key itself is in the Keychain.
+    private(set) var isBiometricUnlockEnabled = UserDefaults.standard.object(forKey: VaultSession.biometricsDefaultsKey) as? Bool ?? true
+    private static let biometricsDefaultsKey = "munin.biometrics.enabled"
+
+    /// The lock screen shows "Unlock with biometrics" only when this is true.
+    var offersBiometricUnlock: Bool { canUseBiometrics && isBiometricUnlockEnabled }
+
     private var userID: String?
     private var record: VaultKeyRecord?
     /// The vault key waiting for a master password (new, legacy or recovered).
@@ -101,19 +108,7 @@ final class VaultSession {
         defer { isWorking = false }
         errorMessage = nil
         do {
-            let parameters = KDFParameters.new()
-            let passwordKeys = try await Self.derive(password: password, parameters: parameters)
-            let recoveryKeys = MasterKey.derive(recoveryKey: key)
-            let kdf = String(decoding: try JSONEncoder().encode(parameters), as: UTF8.self)
-            let body = VaultKeyRequestBody(
-                passwordWrappedKey: try MasterKey.wrap(key, with: passwordKeys.wrappingKey, userID: userID, purpose: .password),
-                recoveryWrappedKey: try MasterKey.wrap(key, with: recoveryKeys.wrappingKey, userID: userID, purpose: .recovery),
-                kdf: kdf,
-                passwordProof: passwordKeys.proof,
-                recoveryProof: recoveryKeys.proof,
-                currentProof: resetProof
-            )
-
+            let (body, proof) = try await Self.makeVaultKeyBody(key: key, password: password, userID: userID, currentProof: resetProof)
             let service = MuninService(tokenProvider: auth.tokenProvider)
             if resetProof != nil {
                 try await service.replaceVaultKey(body)
@@ -126,18 +121,64 @@ final class VaultSession {
                 return
             }
 
-            record = VaultKeyRecord(passwordWrappedKey: body.passwordWrappedKey, recoveryWrappedKey: body.recoveryWrappedKey, kdf: kdf)
+            record = VaultKeyRecord(passwordWrappedKey: body.passwordWrappedKey, recoveryWrappedKey: body.recoveryWrappedKey, kdf: body.kdf)
             VaultKeyStore.deleteLegacy(userID: userID)
             if isNewVault { newRecoveryKey = VaultKeyStore.recoveryString(for: key) }
             pendingKey = nil
             resetProof = nil
             isNewVault = false
-            finishUnlock(UnlockedVault(userID: userID, key: key, proof: passwordKeys.proof))
+            finishUnlock(UnlockedVault(userID: userID, key: key, proof: proof))
         } catch let error where error.isMuninAuthRejection {
             auth.signOut()
         } catch {
             errorMessage = error.muninDescription
         }
+    }
+
+    /// Settings → Change Master Password. Returns true when saved.
+    func changeMasterPassword(current: String, new: String, auth: AuthManager) async -> Bool {
+        guard state == .unlocked, let vault, let record, !isWorking else { return false }
+        isWorking = true
+        defer { isWorking = false }
+        errorMessage = nil
+        do {
+            let parameters = try JSONDecoder().decode(KDFParameters.self, from: Data(record.kdf.utf8))
+            let currentKeys = try await Self.derive(password: current, parameters: parameters)
+            guard (try? MasterKey.unwrap(record.passwordWrappedKey, with: currentKeys.wrappingKey, userID: vault.userID, purpose: .password)) != nil else {
+                errorMessage = Localized("lock.wrongMasterPassword")
+                return false
+            }
+            let (body, proof) = try await Self.makeVaultKeyBody(key: vault.key, password: new, userID: vault.userID, currentProof: currentKeys.proof)
+            try await MuninService(tokenProvider: auth.tokenProvider).replaceVaultKey(body)
+
+            self.record = VaultKeyRecord(passwordWrappedKey: body.passwordWrappedKey, recoveryWrappedKey: body.recoveryWrappedKey, kdf: body.kdf)
+            let updated = UnlockedVault(userID: vault.userID, key: vault.key, proof: proof)
+            self.vault = updated
+            if offersBiometricUnlock { VaultKeyStore.saveForBiometrics(updated) }
+            return true
+        } catch let error where error.isMuninAuthRejection {
+            auth.signOut()
+            return false
+        } catch {
+            errorMessage = error.muninDescription
+            return false
+        }
+    }
+
+    /// Settings → biometrics switch. Off removes this device's copy of the key.
+    func setBiometricUnlock(_ enabled: Bool) {
+        isBiometricUnlockEnabled = enabled
+        UserDefaults.standard.set(enabled, forKey: Self.biometricsDefaultsKey)
+        guard let vault else { return }
+        if enabled {
+            VaultKeyStore.saveForBiometrics(vault)
+        } else {
+            VaultKeyStore.deleteBiometric(userID: vault.userID)
+        }
+    }
+
+    func clearError() {
+        errorMessage = nil
     }
 
     /// Back to the lock screen without resetting the master password.
@@ -220,7 +261,7 @@ final class VaultSession {
     // MARK: - Private
 
     private func finishUnlock(_ vault: UnlockedVault, saveForBiometrics: Bool = true) {
-        if saveForBiometrics, canUseBiometrics {
+        if saveForBiometrics, offersBiometricUnlock {
             VaultKeyStore.saveForBiometrics(vault)
         }
         self.vault = vault
@@ -238,6 +279,23 @@ final class VaultSession {
         isNewVault = false
         errorMessage = nil
         newRecoveryKey = nil
+    }
+
+    /// Wraps `key` with a new master password (fresh salt) and with the recovery key.
+    /// Returns the request body and the new password proof.
+    private static func makeVaultKeyBody(key: SymmetricKey, password: String, userID: String, currentProof: String?) async throws -> (VaultKeyRequestBody, String) {
+        let parameters = KDFParameters.new()
+        let passwordKeys = try await derive(password: password, parameters: parameters)
+        let recoveryKeys = MasterKey.derive(recoveryKey: key)
+        let body = VaultKeyRequestBody(
+            passwordWrappedKey: try MasterKey.wrap(key, with: passwordKeys.wrappingKey, userID: userID, purpose: .password),
+            recoveryWrappedKey: try MasterKey.wrap(key, with: recoveryKeys.wrappingKey, userID: userID, purpose: .recovery),
+            kdf: String(decoding: try JSONEncoder().encode(parameters), as: UTF8.self),
+            passwordProof: passwordKeys.proof,
+            recoveryProof: recoveryKeys.proof,
+            currentProof: currentProof
+        )
+        return (body, passwordKeys.proof)
     }
 
     /// PBKDF2 is slow on purpose; keep it off the main actor.

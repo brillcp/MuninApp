@@ -1,7 +1,6 @@
 /* Localizable.strings */
 
 /** Account **/
-"account.menu.title" = "Account";
 "account.showRecoveryKey" = "Show Recovery Key";
 "account.signOut" = "Sign Out";
 
@@ -31,6 +30,9 @@
 
 /** Codes **/
 "codes.add" = "Add";
+"codes.column.account" = "Account";
+"codes.column.code" = "Code";
+"codes.copyCode" = "Copy Code";
 "codes.delete.button" = "Delete %@";
 "codes.delete.message" = "Make sure 2FA is turned off for %@, or you have another way to sign in. This can't be undone.";
 "codes.delete.title" = "Delete Account?";
@@ -89,6 +91,7 @@
 "lock.wrongMasterPassword" = "That master password isn't right.";
 
 /** Main **/
+"main.section.munin" = "Munin";
 "main.tab.codes" = "2FA";
 "main.tab.vault" = "Vault";
 "main.window.title" = "Munin";
@@ -144,6 +147,7 @@
 "vault.delete.title" = "Delete Password?";
 "vault.empty.title" = "No items";
 "vault.search.prompt" = "Search all items";
+"vault.selectItem" = "Select an Item";
 "vault.title" = "Vault";
 
 /** Vault Key **/
@@ -167,3 +171,15 @@
 "masterPassword.mismatch" = "The passwords don't match.";
 "masterPassword.reset.title" = "Choose a new master password";
 "masterPassword.tooShort" = "Use at least %lld characters.";
+
+/** Settings **/
+"settings.about" = "About";
+"settings.account" = "Account";
+"settings.biometrics" = "Unlock with Face ID or Touch ID";
+"settings.changeMasterPassword" = "Change Master Password";
+"settings.currentMasterPassword" = "Current master password";
+"settings.email" = "Email";
+"settings.locked" = "Unlock Munin to change security settings.";
+"settings.security" = "Security";
+"settings.title" = "Settings";
+"settings.version" = "Version";
