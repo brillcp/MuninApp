@@ -16,7 +16,7 @@ struct ScannerSheet: View {
                 .barkNavigationBar()
                 .toolbar {
                     ToolbarItem(placement: .cancellationAction) {
-                        Button("global.cancel") { dismiss() }
+                        Button("global.cancel", action: dismiss.callAsFunction)
                     }
                 }
         }

@@ -80,6 +80,8 @@ extension VaultView {
                 listColumn
                     .frame(minWidth: 320, idealWidth: 460, maxHeight: .infinity)
                 VaultItemDetail(viewModel: viewModel, pendingDeletion: $pendingDeletion, onEdit: startEditing)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .glassPanel()
                     .frame(minWidth: 320, maxWidth: .infinity, maxHeight: .infinity)
             }
         }
@@ -100,6 +102,7 @@ extension VaultView {
             pendingDeletion: $pendingDeletion,
             onEdit: startEditing
         )
+        .glassPanel()
             #if os(macOS)
             // Drag a CSV export from Finder onto the list to import it.
             .dropDestination(for: URL.self) { urls, _ in
@@ -120,18 +123,17 @@ extension VaultView {
 
     @ToolbarContentBuilder
     private var toolbarContent: some ToolbarContent {
-        ToolbarItem(placement: .primaryAction) {
-            Button("import.button", systemImage: "square.and.arrow.down") {
+        ToolbarItem(placement: .confirmationAction) {
+            Button("import.button", systemImage: "folder.badge.plus") {
                 isPickingImportFile = true
             }
             .disabled(!viewModel.hasLoaded || viewModel.importProgress != nil)
         }
-        ToolbarItem(placement: .confirmationAction) {
+        ToolbarItem(placement: .secondaryAction) {
             Button("vault.createItem", systemImage: "plus.square.on.square") {
                 isCreating = true
             }
             .buttonStyle(.glassProminent)
-            // Toolbar items don't pick up the app-wide tint, so set it here.
             .tint(.accent)
         }
     }
@@ -210,6 +212,9 @@ private struct VaultPasswordList: View {
             }
         }
         .tableStyle(.bordered)
+        // Let the glass panel show through.
+        .scrollContentBackground(.hidden)
+        .alternatingRowBackgrounds(.disabled)
         #else
         List(viewModel.visibleItems, selection: $viewModel.selection) { item in
             NavigationLink(value: item.id) {

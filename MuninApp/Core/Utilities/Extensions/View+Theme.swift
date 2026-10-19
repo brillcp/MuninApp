@@ -18,7 +18,7 @@ extension View {
                         .foregroundStyle(.white)
                 }
                 .sharedBackgroundVisibility(.hidden)
-                ToolbarItem(placement: .navigation) {
+                ToolbarItem(placement: .cancellationAction) {
                     LockToolbarButton()
                 }
             }
@@ -55,3 +55,28 @@ private struct LockToolbarButton: View {
         Button("lock.command", systemImage: "lock") { session.lock() }
     }
 }
+
+extension View {
+    /// Mac: a floating, rounded glass panel over the window's Valhall
+    /// background. Content inside should hide its own scroll background.
+    /// iOS: unchanged.
+    @ViewBuilder
+    func glassPanel() -> some View {
+        #if os(macOS)
+        clipShape(.rect(cornerRadius: 16))
+            // Tinted with the window background colour, partly see-through.
+            .glassEffect(.regular.tint(Color.panelTint.opacity(0.4)), in: .rect(cornerRadius: 16))
+            .padding(8)
+        #else
+        self
+        #endif
+    }
+}
+
+#if os(macOS)
+extension Color {
+    /// The window background colour (light or dark with the system). Tints the
+    /// glass panels and, more lightly, the Valhall background.
+    static let panelTint = Color(nsColor: .windowBackgroundColor)
+}
+#endif

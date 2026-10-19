@@ -73,6 +73,9 @@ struct PasswordInspector: View {
             }
         }
         .formStyle(.grouped)
+        #if os(macOS)
+        .scrollContentBackground(.hidden)
+        #endif
         .navigationTitle(item.name)
         .barkNavigationBar()
         .toolbar {

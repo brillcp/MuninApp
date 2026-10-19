@@ -11,6 +11,7 @@ struct CodesView: View {
     var body: some View {
         NavigationStack {
             CodesList(viewModel: viewModel, clock: clock, pendingDeletion: $pendingDeletion)
+                .glassPanel()
             .overlay {
                 CodesEmptyState(
                     errorMessage: viewModel.items.isEmpty ? viewModel.errorMessage : nil,
@@ -84,6 +85,8 @@ private struct CodesList: View {
             }
         }
         .tableStyle(.bordered)
+        .scrollContentBackground(.hidden)
+        .alternatingRowBackgrounds(.disabled)
         .safeAreaInset(edge: .bottom) {
             if viewModel.undecryptableCount > 0 {
                 undecryptableLabel

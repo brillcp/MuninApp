@@ -6,17 +6,13 @@ import SwiftUI
 struct LockView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            LockLogo()
             Spacer()
             LockPanel(stacksButtons: true)
             LockVersionLabel()
         }
         .padding()
-        // Fill the screen so the background below covers all of it.
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background {
-            // A full-screen frame with the image centred in it. scaledToFill
-            // overflows the frame; the overflow is cut evenly on both sides.
             Color.clear
                 .overlay {
                     Image("munin")

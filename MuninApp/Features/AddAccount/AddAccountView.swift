@@ -44,7 +44,7 @@ struct AddAccountView: View {
             .navigationTitle("addAccount.title")
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("global.cancel") { dismiss() }
+                    Button("global.cancel", action: dismiss.callAsFunction)
                 }
             }
             .barkNavigationBar(title: "addAccount.title")
