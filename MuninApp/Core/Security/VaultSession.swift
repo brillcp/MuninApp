@@ -28,7 +28,8 @@ final class VaultSession {
     private(set) var state: State = .checking
     private(set) var vault: UnlockedVault?
     private(set) var isWorking = false
-    private(set) var errorMessage: String?
+
+    var errorMessage: String?
     /// Set once after a brand-new vault is created, to show the recovery key.
     var newRecoveryKey: String?
 
@@ -36,7 +37,14 @@ final class VaultSession {
     var isResettingMasterPassword: Bool { resetProof != nil }
 
     var canUseBiometrics: Bool {
-        LAContext().canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: nil)
+        biometricsOverride ?? LAContext().canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: nil)
+    }
+
+    /// Previews only: the canvas and most simulators have no Face ID / Touch ID.
+    private let biometricsOverride: Bool?
+
+    init(biometricsAvailable: Bool? = nil) {
+        biometricsOverride = biometricsAvailable
     }
 
     /// The Settings switch. A preference only (UserDefaults); the key itself is in the Keychain.
