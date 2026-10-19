@@ -20,8 +20,12 @@ import SwiftUI
         // A single window: no "New Window", and the menu bar item reopens this one.
         Window("main.window.title", id: Self.mainWindowID) {
             root
+                // Room for the sidebar, the password list and the detail
+                // (each column needs at least 320).
+                .frame(minWidth: 860, minHeight: 500)
         }
         .defaultSize(width: 900, height: 600)
+        .windowResizability(.contentMinSize)
         .commands {
             LockCommands(session: session)
             FindCommands()

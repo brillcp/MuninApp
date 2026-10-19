@@ -7,8 +7,6 @@ struct PasswordInspector: View {
     /// Decrypts a ciphertext for the given field ("password" or "note").
     let decrypt: (_ ciphertext: String, _ field: String) throws -> String
     let onCopyPassword: () -> Void
-    let onEdit: () -> Void
-    let onDelete: () -> Void
 
     @State private var revealedPassword: String?
     @State private var note: String?
@@ -73,19 +71,8 @@ struct PasswordInspector: View {
             }
         }
         .formStyle(.grouped)
-        #if os(macOS)
-        .scrollContentBackground(.hidden)
-        #endif
         .navigationTitle(item.name)
         .barkNavigationBar()
-        .toolbar {
-            ToolbarItem(placement: .primaryAction) {
-                Button("global.edit", systemImage: "square.and.pencil", action: onEdit)
-            }
-            ToolbarItem(placement: .primaryAction) {
-                Button("global.delete", systemImage: "trash", role: .destructive, action: onDelete)
-            }
-        }
         .task(id: item.id) {
             revealedPassword = nil
             note = try? decrypt(item.encryptedNote, "note")

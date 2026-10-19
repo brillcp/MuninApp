@@ -144,6 +144,7 @@
 
 /** Vault **/
 "vault.column.title" = "Title";
+"vault.copyUsername" = "Copy Username";
 "vault.copyPassword" = "Copy Password";
 "vault.createItem" = "Create Item";
 "vault.delete.button" = "Delete %@";

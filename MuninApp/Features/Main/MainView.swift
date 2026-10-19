@@ -52,23 +52,6 @@ struct MainView: View {
             #endif
         }
         .tabViewStyle(.sidebarAdaptable)
-        #if os(macOS)
-        // Valhall behind everything; the sidebar and the panels float over it.
-        .background {
-            Image("valhall2")
-                .resizable()
-                .scaledToFill()
-                // Blurred so it reads as a backdrop; opaque keeps the edges from fading.
-                .blur(radius: 4, opaque: true)
-                .ignoresSafeArea()
-                .overlay {
-                    // Same tint as the panels (light or dark with the system),
-                    // just lighter, so the image stays visible but calm.
-                    Color.panelTint.opacity(0.25)
-                        .ignoresSafeArea()
-                }
-        }
-        #endif
         #if os(iOS)
         // As in PokedexUI: the .search tab becomes its own button at the trailing
         // edge, and selecting it opens the search field.

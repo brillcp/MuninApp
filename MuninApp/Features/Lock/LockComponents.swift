@@ -348,7 +348,10 @@ struct LockVersionLabel: View {
         Text(LocalizedKey("lock.version", Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? ""))
             .font(.footnote)
             .foregroundStyle(.primary)
+            #if os(iOS)
+            // Readable on the iOS artwork background.
             .shadow(color: .black, radius: 2)
+            #endif
             .padding(.leading)
     }
 }

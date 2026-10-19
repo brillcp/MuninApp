@@ -11,7 +11,6 @@ struct CodesView: View {
     var body: some View {
         NavigationStack {
             CodesList(viewModel: viewModel, clock: clock, pendingDeletion: $pendingDeletion)
-                .glassPanel()
             .overlay {
                 CodesEmptyState(
                     errorMessage: viewModel.items.isEmpty ? viewModel.errorMessage : nil,
@@ -85,8 +84,6 @@ private struct CodesList: View {
             }
         }
         .tableStyle(.bordered)
-        .scrollContentBackground(.hidden)
-        .alternatingRowBackgrounds(.disabled)
         .safeAreaInset(edge: .bottom) {
             if viewModel.undecryptableCount > 0 {
                 undecryptableLabel
@@ -99,9 +96,7 @@ private struct CodesList: View {
                 CodeRow(account: item.account, clock: clock)
                     .contextMenu {
                         Button("global.delete", systemImage: "trash", role: .destructive) { pendingDeletion = item }
-                    }
-                    .swipeActions {
-                        Button("global.delete", systemImage: "trash", role: .destructive) { pendingDeletion = item }
+                        Button("global.copy", systemImage: "doc.on.doc", role: .confirm) { pendingDeletion = item }
                     }
             }
             if viewModel.undecryptableCount > 0 {

@@ -9,8 +9,6 @@ extension View {
         toolbarBackground(Color(.bark), for: .windowToolbar)
             .toolbarBackgroundVisibility(.visible, for: .windowToolbar)
             .toolbar(removing: .title)
-            // The sidebar always shows.
-            .toolbar(removing: .sidebarToggle)
             .toolbar {
                 ToolbarItem(placement: .navigation) {
                     Text(title)
@@ -18,14 +16,14 @@ extension View {
                         .foregroundStyle(.white)
                 }
                 .sharedBackgroundVisibility(.hidden)
-                ToolbarItem(placement: .cancellationAction) {
+                ToolbarItem(placement: .secondaryAction) {
                     LockToolbarButton()
                 }
             }
         #else
         barkNavigationBar()
             .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
+                ToolbarItem(placement: .secondaryAction) {
                     LockToolbarButton()
                 }
             }
@@ -40,7 +38,7 @@ extension View {
         navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(Color(.bark), for: .navigationBar)
             .toolbarBackgroundVisibility(.visible, for: .navigationBar)
-            .toolbarColorScheme(.dark, for: .navigationBar)
+            .toolbarColorScheme(.light, for: .navigationBar)
         #else
         self
         #endif
@@ -55,28 +53,3 @@ private struct LockToolbarButton: View {
         Button("lock.command", systemImage: "lock") { session.lock() }
     }
 }
-
-extension View {
-    /// Mac: a floating, rounded glass panel over the window's Valhall
-    /// background. Content inside should hide its own scroll background.
-    /// iOS: unchanged.
-    @ViewBuilder
-    func glassPanel() -> some View {
-        #if os(macOS)
-        clipShape(.rect(cornerRadius: 16))
-            // Tinted with the window background colour, partly see-through.
-            .glassEffect(.regular.tint(Color.panelTint.opacity(0.4)), in: .rect(cornerRadius: 16))
-            .padding(8)
-        #else
-        self
-        #endif
-    }
-}
-
-#if os(macOS)
-extension Color {
-    /// The window background colour (light or dark with the system). Tints the
-    /// glass panels and, more lightly, the Valhall background.
-    static let panelTint = Color(nsColor: .windowBackgroundColor)
-}
-#endif

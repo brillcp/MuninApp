@@ -80,8 +80,6 @@ extension VaultView {
                 listColumn
                     .frame(minWidth: 320, idealWidth: 460, maxHeight: .infinity)
                 VaultItemDetail(viewModel: viewModel, pendingDeletion: $pendingDeletion, onEdit: startEditing)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .glassPanel()
                     .frame(minWidth: 320, maxWidth: .infinity, maxHeight: .infinity)
             }
         }
@@ -102,7 +100,6 @@ extension VaultView {
             pendingDeletion: $pendingDeletion,
             onEdit: startEditing
         )
-        .glassPanel()
             #if os(macOS)
             // Drag a CSV export from Finder onto the list to import it.
             .dropDestination(for: URL.self) { urls, _ in
@@ -123,13 +120,13 @@ extension VaultView {
 
     @ToolbarContentBuilder
     private var toolbarContent: some ToolbarContent {
-        ToolbarItem(placement: .confirmationAction) {
+        ToolbarItem(placement: .secondaryAction) {
             Button("import.button", systemImage: "folder.badge.plus") {
                 isPickingImportFile = true
             }
             .disabled(!viewModel.hasLoaded || viewModel.importProgress != nil)
         }
-        ToolbarItem(placement: .secondaryAction) {
+        ToolbarItem(placement: .primaryAction) {
             Button("vault.createItem", systemImage: "plus.square.on.square") {
                 isCreating = true
             }
@@ -180,6 +177,10 @@ private struct VaultPasswordList: View {
         rows
             .contextMenu(forSelectionType: PasswordItem.ID.self) { ids in
                 if ids.count == 1, let id = ids.first, let item = viewModel.items.first(where: { $0.id == id }) {
+                    Button("vault.copyUsername", systemImage: "person") {
+                        Pasteboard.copy(item.username)
+                    }
+                    .disabled(item.username.isEmpty)
                     Button("vault.copyPassword", systemImage: "doc.on.doc") {
                         Task { await viewModel.copyPassword(item, auth: auth) }
                     }
@@ -212,9 +213,8 @@ private struct VaultPasswordList: View {
             }
         }
         .tableStyle(.bordered)
-        // Let the glass panel show through.
-        .scrollContentBackground(.hidden)
-        .alternatingRowBackgrounds(.disabled)
+        // Escape deselects the password (and closes its detail).
+        .onExitCommand { viewModel.selection = nil }
         #else
         List(viewModel.visibleItems, selection: $viewModel.selection) { item in
             NavigationLink(value: item.id) {
@@ -236,19 +236,33 @@ private struct VaultItemDetail: View {
     @Environment(AuthManager.self) private var auth
 
     var body: some View {
-        if let item = viewModel.selectedItem {
-            PasswordInspector(item: item) { ciphertext, field in
-                try viewModel.decrypt(ciphertext, field: field, auth: auth)
-            } onCopyPassword: {
-                Task { await viewModel.copyPassword(item, auth: auth) }
-            } onEdit: {
-                onEdit(item)
-            } onDelete: {
-                pendingDeletion = item
+        Group {
+            if let item = viewModel.selectedItem {
+                PasswordInspector(item: item) { ciphertext, field in
+                    try viewModel.decrypt(ciphertext, field: field, auth: auth)
+                } onCopyPassword: {
+                    Task { await viewModel.copyPassword(item, auth: auth) }
+                }
+                .id(item.id)
+            } else {
+                ContentUnavailableView("vault.selectItem", systemImage: "lock.rectangle.stack")
             }
-            .id(item.id)
-        } else {
-            ContentUnavailableView("vault.selectItem", systemImage: "lock.rectangle.stack")
+        }
+        // Always in the toolbar, disabled without a selection, so the toolbar
+        // doesn't change shape when the selection does.
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                Button("global.edit", systemImage: "square.and.pencil") {
+                    if let item = viewModel.selectedItem { onEdit(item) }
+                }
+                .disabled(viewModel.selectedItem == nil)
+            }
+            ToolbarItem(placement: .primaryAction) {
+                Button("global.delete", systemImage: "trash", role: .destructive) {
+                    pendingDeletion = viewModel.selectedItem
+                }
+                .disabled(viewModel.selectedItem == nil)
+            }
         }
     }
 }
