@@ -90,7 +90,11 @@ private struct LockUnlockSection: View {
 
             switch currentMode {
             case .biometrics:
+                #if os(iOS)
                 HStack(spacing: 16.0) {
+                #else
+                VStack(spacing: 16.0) {
+                #endif
                     Button { Task { await session.unlockWithBiometrics() } } label: {
                         Label("lock.unlockWithBiometrics", systemImage: "touchid")
                             .foregroundStyle(.white)
@@ -155,7 +159,6 @@ private struct LockUnlockSection: View {
             }
         }
         .disabled(session.isWorking)
-        .task { await session.unlockAtLaunch() }
     }
 
     /// Biometrics first when this device has them; otherwise the master password.

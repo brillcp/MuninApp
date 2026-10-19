@@ -46,7 +46,6 @@ final class VaultSession {
     private var isNewVault = false
     /// Recovery key proof, for PUT /v1/vault-key when resetting.
     private var resetProof: String?
-    private var hasPromptedAtLaunch = false
 
     // MARK: - Startup
 
@@ -76,6 +75,8 @@ final class VaultSession {
                 state = .missingKey
             }
         } catch is CancellationError {
+            return
+        } catch where Task.isCancelled {
             return
         } catch let error where error.isMuninAuthRejection {
             auth.signOut()
@@ -148,14 +149,6 @@ final class VaultSession {
     }
 
     // MARK: - Unlock
-
-    /// Face ID / Touch ID once when the app starts.
-    func unlockAtLaunch() async {
-        guard !hasPromptedAtLaunch else { return }
-        hasPromptedAtLaunch = true
-        guard canUseBiometrics else { return }
-        await unlockWithBiometrics()
-    }
 
     func unlockWithBiometrics() async {
         guard state == .locked, let userID, !isWorking else { return }

@@ -28,21 +28,23 @@ final class CodesViewModel {
             return
         }
         isLoading = true
-        defer {
-            isLoading = false
-            hasLoaded = true
-        }
+        defer { isLoading = false }
         do {
             let entries = try await MuninService(tokenProvider: auth.tokenProvider).entries()
             decrypt(entries, key: vault.key, userID: vault.userID)
             errorMessage = nil
+            hasLoaded = true
         } catch is CancellationError {
+            return
+        } catch where Task.isCancelled {
+            // URLSession reports a cancelled task as a network error.
             return
         } catch let error where error.isMuninAuthRejection {
             auth.signOut()
             reset()
         } catch {
             errorMessage = error.muninDescription
+            hasLoaded = true
         }
     }
 
