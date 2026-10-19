@@ -9,6 +9,7 @@ struct SettingsView: View {
     @State private var recoveryKey: RecoveryKeyItem?
 
     var body: some View {
+        @Bindable var session = session
         Form {
             if auth.isSignedIn {
                 Section("settings.account") {
@@ -32,10 +33,7 @@ struct SettingsView: View {
                             recoveryKey = RecoveryKeyItem(key: VaultKeyStore.recoveryString(for: vault.key))
                         }
                         if session.canUseBiometrics {
-                            Toggle("settings.biometrics", isOn: Binding(
-                                get: { session.isBiometricUnlockEnabled },
-                                set: { session.setBiometricUnlock($0) }
-                            ))
+                            Toggle("settings.biometrics", isOn: $session.isBiometricUnlockEnabled)
                         }
                     } else {
                         Text("settings.locked")

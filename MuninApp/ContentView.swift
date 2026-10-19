@@ -35,13 +35,12 @@ private struct SignedInContent: View {
     @Environment(VaultSession.self) private var session
 
     var body: some View {
+        @Bindable var session = session
         switch session.state {
         case .unlocked:
             MainView(session: session)
-                .sheet(isPresented: isShowingNewRecoveryKey) {
-                    if let key = session.newRecoveryKey {
-                        RecoveryKeyView(recoveryKey: key)
-                    }
+                .sheet(item: $session.newRecoveryKey) { item in
+                    RecoveryKeyView(recoveryKey: item.key)
                 }
         case .locked, .checking:
             // Shown by ContentView's lock screen instead.
@@ -63,14 +62,6 @@ private struct SignedInContent: View {
                 Button("global.tryAgain") { Task { await session.prepare(auth: auth) } }
             }
         }
-    }
-
-    /// A brand-new vault shows its recovery key once.
-    private var isShowingNewRecoveryKey: Binding<Bool> {
-        Binding(
-            get: { session.newRecoveryKey != nil },
-            set: { if !$0 { session.newRecoveryKey = nil } }
-        )
     }
 }
 

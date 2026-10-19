@@ -31,7 +31,12 @@ final class VaultSession {
     private(set) var errorMessage: String?
     
     /// Set once after a brand-new vault is created, to show the recovery key.
-    var newRecoveryKey: String?
+    var newRecoveryKey: NewRecoveryKey?
+
+    struct NewRecoveryKey: Identifiable {
+        let key: String
+        var id: String { key }
+    }
 
     /// Choosing a new master password after unlocking with the recovery key.
     var isResettingMasterPassword: Bool { resetProof != nil }
@@ -48,7 +53,19 @@ final class VaultSession {
     }
 
     /// The Settings switch. A preference only (UserDefaults); the key itself is in the Keychain.
-    private(set) var isBiometricUnlockEnabled = UserDefaults.standard.object(forKey: VaultSession.biometricsDefaultsKey) as? Bool ?? true
+    /// Off removes this device's copy of the key; on saves it (while unlocked).
+    var isBiometricUnlockEnabled = UserDefaults.standard.object(forKey: VaultSession.biometricsDefaultsKey) as? Bool ?? true {
+        didSet {
+            guard isBiometricUnlockEnabled != oldValue else { return }
+            UserDefaults.standard.set(isBiometricUnlockEnabled, forKey: Self.biometricsDefaultsKey)
+            guard let vault else { return }
+            if isBiometricUnlockEnabled {
+                VaultKeyStore.saveForBiometrics(vault)
+            } else {
+                VaultKeyStore.deleteBiometric(userID: vault.userID)
+            }
+        }
+    }
     private static let biometricsDefaultsKey = "munin.biometrics.enabled"
 
     /// The lock screen shows "Unlock with biometrics" only when this is true.
@@ -131,7 +148,7 @@ final class VaultSession {
 
             record = VaultKeyRecord(passwordWrappedKey: body.passwordWrappedKey, recoveryWrappedKey: body.recoveryWrappedKey, kdf: body.kdf)
             VaultKeyStore.deleteLegacy(userID: userID)
-            if isNewVault { newRecoveryKey = VaultKeyStore.recoveryString(for: key) }
+            if isNewVault { newRecoveryKey = NewRecoveryKey(key: VaultKeyStore.recoveryString(for: key)) }
             pendingKey = nil
             resetProof = nil
             isNewVault = false
@@ -170,18 +187,6 @@ final class VaultSession {
         } catch {
             errorMessage = error.muninDescription
             return false
-        }
-    }
-
-    /// Settings → biometrics switch. Off removes this device's copy of the key.
-    func setBiometricUnlock(_ enabled: Bool) {
-        isBiometricUnlockEnabled = enabled
-        UserDefaults.standard.set(enabled, forKey: Self.biometricsDefaultsKey)
-        guard let vault else { return }
-        if enabled {
-            VaultKeyStore.saveForBiometrics(vault)
-        } else {
-            VaultKeyStore.deleteBiometric(userID: vault.userID)
         }
     }
 

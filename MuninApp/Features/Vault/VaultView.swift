@@ -10,6 +10,7 @@ struct VaultView: View {
     @State private var pendingDeletion: PasswordItem?
     @State private var isPickingImportFile = false
     @FocusState private var isSearchFocused: Bool
+    @State private var searchFocusRequest = SearchFocusRequest()
     @State private var importPlan: VaultViewModel.ImportPlan?
     /// Shown after an import: how many were added, or why the file couldn't be read.
     @State private var importMessage: String?
@@ -48,13 +49,10 @@ struct VaultView: View {
         } message: { plan in
             Text(LocalizedKey("import.confirm.message", plan.newItems.count, plan.duplicateCount))
         }
-        .alert("import.title", isPresented: Binding(
-            get: { importMessage != nil },
-            set: { if !$0 { importMessage = nil } }
-        )) {
-            Button("global.done") { importMessage = nil }
-        } message: {
-            Text(importMessage ?? "")
+        .alert("import.title", item: $importMessage) { _ in
+            Button("global.done") {}
+        } message: { message in
+            Text(message)
         }
         .overlay(alignment: .bottom) {
             if let progress = viewModel.importProgress {
@@ -81,7 +79,7 @@ extension VaultView {
             HSplitView {
                 listColumn
                     .frame(minWidth: 320, idealWidth: 460, maxHeight: .infinity)
-                detailColumn
+                VaultItemDetail(viewModel: viewModel, pendingDeletion: $pendingDeletion, onEdit: startEditing)
                     .frame(minWidth: 320, maxWidth: .infinity, maxHeight: .infinity)
             }
         }
@@ -89,32 +87,19 @@ extension VaultView {
         NavigationSplitView {
             listColumn
         } detail: {
-            detailColumn
+            VaultItemDetail(viewModel: viewModel, pendingDeletion: $pendingDeletion, onEdit: startEditing)
         }
         #endif
     }
 
+    /// The list's navigation chrome (title, search, toolbar, import drop).
+    /// The list itself is `VaultPasswordList`, its own invalidation boundary.
     private var listColumn: some View {
-        passwordList
-            .contextMenu(forSelectionType: PasswordItem.ID.self) { ids in
-                if ids.count == 1, let id = ids.first, let item = viewModel.items.first(where: { $0.id == id }) {
-                    Button("vault.copyPassword", systemImage: "doc.on.doc") {
-                        Task { await viewModel.copyPassword(item, auth: auth) }
-                    }
-                    Button("global.edit", systemImage: "square.and.pencil") { startEditing(item) }
-                    Divider()
-                    Button("global.delete", systemImage: "trash", role: .destructive) { pendingDeletion = item }
-                }
-            }
-            .overlay {
-                VaultEmptyState(
-                    errorMessage: viewModel.items.isEmpty ? viewModel.errorMessage : nil,
-                    isEmpty: viewModel.items.isEmpty,
-                    hasLoaded: viewModel.hasLoaded,
-                    searchText: viewModel.visibleItems.isEmpty ? viewModel.searchText : nil,
-                    onRetry: { Task { await viewModel.refresh(auth: auth) } }
-                )
-            }
+        VaultPasswordList(
+            viewModel: viewModel,
+            pendingDeletion: $pendingDeletion,
+            onEdit: startEditing
+        )
             #if os(macOS)
             // Drag a CSV export from Finder onto the list to import it.
             .dropDestination(for: URL.self) { urls, _ in
@@ -127,51 +112,10 @@ extension VaultView {
             .barkToolbar(title: "vault.title")
             .searchable(text: $viewModel.searchText, prompt: "vault.search.prompt")
             .searchFocused($isSearchFocused)
-            .focusedSceneValue(\.findAction, FindAction { isSearchFocused = true })
+            // ⌘F (Edit ▸ Find) focuses the search field.
+            .focusedSceneValue(\.searchFocusRequest, searchFocusRequest)
+            .onChange(of: searchFocusRequest.count) { isSearchFocused = true }
             .toolbar { toolbarContent }
-    }
-
-    @ViewBuilder
-    private var detailColumn: some View {
-        if let item = viewModel.selectedItem {
-            PasswordInspector(item: item) { ciphertext, field in
-                try viewModel.decrypt(ciphertext, field: field, auth: auth)
-            } onCopyPassword: {
-                Task { await viewModel.copyPassword(item, auth: auth) }
-            } onEdit: {
-                startEditing(item)
-            } onDelete: {
-                pendingDeletion = item
-            }
-            .id(item.id)
-        } else {
-            ContentUnavailableView("vault.selectItem", systemImage: "lock.rectangle.stack")
-        }
-    }
-
-    /// Mac: a sortable table. iOS: a list whose rows push the detail column
-    /// (a Table doesn't navigate when the split view is collapsed on iPhone).
-    @ViewBuilder
-    private var passwordList: some View {
-        #if os(macOS)
-        Table(viewModel.visibleItems, selection: $viewModel.selection, sortOrder: $viewModel.sortOrder) {
-            TableColumn("vault.column.title", value: \.name) { item in
-                PasswordTitleCell(name: item.name, username: item.username, url: item.url)
-            }
-            TableColumn("password.field.lastUpdated", value: \.lastUpdated) { item in
-                Text(item.lastUpdated, format: .relative(presentation: .named))
-                    .foregroundStyle(.secondary)
-            }
-        }
-        .tableStyle(.bordered)
-        #else
-        List(viewModel.visibleItems, selection: $viewModel.selection) { item in
-            NavigationLink(value: item.id) {
-                PasswordTitleCell(name: item.name, username: item.username, url: item.url)
-            }
-        }
-        .listStyle(.plain)
-        #endif
     }
 
     @ToolbarContentBuilder
@@ -220,6 +164,90 @@ private struct EditDraft: Identifiable {
 }
 
 /// The Title column: name with the username underneath.
+/// The password table (Mac) or list (iOS), with its context menu and empty
+/// states. Mac: a sortable table. iOS: a list whose rows push the detail
+/// column (a Table doesn't navigate when the split view is collapsed on iPhone).
+private struct VaultPasswordList: View {
+    @Bindable var viewModel: VaultViewModel
+    @Binding var pendingDeletion: PasswordItem?
+    let onEdit: (PasswordItem) -> Void
+
+    @Environment(AuthManager.self) private var auth
+
+    var body: some View {
+        rows
+            .contextMenu(forSelectionType: PasswordItem.ID.self) { ids in
+                if ids.count == 1, let id = ids.first, let item = viewModel.items.first(where: { $0.id == id }) {
+                    Button("vault.copyPassword", systemImage: "doc.on.doc") {
+                        Task { await viewModel.copyPassword(item, auth: auth) }
+                    }
+                    Button("global.edit", systemImage: "square.and.pencil") { onEdit(item) }
+                    Divider()
+                    Button("global.delete", systemImage: "trash", role: .destructive) { pendingDeletion = item }
+                }
+            }
+            .overlay {
+                VaultEmptyState(
+                    errorMessage: viewModel.items.isEmpty ? viewModel.errorMessage : nil,
+                    isEmpty: viewModel.items.isEmpty,
+                    hasLoaded: viewModel.hasLoaded,
+                    searchText: viewModel.visibleItems.isEmpty ? viewModel.searchText : nil,
+                    onRetry: { Task { await viewModel.refresh(auth: auth) } }
+                )
+            }
+    }
+
+    @ViewBuilder
+    private var rows: some View {
+        #if os(macOS)
+        Table(viewModel.visibleItems, selection: $viewModel.selection, sortOrder: $viewModel.sortOrder) {
+            TableColumn("vault.column.title", value: \.name) { item in
+                PasswordTitleCell(name: item.name, username: item.username, url: item.url)
+            }
+            TableColumn("password.field.lastUpdated", value: \.lastUpdated) { item in
+                Text(item.lastUpdated, format: .relative(presentation: .named))
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .tableStyle(.bordered)
+        #else
+        List(viewModel.visibleItems, selection: $viewModel.selection) { item in
+            NavigationLink(value: item.id) {
+                PasswordTitleCell(name: item.name, username: item.username, url: item.url)
+            }
+        }
+        .listStyle(.plain)
+        #endif
+    }
+}
+
+/// The selected password, or a placeholder. Its own view, so it only updates
+/// when the selection or that item changes.
+private struct VaultItemDetail: View {
+    let viewModel: VaultViewModel
+    @Binding var pendingDeletion: PasswordItem?
+    let onEdit: (PasswordItem) -> Void
+
+    @Environment(AuthManager.self) private var auth
+
+    var body: some View {
+        if let item = viewModel.selectedItem {
+            PasswordInspector(item: item) { ciphertext, field in
+                try viewModel.decrypt(ciphertext, field: field, auth: auth)
+            } onCopyPassword: {
+                Task { await viewModel.copyPassword(item, auth: auth) }
+            } onEdit: {
+                onEdit(item)
+            } onDelete: {
+                pendingDeletion = item
+            }
+            .id(item.id)
+        } else {
+            ContentUnavailableView("vault.selectItem", systemImage: "lock.rectangle.stack")
+        }
+    }
+}
+
 private struct PasswordTitleCell: View {
     let name: String
     let username: String

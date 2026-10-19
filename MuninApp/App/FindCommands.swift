@@ -1,29 +1,30 @@
+import Observation
 import SwiftUI
 
-/// What ⌘F does on the current screen. Equatable so the focused value doesn't
-/// invalidate the menu on every update (a bare closure isn't comparable). Two
-/// actions count as equal: there's one search screen, and its closure only
-/// sets that screen's focus state, so an older copy does the same thing.
-struct FindAction: Equatable {
-    let perform: () -> Void
+/// A screen's request to focus its search field. A model rather than a closure:
+/// closures in focused values (even wrapped in a struct) can't be compared and
+/// invalidate on every update. The screen watches `count` and focuses its field.
+@Observable
+final class SearchFocusRequest {
+    private(set) var count = 0
 
-    static func == (lhs: FindAction, rhs: FindAction) -> Bool { true }
+    func request() { count += 1 }
 }
 
 extension FocusedValues {
     /// Set by the screen with the search field; ⌘F calls it.
-    @Entry var findAction: FindAction?
+    @Entry var searchFocusRequest: SearchFocusRequest?
 }
 
 /// Edit ▸ Find (⌘F) moves focus to the current screen's search field.
 struct FindCommands: Commands {
-    @FocusedValue(\.findAction) private var findAction
+    @FocusedValue(\.searchFocusRequest) private var searchFocusRequest
 
     var body: some Commands {
         CommandGroup(after: .textEditing) {
-            Button("search.find") { findAction?.perform() }
+            Button("search.find") { searchFocusRequest?.request() }
                 .keyboardShortcut("f")
-                .disabled(findAction == nil)
+                .disabled(searchFocusRequest == nil)
         }
     }
 }

@@ -10,7 +10,7 @@ struct CodesView: View {
 
     var body: some View {
         NavigationStack {
-            codesList
+            CodesList(viewModel: viewModel, clock: clock, pendingDeletion: $pendingDeletion)
             .overlay {
                 CodesEmptyState(
                     errorMessage: viewModel.items.isEmpty ? viewModel.errorMessage : nil,
@@ -42,9 +42,32 @@ struct CodesView: View {
         }
     }
 
-    /// Mac: a bordered table like the vault. iOS: a list; tap a row to copy.
-    @ViewBuilder
-    private var codesList: some View {
+    @ToolbarContentBuilder
+    private var toolbarContent: some ToolbarContent {
+        #if os(macOS)
+        ToolbarItem(placement: .primaryAction) {
+            Button("global.refresh", systemImage: "arrow.clockwise") {
+                Task { await viewModel.refresh(auth: auth) }
+            }
+            .keyboardShortcut("r")
+        }
+        #endif
+        ToolbarItem(placement: .primaryAction) {
+            Button("codes.add", systemImage: "plus") { isAdding = true }
+                .disabled(!viewModel.hasLoaded)
+                .keyboardShortcut("n")
+        }
+    }
+}
+
+/// The codes: Mac, a bordered table like the vault; iOS, a list (tap a row to copy).
+/// Its own view, so the 2FA screen's chrome doesn't re-evaluate with it.
+private struct CodesList: View {
+    let viewModel: CodesViewModel
+    let clock: CodeClock
+    @Binding var pendingDeletion: VaultItem?
+
+    var body: some View {
         #if os(macOS)
         // No selection: rows aren't selectable. Right-click a cell for its menu.
         Table(viewModel.items) {
@@ -100,25 +123,6 @@ struct CodesView: View {
             .font(.footnote)
             .foregroundStyle(.secondary)
     }
-
-    @ToolbarContentBuilder
-    private var toolbarContent: some ToolbarContent {
-        #if os(macOS)
-        ToolbarItem(placement: .primaryAction) {
-            Button("global.refresh", systemImage: "arrow.clockwise") {
-                Task { await viewModel.refresh(auth: auth) }
-            }
-            .keyboardShortcut("r")
-        }
-        #endif
-        ToolbarItem(placement: .primaryAction) {
-            Button("codes.add", systemImage: "plus") { isAdding = true }
-                .disabled(!viewModel.hasLoaded)
-                .keyboardShortcut("n")
-        }
-    }
-
-
 }
 
 /// Error, empty and loading states for the codes list.

@@ -11,6 +11,9 @@ struct SearchView: View {
 
     @Environment(AuthManager.self) private var auth
     @State private var query = ""
+    /// Filtered once per change of query or data, not on every body evaluation.
+    @State private var passwords: [PasswordItem] = []
+    @State private var codes: [VaultItem] = []
     /// One clock for the code rows.
     @State private var clock = CodeClock()
 
@@ -55,24 +58,27 @@ struct SearchView: View {
         // On the NavigationStack (not inside it), as Apple's search-tab examples do,
         // so the tab bar can turn the Search tab into its own search field.
         .searchable(text: $query, prompt: "search.prompt")
+        .onChange(of: query, initial: true) { updateResults() }
+        .onChange(of: vaultModel.items) { updateResults() }
+        .onChange(of: codesModel.items) { updateResults() }
     }
 
     private var trimmedQuery: String {
         query.trimmingCharacters(in: .whitespaces)
     }
 
-    private var passwords: [PasswordItem] {
-        guard !trimmedQuery.isEmpty else { return [] }
-        return vaultModel.items.filter {
+    private func updateResults() {
+        guard !trimmedQuery.isEmpty else {
+            passwords = []
+            codes = []
+            return
+        }
+        passwords = vaultModel.items.filter {
             $0.name.localizedCaseInsensitiveContains(trimmedQuery)
                 || $0.username.localizedCaseInsensitiveContains(trimmedQuery)
                 || $0.url.localizedCaseInsensitiveContains(trimmedQuery)
         }
-    }
-
-    private var codes: [VaultItem] {
-        guard !trimmedQuery.isEmpty else { return [] }
-        return codesModel.items.filter {
+        codes = codesModel.items.filter {
             $0.account.title.localizedCaseInsensitiveContains(trimmedQuery)
                 || ($0.account.subtitle?.localizedCaseInsensitiveContains(trimmedQuery) ?? false)
         }
