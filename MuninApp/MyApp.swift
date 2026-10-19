@@ -17,14 +17,11 @@ import SwiftUI
 
     var body: some Scene {
         #if os(macOS)
-        // A single window: no "New Window", and the menu bar item reopens this one.
         Window("main.window.title", id: Self.mainWindowID) {
             root
-                // Room for the sidebar, the password list and the detail
-                // (each column needs at least 320).
-                .frame(minWidth: 860, minHeight: 500)
+                .frame(minWidth: 900, minHeight: 600)
         }
-        .defaultSize(width: 900, height: 600)
+        .defaultSize(width: 1100, height: 860)
         .windowResizability(.contentMinSize)
         .commands {
             LockCommands(session: session)

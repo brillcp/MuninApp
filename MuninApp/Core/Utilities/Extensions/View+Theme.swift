@@ -36,9 +36,9 @@ extension View {
     func barkNavigationBar(title: LocalizedStringKey? = nil) -> some View {
         #if os(iOS)
         navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(Color(.bark), for: .navigationBar)
+            .toolbarBackground(.bark, for: .navigationBar)
             .toolbarBackgroundVisibility(.visible, for: .navigationBar)
-            .toolbarColorScheme(.light, for: .navigationBar)
+            .toolbarColorScheme(.dark, for: .navigationBar)
         #else
         self
         #endif
@@ -48,8 +48,13 @@ extension View {
 /// Locks Munin (same as ⌘L). In the Vault and 2FA toolbars.
 private struct LockToolbarButton: View {
     @Environment(VaultSession.self) private var session
+    @State private var taps = 0
 
     var body: some View {
-        Button("lock.command", systemImage: "lock") { session.lock() }
+        Button("lock.command", systemImage: "lock") {
+            taps += 1
+            session.lock()
+        }
+        .sensoryFeedback(.impact(weight: .light), trigger: taps)
     }
 }

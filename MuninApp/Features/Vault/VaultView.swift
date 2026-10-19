@@ -14,9 +14,12 @@ struct VaultView: View {
     @State private var importPlan: VaultViewModel.ImportPlan?
     /// Shown after an import: how many were added, or why the file couldn't be read.
     @State private var importMessage: String?
+    /// Bumped by toolbar buttons for a light haptic.
+    @State private var hapticTaps = 0
 
     var body: some View {
         columns
+        .sensoryFeedback(.impact(weight: .light), trigger: hapticTaps)
         .task { await viewModel.refresh(auth: auth) }
         .sheet(isPresented: $isCreating) {
             PasswordEditorView { fields in
@@ -122,17 +125,36 @@ extension VaultView {
     private var toolbarContent: some ToolbarContent {
         ToolbarItem(placement: .secondaryAction) {
             Button("import.button", systemImage: "folder.badge.plus") {
+                hapticTaps += 1
                 isPickingImportFile = true
             }
             .disabled(!viewModel.hasLoaded || viewModel.importProgress != nil)
         }
         ToolbarItem(placement: .primaryAction) {
             Button("vault.createItem", systemImage: "plus.square.on.square") {
+                hapticTaps += 1
                 isCreating = true
             }
             .buttonStyle(.glassProminent)
             .tint(.accent)
         }
+        #if os(macOS)
+        // Here (not in the detail) so the Mac toolbar has one owner and its
+        // buttons don't shift when the selection changes. Always shown,
+        // disabled without a selection.
+        ToolbarItem(placement: .primaryAction) {
+            Button("global.edit", systemImage: "square.and.pencil") {
+                if let item = viewModel.selectedItem { startEditing(item) }
+            }
+            .disabled(viewModel.selectedItem == nil)
+        }
+        ToolbarItem(placement: .primaryAction) {
+            Button("global.delete", systemImage: "trash", role: .destructive) {
+                pendingDeletion = viewModel.selectedItem
+            }
+            .disabled(viewModel.selectedItem == nil)
+        }
+        #endif
     }
 
     /// Reads the CSV (picked or dropped from Finder) in memory and asks to confirm.
@@ -233,6 +255,8 @@ private struct VaultItemDetail: View {
     @Binding var pendingDeletion: PasswordItem?
     let onEdit: (PasswordItem) -> Void
 
+    @State private var hapticTaps = 0
+
     @Environment(AuthManager.self) private var auth
 
     var body: some View {
@@ -248,22 +272,26 @@ private struct VaultItemDetail: View {
                 ContentUnavailableView("vault.selectItem", systemImage: "lock.rectangle.stack")
             }
         }
-        // Always in the toolbar, disabled without a selection, so the toolbar
-        // doesn't change shape when the selection does.
+        #if os(iOS)
+        // iOS: on the detail screen. (Mac: in VaultView's toolbar.)
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Button("global.edit", systemImage: "square.and.pencil") {
+                    hapticTaps += 1
                     if let item = viewModel.selectedItem { onEdit(item) }
                 }
                 .disabled(viewModel.selectedItem == nil)
             }
             ToolbarItem(placement: .primaryAction) {
                 Button("global.delete", systemImage: "trash", role: .destructive) {
+                    hapticTaps += 1
                     pendingDeletion = viewModel.selectedItem
                 }
                 .disabled(viewModel.selectedItem == nil)
             }
         }
+        .sensoryFeedback(.impact(weight: .light), trigger: hapticTaps)
+        #endif
     }
 }
 

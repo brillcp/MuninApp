@@ -129,6 +129,7 @@
 "passwordGenerator.useSymbols" = "Use symbols (@!$%&*)";
 
 /** Password Inspector **/
+"passwordInspector.openWebsite" = "Open Website";
 "passwordInspector.hide" = "Hide";
 "passwordInspector.show" = "Show";
 

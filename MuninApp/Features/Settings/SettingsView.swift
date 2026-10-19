@@ -7,6 +7,7 @@ struct SettingsView: View {
 
     @State private var isChangingPassword = false
     @State private var recoveryKey: RecoveryKeyItem?
+    @State private var hapticTaps = 0
 
     var body: some View {
         @Bindable var session = session
@@ -20,16 +21,20 @@ struct SettingsView: View {
                         }
                     }
                     Button("account.signOut", systemImage: "rectangle.portrait.and.arrow.right", role: .destructive) {
+                        hapticTaps += 1
                         auth.signOut()
                     }
+                    .tint(.red)
                 }
 
                 Section("settings.security") {
                     if let vault = session.vault {
                         Button("settings.changeMasterPassword", systemImage: "key.horizontal") {
+                            hapticTaps += 1
                             isChangingPassword = true
                         }
                         Button("account.showRecoveryKey", systemImage: "key") {
+                            hapticTaps += 1
                             recoveryKey = RecoveryKeyItem(key: VaultKeyStore.recoveryString(for: vault.key))
                         }
                         if session.canUseBiometrics {
@@ -49,6 +54,7 @@ struct SettingsView: View {
             }
         }
         .formStyle(.grouped)
+        .sensoryFeedback(.impact(weight: .light), trigger: hapticTaps)
         .sheet(isPresented: $isChangingPassword) {
             ChangeMasterPasswordView()
         }

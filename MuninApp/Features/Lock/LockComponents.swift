@@ -287,8 +287,13 @@ struct LockPrimaryButton: View {
         self.action = action
     }
 
+    @State private var taps = 0
+
     var body: some View {
-        Button(action: action) {
+        Button {
+            taps += 1
+            action()
+        } label: {
             Group {
                 if let systemImage {
                     Label(title, systemImage: systemImage)
@@ -300,6 +305,7 @@ struct LockPrimaryButton: View {
         }
         .buttonStyle(.glassProminent)
         .controlSize(.large)
+        .sensoryFeedback(.impact(weight: .light), trigger: taps)
     }
 }
 
@@ -313,8 +319,14 @@ struct LockSecondaryButton: View {
         self.action = action
     }
 
+    @State private var taps = 0
+
     var body: some View {
-        Button(title, action: action)
+        Button(title) {
+            taps += 1
+            action()
+        }
+        .sensoryFeedback(.impact(weight: .light), trigger: taps)
             .buttonStyle(.borderless)
             .tint(.primary)
     }

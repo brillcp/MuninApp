@@ -6,6 +6,7 @@ struct PasswordGeneratorView: View {
 
     @State private var generator = PasswordGenerator()
     @State private var password = ""
+    @State private var hapticTaps = 0
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -19,14 +20,21 @@ struct PasswordGeneratorView: View {
                     Label(strength.title, systemImage: "checkmark.shield.fill")
                         .foregroundStyle(strength.color)
                     Spacer()
-                    Button("passwordGenerator.regenerate", systemImage: "arrow.counterclockwise", action: regenerate)
-                        .labelStyle(.iconOnly)
-                    Button("global.copy", systemImage: "doc.on.doc") { Pasteboard.copySensitive(password) }
-                        .labelStyle(.iconOnly)
+                    Button("passwordGenerator.regenerate", systemImage: "arrow.counterclockwise") {
+                        hapticTaps += 1
+                        regenerate()
+                    }
+                    .labelStyle(.iconOnly)
+                    Button("global.copy", systemImage: "doc.on.doc") {
+                        hapticTaps += 1
+                        Pasteboard.copySensitive(password)
+                    }
+                    .labelStyle(.iconOnly)
                 }
                 .buttonStyle(.borderless)
 
                 Button {
+                    hapticTaps += 1
                     onFill(password)
                 } label: {
                     Text("passwordGenerator.fillPassword").frame(maxWidth: .infinity)
@@ -35,6 +43,7 @@ struct PasswordGeneratorView: View {
                 .controlSize(.large)
             }
             .padding()
+            .padding(.top)
 
             Form {
                 LabeledContent("passwordGenerator.length") {
@@ -52,6 +61,7 @@ struct PasswordGeneratorView: View {
             .formStyle(.grouped)
         }
         .frame(minWidth: 340, idealWidth: 380)
+        .sensoryFeedback(.impact(weight: .light), trigger: hapticTaps)
         .onAppear(perform: regenerate)
         .onChange(of: generator.length) { regenerate() }
         .onChange(of: generator.useCapitals) { regenerate() }

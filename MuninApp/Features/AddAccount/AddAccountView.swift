@@ -47,7 +47,9 @@ struct AddAccountView: View {
                     Button("global.cancel", action: dismiss.callAsFunction)
                 }
             }
-            .barkNavigationBar(title: "addAccount.title")
+            #if os(iOS)
+            .navigationBarTitleDisplayMode(.inline)
+            #endif
             #if os(iOS)
             .fullScreenCover(isPresented: $isScanning) {
                 ScannerSheet { value in

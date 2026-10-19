@@ -5,6 +5,7 @@ struct CodesView: View {
     let viewModel: CodesViewModel
     @State private var isAdding = false
     @State private var pendingDeletion: VaultItem?
+    @State private var hapticTaps = 0
     /// One clock for the code rows.
     @State private var clock = CodeClock()
 
@@ -27,6 +28,7 @@ struct CodesView: View {
             .refreshable { await viewModel.refresh(auth: auth) }
             .task { await viewModel.refresh(auth: auth) }
             .task { await clock.run() }
+            .sensoryFeedback(.impact(weight: .light), trigger: hapticTaps)
             .sheet(isPresented: $isAdding) {
                 AddAccountView { accounts in
                     try await viewModel.add(accounts, auth: auth)
@@ -47,13 +49,17 @@ struct CodesView: View {
         #if os(macOS)
         ToolbarItem(placement: .primaryAction) {
             Button("global.refresh", systemImage: "arrow.clockwise") {
+                hapticTaps += 1
                 Task { await viewModel.refresh(auth: auth) }
             }
             .keyboardShortcut("r")
         }
         #endif
         ToolbarItem(placement: .primaryAction) {
-            Button("codes.add", systemImage: "plus") { isAdding = true }
+            Button("codes.add", systemImage: "plus") {
+                hapticTaps += 1
+                isAdding = true
+            }
                 .disabled(!viewModel.hasLoaded)
                 .keyboardShortcut("n")
         }

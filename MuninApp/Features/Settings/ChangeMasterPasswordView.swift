@@ -43,7 +43,9 @@ struct ChangeMasterPasswordView: View {
             .formStyle(.grouped)
             .disabled(session.isWorking)
             .navigationTitle("settings.changeMasterPassword")
-            .barkNavigationBar(title: "settings.changeMasterPassword")
+            #if os(iOS)
+            .navigationBarTitleDisplayMode(.inline)
+            #endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("global.cancel") { dismiss() }

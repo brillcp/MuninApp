@@ -11,6 +11,7 @@ struct PasswordEditorView: View {
     @State private var isSaving = false
     @State private var isGenerating = false
     @State private var errorMessage: String?
+    @State private var hapticTaps = 0
 
     init(fields: PasswordFields = PasswordFields(), isEditing: Bool = false, onSave: @escaping (PasswordFields) async throws -> Void) {
         self.isEditing = isEditing
@@ -20,22 +21,33 @@ struct PasswordEditorView: View {
 
     var body: some View {
         NavigationStack {
+            // Same sections as the detail view (PasswordInspector), so the two match.
             Form {
-                TextField("password.field.name", text: $fields.name)
-                TextField("password.field.url", text: $fields.url)
-                    .autocorrectionDisabled()
-                    #if os(iOS)
-                    .keyboardType(.URL)
-                    .textInputAutocapitalization(.never)
-                    #endif
-                TextField("password.field.username", text: $fields.username)
-                    .autocorrectionDisabled()
-                    #if os(iOS)
-                    .textInputAutocapitalization(.never)
-                    #endif
-                HStack {
-                    SecureField("password.field.password", text: $fields.password)
-                    Button("passwordEditor.generate", systemImage: "wand.and.stars") { isGenerating = true }
+                Section {
+                    TextField("password.field.name", text: $fields.name)
+                }
+
+                Section {
+                    TextField("password.field.url", text: $fields.url)
+                        .autocorrectionDisabled()
+                        #if os(iOS)
+                        .keyboardType(.URL)
+                        .textInputAutocapitalization(.never)
+                        #endif
+                    TextField("password.field.username", text: $fields.username)
+                        .autocorrectionDisabled()
+                        #if os(iOS)
+                        .textInputAutocapitalization(.never)
+                        #endif
+                }
+
+                Section("password.field.password") {
+                    HStack {
+                        SecureField("password.field.password", text: $fields.password)
+                        Button("passwordEditor.generate", systemImage: "wand.and.stars") {
+                            hapticTaps += 1
+                            isGenerating = true
+                        }
                         .labelStyle(.iconOnly)
                         .popover(isPresented: $isGenerating) {
                             PasswordGeneratorView { generated in
@@ -43,25 +55,40 @@ struct PasswordEditorView: View {
                                 isGenerating = false
                             }
                         }
+                    }
                 }
-                TextField("password.field.note", text: $fields.note, axis: .vertical)
-                    .lineLimit(3...8)
+
+                Section("password.field.note") {
+                    TextField("password.field.note", text: $fields.note, axis: .vertical)
+                        .lineLimit(3...8)
+                }
 
                 if let errorMessage {
-                    Text(errorMessage)
-                        .foregroundStyle(.red)
+                    Section {
+                        Text(errorMessage)
+                            .foregroundStyle(.red)
+                    }
                 }
             }
             .formStyle(.grouped)
+            .sensoryFeedback(.impact(weight: .light), trigger: hapticTaps)
             .disabled(isSaving)
             .navigationTitle(LocalizedStringKey(isEditing ? "passwordEditor.editTitle" : "passwordEditor.newTitle"))
-            .barkNavigationBar(title: LocalizedStringKey(isEditing ? "passwordEditor.editTitle" : "passwordEditor.newTitle"))
+            #if os(iOS)
+            .navigationBarTitleDisplayMode(.inline)
+            #endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("global.cancel") { dismiss() }
+                    Button("global.cancel") {
+                        hapticTaps += 1
+                        dismiss()
+                    }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("global.save", action: save)
+                    Button("global.save") {
+                        hapticTaps += 1
+                        save()
+                    }
                         .disabled(fields.name.trimmingCharacters(in: .whitespaces).isEmpty || isSaving)
                 }
             }
