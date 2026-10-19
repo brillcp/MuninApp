@@ -58,7 +58,7 @@ struct LockUnlockSection: View {
                     LockSecondaryButton("lock.useMasterPassword") {
                         withAnimation {
                             mode = .masterPassword
-                            session.errorMessage = nil
+                            session.clearError()
                         }
                     }
                 }

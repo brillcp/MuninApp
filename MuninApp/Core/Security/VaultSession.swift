@@ -28,8 +28,8 @@ final class VaultSession {
     private(set) var state: State = .checking
     private(set) var vault: UnlockedVault?
     private(set) var isWorking = false
-
-    var errorMessage: String?
+    private(set) var errorMessage: String?
+    
     /// Set once after a brand-new vault is created, to show the recovery key.
     var newRecoveryKey: String?
 
