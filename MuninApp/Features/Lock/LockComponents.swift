@@ -10,7 +10,7 @@ struct LockLogo: View {
             Image("Logo")
                 .resizable()
                 .scaledToFit()
-                .frame(width: 32, height: 32)
+                .frame(width: 38, height: 38)
             Text("main.window.title")
                 .font(.title2.bold())
                 .foregroundStyle(.primary)
@@ -46,6 +46,8 @@ struct LockPanel: View {
     @Environment(VaultSession.self) private var session
     /// Set when the user picks another way to unlock; nil means the default.
     @State private var chosenStep: LockStep?
+    /// After Sign in with Apple: start Face ID / Touch ID once the vault is ready.
+    @State private var unlocksAfterSignIn = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
@@ -82,6 +84,16 @@ struct LockPanel: View {
         .animation(.bouncy, value: isWorking)
         // A new account (or signing out) starts from its default step.
         .onChange(of: auth.userID) { chosenStep = nil }
+        // A finished sign-in (also the same account again, after "Switch
+        // account") goes back to unlocking and starts biometrics.
+        .onChange(of: auth.isSigningIn) { wasSigningIn, isSigningIn in
+            guard wasSigningIn, !isSigningIn, auth.isSignedIn, auth.signInError == nil else { return }
+            chosenStep = nil
+            unlocksAfterSignIn = true
+            startUnlockIfReady()
+        }
+        // A new account is checked first; unlock once it's locked and ready.
+        .onChange(of: session.state) { startUnlockIfReady() }
     }
 
     private var step: LockStep {
@@ -119,6 +131,14 @@ struct LockPanel: View {
         step == .signIn ? auth.signInError : session.errorMessage
     }
 
+    private func startUnlockIfReady() {
+        guard unlocksAfterSignIn, session.state == .locked else { return }
+        unlocksAfterSignIn = false
+        if session.offersBiometricUnlock {
+            Task { await session.unlockWithBiometrics() }
+        }
+    }
+
     /// `nil` goes back to the default step.
     private func go(to step: LockStep?) {
         session.clearError()
@@ -150,6 +170,7 @@ private struct LockSignInStep: View {
             .frame(maxWidth: .infinity)
             .frame(height: 50)
             .clipShape(.capsule)
+            .controlSize(.large)
 
             if let onCancel {
                 LockSecondaryButton("global.cancel", action: onCancel)
