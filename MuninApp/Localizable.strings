@@ -81,6 +81,9 @@
 "lock.reason" = "Unlock your vault";
 "lock.recovery.continue" = "Continue";
 "lock.recovery.message" = "Enter your recovery key to choose a new master password.";
+"lock.step.masterPassword" = "Use master password";
+"lock.step.recoveryKey" = "Enter recovery key";
+"lock.step.signIn" = "Sign in";
 "lock.switchAccount" = "Switch account";
 "lock.title" = "Unlock your vault";
 "lock.unlock" = "Unlock";

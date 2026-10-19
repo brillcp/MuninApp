@@ -8,7 +8,7 @@ struct LockView: View {
             VStack(alignment: .leading, spacing: 16) {
                 LockLogo()
                 Spacer()
-                LockUnlockSection()
+                LockPanel()
                 LockVersionLabel()
             }
             .padding(48)

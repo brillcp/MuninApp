@@ -23,6 +23,7 @@ import SwiftUI
             SettingsView()
                 .environment(auth)
                 .environment(session)
+                .tint(.accent)
         }
 
         MenuBarExtra("main.window.title", systemImage: "key.viewfinder") {
@@ -38,9 +39,12 @@ import SwiftUI
 
     static let mainWindowID = "main"
 
+    /// The app's tint is set once here; views only override it where they
+    /// need something else (e.g. the countdown gauge).
     private var root: some View {
         ContentView()
             .environment(auth)
             .environment(session)
+            .tint(.accent)
     }
 }

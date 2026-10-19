@@ -20,9 +20,21 @@ extension View {
                 .sharedBackgroundVisibility(.hidden)
             }
         #else
-        toolbarBackground(Color(.bark), for: .navigationBar)
+        barkNavigationBar()
+        #endif
+    }
+
+    /// iOS: every navigation bar is Bark with a light, inline (never large)
+    /// title. Mac sheets have no navigation bar, so nothing changes there.
+    @ViewBuilder
+    func barkNavigationBar() -> some View {
+        #if os(iOS)
+        navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(Color(.bark), for: .navigationBar)
             .toolbarBackgroundVisibility(.visible, for: .navigationBar)
             .toolbarColorScheme(.dark, for: .navigationBar)
+        #else
+        self
         #endif
     }
 }

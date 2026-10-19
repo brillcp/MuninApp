@@ -13,7 +13,7 @@ struct ScannerSheet: View {
             QRScannerView(onFound: onFound)
                 .ignoresSafeArea()
                 .navigationTitle("scanner.title")
-                .navigationBarTitleDisplayMode(.inline)
+                .barkNavigationBar()
                 .toolbar {
                     ToolbarItem(placement: .cancellationAction) {
                         Button("global.cancel") { dismiss() }

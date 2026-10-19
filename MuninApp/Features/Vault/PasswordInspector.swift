@@ -67,6 +67,7 @@ struct PasswordInspector: View {
         }
         .formStyle(.grouped)
         .navigationTitle(item.name)
+        .barkNavigationBar()
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Button("global.edit", systemImage: "square.and.pencil", action: onEdit)

@@ -56,7 +56,7 @@ struct PasswordEditorView: View {
             .disabled(isSaving)
             .navigationTitle(LocalizedStringKey(isEditing ? "passwordEditor.editTitle" : "passwordEditor.newTitle"))
             #if os(iOS)
-            .navigationBarTitleDisplayMode(.inline)
+            .barkNavigationBar()
             #endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -65,7 +65,6 @@ struct PasswordEditorView: View {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("global.save", action: save)
                         .disabled(fields.name.trimmingCharacters(in: .whitespaces).isEmpty || isSaving)
-                        .tint(.accent)
                 }
             }
         }

@@ -39,7 +39,7 @@ struct MainView: View {
             }
             .buttonStyle(.borderless)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding()
+            .padding(.vertical)
         }
         #endif
     }

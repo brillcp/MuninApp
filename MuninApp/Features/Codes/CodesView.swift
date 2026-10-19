@@ -6,9 +6,6 @@ struct CodesView: View {
     @State private var isAdding = false
     @State private var isShowingSettings = false
     @State private var pendingDeletion: VaultItem?
-    #if os(macOS)
-    @State private var selection: VaultItem.ID?
-    #endif
     /// One clock for the whole list, ticking on whole seconds.
     @State private var now = Date.now
 
@@ -29,6 +26,7 @@ struct CodesView: View {
                 )
             }
             .navigationTitle("codes.title")
+            .navigationSplitViewStyle(.prominentDetail)
             .barkToolbar(title: "codes.title")
             .toolbar { toolbarContent }
             .refreshable { await viewModel.refresh(auth: auth) }
@@ -58,23 +56,21 @@ struct CodesView: View {
     @ViewBuilder
     private var codesList: some View {
         #if os(macOS)
-        Table(viewModel.items, selection: $selection) {
+        // No selection: rows aren't selectable. Right-click a cell for its menu.
+        Table(viewModel.items) {
             TableColumn("codes.column.account") { item in
                 AccountLabel(title: item.account.title, subtitle: item.account.subtitle)
                     .equatable()
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .contentShape(Rectangle())
+                    .contextMenu { codeMenu(for: item) }
             }
             TableColumn("codes.column.code") { item in
                 CodeCell(account: item.account, now: now)
+                    .contextMenu { codeMenu(for: item) }
             }
         }
         .tableStyle(.bordered)
-        .contextMenu(forSelectionType: VaultItem.ID.self) { ids in
-            if ids.count == 1, let id = ids.first, let item = viewModel.items.first(where: { $0.id == id }) {
-                Button("codes.copyCode", systemImage: "doc.on.doc") { CodeRow.copyCode(of: item.account) }
-                Divider()
-                Button("global.delete", systemImage: "trash", role: .destructive) { pendingDeletion = item }
-            }
-        }
         .safeAreaInset(edge: .bottom) {
             if viewModel.undecryptableCount > 0 {
                 undecryptableLabel
@@ -102,6 +98,13 @@ struct CodesView: View {
         #endif
     }
 
+    @ViewBuilder
+    private func codeMenu(for item: VaultItem) -> some View {
+        Button("codes.copyCode", systemImage: "doc.on.doc") { CodeRow.copyCode(of: item.account) }
+        Divider()
+        Button("global.delete", systemImage: "trash", role: .destructive) { pendingDeletion = item }
+    }
+
     private var undecryptableLabel: some View {
         Label(LocalizedKey("codes.undecryptable", viewModel.undecryptableCount), systemImage: "exclamationmark.lock")
             .font(.footnote)
@@ -113,7 +116,6 @@ struct CodesView: View {
         #if os(iOS)
         ToolbarItem(placement: .primaryAction) {
             Button("settings.title", systemImage: "gearshape") { isShowingSettings = true }
-                .tint(.accent)
         }
         #else
         ToolbarItem(placement: .primaryAction) {
@@ -127,7 +129,6 @@ struct CodesView: View {
             Button("codes.add", systemImage: "plus") { isAdding = true }
                 .disabled(!viewModel.hasLoaded)
                 .keyboardShortcut("n")
-                .tint(.accent)
         }
     }
 

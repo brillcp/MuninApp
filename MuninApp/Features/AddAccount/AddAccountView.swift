@@ -48,7 +48,7 @@ struct AddAccountView: View {
                 }
             }
             #if os(iOS)
-            .navigationBarTitleDisplayMode(.inline)
+            .barkNavigationBar()
             .fullScreenCover(isPresented: $isScanning) {
                 ScannerSheet { value in
                     isScanning = false

@@ -8,10 +8,7 @@ struct LockView: View {
         VStack(alignment: .leading, spacing: 16) {
             LockLogo()
             Spacer()
-            LockUnlockSection(stacksButtons: true)
-                .padding()
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .glassEffect(in: .rect(cornerRadius: 24))
+            LockPanel(stacksButtons: true)
             LockVersionLabel()
         }
         .padding()

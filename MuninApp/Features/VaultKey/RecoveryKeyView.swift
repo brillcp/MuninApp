@@ -41,7 +41,7 @@ struct RecoveryKeyView: View {
             .padding()
             .navigationTitle("vaultKey.recovery.title")
             #if os(iOS)
-            .navigationBarTitleDisplayMode(.inline)
+            .barkNavigationBar()
             #endif
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {

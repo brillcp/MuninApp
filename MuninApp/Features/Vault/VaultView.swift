@@ -16,48 +16,7 @@ struct VaultView: View {
     }
 
     var body: some View {
-        NavigationSplitView {
-            passwordList
-            .contextMenu(forSelectionType: PasswordItem.ID.self) { ids in
-                if ids.count == 1, let id = ids.first, let item = viewModel.items.first(where: { $0.id == id }) {
-                    Button("vault.copyPassword", systemImage: "doc.on.doc") {
-                        Task { await viewModel.copyPassword(item, auth: auth) }
-                    }
-                    Button("global.edit", systemImage: "square.and.pencil") { startEditing(item) }
-                    Divider()
-                    Button("global.delete", systemImage: "trash", role: .destructive) { pendingDeletion = item }
-                }
-            }
-            .overlay {
-                VaultEmptyState(
-                    errorMessage: viewModel.items.isEmpty ? viewModel.errorMessage : nil,
-                    isEmpty: viewModel.items.isEmpty,
-                    hasLoaded: viewModel.hasLoaded,
-                    searchText: viewModel.visibleItems.isEmpty ? viewModel.searchText : nil,
-                    onRetry: { Task { await viewModel.refresh(auth: auth) } }
-                )
-            }
-            .navigationTitle("vault.title")
-            .barkToolbar(title: "vault.title")
-            .searchable(text: $viewModel.searchText, prompt: "vault.search.prompt")
-            .toolbar { toolbarContent }
-            .navigationSplitViewColumnWidth(min: 320, ideal: 460)
-        } detail: {
-            if let item = viewModel.selectedItem {
-                PasswordInspector(item: item) { ciphertext, field in
-                    try viewModel.decrypt(ciphertext, field: field, auth: auth)
-                } onCopyPassword: {
-                    Task { await viewModel.copyPassword(item, auth: auth) }
-                } onEdit: {
-                    startEditing(item)
-                } onDelete: {
-                    pendingDeletion = item
-                }
-                .id(item.id)
-            } else {
-                ContentUnavailableView("vault.selectItem", systemImage: "lock.rectangle.stack")
-            }
-        }
+        columns
         #if os(iOS)
         .sheet(isPresented: $isShowingSettings) {
             SettingsSheet()
@@ -85,6 +44,75 @@ struct VaultView: View {
 }
 
 extension VaultView {
+    /// Mac: list and detail side by side in an HSplitView. A NavigationSplitView
+    /// nested in the sidebar tab gave the detail the outer sidebar's width as an
+    /// extra leading inset. iOS: a NavigationSplitView, so tapping a row pushes
+    /// the detail on iPhone.
+    @ViewBuilder
+    private var columns: some View {
+        #if os(macOS)
+        NavigationStack {
+            HSplitView {
+                listColumn
+                    .frame(minWidth: 320, idealWidth: 460, maxHeight: .infinity)
+                detailColumn
+                    .frame(minWidth: 320, maxWidth: .infinity, maxHeight: .infinity)
+            }
+        }
+        #else
+        NavigationSplitView {
+            listColumn
+        } detail: {
+            detailColumn
+        }
+        #endif
+    }
+
+    private var listColumn: some View {
+        passwordList
+            .contextMenu(forSelectionType: PasswordItem.ID.self) { ids in
+                if ids.count == 1, let id = ids.first, let item = viewModel.items.first(where: { $0.id == id }) {
+                    Button("vault.copyPassword", systemImage: "doc.on.doc") {
+                        Task { await viewModel.copyPassword(item, auth: auth) }
+                    }
+                    Button("global.edit", systemImage: "square.and.pencil") { startEditing(item) }
+                    Divider()
+                    Button("global.delete", systemImage: "trash", role: .destructive) { pendingDeletion = item }
+                }
+            }
+            .overlay {
+                VaultEmptyState(
+                    errorMessage: viewModel.items.isEmpty ? viewModel.errorMessage : nil,
+                    isEmpty: viewModel.items.isEmpty,
+                    hasLoaded: viewModel.hasLoaded,
+                    searchText: viewModel.visibleItems.isEmpty ? viewModel.searchText : nil,
+                    onRetry: { Task { await viewModel.refresh(auth: auth) } }
+                )
+            }
+            .navigationTitle("vault.title")
+            .barkToolbar(title: "vault.title")
+            .searchable(text: $viewModel.searchText, prompt: "vault.search.prompt")
+            .toolbar { toolbarContent }
+    }
+
+    @ViewBuilder
+    private var detailColumn: some View {
+        if let item = viewModel.selectedItem {
+            PasswordInspector(item: item) { ciphertext, field in
+                try viewModel.decrypt(ciphertext, field: field, auth: auth)
+            } onCopyPassword: {
+                Task { await viewModel.copyPassword(item, auth: auth) }
+            } onEdit: {
+                startEditing(item)
+            } onDelete: {
+                pendingDeletion = item
+            }
+            .id(item.id)
+        } else {
+            ContentUnavailableView("vault.selectItem", systemImage: "lock.rectangle.stack")
+        }
+    }
+
     /// Mac: a sortable table. iOS: a list whose rows push the detail column
     /// (a Table doesn't navigate when the split view is collapsed on iPhone).
     @ViewBuilder
@@ -117,12 +145,10 @@ extension VaultView {
                 isCreating = true
             }
             .buttonStyle(.glassProminent)
-            .tint(.accent)
         }
         #if os(iOS)
         ToolbarItem(placement: .primaryAction) {
             Button("settings.title", systemImage: "gearshape") { isShowingSettings = true }
-                .tint(.accent)
         }
         #endif
     }

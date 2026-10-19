@@ -78,13 +78,12 @@ struct SettingsSheet: View {
         NavigationStack {
             SettingsView()
                 .navigationTitle("settings.title")
-                .navigationBarTitleDisplayMode(.inline)
+                .barkNavigationBar()
                 .toolbar {
                     ToolbarItem(placement: .confirmationAction) {
                         Button("global.done") { dismiss() }
                     }
                 }
-                .tint(.accent)
         }
     }
 }

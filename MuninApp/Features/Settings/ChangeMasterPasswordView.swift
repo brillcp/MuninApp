@@ -44,7 +44,7 @@ struct ChangeMasterPasswordView: View {
             .disabled(session.isWorking)
             .navigationTitle("settings.changeMasterPassword")
             #if os(iOS)
-            .navigationBarTitleDisplayMode(.inline)
+            .barkNavigationBar()
             #endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -57,7 +57,6 @@ struct ChangeMasterPasswordView: View {
                     } else {
                         Button("global.save", action: save)
                             .disabled(!isValid)
-                            .tint(.accent)
                     }
                 }
             }

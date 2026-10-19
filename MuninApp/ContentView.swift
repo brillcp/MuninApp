@@ -7,13 +7,19 @@ struct ContentView: View {
 
     var body: some View {
         Group {
-            if auth.isSignedIn {
-                SignedInContent()
+            if showsLockScreen {
+                // One lock screen from sign-in through unlock, so its card can
+                // animate between the steps.
+                LockView()
             } else {
-                SignInView()
+                SignedInContent()
             }
         }
         .task(id: auth.userID) { await session.prepare(auth: auth) }
+    }
+
+    private var showsLockScreen: Bool {
+        !auth.isSignedIn || session.state == .locked || session.state == .checking
     }
 }
 
@@ -31,13 +37,11 @@ private struct SignedInContent: View {
                         RecoveryKeyView(recoveryKey: key)
                     }
                 }
-        case .locked:
-            LockView()
+        case .locked, .checking:
+            // Shown by ContentView's lock screen instead.
+            EmptyView()
         case .needsMasterPassword:
             MasterPasswordSetupView()
-        case .checking:
-            ProgressView()
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
         case .missingKey:
             MissingKeyView { recoveryString in
                 session.restoreLegacyKey(recoveryString)
