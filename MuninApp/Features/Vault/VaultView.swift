@@ -71,20 +71,45 @@ struct VaultView: View {
 }
 
 extension VaultView {
-    /// Mac: list and detail side by side in an HSplitView. A NavigationSplitView
+    /// Mac: the list, with the detail as an inspector. A NavigationSplitView
     /// nested in the sidebar tab gave the detail the outer sidebar's width as an
-    /// extra leading inset. iOS: a NavigationSplitView, so tapping a row pushes
+    /// extra leading inset, and an HSplitView couldn't animate the panel in. iOS: a NavigationSplitView, so tapping a row pushes
     /// the detail on iPhone.
     @ViewBuilder
     private var columns: some View {
         #if os(macOS)
+        // The detail floats over the list's trailing edge as a glass panel.
+        // (.inspector and HSplitView both animated badly in the sidebar tab.)
         NavigationStack {
-            HSplitView {
-                listColumn
-                    .frame(minWidth: 320, idealWidth: 460, maxHeight: .infinity)
-                VaultItemDetail(viewModel: viewModel, pendingDeletion: $pendingDeletion, onEdit: startEditing)
-                    .frame(minWidth: 320, maxWidth: .infinity, maxHeight: .infinity)
-            }
+            listColumn
+                .overlay(alignment: .trailing) {
+                    if viewModel.isShowingDetail {
+                        // A NavigationStack's toolbar in an overlay never shows on
+                        // the Mac (it belongs to the window), so the close button
+                        // is a plain header row instead.
+                        VaultItemDetail(viewModel: viewModel, pendingDeletion: $pendingDeletion, onEdit: startEditing)
+                            .safeAreaInset(edge: .top, spacing: 0) {
+                                HStack {
+                                    Button("global.close", systemImage: "xmark") {
+                                        hapticTaps += 1
+                                        viewModel.isShowingDetail = false
+                                    }
+                                    .labelStyle(.iconOnly)
+                                    .buttonStyle(.glass)
+                                    .buttonBorderShape(.circle)
+                                    .help("global.close")
+                                    Spacer()
+                                }
+                                .padding([.horizontal, .top], 12)
+                            }
+                        .frame(width: 340)
+                        .frame(maxHeight: .infinity)
+                            .glassEffect(in: .rect(cornerRadius: 20))
+                            .padding(12)
+                            .transition(.offset(x: 64).combined(with: .opacity))
+                    }
+                }
+                .animation(.bouncy(duration: 0.25), value: viewModel.isShowingDetail)
         }
         #else
         NavigationSplitView {
@@ -123,38 +148,50 @@ extension VaultView {
 
     @ToolbarContentBuilder
     private var toolbarContent: some ToolbarContent {
-        ToolbarItem(placement: .secondaryAction) {
-            Button("import.button", systemImage: "folder.badge.plus") {
-                hapticTaps += 1
-                isPickingImportFile = true
-            }
-            .disabled(!viewModel.hasLoaded || viewModel.importProgress != nil)
-        }
-        ToolbarItem(placement: .primaryAction) {
-            Button("vault.createItem", systemImage: "plus.square.on.square") {
-                hapticTaps += 1
-                isCreating = true
-            }
-            .buttonStyle(.glassProminent)
-            .tint(.accent)
-        }
         #if os(macOS)
-        // Here (not in the detail) so the Mac toolbar has one owner and its
-        // buttons don't shift when the selection changes. Always shown,
-        // disabled without a selection.
-        ToolbarItem(placement: .primaryAction) {
+        // Title ---> Create  [Import, Lock]  [Edit, Delete]
+        ToolbarItem(placement: .primaryAction) { createButton }
+        // Pushes the groups below to the far right.
+        ToolbarSpacer(.flexible, placement: .primaryAction)
+        ToolbarItemGroup(placement: .primaryAction) {
+            importButton
+            LockToolbarButton()
+        }
+        ToolbarSpacer(.fixed, placement: .primaryAction)
+        // Always shown, disabled without a selection, so the toolbar keeps its shape.
+        ToolbarItemGroup(placement: .primaryAction) {
             Button("global.edit", systemImage: "square.and.pencil") {
+                hapticTaps += 1
                 if let item = viewModel.selectedItem { startEditing(item) }
             }
             .disabled(viewModel.selectedItem == nil)
-        }
-        ToolbarItem(placement: .primaryAction) {
             Button("global.delete", systemImage: "trash", role: .destructive) {
+                hapticTaps += 1
                 pendingDeletion = viewModel.selectedItem
             }
             .disabled(viewModel.selectedItem == nil)
         }
+        #else
+        ToolbarItem(placement: .confirmationAction) { importButton }
+        ToolbarItem(placement: .primaryAction) { createButton }
         #endif
+    }
+
+    private var createButton: some View {
+        Button("vault.createItem", systemImage: "plus.square.on.square") {
+            hapticTaps += 1
+            isCreating = true
+        }
+        .buttonStyle(.glassProminent)
+        .tint(.accent)
+    }
+
+    private var importButton: some View {
+        Button("import.button", systemImage: "folder.badge.plus") {
+            hapticTaps += 1
+            isPickingImportFile = true
+        }
+        .disabled(!viewModel.hasLoaded || viewModel.importProgress != nil)
     }
 
     /// Reads the CSV (picked or dropped from Finder) in memory and asks to confirm.
@@ -268,8 +305,6 @@ private struct VaultItemDetail: View {
                     Task { await viewModel.copyPassword(item, auth: auth) }
                 }
                 .id(item.id)
-            } else {
-                ContentUnavailableView("vault.selectItem", systemImage: "lock.rectangle.stack")
             }
         }
         #if os(iOS)

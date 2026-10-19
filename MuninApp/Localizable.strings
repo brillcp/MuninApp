@@ -63,6 +63,7 @@
 
 /** Global **/
 "global.cancel" = "Cancel";
+"global.close" = "Close";
 "global.copied" = "Copied";
 "global.copy" = "Copy";
 "global.delete" = "Delete";
@@ -153,7 +154,6 @@
 "vault.delete.title" = "Delete Password?";
 "vault.empty.title" = "No items";
 "vault.search.prompt" = "Search all items";
-"vault.selectItem" = "Select an item";
 "vault.title" = "Vault";
 
 /** Vault Key **/

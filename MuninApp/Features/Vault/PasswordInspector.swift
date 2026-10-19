@@ -26,8 +26,6 @@ struct PasswordInspector: View {
 
     var body: some View {
         Form {
-            // Website icon at the top. On the Mac the name sits under it (there's no
-            // navigation bar); on iOS the name is the navigation title.
             Section {
                 VStack(spacing: 12) {
                     WebsiteIcon(url: item.url, size: 64)
@@ -117,6 +115,10 @@ struct PasswordInspector: View {
             }
         }
         .formStyle(.grouped)
+        #if os(macOS)
+        // Lets the glass panel show through behind the sections.
+        .scrollContentBackground(.hidden)
+        #endif
         .sensoryFeedback(.impact(weight: .light), trigger: hapticTaps)
         #if os(iOS)
         // Mac: the name is under the icon instead. As a window title its
@@ -163,7 +165,7 @@ private struct CopyableRow<Value: View>: View {
                 value
             }
         }
-        .contentShape(Rectangle())
+        .contentShape(.rect)
         .transition(.blurReplace)
         .onTapGesture(perform: onCopy)
     }
