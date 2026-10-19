@@ -65,6 +65,7 @@ struct PasswordEditorView: View {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("global.save", action: save)
                         .disabled(fields.name.trimmingCharacters(in: .whitespaces).isEmpty || isSaving)
+                        .tint(.accent)
                 }
             }
         }

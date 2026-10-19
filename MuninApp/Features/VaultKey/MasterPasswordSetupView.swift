@@ -46,6 +46,7 @@ struct MasterPasswordSetupView: View {
                 Button("global.save", action: save)
                     .buttonStyle(.borderedProminent)
                     .disabled(!isValid || session.isWorking)
+                    .tint(.accent)
                 if session.isWorking {
                     ProgressView()
                         .controlSize(.small)

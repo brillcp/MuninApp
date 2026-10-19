@@ -84,6 +84,7 @@ struct SettingsSheet: View {
                         Button("global.done") { dismiss() }
                     }
                 }
+                .tint(.accent)
         }
     }
 }

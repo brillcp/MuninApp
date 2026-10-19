@@ -52,53 +52,32 @@ struct LockUnlockSection: View {
             switch currentMode {
             case .biometrics:
                 biometricsLayout {
-                    Button { Task { await session.unlockWithBiometrics() } } label: {
-                        Label("lock.unlockWithBiometrics", systemImage: "touchid")
-                            .frame(maxWidth: .infinity)
+                    LockPrimaryButton("lock.unlockWithBiometrics", systemImage: "touchid") {
+                        Task { await session.unlockWithBiometrics() }
                     }
-                    .tint(.accent)
-                    .buttonStyle(.glassProminent)
-
-                    Button {
+                    LockSecondaryButton("lock.useMasterPassword") {
                         withAnimation {
                             mode = .masterPassword
                             session.errorMessage = nil
                         }
-                    } label: {
-                        Text("lock.useMasterPassword")
                     }
-                    .buttonStyle(.borderless)
-                    .tint(.white)
                 }
-                .controlSize(.large)
-                .tint(.bark)
             case .masterPassword:
                 SecureField("lock.masterPassword.placeholder", text: $password)
                     .textFieldStyle(.roundedBorder)
                     #if os(iOS)
                     .textContentType(.password)
                     #endif
-//                    .frame(maxWidth: 320)
                     .onSubmit(unlockWithPassword)
                     .colorScheme(.light)
 
-                Button(action: unlockWithPassword) {
-                    Text("lock.unlock")
-                        .frame(maxWidth: .infinity)
-                }
-                .buttonStyle(.glassProminent)
-                .tint(.accent)
-                .controlSize(.large)
-                .disabled(password.isEmpty)
+                LockPrimaryButton("lock.unlock", action: unlockWithPassword)
+                    .disabled(password.isEmpty)
 
                 if session.offersBiometricUnlock {
-                    Button("lock.useBiometrics") { withAnimation { mode = .biometrics } }
-                        .buttonStyle(.borderless)
-                        .tint(.white)
+                    LockSecondaryButton("lock.useBiometrics") { withAnimation { mode = .biometrics } }
                 }
-                Button("lock.forgotMasterPassword") { withAnimation { mode = .recoveryKey } }
-                    .buttonStyle(.borderless)
-                    .tint(.white)
+                LockSecondaryButton("lock.forgotMasterPassword") { withAnimation { mode = .recoveryKey } }
             case .recoveryKey:
                 Text("lock.recovery.message")
                     .foregroundStyle(.secondary)
@@ -109,20 +88,11 @@ struct LockUnlockSection: View {
                     #if os(iOS)
                     .textInputAutocapitalization(.never)
                     #endif
-//                    .frame(maxWidth: 360)
                     .colorScheme(.light)
 
-                Button(action: { session.unlock(recoveryKey: recoveryKey) }) {
-                    Text("lock.recovery.continue")
-                        .frame(maxWidth: .infinity)
-                }
-                .buttonStyle(.glassProminent)
-                .controlSize(.large)
-                .disabled(recoveryKey.isEmpty)
-                .tint(.accent)
-
-                Button("global.cancel") { withAnimation { mode = .masterPassword } }
-                    .tint(.white)
+                LockPrimaryButton("lock.recovery.continue") { session.unlock(recoveryKey: recoveryKey) }
+                    .disabled(recoveryKey.isEmpty)
+                LockSecondaryButton("global.cancel") { withAnimation { mode = .masterPassword } }
             }
 
             if session.isWorking {
@@ -156,6 +126,52 @@ struct LockUnlockSection: View {
         let entered = password
         password = ""
         Task { await session.unlock(masterPassword: entered) }
+    }
+}
+
+/// The main action: full width, filled with the accent color.
+struct LockPrimaryButton: View {
+    let title: LocalizedStringKey
+    var systemImage: String?
+    let action: () -> Void
+
+    init(_ title: LocalizedStringKey, systemImage: String? = nil, action: @escaping () -> Void) {
+        self.title = title
+        self.systemImage = systemImage
+        self.action = action
+    }
+
+    var body: some View {
+        Button(action: action) {
+            Group {
+                if let systemImage {
+                    Label(title, systemImage: systemImage)
+                } else {
+                    Text(title)
+                }
+            }
+            .frame(maxWidth: .infinity)
+        }
+        .buttonStyle(.glassProminent)
+        .tint(.accent)
+        .controlSize(.large)
+    }
+}
+
+/// Alternative actions (switch method, forgot password, cancel): plain white text.
+struct LockSecondaryButton: View {
+    let title: LocalizedStringKey
+    let action: () -> Void
+
+    init(_ title: LocalizedStringKey, action: @escaping () -> Void) {
+        self.title = title
+        self.action = action
+    }
+
+    var body: some View {
+        Button(title, action: action)
+            .buttonStyle(.borderless)
+            .tint(.white)
     }
 }
 

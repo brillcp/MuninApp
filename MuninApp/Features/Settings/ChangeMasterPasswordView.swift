@@ -57,6 +57,7 @@ struct ChangeMasterPasswordView: View {
                     } else {
                         Button("global.save", action: save)
                             .disabled(!isValid)
+                            .tint(.accent)
                     }
                 }
             }

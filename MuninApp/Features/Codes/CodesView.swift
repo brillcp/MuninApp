@@ -98,6 +98,7 @@ struct CodesView: View {
                 }
             }
         }
+        .listStyle(.plain)
         #endif
     }
 
@@ -109,14 +110,10 @@ struct CodesView: View {
 
     @ToolbarContentBuilder
     private var toolbarContent: some ToolbarContent {
-        ToolbarItem(placement: .primaryAction) {
-            Button("codes.add", systemImage: "plus") { isAdding = true }
-                .disabled(!viewModel.hasLoaded)
-                .keyboardShortcut("n")
-        }
         #if os(iOS)
         ToolbarItem(placement: .primaryAction) {
             Button("settings.title", systemImage: "gearshape") { isShowingSettings = true }
+                .tint(.accent)
         }
         #else
         ToolbarItem(placement: .primaryAction) {
@@ -126,6 +123,12 @@ struct CodesView: View {
             .keyboardShortcut("r")
         }
         #endif
+        ToolbarItem(placement: .primaryAction) {
+            Button("codes.add", systemImage: "plus") { isAdding = true }
+                .disabled(!viewModel.hasLoaded)
+                .keyboardShortcut("n")
+                .tint(.accent)
+        }
     }
 
     private func tick() async {

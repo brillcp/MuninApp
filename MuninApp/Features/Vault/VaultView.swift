@@ -106,6 +106,7 @@ extension VaultView {
                 PasswordTitleCell(name: item.name, username: item.username)
             }
         }
+        .listStyle(.plain)
         #endif
     }
 
@@ -116,11 +117,12 @@ extension VaultView {
                 isCreating = true
             }
             .buttonStyle(.glassProminent)
-            .tint(.accentColor)
+            .tint(.accent)
         }
         #if os(iOS)
         ToolbarItem(placement: .primaryAction) {
             Button("settings.title", systemImage: "gearshape") { isShowingSettings = true }
+                .tint(.accent)
         }
         #endif
     }
