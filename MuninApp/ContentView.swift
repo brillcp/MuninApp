@@ -4,6 +4,7 @@ import Playgrounds
 struct ContentView: View {
     @Environment(AuthManager.self) private var auth
     @Environment(VaultSession.self) private var session
+    @Environment(VaultViewModel.self) private var vaultModel
 
     var body: some View {
         Group {
@@ -16,6 +17,11 @@ struct ContentView: View {
             }
         }
         .task(id: auth.userID) { await session.prepare(auth: auth) }
+        // The password list outlives the main view (the menu bar uses it), so
+        // drop it explicitly on lock and sign out.
+        .onChange(of: session.state) { _, state in
+            if state != .unlocked { vaultModel.clear() }
+        }
     }
 
     private var showsLockScreen: Bool {
@@ -72,4 +78,5 @@ private struct SignedInContent: View {
     ContentView()
         .environment(AuthManager())
         .environment(VaultSession())
+        .environment(VaultViewModel(session: VaultSession()))
 }

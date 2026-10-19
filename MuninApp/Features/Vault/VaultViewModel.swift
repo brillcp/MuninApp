@@ -51,6 +51,15 @@ final class VaultViewModel {
         selectedItem = selection.flatMap { id in items.first { $0.id == id } }
     }
 
+    /// Drops everything decrypted. Called when the vault locks or the user signs out.
+    func clear() {
+        items = []
+        selection = nil
+        searchText = ""
+        errorMessage = nil
+        hasLoaded = false
+    }
+
     // MARK: - Loading
 
     func refresh(auth: AuthManager) async {

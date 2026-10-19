@@ -2,9 +2,14 @@ import SwiftUI
 
 @main struct MyApp: App {
     @State private var auth = AuthManager()
-    @State private var session = VaultSession()
+    @State private var session: VaultSession
+    /// The password list, shared by the main window and the Mac menu bar.
+    @State private var vaultModel: VaultViewModel
 
     init() {
+        let session = VaultSession()
+        _session = State(initialValue: session)
+        _vaultModel = State(initialValue: VaultViewModel(session: session))
         #if os(macOS)
         TableSelectionStyle.apply(color: NSColor(resource: .wood))
         #endif
@@ -27,8 +32,13 @@ import SwiftUI
         }
 
         MenuBarExtra("main.window.title", systemImage: "key.viewfinder") {
-            MenuBarContent(session: session)
+            MenuBarContent()
+                .environment(auth)
+                .environment(session)
+                .environment(vaultModel)
+                .tint(.accent)
         }
+        .menuBarExtraStyle(.window)
         #else
         WindowGroup {
             root
@@ -45,6 +55,7 @@ import SwiftUI
         ContentView()
             .environment(auth)
             .environment(session)
+            .environment(vaultModel)
             .tint(.accent)
     }
 }

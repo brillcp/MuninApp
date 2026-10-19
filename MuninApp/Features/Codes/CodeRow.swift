@@ -119,7 +119,7 @@ private struct CodeText: View, Equatable {
     var body: some View {
         (didCopy ? Text("global.copied") : Text(verbatim: CodeRow.formatted(code)))
             .font(.system(.title2, design: .monospaced, weight: .semibold))
-            .foregroundStyle(didCopy ? Color.accentColor : .primary)
+            .foregroundStyle(didCopy ? .accent : .primary)
             .monospacedDigit()
             .animation(.default, value: code)
     }

@@ -13,12 +13,12 @@ struct MainView: View {
     }
 
     @State private var selection: Section = .vault
-    /// Shared by the Vault, 2FA and Search tabs, so search uses the loaded data.
-    @State private var vaultModel: VaultViewModel
+    /// From the app (also used by the Mac menu bar), shared by Vault and Search.
+    @Environment(VaultViewModel.self) private var vaultModel
+    /// Shared by the 2FA and Search tabs.
     @State private var codesModel: CodesViewModel
 
     init(session: VaultSession) {
-        _vaultModel = State(initialValue: VaultViewModel(session: session))
         _codesModel = State(initialValue: CodesViewModel(session: session))
     }
 
@@ -80,6 +80,7 @@ struct MainView: View {
 
 #Preview {
     MainView(session: VaultSession())
+        .environment(VaultViewModel(session: VaultSession()))
         .environment(AuthManager())
         .environment(VaultSession())
 }

@@ -15,14 +15,21 @@ struct PasswordInspector: View {
 
     var body: some View {
         Form {
-            #if os(macOS)
-            // macOS has no navigation bar, so the name stays in the content there.
+            // Website icon at the top. On the Mac the name sits under it (there's no
+            // navigation bar); on iOS the name is the navigation title.
             Section {
-                Text(item.name)
-                    .font(.title2.bold())
-                    .textSelection(.enabled)
+                VStack(spacing: 12) {
+                    WebsiteIcon(url: item.url, size: 64)
+                    #if os(macOS)
+                    Text(item.name)
+                        .font(.title2.bold())
+                        .multilineTextAlignment(.center)
+                        .textSelection(.enabled)
+                    #endif
+                }
+                .frame(maxWidth: .infinity)
+                .listRowBackground(Color.clear)
             }
-            #endif
 
             Section {
                 LabeledContent("password.field.url") {

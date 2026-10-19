@@ -18,9 +18,17 @@ extension View {
                         .foregroundStyle(.white)
                 }
                 .sharedBackgroundVisibility(.hidden)
+                ToolbarItem(placement: .navigation) {
+                    LockToolbarButton()
+                }
             }
         #else
         barkNavigationBar()
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    LockToolbarButton()
+                }
+            }
         #endif
     }
 
@@ -36,5 +44,14 @@ extension View {
         #else
         self
         #endif
+    }
+}
+
+/// Locks Munin (same as ⌘L). In the Vault and 2FA toolbars.
+private struct LockToolbarButton: View {
+    @Environment(VaultSession.self) private var session
+
+    var body: some View {
+        Button("lock.command", systemImage: "lock") { session.lock() }
     }
 }

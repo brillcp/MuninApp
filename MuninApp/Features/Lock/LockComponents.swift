@@ -74,6 +74,7 @@ struct LockPanel: View {
         .glassEffect(in: .rect(cornerRadius: 24))
         .disabled(isWorking)
         .animation(.bouncy, value: step)
+        .animation(.bouncy, value: isWorking)
         .onChange(of: auth.isSignedIn) { chosenStep = nil }
     }
 

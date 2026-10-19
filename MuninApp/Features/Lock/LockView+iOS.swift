@@ -12,12 +12,19 @@ struct LockView: View {
             LockVersionLabel()
         }
         .padding()
+        // Fill the screen so the background below covers all of it.
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
         .background {
-            Image("munin")
-                .resizable()
-                .scaledToFill()
+            // A full-screen frame with the image centred in it. scaledToFill
+            // overflows the frame; the overflow is cut evenly on both sides.
+            Color.clear
+                .overlay {
+                    Image("munin")
+                        .resizable()
+                        .scaledToFill()
+                }
+                .clipped()
                 .ignoresSafeArea()
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
         }
         .colorScheme(.dark)
     }
