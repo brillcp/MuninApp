@@ -2,15 +2,11 @@ import SwiftUI
 
 struct CodesView: View {
     @Environment(AuthManager.self) private var auth
-    @State private var viewModel: CodesViewModel
+    let viewModel: CodesViewModel
     @State private var isAdding = false
     @State private var pendingDeletion: VaultItem?
-    /// One clock for the whole list, ticking on whole seconds.
-    @State private var now = Date.now
-
-    init(session: VaultSession) {
-        _viewModel = State(initialValue: CodesViewModel(session: session))
-    }
+    /// One clock for the code rows.
+    @State private var clock = CodeClock()
 
     var body: some View {
         NavigationStack {
@@ -30,7 +26,7 @@ struct CodesView: View {
             .toolbar { toolbarContent }
             .refreshable { await viewModel.refresh(auth: auth) }
             .task { await viewModel.refresh(auth: auth) }
-            .task(tick)
+            .task { await clock.run() }
             .sheet(isPresented: $isAdding) {
                 AddAccountView { accounts in
                     try await viewModel.add(accounts, auth: auth)
@@ -60,7 +56,7 @@ struct CodesView: View {
                     .contextMenu { codeMenu(for: item) }
             }
             TableColumn("codes.column.code") { item in
-                CodeCell(account: item.account, now: now)
+                CodeCell(account: item.account, clock: clock)
                     .contextMenu { codeMenu(for: item) }
             }
         }
@@ -74,7 +70,7 @@ struct CodesView: View {
         #else
         List {
             ForEach(viewModel.items) { item in
-                CodeRow(account: item.account, now: now)
+                CodeRow(account: item.account, clock: clock)
                     .contextMenu {
                         Button("global.delete", systemImage: "trash", role: .destructive) { pendingDeletion = item }
                     }
@@ -122,13 +118,6 @@ struct CodesView: View {
         }
     }
 
-    private func tick() async {
-        while !Task.isCancelled {
-            let fraction = Date.now.timeIntervalSince1970.truncatingRemainder(dividingBy: 1)
-            try? await Task.sleep(for: .seconds(1 - fraction))
-            now = .now
-        }
-    }
 
 }
 
@@ -167,7 +156,7 @@ private struct CodesEmptyState: View {
 }
 
 #Preview {
-    CodesView(session: VaultSession())
+    CodesView(viewModel: CodesViewModel(session: VaultSession()))
         .environment(AuthManager())
         .environment(VaultSession())
 }

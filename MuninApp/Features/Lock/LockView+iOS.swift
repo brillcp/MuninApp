@@ -9,6 +9,7 @@ struct LockView: View {
             LockLogo()
             Spacer()
             LockPanel(stacksButtons: true)
+                .glassEffect(in: .rect(cornerRadius: 24))
             LockVersionLabel()
         }
         .padding()

@@ -7,7 +7,10 @@ import AppKit
 
 struct CodeRow: View {
     let account: OTPAccount
-    let now: Date
+    /// Passed in (not from the environment): the Mac table's cells don't get
+    /// the environment. Reading `clock.now` here still makes each row update itself.
+    let clock: CodeClock
+    private var now: Date { clock.now }
 
     @State private var didCopy = false
 
@@ -81,7 +84,8 @@ struct AccountLabel: View, Equatable {
 /// The code and countdown for the Mac table's Code column. Click to copy.
 struct CodeCell: View {
     let account: OTPAccount
-    let now: Date
+    let clock: CodeClock
+    private var now: Date { clock.now }
 
     @State private var didCopy = false
 

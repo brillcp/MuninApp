@@ -186,3 +186,22 @@
 "settings.security" = "Security";
 "settings.title" = "Settings";
 "settings.version" = "Version";
+
+/** Search **/
+"search.empty.message" = "Find passwords and 2FA codes by name, username or website.";
+"search.empty.title" = "Search for things";
+"search.prompt" = "Passwords and 2FA";
+"search.section.codes" = "2FA";
+"search.section.passwords" = "Passwords";
+"search.title" = "Search";
+
+/** Import **/
+"import.button" = "Import Passwords";
+"import.confirm.button" = "Import %lld Passwords";
+"import.confirm.message" = "%lld new passwords will be encrypted and added. %lld are already in your vault and will be skipped.";
+"import.confirm.title" = "Import Passwords?";
+"import.done.message" = "Imported %lld passwords. Delete the CSV file now: it has all your passwords in plain text.";
+"import.error.columns" = "This CSV doesn't have name and password columns.";
+"import.error.unreadable" = "Couldn't read the file. Export it as UTF-8 CSV.";
+"import.progress" = "Importing %lld of %lld";
+"import.title" = "Import";

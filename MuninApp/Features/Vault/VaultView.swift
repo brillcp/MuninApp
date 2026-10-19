@@ -1,16 +1,17 @@
 import SwiftUI
+import UniformTypeIdentifiers
 
 struct VaultView: View {
     @Environment(AuthManager.self) private var auth
-    @State private var viewModel: VaultViewModel
+    @Bindable var viewModel: VaultViewModel
     @State private var isCreating = false
     /// The item being edited, with its password and note decrypted for the editor.
     @State private var editing: EditDraft?
     @State private var pendingDeletion: PasswordItem?
-
-    init(session: VaultSession) {
-        _viewModel = State(initialValue: VaultViewModel(session: session))
-    }
+    @State private var isPickingImportFile = false
+    @State private var importPlan: VaultViewModel.ImportPlan?
+    /// Shown after an import: how many were added, or why the file couldn't be read.
+    @State private var importMessage: String?
 
     var body: some View {
         columns
@@ -30,6 +31,38 @@ struct VaultView: View {
         .sheet(item: $editing) { draft in
             PasswordEditorView(fields: draft.fields, isEditing: true) { fields in
                 try await viewModel.update(draft.item, with: fields, auth: auth)
+            }
+        }
+        .fileImporter(isPresented: $isPickingImportFile, allowedContentTypes: [.commaSeparatedText]) { result in
+            if case .success(let url) = result { prepareImport(from: url) }
+        }
+        .confirmationDialog("import.confirm.title", item: $importPlan, titleVisibility: .visible) { plan in
+            Button(LocalizedKey("import.confirm.button", plan.newItems.count)) {
+                Task {
+                    let saved = await viewModel.runImport(plan, auth: auth)
+                    importMessage = Localized("import.done.message", saved)
+                }
+            }
+            .disabled(plan.newItems.isEmpty)
+        } message: { plan in
+            Text(LocalizedKey("import.confirm.message", plan.newItems.count, plan.duplicateCount))
+        }
+        .alert("import.title", isPresented: Binding(
+            get: { importMessage != nil },
+            set: { if !$0 { importMessage = nil } }
+        )) {
+            Button("global.done") { importMessage = nil }
+        } message: {
+            Text(importMessage ?? "")
+        }
+        .overlay(alignment: .bottom) {
+            if let progress = viewModel.importProgress {
+                ProgressView(value: Double(progress.done), total: Double(max(progress.total, 1))) {
+                    Text(LocalizedKey("import.progress", progress.done, progress.total))
+                }
+                .padding()
+                .glassEffect(in: .rect(cornerRadius: 16))
+                .padding()
             }
         }
     }
@@ -81,6 +114,14 @@ extension VaultView {
                     onRetry: { Task { await viewModel.refresh(auth: auth) } }
                 )
             }
+            #if os(macOS)
+            // Drag a CSV export from Finder onto the list to import it.
+            .dropDestination(for: URL.self) { urls, _ in
+                guard let url = urls.first(where: { $0.pathExtension.lowercased() == "csv" }) else { return false }
+                prepareImport(from: url)
+                return true
+            }
+            #endif
             .navigationTitle("vault.title")
             .barkToolbar(title: "vault.title")
             .searchable(text: $viewModel.searchText, prompt: "vault.search.prompt")
@@ -132,11 +173,29 @@ extension VaultView {
 
     @ToolbarContentBuilder
     private var toolbarContent: some ToolbarContent {
+        ToolbarItem(placement: .primaryAction) {
+            Button("import.button", systemImage: "square.and.arrow.down") {
+                isPickingImportFile = true
+            }
+            .disabled(!viewModel.hasLoaded || viewModel.importProgress != nil)
+        }
         ToolbarItem(placement: .confirmationAction) {
             Button("vault.createItem", systemImage: "plus.square.on.square") {
                 isCreating = true
             }
             .buttonStyle(.glassProminent)
+        }
+    }
+
+    /// Reads the CSV (picked or dropped from Finder) in memory and asks to confirm.
+    private func prepareImport(from url: URL) {
+        let isScoped = url.startAccessingSecurityScopedResource()
+        defer { if isScoped { url.stopAccessingSecurityScopedResource() } }
+        do {
+            let rows = try PasswordCSVParser.parse(try Data(contentsOf: url))
+            importPlan = viewModel.planImport(rows)
+        } catch {
+            importMessage = error.localizedDescription
         }
     }
 
@@ -162,7 +221,7 @@ private struct PasswordTitleCell: View {
     let url: String
 
     var body: some View {
-        HStack(spacing: 10) {
+        HStack(spacing: 12) {
             WebsiteIcon(url: url)
             VStack(alignment: .leading, spacing: 2) {
                 Text(name)
@@ -205,6 +264,6 @@ private struct VaultEmptyState: View {
 }
 
 #Preview {
-    VaultView(session: VaultSession())
+    VaultView(viewModel: VaultViewModel(session: VaultSession()))
         .environment(AuthManager())
 }

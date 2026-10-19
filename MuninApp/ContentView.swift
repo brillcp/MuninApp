@@ -31,7 +31,7 @@ private struct SignedInContent: View {
     var body: some View {
         switch session.state {
         case .unlocked:
-            MainView()
+            MainView(session: session)
                 .sheet(isPresented: isShowingNewRecoveryKey) {
                     if let key = session.newRecoveryKey {
                         RecoveryKeyView(recoveryKey: key)

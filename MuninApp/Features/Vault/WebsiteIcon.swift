@@ -3,7 +3,7 @@ import SwiftUI
 /// The item's website icon (apple-touch-icon or favicon), or a globe until one loads.
 struct WebsiteIcon: View {
     let url: String
-    var size: CGFloat = 28
+    var size: CGFloat = 38
 
     @State private var image: Image?
 
@@ -22,7 +22,7 @@ struct WebsiteIcon: View {
             }
         }
         .frame(width: size, height: size)
-        .clipShape(.rect(cornerRadius: size * 0.22))
+        .clipShape(.circle)
         .task(id: url) {
             let data = await WebsiteIconStore.shared.icon(for: url)
             image = data.flatMap(PlatformImage.init(data:)).map(Image.init(platformImage:))
