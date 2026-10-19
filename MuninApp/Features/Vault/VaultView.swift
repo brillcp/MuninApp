@@ -184,6 +184,8 @@ extension VaultView {
                 isCreating = true
             }
             .buttonStyle(.glassProminent)
+            // Toolbar items don't pick up the app-wide tint, so set it here.
+            .tint(.accent)
         }
     }
 

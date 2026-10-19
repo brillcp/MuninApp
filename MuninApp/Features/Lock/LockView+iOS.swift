@@ -9,16 +9,15 @@ struct LockView: View {
             LockLogo()
             Spacer()
             LockPanel(stacksButtons: true)
-                .glassEffect(in: .rect(cornerRadius: 24))
             LockVersionLabel()
         }
         .padding()
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
         .background {
             Image("munin")
                 .resizable()
                 .scaledToFill()
                 .ignoresSafeArea()
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
         }
         .colorScheme(.dark)
     }

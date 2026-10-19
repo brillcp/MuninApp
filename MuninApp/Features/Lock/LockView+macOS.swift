@@ -14,7 +14,7 @@ struct LockView: View {
             .padding(48)
 
             LockArtwork()
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .trailing)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(.background)
