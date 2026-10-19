@@ -4,9 +4,6 @@ struct VaultView: View {
     @Environment(AuthManager.self) private var auth
     @State private var viewModel: VaultViewModel
     @State private var isCreating = false
-    #if os(iOS)
-    @State private var isShowingSettings = false
-    #endif
     /// The item being edited, with its password and note decrypted for the editor.
     @State private var editing: EditDraft?
     @State private var pendingDeletion: PasswordItem?
@@ -17,11 +14,6 @@ struct VaultView: View {
 
     var body: some View {
         columns
-        #if os(iOS)
-        .sheet(isPresented: $isShowingSettings) {
-            SettingsSheet()
-        }
-        #endif
         .task { await viewModel.refresh(auth: auth) }
         .sheet(isPresented: $isCreating) {
             PasswordEditorView { fields in
@@ -120,7 +112,7 @@ extension VaultView {
         #if os(macOS)
         Table(viewModel.visibleItems, selection: $viewModel.selection, sortOrder: $viewModel.sortOrder) {
             TableColumn("vault.column.title", value: \.name) { item in
-                PasswordTitleCell(name: item.name, username: item.username)
+                PasswordTitleCell(name: item.name, username: item.username, url: item.url)
             }
             TableColumn("password.field.lastUpdated", value: \.lastUpdated) { item in
                 Text(item.lastUpdated, format: .relative(presentation: .named))
@@ -131,7 +123,7 @@ extension VaultView {
         #else
         List(viewModel.visibleItems, selection: $viewModel.selection) { item in
             NavigationLink(value: item.id) {
-                PasswordTitleCell(name: item.name, username: item.username)
+                PasswordTitleCell(name: item.name, username: item.username, url: item.url)
             }
         }
         .listStyle(.plain)
@@ -146,11 +138,6 @@ extension VaultView {
             }
             .buttonStyle(.glassProminent)
         }
-        #if os(iOS)
-        ToolbarItem(placement: .primaryAction) {
-            Button("settings.title", systemImage: "gearshape") { isShowingSettings = true }
-        }
-        #endif
     }
 
     private func startEditing(_ item: PasswordItem) {
@@ -172,13 +159,17 @@ private struct EditDraft: Identifiable {
 private struct PasswordTitleCell: View {
     let name: String
     let username: String
+    let url: String
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 2) {
-            Text(name)
-            Text(username)
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
+        HStack(spacing: 10) {
+            WebsiteIcon(url: url)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(name)
+                Text(username)
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+            }
         }
     }
 }

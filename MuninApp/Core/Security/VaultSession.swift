@@ -262,6 +262,7 @@ final class VaultSession {
     func lock() {
         guard state == .unlocked else { return }
         vault = nil
+        Task { await WebsiteIconStore.shared.clear() }
         errorMessage = nil
         state = .locked
     }
@@ -278,6 +279,7 @@ final class VaultSession {
     }
 
     private func clear() {
+        Task { await WebsiteIconStore.shared.clear() }
         state = .checking
         vault = nil
         userID = nil

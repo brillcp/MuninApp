@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Account, security and about. A Settings window on Mac (⌘,), a sheet on iOS.
+/// Account, security and about. A Settings window on Mac (⌘,), a tab on iOS.
 struct SettingsView: View {
     @Environment(AuthManager.self) private var auth
     @Environment(VaultSession.self) private var session
@@ -68,26 +68,6 @@ private struct RecoveryKeyItem: Identifiable {
     let key: String
     var id: String { key }
 }
-
-#if os(iOS)
-/// iOS: Settings in a sheet with a Done button.
-struct SettingsSheet: View {
-    @Environment(\.dismiss) private var dismiss
-
-    var body: some View {
-        NavigationStack {
-            SettingsView()
-                .navigationTitle("settings.title")
-                .barkNavigationBar()
-                .toolbar {
-                    ToolbarItem(placement: .confirmationAction) {
-                        Button("global.done") { dismiss() }
-                    }
-                }
-        }
-    }
-}
-#endif
 
 #Preview {
     SettingsView()

@@ -8,6 +8,7 @@ struct MainView: View {
     enum Section: Hashable {
         case vault
         case codes
+        case settings
     }
 
     @State private var selection: Section = .vault
@@ -22,6 +23,16 @@ struct MainView: View {
                     CodesView(session: session)
                 }
             }
+            #if os(iOS)
+            // The Mac has a Settings window (⌘,) instead.
+            Tab("settings.title", systemImage: "gearshape", value: Section.settings) {
+                NavigationStack {
+                    SettingsView()
+                        .navigationTitle("settings.title")
+                        .barkNavigationBar()
+                }
+            }
+            #endif
         }
         .tabViewStyle(.sidebarAdaptable)
         #if os(macOS)

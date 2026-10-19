@@ -24,10 +24,10 @@ extension View {
         #endif
     }
 
-    /// iOS: every navigation bar is Bark with a light, inline (never large)
-    /// title. Mac sheets have no navigation bar, so nothing changes there.
+    /// iOS: the navigation bar is Bark with a light, inline (never large) title.
+    /// Mac: no change; sheets keep the system look. `title` is unused there.
     @ViewBuilder
-    func barkNavigationBar() -> some View {
+    func barkNavigationBar(title: LocalizedStringKey? = nil) -> some View {
         #if os(iOS)
         navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(Color(.bark), for: .navigationBar)

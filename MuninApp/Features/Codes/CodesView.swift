@@ -4,7 +4,6 @@ struct CodesView: View {
     @Environment(AuthManager.self) private var auth
     @State private var viewModel: CodesViewModel
     @State private var isAdding = false
-    @State private var isShowingSettings = false
     @State private var pendingDeletion: VaultItem?
     /// One clock for the whole list, ticking on whole seconds.
     @State private var now = Date.now
@@ -37,11 +36,6 @@ struct CodesView: View {
                     try await viewModel.add(accounts, auth: auth)
                 }
             }
-            #if os(iOS)
-            .sheet(isPresented: $isShowingSettings) {
-                SettingsSheet()
-            }
-            #endif
             .confirmationDialog("codes.delete.title", item: $pendingDeletion, titleVisibility: .visible) { item in
                 Button(LocalizedKey("codes.delete.button", item.account.title), role: .destructive) {
                     Task { await viewModel.delete(item, auth: auth) }
@@ -113,11 +107,7 @@ struct CodesView: View {
 
     @ToolbarContentBuilder
     private var toolbarContent: some ToolbarContent {
-        #if os(iOS)
-        ToolbarItem(placement: .primaryAction) {
-            Button("settings.title", systemImage: "gearshape") { isShowingSettings = true }
-        }
-        #else
+        #if os(macOS)
         ToolbarItem(placement: .primaryAction) {
             Button("global.refresh", systemImage: "arrow.clockwise") {
                 Task { await viewModel.refresh(auth: auth) }

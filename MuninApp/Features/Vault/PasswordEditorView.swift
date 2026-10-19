@@ -55,9 +55,7 @@ struct PasswordEditorView: View {
             .formStyle(.grouped)
             .disabled(isSaving)
             .navigationTitle(LocalizedStringKey(isEditing ? "passwordEditor.editTitle" : "passwordEditor.newTitle"))
-            #if os(iOS)
-            .barkNavigationBar()
-            #endif
+            .barkNavigationBar(title: LocalizedStringKey(isEditing ? "passwordEditor.editTitle" : "passwordEditor.newTitle"))
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("global.cancel") { dismiss() }
