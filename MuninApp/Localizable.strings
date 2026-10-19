@@ -190,6 +190,7 @@
 /** Search **/
 "search.empty.message" = "Find passwords and 2FA codes by name, username or website.";
 "search.empty.title" = "Search for things";
+"search.find" = "Find";
 "search.prompt" = "Passwords and 2FA";
 "search.section.codes" = "2FA";
 "search.section.passwords" = "Passwords";

@@ -54,6 +54,11 @@ struct LockPanel: View {
 
             if auth.isSignedIn {
                 LockAccountRow(email: auth.email)
+                if step != .signIn {
+                    // Shows Sign in with Apple; the current account stays signed
+                    // in until another one signs in.
+                    LockSecondaryButton("lock.switchAccount") { go(to: .signIn) }
+                }
             }
 
             if isWorking {
@@ -75,12 +80,13 @@ struct LockPanel: View {
         .disabled(isWorking)
         .animation(.bouncy, value: step)
         .animation(.bouncy, value: isWorking)
-        .onChange(of: auth.isSignedIn) { chosenStep = nil }
+        // A new account (or signing out) starts from its default step.
+        .onChange(of: auth.userID) { chosenStep = nil }
     }
 
     private var step: LockStep {
         guard auth.isSignedIn else { return .signIn }
-        if let chosenStep, chosenStep != .signIn { return chosenStep }
+        if let chosenStep { return chosenStep }
         return session.offersBiometricUnlock ? .biometrics : .masterPassword
     }
 
@@ -88,11 +94,15 @@ struct LockPanel: View {
     private var stepView: some View {
         switch step {
         case .signIn:
-            LockSignInStep()
+            // Signed in already means "Switch account": offer a way back.
+            LockSignInStep(onCancel: auth.isSignedIn ? { go(to: nil) } : nil)
         case .biometrics:
             LockBiometricsStep(stacksButtons: stacksButtons) { go(to: .masterPassword) }
         case .masterPassword:
             LockMasterPasswordStep(
+                // Focus the field when the user chose this step, not when it's
+                // the default (so the iOS keyboard doesn't pop up at launch).
+                focusesField: chosenStep == .masterPassword,
                 onUseBiometrics: session.offersBiometricUnlock ? { go(to: .biometrics) } : nil,
                 onForgotPassword: { go(to: .recoveryKey) }
             )
@@ -109,7 +119,8 @@ struct LockPanel: View {
         step == .signIn ? auth.signInError : session.errorMessage
     }
 
-    private func go(to step: LockStep) {
+    /// `nil` goes back to the default step.
+    private func go(to step: LockStep?) {
         session.clearError()
         chosenStep = step
     }
@@ -119,6 +130,9 @@ struct LockPanel: View {
 
 /// Signed out: Sign in with Apple.
 private struct LockSignInStep: View {
+    /// Set when switching account, to go back to unlocking.
+    var onCancel: (() -> Void)?
+
     @Environment(AuthManager.self) private var auth
     @Environment(\.colorScheme) private var colorScheme
 
@@ -136,6 +150,10 @@ private struct LockSignInStep: View {
             .frame(maxWidth: .infinity)
             .frame(height: 50)
             .clipShape(.capsule)
+
+            if let onCancel {
+                LockSecondaryButton("global.cancel", action: onCancel)
+            }
         }
     }
 }
@@ -165,15 +183,19 @@ private struct LockBiometricsStep: View {
 
 /// Master password field. Offers biometrics (if available) and the recovery key.
 private struct LockMasterPasswordStep: View {
+    let focusesField: Bool
     let onUseBiometrics: (() -> Void)?
     let onForgotPassword: () -> Void
 
     @Environment(VaultSession.self) private var session
     @State private var password = ""
+    @FocusState private var isFieldFocused: Bool
 
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
             SecureField("lock.masterPassword.placeholder", text: $password)
+                .focused($isFieldFocused)
+                .task { if focusesField { isFieldFocused = true } }
                 .textFieldStyle(.roundedBorder)
                 #if os(iOS)
                 .textContentType(.password)
@@ -205,12 +227,16 @@ private struct LockRecoveryKeyStep: View {
 
     @Environment(VaultSession.self) private var session
     @State private var recoveryKey = ""
+    @FocusState private var isFieldFocused: Bool
 
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
             Text("lock.recovery.message")
                 .foregroundStyle(.secondary)
             TextField("vaultKey.missing.placeholder", text: $recoveryKey, axis: .vertical)
+                .focused($isFieldFocused)
+                // Only reachable via "Forgot master password?", so always focus.
+                .task { isFieldFocused = true }
                 .textFieldStyle(.roundedBorder)
                 .font(.body.monospaced())
                 .autocorrectionDisabled()

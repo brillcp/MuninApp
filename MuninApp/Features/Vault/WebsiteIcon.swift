@@ -22,7 +22,11 @@ struct WebsiteIcon: View {
             }
         }
         .frame(width: size, height: size)
+        #if os(iOS)
         .clipShape(.circle)
+        #else
+        .clipShape(.rect(cornerRadius: 12.0))
+        #endif
         .task(id: url) {
             let data = await WebsiteIconStore.shared.icon(for: url)
             image = data.flatMap(PlatformImage.init(data:)).map(Image.init(platformImage:))

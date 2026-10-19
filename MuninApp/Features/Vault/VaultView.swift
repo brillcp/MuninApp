@@ -9,6 +9,7 @@ struct VaultView: View {
     @State private var editing: EditDraft?
     @State private var pendingDeletion: PasswordItem?
     @State private var isPickingImportFile = false
+    @FocusState private var isSearchFocused: Bool
     @State private var importPlan: VaultViewModel.ImportPlan?
     /// Shown after an import: how many were added, or why the file couldn't be read.
     @State private var importMessage: String?
@@ -125,6 +126,8 @@ extension VaultView {
             .navigationTitle("vault.title")
             .barkToolbar(title: "vault.title")
             .searchable(text: $viewModel.searchText, prompt: "vault.search.prompt")
+            .searchFocused($isSearchFocused)
+            .focusedSceneValue(\.findAction, FindAction { isSearchFocused = true })
             .toolbar { toolbarContent }
     }
 

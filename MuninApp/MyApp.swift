@@ -22,7 +22,10 @@ import SwiftUI
             root
         }
         .defaultSize(width: 900, height: 600)
-        .commands { LockCommands(session: session) }
+        .commands {
+            LockCommands(session: session)
+            FindCommands()
+        }
 
         Settings {
             SettingsView()
@@ -43,7 +46,10 @@ import SwiftUI
         WindowGroup {
             root
         }
-        .commands { LockCommands(session: session) }
+        .commands {
+            LockCommands(session: session)
+            FindCommands()
+        }
         #endif
     }
 
