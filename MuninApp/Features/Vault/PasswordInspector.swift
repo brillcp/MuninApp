@@ -27,7 +27,7 @@ struct PasswordInspector: View {
     }
 
     var body: some View {
-        List {
+        Form {
             Section {
                 VStack(spacing: 12) {
                     WebsiteIcon(url: item.url, size: 64)
@@ -106,11 +106,9 @@ struct PasswordInspector: View {
             }
         }
         .frame(maxHeight: .infinity)
+        .formStyle(.grouped)
         #if os(macOS)
-        .listStyle(.inset)
         .scrollContentBackground(.hidden)
-        #else
-        .listStyle(.insetGrouped)
         #endif
         .sensoryFeedback(.impact(weight: .light), trigger: hapticTaps)
         #if os(iOS)

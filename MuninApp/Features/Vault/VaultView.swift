@@ -16,6 +16,11 @@ struct VaultView: View {
     @State private var importMessage: String?
     /// Bumped by toolbar buttons for a light haptic.
     @State private var hapticTaps = 0
+    /// Mac: whether the detail panel is slid in. Follows the selection, one
+    /// update later (see `columns`).
+    @State private var isDetailVisible = false
+    /// Mac: the item that was showing, kept only while the panel slides out.
+    @State private var closingItem: PasswordItem?
 
     var body: some View {
         columns
@@ -81,36 +86,52 @@ extension VaultView {
         NavigationStack {
             listColumn
                 .overlay(alignment: .trailing) {
-                    if viewModel.isShowingDetail {
-                        VaultItemDetail(viewModel: viewModel, pendingDeletion: $pendingDeletion, onEdit: startEditing)
-                            .safeAreaInset(edge: .top, spacing: 0) {
-                                HStack {
-                                    Button("global.close", systemImage: "xmark") {
-                                        hapticTaps += 1
-                                        viewModel.isShowingDetail = false
-                                    }
-                                    .labelStyle(.iconOnly)
-                                    .buttonStyle(.glass)
-                                    .buttonBorderShape(.circle)
-                                    .help("global.close")
-                                    Spacer()
+                    VaultItemDetail(item: viewModel.selectedItem ?? closingItem, viewModel: viewModel, pendingDeletion: $pendingDeletion, onEdit: startEditing)
+                        .safeAreaInset(edge: .top, spacing: 0) {
+                            HStack {
+                                Button("global.close", systemImage: "xmark") {
+                                    hapticTaps += 1
+                                    viewModel.selection = nil
                                 }
-                                .padding([.horizontal, .top], 12)
+                                .labelStyle(.iconOnly)
+                                .buttonStyle(.glass)
+                                .buttonBorderShape(.circle)
+                                .help("global.close")
+                                Spacer()
                             }
-                            .frame(width: 340)
-                            .frame(maxHeight: .infinity)
-                            .glassEffect(in: .rect(cornerRadius: 20))
-                            .padding(12)
-                            .transition(.offset(x: 48).combined(with: .opacity))
+                            .padding([.horizontal, .top], 12)
+                        }
+                        .frame(width: 340)
+                        .frame(maxHeight: .infinity)
+                        .glassEffect(in: .rect(cornerRadius: 20))
+                        .padding(12)
+                        .offset(x: isDetailVisible ? 0 : 48)
+                        .opacity(isDetailVisible ? 1 : 0)
+                        .allowsHitTesting(isDetailVisible)
+                        .accessibilityHidden(!isDetailVisible)
+                }
+                .onChange(of: viewModel.selectedItem) { oldItem, newItem in
+                    switch (oldItem, newItem) {
+                    case (nil, .some):
+                        withAnimation(.bouncy(duration: 0.25)) { isDetailVisible = true }
+                    case (.some(let oldItem), nil):
+                        closingItem = oldItem
+                        withAnimation(.bouncy(duration: 0.25)) {
+                            isDetailVisible = false
+                        } completion: {
+                            closingItem = nil
+                        }
+                    default:
+                        // Switching between passwords: no animation.
+                        break
                     }
                 }
-                .animation(.bouncy(duration: 0.25), value: viewModel.isShowingDetail)
         }
         #else
         NavigationSplitView {
             listColumn
         } detail: {
-            VaultItemDetail(viewModel: viewModel, pendingDeletion: $pendingDeletion, onEdit: startEditing)
+            VaultItemDetail(item: viewModel.selectedItem, viewModel: viewModel, pendingDeletion: $pendingDeletion, onEdit: startEditing)
         }
         #endif
     }
@@ -286,6 +307,7 @@ private struct VaultPasswordList: View {
 /// The selected password, or a placeholder. Its own view, so it only updates
 /// when the selection or that item changes.
 private struct VaultItemDetail: View {
+    let item: PasswordItem?
     let viewModel: VaultViewModel
     @Binding var pendingDeletion: PasswordItem?
     let onEdit: (PasswordItem) -> Void
@@ -296,7 +318,7 @@ private struct VaultItemDetail: View {
 
     var body: some View {
         Group {
-            if let item = viewModel.selectedItem {
+            if let item {
                 PasswordInspector(item: item) { ciphertext, field in
                     try viewModel.decrypt(ciphertext, field: field, auth: auth)
                 } onCopyPassword: {

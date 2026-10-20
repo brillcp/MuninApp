@@ -32,18 +32,7 @@ final class VaultViewModel {
         didSet { recomputeVisibleItems() }
     }
     var selection: PasswordItem.ID? {
-        didSet {
-            recomputeSelectedItem()
-            let hasSelection = selection != nil
-            if isShowingDetail != hasSelection { isShowingDetail = hasSelection }
-        }
-    }
-
-    /// Drives the Mac inspector: shown while something is selected, and
-    /// closing it deselects.
-    /// Only changes when the panel opens or closes, not when switching items.
-    var isShowingDetail = false {
-        didSet { if !isShowingDetail, selection != nil { selection = nil } }
+        didSet { recomputeSelectedItem() }
     }
 
     /// `items` filtered by `searchText` and sorted by `sortOrder`.
