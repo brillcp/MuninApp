@@ -5,24 +5,23 @@ import SwiftUI
 /// glass card at the bottom.
 struct LockView: View {
     var body: some View {
-        VStack(alignment: .leading, spacing: DesignKit.Spacing.Primitive.s16) {
-            Spacer()
-            LockPanel()
-            LockVersionLabel()
-        }
-        .padding()
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background {
-            Color.clear
-                .overlay {
-                    Image("munin")
-                        .resizable()
-                        .scaledToFill()
-                }
-                .clipped()
-                .ignoresSafeArea()
-        }
-        .colorScheme(.dark)
+        Color.clear
+            .safeAreaBar(edge: .bottom) {
+                LockPanel()
+            }
+            .padding()
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background {
+                Color.clear
+                    .overlay {
+                        Image("munin")
+                            .resizable()
+                            .scaledToFill()
+                    }
+                    .clipped()
+                    .ignoresSafeArea()
+            }
+            .colorScheme(.dark)
     }
 }
 
