@@ -27,8 +27,9 @@ extension View {
     @ViewBuilder
     func barkNavigationBar(title: LocalizedStringKey? = nil) -> some View {
         #if os(iOS)
-        navigationBarTitleDisplayMode(.large)
-            .toolbarBackground(.bark.opacity(0.8), for: .navigationBar)
+        navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(.bark.opacity(0.9), for: .navigationBar)
+            .toolbarBackgroundVisibility(.visible, for: .navigationBar)
         #else
         self
         #endif
