@@ -1,14 +1,12 @@
 {
-  "fill" : {
-    "automatic-gradient" : "extended-srgb:0.00000,0.53333,1.00000,1.00000"
-  },
+  "fill" : "automatic",
   "groups" : [
     {
+      "blur-material" : null,
       "layers" : [
         {
-          "glass" : false,
-          "image-name" : "munin-icon.png",
-          "name" : "munin-icon"
+          "image-name" : "munin-icon 2.png",
+          "name" : "munin"
         }
       ],
       "shadow" : {

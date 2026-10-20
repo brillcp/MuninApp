@@ -1,18 +1,25 @@
 import SwiftUI
 
-/// Every field of the selected password item (the vault's detail column).
-/// The password stays hidden until Show; the note is decrypted while the item is selected.
+/// Every field of the selected password item (the vault's detail).
+///
+/// The password stays encrypted until it's shown or copied; the note is
+/// decrypted while the item is selected. Tapping a row copies its value. On
+/// iOS the background and tint use the website icon's dominant colour.
 struct PasswordInspector: View {
     @Environment(\.openURL) private var openURL
 
+    /// The decrypted password while it's shown.
     @State private var revealedPassword: String?
+    /// The decrypted note while the item is shown.
     @State private var note: String?
+    /// Bumped by buttons for a light haptic.
     @State private var hapticTaps = 0
     /// The website icon's dominant colour; tints the background.
     @State private var tint: Color?
     /// The field just copied, for the short "Copied" label.
     @State private var copiedField: Field?
 
+    /// A field that can be copied.
     private enum Field { case url, username, password, note }
 
     /// The item's website; "kattmat.com" opens as https.
@@ -22,11 +29,14 @@ struct PasswordInspector: View {
         return URL(string: trimmed.contains("://") ? trimmed : "https://\(trimmed)")
     }
 
+    /// Opacity for tinted row backgrounds.
     private var rowOpacity: CGFloat = 0.05
 
+    /// The item to show.
     let item: PasswordItem
     /// Decrypts a ciphertext for the given field ("password" or "note").
     let decrypt: (_ ciphertext: String, _ field: String) throws -> String
+    /// Decrypts and copies the password.
     let onCopyPassword: () -> Void
     /// Asks for confirmation; the button sits at the bottom of the list.
     let onDelete: () -> Void
@@ -138,12 +148,14 @@ struct PasswordInspector: View {
         .tint(tint)
     }
 
+    /// An icon button that copies a field.
     private func copyButton(_ field: Field, perform: @escaping () -> Void) -> some View {
         Button("global.copy", systemImage: "square.on.square") {
             copy(field, perform: perform)
         }
     }
 
+    /// Runs the copy and shows "Copied" on that row for a moment.
     private func copy(_ field: Field, perform: () -> Void) {
         perform()
         hapticTaps += 1
@@ -161,9 +173,13 @@ struct PasswordInspector: View {
 /// trailing side. Tapping the row copies (set by the caller); the value
 /// briefly reads "Copied".
 private struct DetailRow<Value: View, Actions: View>: View {
+    /// The field's name.
     let label: LocalizedStringKey
+    /// Shows "Copied" in place of the value.
     let isCopied: Bool
+    /// The field's value.
     @ViewBuilder let value: Value
+    /// Icon buttons on the trailing side.
     @ViewBuilder let actions: Actions
 
     var body: some View {

@@ -8,19 +8,28 @@ import Playgrounds
 /// signed-in user, applies auto-lock, and drops the decrypted password list on
 /// lock and sign-out. That list outlives the main view (the Mac menu bar uses
 /// it too), so it has to be cleared explicitly.
+///
+/// Locking and unlocking cross-fade the two. A plain fade: blurring the
+/// whole window during the swap stuttered. It's a ZStack rather than a Group: a Group passes its
+/// `.animation` to each child separately, so an inserted or removed child
+/// never sees the value change and the transition doesn't run.
 struct ContentView: View {
     @Environment(AuthManager.self) private var auth
     @Environment(VaultSession.self) private var session
     @Environment(VaultViewModel.self) private var vaultModel
 
     var body: some View {
-        Group {
-            if showsLockScreen {
-                LockView()
-            } else {
-                SignedInContent()
+        ZStack {
+            Group {
+                if showsLockScreen {
+                    LockView()
+                } else {
+                    SignedInContent()
+                }
             }
+            .transition(.opacity.combined(with: .scale(1.1)))
         }
+        .animation(.smooth(duration: 0.45), value: showsLockScreen)
         .task(id: auth.userID) { await session.prepare(auth: auth) }
         .autoLock(session)
         .onChange(of: session.state) { _, state in
