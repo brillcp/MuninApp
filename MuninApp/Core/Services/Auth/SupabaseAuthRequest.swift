@@ -3,6 +3,7 @@ import Networking
 
 /// Endpoints on the Supabase Auth base URL (`/auth/v1`).
 enum SupabaseAuthEndpoint: EndpointType {
+    /// `/token`, for both the identity token and the refresh token grants.
     case token
 
     var path: String {
@@ -13,9 +14,10 @@ enum SupabaseAuthEndpoint: EndpointType {
 }
 
 /// Sign in with Apple: trades Apple's identity token for a Supabase session.
-/// `nonce` is the raw nonce; Apple received its SHA-256.
 struct AppleIDTokenRequest: Requestable {
+    /// Apple's identity token (a JWT).
     let idToken: String
+    /// The raw nonce; Apple received its SHA-256.
     let nonce: String
 
     var httpMethod: HTTP.Method { .post }
@@ -29,6 +31,7 @@ struct AppleIDTokenRequest: Requestable {
 
 /// Refresh-token exchange: trades a stored refresh token for a fresh session.
 struct RefreshTokenRequest: Requestable {
+    /// The refresh token from the current session.
     let refreshToken: String
 
     var httpMethod: HTTP.Method { .post }
@@ -42,6 +45,7 @@ struct RefreshTokenRequest: Requestable {
 
 // MARK: - Bodies
 
+/// Body of `AppleIDTokenRequest`.
 nonisolated private struct IDTokenBody: Encodable, Sendable {
     let provider: String
     let idToken: String
@@ -53,6 +57,7 @@ nonisolated private struct IDTokenBody: Encodable, Sendable {
     }
 }
 
+/// Body of `RefreshTokenRequest`.
 nonisolated private struct RefreshBody: Encodable, Sendable {
     let refreshToken: String
 
@@ -65,11 +70,16 @@ nonisolated private struct RefreshBody: Encodable, Sendable {
 
 /// Response from `/auth/v1/token` for both grant types.
 nonisolated struct SupabaseSession: Sendable, Decodable {
+    /// The JWT sent to Munin as the bearer token.
     let accessToken: String
+    /// Exchanged for a new session when the access token expires.
     let refreshToken: String
+    /// The access token's lifetime in seconds.
     let expiresIn: Int
+    /// The signed-in user.
     let user: User?
 
+    /// The Supabase user in a session response.
     struct User: Sendable, Decodable {
         let id: String
         let email: String?

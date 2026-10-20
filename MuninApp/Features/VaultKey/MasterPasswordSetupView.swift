@@ -5,7 +5,9 @@ struct MasterPasswordSetupView: View {
     @Environment(AuthManager.self) private var auth
     @Environment(VaultSession.self) private var session
 
+    /// The new master password.
     @State private var password = ""
+    /// The new master password, typed again.
     @State private var confirmation = ""
 
     var body: some View {
@@ -57,10 +59,12 @@ struct MasterPasswordSetupView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
+    /// Whether Save is enabled: long enough and typed the same twice.
     private var isValid: Bool {
         password.count >= VaultSession.minimumPasswordLength && password == confirmation
     }
 
+    /// What's wrong with the password, shown under the fields.
     private var problem: LocalizedStringKey? {
         if !password.isEmpty, password.count < VaultSession.minimumPasswordLength {
             return LocalizedKey("masterPassword.tooShort", VaultSession.minimumPasswordLength)
@@ -71,6 +75,7 @@ struct MasterPasswordSetupView: View {
         return nil
     }
 
+    /// Sets the master password, which also unlocks the vault.
     private func save() {
         guard isValid else { return }
         Task { await session.setMasterPassword(password, auth: auth) }

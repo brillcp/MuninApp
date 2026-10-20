@@ -3,13 +3,16 @@ import Foundation
 /// RFC 4648 Base32, the format authenticator secrets come in.
 /// Case-insensitive; ignores padding, spaces and dashes.
 enum Base32 {
+    /// The 32 symbols, in value order.
     private static let alphabet = Array("ABCDEFGHIJKLMNOPQRSTUVWXYZ234567")
+    /// Each symbol's 5-bit value.
     private static let lookup: [Character: UInt8] = {
         var table: [Character: UInt8] = [:]
         for (index, character) in alphabet.enumerated() { table[character] = UInt8(index) }
         return table
     }()
 
+    /// Decodes a Base32 string. Nil if it contains other characters or decodes to nothing.
     static func decode(_ string: String) -> Data? {
         var buffer: UInt32 = 0
         var bitCount = 0

@@ -3,17 +3,19 @@ import Foundation
 
 /// RFC 6238 time-based codes, calculated on device.
 extension OTPAccount {
+    /// The code valid at `date`.
     func code(at date: Date) -> String {
         let counter = UInt64(max(0, date.timeIntervalSince1970)) / UInt64(max(period, 1))
         return hotp(counter: counter)
     }
 
+    /// Seconds until the code shown at `date` changes.
     func secondsRemaining(at date: Date) -> Int {
         let period = max(self.period, 1)
         return period - Int(UInt64(max(0, date.timeIntervalSince1970)) % UInt64(period))
     }
 
-    /// RFC 4226 HOTP.
+    /// RFC 4226 HOTP: the code for one counter value, zero-padded to `digits`.
     func hotp(counter: UInt64) -> String {
         let key = SymmetricKey(data: secret)
         let message = withUnsafeBytes(of: counter.bigEndian) { Data($0) }

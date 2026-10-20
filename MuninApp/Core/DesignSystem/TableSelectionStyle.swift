@@ -1,16 +1,20 @@
 #if os(macOS)
 import AppKit
 
-/// Applies a custom color as the table row selection highlight.
+/// Applies a custom colour as the table row selection highlight.
 ///
-/// SwiftUI's `Table` ignores `.tint()` for selection on macOS, always using the
-/// system accent color. This swizzles `NSTableRowView.drawSelection(in:)` once at
-/// app launch so every table row in the app draws the custom color. Same as Oden.
+/// SwiftUI's `Table` ignores `.tint()` for selection on macOS and always uses
+/// the system accent colour. This swizzles `NSTableRowView.drawSelection(in:)`
+/// once at app launch, so every table row in the app draws the custom colour.
 @MainActor
 enum TableSelectionStyle {
+    /// Whether the method has already been swapped. Swapping twice would undo it.
     private static var applied = false
+    /// The colour selected rows are filled with (at 40% opacity).
     private(set) static var selectionColor = NSColor(resource: .wood)
 
+    /// Makes every table row draw its selection with `color`. Call once at
+    /// launch; later calls only update the colour.
     static func apply(color: NSColor) {
         selectionColor = color
         guard !applied else { return }
@@ -24,6 +28,10 @@ enum TableSelectionStyle {
 }
 
 private extension NSTableRowView {
+    /// Replacement for `drawSelection(in:)`, installed by `TableSelectionStyle`.
+    ///
+    /// Fills the row with the selection colour while the table is focused,
+    /// and with a neutral grey while it isn't.
     @objc func muninDrawSelection(in dirtyRect: NSRect) {
         guard isSelected else { return }
 

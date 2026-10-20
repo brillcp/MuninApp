@@ -4,7 +4,9 @@ import Foundation
 /// End-to-end encryption for vault entries: AES-256-GCM with a key that only
 /// exists on the user's devices. Munin stores the output and can't read it.
 enum VaultCrypto {
+    /// Errors from sealing or opening.
     enum CryptoError: Error {
+        /// The ciphertext isn't valid base64, or sealing produced no output.
         case invalidCiphertext
     }
 
@@ -14,6 +16,7 @@ enum VaultCrypto {
         Data("munin.vault.v1:\(userID.lowercased())".utf8)
     }
 
+    /// Encrypts a 2FA account (as JSON) for storage on Munin. Returns the sealed box, base64.
     static func seal(_ account: OTPAccount, key: SymmetricKey, userID: String) throws -> String {
         let plaintext = try JSONEncoder().encode(account)
         let box = try AES.GCM.seal(plaintext, using: key, authenticating: associatedData(userID: userID))
@@ -29,12 +32,15 @@ enum VaultCrypto {
         Data("munin.password.v1:\(userID.lowercased()):\(field)".utf8)
     }
 
+    /// Encrypts one password field (`name`, `url`, `username`, `password` or
+    /// `note`). Returns the sealed box, base64.
     static func seal(_ value: String, field: String, key: SymmetricKey, userID: String) throws -> String {
         let box = try AES.GCM.seal(Data(value.utf8), using: key, authenticating: passwordAssociatedData(field: field, userID: userID))
         guard let combined = box.combined else { throw CryptoError.invalidCiphertext }
         return combined.base64EncodedString()
     }
 
+    /// Decrypts one password field. Throws if the key, user or field doesn't match.
     static func open(_ ciphertext: String, field: String, key: SymmetricKey, userID: String) throws -> String {
         guard let data = Data(base64Encoded: ciphertext) else { throw CryptoError.invalidCiphertext }
         let box = try AES.GCM.SealedBox(combined: data)
@@ -44,6 +50,7 @@ enum VaultCrypto {
 
     // MARK: - Code entries
 
+    /// Decrypts a 2FA account. Throws if the key or user doesn't match.
     static func open(_ ciphertext: String, key: SymmetricKey, userID: String) throws -> OTPAccount {
         guard let data = Data(base64Encoded: ciphertext) else { throw CryptoError.invalidCiphertext }
         let box = try AES.GCM.SealedBox(combined: data)

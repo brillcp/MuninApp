@@ -2,16 +2,25 @@ import Foundation
 
 /// Random passwords from the system's cryptographically secure generator.
 struct PasswordGenerator {
+    /// Characters per password.
     var length = 20
+    /// Include A–Z.
     var useCapitals = true
+    /// Include 0–9.
     var useDigits = true
+    /// Include symbols.
     var useSymbols = true
 
+    /// Always included.
     static let lowercase = Array("abcdefghijklmnopqrstuvwxyz")
+    /// Included when `useCapitals` is on.
     static let capitals = Array("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+    /// Included when `useDigits` is on.
     static let digits = Array("0123456789")
+    /// Included when `useSymbols` is on.
     static let symbols = Array("@!$%&*")
 
+    /// The enabled character sets.
     private var sets: [[Character]] {
         var sets = [Self.lowercase]
         if useCapitals { sets.append(Self.capitals) }
@@ -20,7 +29,7 @@ struct PasswordGenerator {
         return sets
     }
 
-    /// Includes at least one character from every enabled set.
+    /// A new random password, with at least one character from every enabled set.
     func generate() -> String {
         var rng = SystemRandomNumberGenerator()
         let sets = sets

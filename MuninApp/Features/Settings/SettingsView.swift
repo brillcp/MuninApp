@@ -5,8 +5,11 @@ struct SettingsView: View {
     @Environment(AuthManager.self) private var auth
     @Environment(VaultSession.self) private var session
 
+    /// Shows the Change Master Password sheet.
     @State private var isChangingPassword = false
+    /// The recovery key to show in a sheet.
     @State private var recoveryKey: RecoveryKeyItem?
+    /// Bumped by buttons for a light haptic.
     @State private var hapticTaps = 0
 
     var body: some View {
@@ -82,10 +85,11 @@ struct SettingsView: View {
 
 /// The signed-in account: a centred accent circle with initials, and the email.
 private struct AccountHeader: View {
+    /// The signed-in email.
     let email: String?
 
     /// Sign in with Apple only gives Munin the email, so the initials come from
-    /// its first part: "viktor.gidlof@…" → "VG", "viktor@…" → "V".
+    /// its first part: "jane.doe@…" → "JD", "jane@…" → "J".
     private var initials: String {
         guard let local = email?.split(separator: "@").first else { return "?" }
         let parts = local.split(whereSeparator: { ".-_+".contains($0) })
@@ -110,7 +114,9 @@ private struct AccountHeader: View {
     }
 }
 
+/// A recovery key, presented as a sheet item.
 private struct RecoveryKeyItem: Identifiable {
+    /// The recovery key, formatted for the user to write down.
     let key: String
     var id: String { key }
 }

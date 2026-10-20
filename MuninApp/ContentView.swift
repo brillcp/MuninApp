@@ -1,6 +1,13 @@
 import SwiftUI
 import Playgrounds
 
+/// The app's root view: the lock screen, or the signed-in content.
+///
+/// One lock screen covers everything from sign-in through unlock, so its card
+/// can animate between the steps. The view also starts the session for the
+/// signed-in user, applies auto-lock, and drops the decrypted password list on
+/// lock and sign-out. That list outlives the main view (the Mac menu bar uses
+/// it too), so it has to be cleared explicitly.
 struct ContentView: View {
     @Environment(AuthManager.self) private var auth
     @Environment(VaultSession.self) private var session
@@ -9,8 +16,6 @@ struct ContentView: View {
     var body: some View {
         Group {
             if showsLockScreen {
-                // One lock screen from sign-in through unlock, so its card can
-                // animate between the steps.
                 LockView()
             } else {
                 SignedInContent()
@@ -18,19 +23,21 @@ struct ContentView: View {
         }
         .task(id: auth.userID) { await session.prepare(auth: auth) }
         .autoLock(session)
-        // The password list outlives the main view (the menu bar uses it), so
-        // drop it explicitly on lock and sign out.
         .onChange(of: session.state) { _, state in
             if state != .unlocked { vaultModel.clear() }
         }
     }
 
+    /// True while signed out, locked, or still checking the vault's state.
     private var showsLockScreen: Bool {
         !auth.isSignedIn || session.state == .locked || session.state == .checking
     }
 }
 
 /// What a signed-in user sees, depending on the vault's state.
+///
+/// The locked and checking states render nothing here, because `ContentView`
+/// shows its lock screen for them instead.
 private struct SignedInContent: View {
     @Environment(AuthManager.self) private var auth
     @Environment(VaultSession.self) private var session
@@ -44,7 +51,6 @@ private struct SignedInContent: View {
                     RecoveryKeyView(recoveryKey: item.key)
                 }
         case .locked, .checking:
-            // Shown by ContentView's lock screen instead.
             EmptyView()
         case .needsMasterPassword:
             MasterPasswordSetupView()

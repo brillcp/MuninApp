@@ -2,19 +2,29 @@ import AuthenticationServices
 import Foundation
 import Observation
 
-/// Sign in with Apple → Supabase session. Views observe `isSignedIn`.
+/// Sign in with Apple, exchanged for a Supabase session. Views observe `isSignedIn`.
+///
+/// The user's ID and email are kept in the Keychain; the session tokens are
+/// held by `SupabaseTokenProvider`.
 @Observable
 final class AuthManager {
+    /// Whether a Supabase session exists.
     private(set) var isSignedIn: Bool
+    /// The signed-in user's email, as given by Sign in with Apple.
     private(set) var email: String?
-    /// Supabase user ID; Munin scopes the user's accounts to it.
+    /// Supabase user ID; Munin scopes the user's data to it.
     private(set) var userID: String?
+    /// True while the Apple identity token is being exchanged with Supabase.
     private(set) var isSigningIn = false
+    /// The last sign-in error, shown on the sign-in step.
     private(set) var signInError: String?
 
+    /// Supplies and refreshes the Supabase JWT for requests to Munin.
     let tokenProvider: SupabaseTokenProvider
+    /// The raw nonce of the sign-in in progress, sent to Supabase with the identity token.
     private var currentNonce: String?
 
+    /// Restores the signed-in state, email and user ID from the previous launch.
     init(tokenProvider: SupabaseTokenProvider = .shared) {
         self.tokenProvider = tokenProvider
         isSignedIn = tokenProvider.hasSession
@@ -47,6 +57,8 @@ final class AuthManager {
         signInError = nil
     }
 
+    /// Finishes Sign in with Apple: exchanges the identity token for a
+    /// Supabase session and stores the user. Cancelling is not an error.
     func complete(_ result: Result<ASAuthorization, any Error>) async {
         switch result {
         case .failure(let error):
@@ -79,12 +91,14 @@ final class AuthManager {
         }
     }
 
+    /// Deletes the session tokens and the stored user.
     func signOut() {
         tokenProvider.reset()
         setUser(id: nil, email: nil)
         isSignedIn = false
     }
 
+    /// Stores the user's ID and email in memory and in the Keychain (nil deletes them).
     private func setUser(id: String?, email: String?) {
         userID = id
         self.email = email

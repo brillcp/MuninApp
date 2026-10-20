@@ -16,8 +16,10 @@ import AppKit
 /// Nothing touches disk: an ephemeral session with no URL cache or cookies,
 /// and results live in this actor until the vault locks (`clear()`).
 actor WebsiteIconStore {
+    /// The app-wide store.
     static let shared = WebsiteIconStore()
 
+    /// A session that stores nothing: no URL cache, no cookies.
     private let session: URLSession = {
         let configuration = URLSessionConfiguration.ephemeral
         configuration.urlCache = nil
@@ -30,6 +32,7 @@ actor WebsiteIconStore {
 
     /// Image data per host; `nil` once a host is known to have no icon.
     private var icons: [String: Data?] = [:]
+    /// Fetches in progress per host, so concurrent callers share one fetch.
     private var inFlight: [String: Task<Data?, Never>] = [:]
     /// The icon's dominant colour per host; `nil` when there's no icon.
     private var colors: [String: Color?] = [:]
@@ -57,7 +60,7 @@ actor WebsiteIconStore {
         return color
     }
 
-    /// Called on lock and sign out.
+    /// Cancels fetches and drops every cached icon and colour. Called on lock and sign out.
     func clear() {
         inFlight.values.forEach { $0.cancel() }
         inFlight = [:]
@@ -105,6 +108,7 @@ actor WebsiteIconStore {
 
     // MARK: - Fetching
 
+    /// Tries each icon candidate for `host` in order and returns the first image found.
     private func fetchIcon(host: String) async -> Data? {
         guard let page = URL(string: "https://\(host)/") else { return nil }
 
@@ -121,6 +125,8 @@ actor WebsiteIconStore {
         return nil
     }
 
+    /// Fetches a page's HTML (its first 256 KB) and the URL it ended up at
+    /// after redirects, for resolving relative icon links.
     private func fetchHTML(_ url: URL) async -> (String, URL)? {
         guard let (data, response) = try? await session.data(from: url),
               let http = response as? HTTPURLResponse, (200..<300).contains(http.statusCode) else { return nil }
@@ -130,6 +136,7 @@ actor WebsiteIconStore {
         return (html, http.url ?? url)
     }
 
+    /// Fetches `url` and returns its data if it's a decodable image under 2 MB.
     private func fetchImage(_ url: URL) async -> Data? {
         guard let (data, response) = try? await session.data(from: url),
               let http = response as? HTTPURLResponse, (200..<300).contains(http.statusCode),
@@ -159,6 +166,7 @@ actor WebsiteIconStore {
         return touchIcons + icons
     }
 
+    /// The value of the attribute `name` in an HTML tag, quoted or not.
     private static func attribute(_ name: String, in tag: String) -> String? {
         guard let regex = try? Regex(#"\b\#(name)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))"#).ignoresCase(),
               let match = tag.firstMatch(of: regex) else { return nil }
@@ -168,6 +176,7 @@ actor WebsiteIconStore {
         return nil
     }
 
+    /// The lowercased host of a URL typed with or without a scheme, used as the cache key.
     static func host(from urlString: String) -> String? {
         let trimmed = urlString.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return nil }

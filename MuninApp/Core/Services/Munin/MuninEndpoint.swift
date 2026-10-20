@@ -3,11 +3,17 @@ import Networking
 
 /// Endpoints on Munin's `/v1` base URL.
 enum MuninEndpoint: EndpointType {
+    /// `/entries`: the 2FA accounts.
     case entries
+    /// `/entries/{id}`: one 2FA account.
     case entry(UUID)
+    /// `/passwords`: the password items.
     case passwords
+    /// `/passwords/{id}`: one password item.
     case password(UUID)
+    /// `/passwords/{id}/touch`: bumps an item's last updated time.
     case passwordTouch(UUID)
+    /// `/vault-key`: the wrapped vault key.
     case vaultKey
 
     var path: String {

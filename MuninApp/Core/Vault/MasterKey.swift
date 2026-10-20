@@ -5,14 +5,19 @@ import Foundation
 /// How the master password is turned into a key. Stored as JSON next to the
 /// wrapped vault key on Munin, so another device can derive the same key.
 nonisolated struct KDFParameters: Codable, Sendable {
+    /// The only supported algorithm: PBKDF2-HMAC-SHA256.
     static let pbkdf2SHA256 = "pbkdf2-sha256"
+    /// PBKDF2 rounds for new master passwords.
     static let defaultIterations = 600_000
 
+    /// The KDF's name, `pbkdf2-sha256`.
     let algorithm: String
+    /// PBKDF2 rounds.
     let iterations: Int
     /// 16 random bytes, base64.
     let salt: String
 
+    /// Parameters for a new master password: the default rounds and a fresh random salt.
     static func new() -> KDFParameters {
         let salt = SymmetricKey(size: .bits128).withUnsafeBytes { Data($0) }
         return KDFParameters(algorithm: pbkdf2SHA256, iterations: defaultIterations, salt: salt.base64EncodedString())
@@ -33,18 +38,28 @@ nonisolated struct DerivedKeys: Sendable {
 /// Master password → PBKDF2-HMAC-SHA256 → HKDF → wrapping key + proof.
 /// Recovery key (the vault key itself, as before) → HKDF → wrapping key + proof.
 nonisolated enum MasterKey {
+    /// Which secret a key was derived from. Part of the HKDF info and the
+    /// wrapped key's associated data, so the two never mix.
     enum Purpose: String {
         case password
         case recovery
     }
 
+    /// Errors from deriving keys or unwrapping the vault key.
     enum MasterKeyError: Error {
+        /// The stored KDF parameters name an unknown algorithm or are malformed.
         case unsupportedKDF
+        /// PBKDF2 itself failed.
         case derivationFailed
+        /// The wrapped key isn't valid base64, AES-GCM, or 32 bytes.
         case invalidWrappedKey
     }
 
-    /// Slow on purpose (~0.5 s). Call off the main actor.
+    /// Derives the wrapping key and proof from the master password.
+    ///
+    /// The password is Unicode-normalised first, so it derives the same key
+    /// on every device. Slow on purpose (about half a second); call it off the
+    /// main actor.
     static func derive(password: String, parameters: KDFParameters) throws -> DerivedKeys {
         guard parameters.algorithm == KDFParameters.pbkdf2SHA256,
               parameters.iterations > 0,
@@ -74,6 +89,8 @@ nonisolated enum MasterKey {
         return split(SymmetricKey(data: derived), purpose: .password)
     }
 
+    /// Derives the wrapping key and proof from the recovery key. Fast: the
+    /// recovery key is already random, so no PBKDF2 is needed.
     static func derive(recoveryKey: SymmetricKey) -> DerivedKeys {
         split(recoveryKey, purpose: .recovery)
     }
@@ -98,11 +115,14 @@ nonisolated enum MasterKey {
 
     // MARK: - Wrapping the vault key
 
+    /// The AES-GCM associated data for a wrapped vault key.
+    ///
     /// Bound to the user and to which key wrapped it, so the two copies can't be swapped.
     private static func associatedData(userID: String, purpose: Purpose) -> Data {
         Data("munin.vaultkey.v1:\(userID.lowercased()):\(purpose.rawValue)".utf8)
     }
 
+    /// Encrypts the vault key with a wrapping key (AES-GCM). Returns the sealed box, base64.
     static func wrap(_ vaultKey: SymmetricKey, with wrappingKey: SymmetricKey, userID: String, purpose: Purpose) throws -> String {
         let plaintext = vaultKey.withUnsafeBytes { Data($0) }
         let box = try AES.GCM.seal(plaintext, using: wrappingKey, authenticating: associatedData(userID: userID, purpose: purpose))
@@ -110,6 +130,8 @@ nonisolated enum MasterKey {
         return combined.base64EncodedString()
     }
 
+    /// Decrypts a wrapped vault key.
+    ///
     /// Throws if the wrapping key is wrong (wrong master password or recovery key).
     static func unwrap(_ wrapped: String, with wrappingKey: SymmetricKey, userID: String, purpose: Purpose) throws -> SymmetricKey {
         guard let data = Data(base64Encoded: wrapped) else { throw MasterKeyError.invalidWrappedKey }
@@ -122,7 +144,9 @@ nonisolated enum MasterKey {
 
 /// The vault while it's unlocked: in memory only, cleared on lock and sign out.
 nonisolated struct UnlockedVault: Sendable {
+    /// The vault owner's user ID.
     let userID: String
+    /// The vault key, which encrypts every entry and password field.
     let key: SymmetricKey
     /// The master password proof, sent with deletes and edits.
     let proof: String

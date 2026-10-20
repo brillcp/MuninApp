@@ -7,9 +7,13 @@ import Observation
 /// views from the decrypted accounts.
 @Observable
 final class CodesViewModel {
+    /// The decrypted accounts.
     private(set) var items: [VaultItem] = []
+    /// The last load or delete error.
     private(set) var errorMessage: String?
+    /// True while loading.
     private(set) var isLoading = false
+    /// True once the first load has finished, successfully or not.
     private(set) var hasLoaded = false
     /// Entries that didn't decrypt with this device's key.
     private(set) var undecryptableCount = 0
@@ -17,10 +21,12 @@ final class CodesViewModel {
     /// Read at use time, so a changed master password (new proof) and a lock are picked up.
     private let session: VaultSession
 
+    /// Creates a view model that reads the vault key from `session`.
     init(session: VaultSession) {
         self.session = session
     }
 
+    /// The unlocked vault, or `VaultError.keyMissing` while locked.
     private func unlockedVault() throws -> UnlockedVault {
         guard let vault = session.vault else { throw VaultError.keyMissing }
         return vault
@@ -28,6 +34,8 @@ final class CodesViewModel {
 
     // MARK: - Loading
 
+    /// Loads the entries from Munin and decrypts them. Signs out if Munin
+    /// rejects the token.
     func refresh(auth: AuthManager) async {
         guard auth.isSignedIn else {
             reset()
@@ -55,6 +63,7 @@ final class CodesViewModel {
         }
     }
 
+    /// Decrypts the entries into `items`, counting the ones that fail.
     private func decrypt(_ entries: [EncryptedEntry], key: SymmetricKey, userID: String) {
         var decrypted: [VaultItem] = []
         var failures = 0
@@ -88,6 +97,7 @@ final class CodesViewModel {
         return added
     }
 
+    /// Deletes an entry on Munin (with the master password proof) and removes it from the list.
     func delete(_ item: VaultItem, auth: AuthManager) async {
         do {
             let vault = try unlockedVault()
@@ -98,6 +108,7 @@ final class CodesViewModel {
         }
     }
 
+    /// Forgets everything loaded.
     private func reset() {
         items = []
         errorMessage = nil
@@ -106,8 +117,11 @@ final class CodesViewModel {
     }
 }
 
+/// Errors from vault operations that need a signed-in user and an unlocked key.
 enum VaultError: LocalizedError {
+    /// No user is signed in.
     case notSignedIn
+    /// The vault is locked, so there's no key.
     case keyMissing
 
     var errorDescription: String? {

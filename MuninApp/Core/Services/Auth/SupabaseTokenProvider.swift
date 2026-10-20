@@ -4,14 +4,18 @@ import Networking
 /// Holds the Supabase session from Sign in with Apple and supplies its JWT as
 /// the bearer token for Munin.
 ///
-/// JWTs are short-lived (~1h). Callers `await ensureFresh()` before a request;
-/// a missing, expired or nearly expired JWT is exchanged for a new pair using
-/// the stored refresh token. Tokens persist in the Keychain.
+/// JWTs are short-lived (about an hour). Callers `await ensureFresh()` before
+/// a request; a missing, expired or nearly expired JWT is exchanged for a new
+/// pair using the stored refresh token. Tokens persist in the Keychain.
 final class SupabaseTokenProvider: TokenProvidable {
+    /// The app-wide instance.
     static let shared = SupabaseTokenProvider()
 
+    /// The current access token (JWT).
     private var cachedToken: String?
+    /// The current refresh token.
     private var cachedRefreshToken: String?
+    /// When the access token expires.
     private var cachedExpiresAt: Date?
 
     /// Refresh slightly before actual expiry so an in-flight request doesn't
@@ -22,8 +26,10 @@ final class SupabaseTokenProvider: TokenProvidable {
     /// refresh token on every exchange, so two parallel refreshes would race.
     private var inflightRefresh: Task<Void, Error>?
 
+    /// Talks to Supabase Auth.
     private let authService: Network.Service
 
+    /// Restores the session saved by the previous launch.
     init() {
         cachedToken = KeychainService.loadSupabaseToken()
         cachedRefreshToken = KeychainService.loadSupabaseRefreshToken()
@@ -39,15 +45,18 @@ final class SupabaseTokenProvider: TokenProvidable {
 }
 
 extension SupabaseTokenProvider {
+    /// The current access token, or `.missing` when signed out.
     var token: Result<String, TokenProvidableError> {
         guard let cachedToken else { return .failure(.missing) }
         return .success(cachedToken)
     }
 
+    /// Replaces the cached access token (`TokenProvidable` requirement).
     func setToken(_ token: String) {
         cachedToken = token
     }
 
+    /// Forgets the session: clears the cached tokens and deletes them from the Keychain.
     func reset() {
         cachedToken = nil
         cachedRefreshToken = nil
@@ -57,10 +66,12 @@ extension SupabaseTokenProvider {
         KeychainService.deleteSupabaseRefreshToken()
     }
 
+    /// Whether a refresh token is stored, so a session can be resumed.
     var hasSession: Bool { cachedRefreshToken != nil }
 
     // MARK: - Session
 
+    /// Exchanges Apple's identity token for a Supabase session and stores it.
     func signInWithApple(idToken: String, nonce: String) async throws -> SupabaseSession {
         let session: SupabaseSession = try await authService.request(
             AppleIDTokenRequest(idToken: idToken, nonce: nonce)
@@ -82,8 +93,10 @@ extension SupabaseTokenProvider {
 }
 
 private extension SupabaseTokenProvider {
+    /// UserDefaults key for the access token's expiry date (not a secret).
     static let expiryKey = "supabase.token.expires_at"
 
+    /// Caches a new session and saves its tokens to the Keychain.
     func setSession(_ session: SupabaseSession) {
         cachedToken = session.accessToken
         cachedRefreshToken = session.refreshToken
@@ -107,6 +120,10 @@ private extension SupabaseTokenProvider {
         try await task.value
     }
 
+    /// Exchanges the refresh token for a new session.
+    ///
+    /// If Supabase rejects the refresh token, the session is reset and
+    /// `TokenProvidableError.missing` is thrown, which signs the user out.
     func refreshTokenIfPossible() async throws {
         guard let refreshToken = cachedRefreshToken else {
             throw TokenProvidableError.missing

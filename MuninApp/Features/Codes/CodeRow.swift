@@ -5,13 +5,17 @@ import UIKit
 import AppKit
 #endif
 
+/// One 2FA account in the iOS list: name, current code and countdown. Tap to copy the code.
 struct CodeRow: View {
+    /// The account whose code is shown.
     let account: OTPAccount
     /// Passed in (not from the environment): the Mac table's cells don't get
     /// the environment. Reading `clock.now` here still makes each row update itself.
     let clock: CodeClock
+    /// The current time, read from the clock so the row redraws every second.
     private var now: Date { clock.now }
 
+    /// Briefly true after copying, to show "Copied" instead of the code.
     @State private var didCopy = false
 
     var body: some View {
@@ -33,6 +37,7 @@ struct CodeRow: View {
         .accessibilityHint("codes.row.copyHint")
     }
 
+    /// Copies the current code and shows "Copied" for a moment.
     private func copy() {
         Self.copyCode(of: account)
         didCopy = true
@@ -42,6 +47,7 @@ struct CodeRow: View {
         }
     }
 
+    /// Copies the account's current code to the clipboard.
     static func copyCode(of account: OTPAccount) {
         #if os(iOS)
         UIPasteboard.general.string = account.code(at: .now)
@@ -51,7 +57,7 @@ struct CodeRow: View {
         #endif
     }
 
-    /// "123456" → "123 456", "12345678" → "1234 5678".
+    /// Splits a code in two halves for reading: "123456" → "123 456", "12345678" → "1234 5678".
     static func formatted(_ code: String) -> String {
         guard code.count > 4 else { return code }
         let middle = code.index(code.startIndex, offsetBy: code.count / 2)
@@ -61,7 +67,9 @@ struct CodeRow: View {
 
 /// Issuer and account name. Never changes while the row is on screen.
 struct AccountLabel: View, Equatable {
+    /// The issuer, or the account name when there's no issuer.
     let title: String
+    /// The account name, when the title is the issuer.
     let subtitle: String?
 
     var body: some View {
@@ -80,10 +88,14 @@ struct AccountLabel: View, Equatable {
 
 /// The code and countdown for the Mac table's Code column. Click to copy.
 struct CodeCell: View {
+    /// The account whose code is shown.
     let account: OTPAccount
+    /// The screen's clock, passed in because table cells don't get the environment.
     let clock: CodeClock
+    /// The current time, read from the clock so the cell redraws every second.
     private var now: Date { clock.now }
 
+    /// Briefly true after copying, to show "Copied" instead of the code.
     @State private var didCopy = false
 
     var body: some View {
@@ -110,7 +122,9 @@ struct CodeCell: View {
 
 /// The code. Only redraws when the code rotates or is copied.
 private struct CodeText: View, Equatable {
+    /// The current code.
     let code: String
+    /// Shows "Copied" instead of the code.
     let didCopy: Bool
 
     var body: some View {
@@ -123,8 +137,12 @@ private struct CodeText: View, Equatable {
 }
 
 /// The countdown. The only part of a row that redraws every second.
+///
+/// Turns red for the last five seconds.
 private struct CountdownGauge: View, Equatable {
+    /// Seconds until the code changes.
     let remaining: Int
+    /// The code's full period in seconds.
     let period: Int
 
     var body: some View {

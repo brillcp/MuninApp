@@ -3,12 +3,13 @@ import SwiftUI
 
 // MARK: - Localization
 
-/// Looks up `key` in Localizable.strings and substitutes any `args` into its stored format placeholders.
-/// Falls back to `key` itself if missing.
+/// Looks up `key` in Localizable.strings and substitutes any `args` into its
+/// format placeholders. Falls back to `key` itself if it's missing.
 nonisolated func Localized(_ key: String, _ args: CVarArg...) -> String {
     formattedLocalizedString(key, args)
 }
 
+/// Like `Localized(_:_:)`, but returns a `LocalizedStringKey` for SwiftUI views.
 nonisolated func LocalizedKey(_ key: String, _ args: CVarArg...) -> LocalizedStringKey {
     LocalizedStringKey(formattedLocalizedString(key, args))
 }

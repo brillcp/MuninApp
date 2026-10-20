@@ -2,23 +2,30 @@
 import AppKit
 import SwiftUI
 
-/// The Munin window in the Mac menu bar: the password list. Each row has
-/// Copy Username and Copy Password (the password clears from the clipboard
-/// after a minute, as in the app).
+/// The Munin window in the Mac menu bar: a searchable list of passwords.
+///
+/// Each row has Copy Username and Copy Password buttons. A copied password is
+/// cleared from the clipboard after a minute, the same as in the main window.
+/// While the vault is locked, the window only shows a locked state.
 struct MenuBarContent: View {
     @Environment(AuthManager.self) private var auth
     @Environment(VaultSession.self) private var session
     @Environment(VaultViewModel.self) private var vaultModel
     @Environment(\.openWindow) private var openWindow
 
+    /// The search field's text.
     @State private var query = ""
-    /// Sorted and filtered once per change of query or data.
+    /// The items to show: sorted and filtered once per change of query or
+    /// data, rather than on every render.
     @State private var filteredItems: [PasswordItem] = []
     /// The row and field just copied, for the short "Copied" label.
     @State private var copied: CopiedField?
 
+    /// Identifies one copied field in one row.
     private struct CopiedField: Equatable {
+        /// The row's item.
         let id: PasswordItem.ID
+        /// Which of the row's fields was copied.
         let field: MenuBarPasswordRow.Field
     }
 
@@ -47,6 +54,8 @@ struct MenuBarContent: View {
         }
     }
 
+    /// The filtered passwords, with a spinner while loading and an empty
+    /// state when nothing matches.
     private var passwordList: some View {
         List(filteredItems) { item in
             MenuBarPasswordRow(
@@ -66,6 +75,7 @@ struct MenuBarContent: View {
         }
     }
 
+    /// Open (brings up the main window), Lock (while unlocked) and Quit.
     private var footer: some View {
         HStack {
             Button("menuBar.open") {
@@ -86,6 +96,8 @@ struct MenuBarContent: View {
         .padding(DesignKit.Spacing.Primitive.s12)
     }
 
+    /// Sorts the vault's items by name and filters them by the query
+    /// (name, username or URL), storing the result in `filteredItems`.
     private func updateFilteredItems() {
         let sorted = vaultModel.items.sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
         let trimmed = query.trimmingCharacters(in: .whitespaces)
@@ -100,16 +112,21 @@ struct MenuBarContent: View {
         }
     }
 
+    /// Copies the item's username and shows "Copied" on its row.
     private func copyUsername(_ item: PasswordItem) {
         Pasteboard.copy(item.username)
         showCopied(CopiedField(id: item.id, field: .username))
     }
 
+    /// Decrypts and copies the item's password (cleared from the clipboard
+    /// after a minute) and shows "Copied" on its row.
     private func copyPassword(_ item: PasswordItem) {
         Task { await vaultModel.copyPassword(item, auth: auth) }
         showCopied(CopiedField(id: item.id, field: .password))
     }
 
+    /// Shows the "Copied" label for `field`, then hides it after a moment
+    /// unless something else was copied in the meantime.
     private func showCopied(_ field: CopiedField) {
         copied = field
         Task {
@@ -121,12 +138,16 @@ struct MenuBarContent: View {
 
 /// One password in the menu bar list: icon, name, username, and two copy buttons.
 private struct MenuBarPasswordRow: View {
+    /// A field that can be copied from the row.
     enum Field { case username, password }
 
+    /// The password item shown in the row.
     let item: PasswordItem
     /// Which field was just copied from this row, if any.
     let copiedField: Field?
+    /// Called by the Copy Username button.
     let onCopyUsername: () -> Void
+    /// Called by the Copy Password button.
     let onCopyPassword: () -> Void
 
     var body: some View {

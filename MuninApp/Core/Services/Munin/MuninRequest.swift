@@ -1,6 +1,7 @@
 import Foundation
 import Networking
 
+/// Every request the app makes to Munin.
 enum MuninRequest: Requestable {
     /// The signed-in user's encrypted entries.
     case entries
@@ -69,7 +70,9 @@ enum MuninRequest: Requestable {
 
 // MARK: - Bodies & response models
 
+/// `POST /v1/entries`: one encrypted 2FA account.
 nonisolated struct CreateEntryBody: Encodable, Sendable {
+    /// The account, encrypted with the vault key.
     let ciphertext: String
 }
 
@@ -78,7 +81,7 @@ nonisolated struct EntriesResponse: Sendable, Decodable {
     let entries: [EncryptedEntry]
 }
 
-/// An entry as Munin stores it: an id and ciphertext only it can't read.
+/// An entry as Munin stores it: an id, and ciphertext Munin can't read.
 nonisolated struct EncryptedEntry: Sendable, Decodable {
     let id: UUID
     let ciphertext: String
@@ -86,7 +89,7 @@ nonisolated struct EncryptedEntry: Sendable, Decodable {
 
 // MARK: - Passwords
 
-/// POST /v1/passwords. Every field is ciphertext.
+/// `POST /v1/passwords` and `PUT /v1/passwords/{id}`. Every field is ciphertext.
 nonisolated struct PasswordFieldsBody: Encodable, Sendable {
     let name: String
     let url: String
@@ -122,12 +125,17 @@ nonisolated struct VaultKeyRecord: Sendable, Decodable {
     let kdf: String
 }
 
-/// POST / PUT /v1/vault-key.
+/// `POST` and `PUT /v1/vault-key`.
 nonisolated struct VaultKeyRequestBody: Encodable, Sendable {
+    /// The vault key wrapped with the master password's key.
     let passwordWrappedKey: String
+    /// The vault key wrapped with the recovery key's key.
     let recoveryWrappedKey: String
+    /// `KDFParameters` as JSON.
     let kdf: String
+    /// Proof of the new master password; Munin stores a hash of it.
     let passwordProof: String
+    /// Proof of the recovery key; Munin stores a hash of it.
     let recoveryProof: String
     /// PUT only: proof from the current master password or the recovery key.
     let currentProof: String?

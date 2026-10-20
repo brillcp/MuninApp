@@ -2,43 +2,60 @@ import CryptoKit
 import Foundation
 import Observation
 
+/// The user's password items: loads and decrypts them, and creates, edits,
+/// deletes, copies and imports them.
+///
+/// Name, URL and username are decrypted on load, for the list and search.
+/// Password and note stay encrypted in memory until they're needed. Shared by
+/// the main window and the Mac menu bar.
 @Observable
 final class VaultViewModel {
     /// Read at use time, so a changed master password (new proof) and a lock are picked up.
     private let session: VaultSession
 
+    /// Creates a view model that reads the vault key from `session`.
     init(session: VaultSession) {
         self.session = session
     }
 
+    /// The unlocked vault, or `VaultError.keyMissing` while locked.
     private func unlockedVault() throws -> UnlockedVault {
         guard let vault = session.vault else { throw VaultError.keyMissing }
         return vault
     }
 
+    /// Every password item, decrypted as far as the list needs.
     private(set) var items: [PasswordItem] = [] {
         didSet {
             recomputeVisibleItems()
             recomputeSelectedItem()
         }
     }
+    /// The last error, or how many items couldn't be decrypted.
     private(set) var errorMessage: String?
+    /// True once the first load has finished, successfully or not.
     private(set) var hasLoaded = false
 
+    /// The Mac search field's text; filters `visibleItems` by name and username.
     var searchText = "" {
         didSet { recomputeVisibleItems() }
     }
+    /// The table's sort order. Newest first by default.
     var sortOrder = [KeyPathComparator(\PasswordItem.lastUpdated, order: .reverse)] {
         didSet { recomputeVisibleItems() }
     }
+    /// The selected item's id.
     var selection: PasswordItem.ID? {
         didSet { recomputeSelectedItem() }
     }
 
     /// `items` filtered by `searchText` and sorted by `sortOrder`.
     private(set) var visibleItems: [PasswordItem] = []
+    /// The item matching `selection`, if it still exists.
     private(set) var selectedItem: PasswordItem?
 
+    /// Recomputes `visibleItems`. Stored rather than computed, so it only
+    /// changes when its inputs do.
     private func recomputeVisibleItems() {
         let filtered = searchText.isEmpty ? items : items.filter {
             $0.name.localizedCaseInsensitiveContains(searchText)
@@ -47,6 +64,7 @@ final class VaultViewModel {
         visibleItems = filtered.sorted(using: sortOrder)
     }
 
+    /// Recomputes `selectedItem` from `selection` and `items`.
     private func recomputeSelectedItem() {
         selectedItem = selection.flatMap { id in items.first { $0.id == id } }
     }
@@ -62,6 +80,8 @@ final class VaultViewModel {
 
     // MARK: - Loading
 
+    /// Loads the items from Munin and decrypts their name, URL and username.
+    /// Items that fail to decrypt are counted in `errorMessage`.
     func refresh(auth: AuthManager) async {
         guard auth.isSignedIn else { return }
         do {
@@ -93,6 +113,7 @@ final class VaultViewModel {
 
     // MARK: - Create
 
+    /// Encrypts every field, saves the new item to Munin and adds it to the list.
     func create(_ fields: PasswordFields, auth: AuthManager) async throws {
         let vault = try unlockedVault()
         let (key, userID) = (vault.key, vault.userID)
@@ -106,7 +127,9 @@ final class VaultViewModel {
     /// Rows from a CSV that aren't in the vault yet, and how many were already there.
     struct ImportPlan: Identifiable {
         let id = UUID()
+        /// The rows to import.
         let newItems: [PasswordFields]
+        /// How many rows were skipped as duplicates.
         let duplicateCount: Int
     }
 
@@ -115,6 +138,7 @@ final class VaultViewModel {
 
     /// Same name, username and website as an existing item (or an earlier row) counts as a duplicate.
     func planImport(_ rows: [PasswordFields]) -> ImportPlan {
+        /// A case- and whitespace-insensitive key for duplicate checks.
         func key(_ name: String, _ username: String, _ url: String) -> String {
             [name, username, url].map { $0.trimmingCharacters(in: .whitespaces).lowercased() }.joined(separator: "\u{1F}")
         }
@@ -146,6 +170,8 @@ final class VaultViewModel {
 
     // MARK: - Edit
 
+    /// Encrypts the new fields and replaces the item on Munin (with the master
+    /// password proof), then updates it in the list.
     func update(_ item: PasswordItem, with fields: PasswordFields, auth: AuthManager) async throws {
         let vault = try unlockedVault()
         let (key, userID) = (vault.key, vault.userID)
@@ -159,6 +185,8 @@ final class VaultViewModel {
 
     // MARK: - Delete
 
+    /// Deletes the item on Munin (with the master password proof) and removes
+    /// it from the list, deselecting it if needed.
     func delete(_ item: PasswordItem, auth: AuthManager) async {
         do {
             let vault = try unlockedVault()
@@ -199,7 +227,9 @@ final class VaultViewModel {
 
     // MARK: - Helpers
 
+    /// Encrypts each field separately, bound to its column.
     private static func seal(_ fields: PasswordFields, key: SymmetricKey, userID: String) throws -> PasswordFieldsBody {
+        /// Encrypts one field.
         func seal(_ value: String, _ field: String) throws -> String {
             try VaultCrypto.seal(value, field: field, key: key, userID: userID)
         }
@@ -212,6 +242,7 @@ final class VaultViewModel {
         )
     }
 
+    /// Decrypts an item's name, URL and username; password and note stay encrypted.
     private static func item(from entry: EncryptedPassword, key: SymmetricKey, userID: String) throws -> PasswordItem {
         PasswordItem(
             id: entry.id,

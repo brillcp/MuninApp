@@ -6,10 +6,12 @@ import UniformTypeIdentifiers
 import AppKit
 #endif
 
+/// Copies text to the system clipboard, with special handling for passwords.
 enum Pasteboard {
     /// How long a copied password stays on the clipboard.
     static let sensitiveLifetime: Duration = .seconds(60)
 
+    /// Copies non-sensitive text (a username, a URL, a note).
     static func copy(_ string: String) {
         #if os(iOS)
         UIPasteboard.general.string = string

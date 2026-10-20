@@ -2,17 +2,25 @@
 import SwiftUI
 
 /// iOS search tab: passwords and 2FA codes in one list, in two sections.
-/// Nothing is remembered between searches.
+///
+/// Nothing is remembered between searches. Both lists load on appear in case
+/// their tabs haven't been opened yet. The `.searchable` modifier sits on the
+/// NavigationStack (not inside it), as in Apple's search tab examples, so the
+/// tab bar can turn the Search tab into its own search field.
 struct SearchView: View {
+    /// The passwords to search.
     let vaultModel: VaultViewModel
+    /// The 2FA accounts to search.
     let codesModel: CodesViewModel
     /// Tapping a password opens it in the Vault tab.
     let onOpenPassword: (PasswordItem) -> Void
 
     @Environment(AuthManager.self) private var auth
+    /// The search field's text.
     @State private var query = ""
-    /// Filtered once per change of query or data, not on every body evaluation.
+    /// Matching passwords. Filtered once per change of query or data, not on every body evaluation.
     @State private var passwords: [PasswordItem] = []
+    /// Matching 2FA accounts, filtered the same way.
     @State private var codes: [VaultItem] = []
     /// One clock for the code rows.
     @State private var clock = CodeClock()
@@ -48,24 +56,24 @@ struct SearchView: View {
             }
             .navigationTitle("search.title")
             .task {
-                // The other tabs may not have loaded yet.
                 if !vaultModel.hasLoaded { await vaultModel.refresh(auth: auth) }
                 if !codesModel.hasLoaded { await codesModel.refresh(auth: auth) }
             }
             .task { await clock.run() }
         }
-        // On the NavigationStack (not inside it), as Apple's search-tab examples do,
-        // so the tab bar can turn the Search tab into its own search field.
         .searchable(text: $query, prompt: "search.prompt")
         .onChange(of: query, initial: true) { updateResults() }
         .onChange(of: vaultModel.items) { updateResults() }
         .onChange(of: codesModel.items) { updateResults() }
     }
 
+    /// The query without surrounding spaces.
     private var trimmedQuery: String {
         query.trimmingCharacters(in: .whitespaces)
     }
 
+    /// Filters passwords (name, username, URL) and 2FA accounts (title,
+    /// subtitle) by the query. An empty query shows nothing.
     private func updateResults() {
         guard !trimmedQuery.isEmpty else {
             passwords = []
@@ -85,7 +93,9 @@ struct SearchView: View {
 
 }
 
+/// A password result: icon, name, username and a disclosure chevron.
 private struct SearchPasswordRow: View {
+    /// The password item.
     let item: PasswordItem
 
     var body: some View {

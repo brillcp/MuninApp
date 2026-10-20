@@ -8,9 +8,10 @@ import Observation
 /// it only redraws rows whose data changed, so the countdown froze.
 @Observable
 final class CodeClock {
+    /// The current time, updated on every whole second while `run()` is active.
     private(set) var now = Date.now
 
-    /// Runs until the calling task is cancelled (use from `.task`).
+    /// Ticks until the calling task is cancelled (use from `.task`).
     func run() async {
         now = .now
         while !Task.isCancelled {

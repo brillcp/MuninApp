@@ -10,19 +10,26 @@ import LocalAuthentication
 /// - Legacy: before master passwords the key synced through iCloud Keychain.
 ///   It's read once to set up the master password, then deleted.
 nonisolated enum VaultKeyStore {
+    /// The outcome of unlocking with Face ID / Touch ID.
     enum BiometricResult: Sendable {
+        /// The key and proof were read.
         case unlocked(UnlockedVault)
         /// No copy on this device yet, or biometrics changed since it was saved.
         case notAvailable
+        /// The user dismissed the prompt.
         case canceled
+        /// Authentication failed, or the stored copy couldn't be read.
         case failed
     }
 
+    /// Keychain account of the legacy synced key.
     private static func legacyAccount(userID: String) -> String { "vault.key.\(userID.lowercased())" }
+    /// Keychain account of the biometric copy.
     private static func biometricAccount(userID: String) -> String { "vault.unlock.\(userID.lowercased())" }
 
     // MARK: - Legacy (iCloud Keychain)
 
+    /// The legacy synced vault key, if this device has one.
     static func loadLegacy(userID: String) -> SymmetricKey? {
         guard let data = KeychainService.loadSynced(account: legacyAccount(userID: userID)), data.count == 32 else {
             return nil
@@ -30,17 +37,20 @@ nonisolated enum VaultKeyStore {
         return SymmetricKey(data: data)
     }
 
+    /// Deletes the legacy synced key, on every device, once a master password is set.
     static func deleteLegacy(userID: String) {
         KeychainService.deleteSynced(account: legacyAccount(userID: userID))
     }
 
     // MARK: - Biometrics
 
+    /// The biometric copy's format: the key and the proof, both base64.
     private struct StoredVault: Codable {
         let key: String
         let proof: String
     }
 
+    /// Saves the key and proof behind Face ID / Touch ID on this device.
     @discardableResult
     static func saveForBiometrics(_ vault: UnlockedVault) -> Bool {
         let stored = StoredVault(key: vault.key.withUnsafeBytes { Data($0) }.base64EncodedString(), proof: vault.proof)
@@ -64,6 +74,7 @@ nonisolated enum VaultKeyStore {
         }
     }
 
+    /// Deletes this device's biometric copy.
     static func deleteBiometric(userID: String) {
         KeychainService.deleteBiometric(account: biometricAccount(userID: userID))
     }
@@ -80,6 +91,7 @@ nonisolated enum VaultKeyStore {
         }.joined(separator: " ")
     }
 
+    /// Parses a recovery key typed or pasted by the user, with or without spaces.
     static func key(fromRecoveryString string: String) -> SymmetricKey? {
         let compact = string.filter { !$0.isWhitespace }
         guard let data = Data(base64Encoded: compact), data.count == 32 else { return nil }

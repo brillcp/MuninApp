@@ -4,11 +4,17 @@ import Foundation
 /// - `otpauth://totp/Issuer:name?secret=…` (a site's 2FA setup QR code)
 /// - `otpauth-migration://offline?data=…` (Google Authenticator export, many accounts)
 enum OTPAuthParser {
+    /// Why a QR code or link couldn't be read.
     enum ParseError: LocalizedError, Equatable {
+        /// Not an `otpauth` or `otpauth-migration` URL.
         case unsupported
+        /// A counter-based (HOTP) account; only time-based codes are supported.
         case hotpNotSupported
+        /// The URL has no `secret`.
         case missingSecret
+        /// The secret isn't valid Base32.
         case invalidSecret
+        /// The Google Authenticator export couldn't be decoded, or held no accounts.
         case invalidMigrationData
 
         var errorDescription: String? {
@@ -22,6 +28,7 @@ enum OTPAuthParser {
         }
     }
 
+    /// Parses an `otpauth://` or `otpauth-migration://` URL into one or more accounts.
     static func parse(_ text: String) throws -> [OTPAccount] {
         let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard let components = URLComponents(string: trimmed), let scheme = components.scheme?.lowercased() else {
@@ -36,6 +43,8 @@ enum OTPAuthParser {
 
     // MARK: - otpauth://
 
+    /// Parses a single `otpauth://totp/…` URL. The issuer comes from the
+    /// `issuer` parameter, or else from the label's "Issuer:" prefix.
     private static func parseOTPAuth(_ components: URLComponents) throws -> OTPAccount {
         switch components.host?.lowercased() {
         case "totp": break
@@ -71,6 +80,8 @@ enum OTPAuthParser {
 
     // MARK: - otpauth-migration:// (protobuf)
 
+    /// Parses a Google Authenticator export (`otpauth-migration://offline?data=…`),
+    /// whose `data` is a base64 protobuf `MigrationPayload`. HOTP accounts are skipped.
     private static func parseMigration(_ components: URLComponents) throws -> [OTPAccount] {
         guard var base64 = components.queryItems?.first(where: { $0.name == "data" })?.value else {
             throw ParseError.invalidMigrationData
@@ -105,14 +116,19 @@ enum OTPAuthParser {
 
 /// Just enough protobuf to read Google Authenticator's MigrationPayload.
 private enum Protobuf {
+    /// A field's value: a varint, length-delimited bytes, or a fixed-size value that's skipped.
     enum Value { case varint(UInt64), bytes(Data), other }
+    /// One decoded field: its number and value.
     struct Field { let number: Int; let value: Value }
 
+    /// Decodes the top-level fields of a protobuf message. Nested messages
+    /// stay as `.bytes`; call again to decode them.
     static func fields(_ data: Data) throws -> [Field] {
         let bytes = [UInt8](data)
         var index = 0
         var fields: [Field] = []
 
+        /// Reads one varint at `index` and advances past it.
         func varint() throws -> UInt64 {
             var result: UInt64 = 0
             var shift: UInt64 = 0

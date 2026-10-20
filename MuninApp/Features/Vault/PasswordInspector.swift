@@ -3,12 +3,7 @@ import SwiftUI
 /// Every field of the selected password item (the vault's detail column).
 /// The password stays hidden until Show; the note is decrypted while the item is selected.
 struct PasswordInspector: View {
-    let item: PasswordItem
-    /// Decrypts a ciphertext for the given field ("password" or "note").
-    let decrypt: (_ ciphertext: String, _ field: String) throws -> String
-    let onCopyPassword: () -> Void
-    /// Asks for confirmation; the button sits at the bottom of the list.
-    let onDelete: () -> Void
+    @Environment(\.openURL) private var openURL
 
     @State private var revealedPassword: String?
     @State private var note: String?
@@ -19,7 +14,6 @@ struct PasswordInspector: View {
     @State private var copiedField: Field?
 
     private enum Field { case url, username, password, note }
-    @Environment(\.openURL) private var openURL
 
     /// The item's website; "kattmat.com" opens as https.
     private var websiteURL: URL? {
@@ -27,6 +21,15 @@ struct PasswordInspector: View {
         guard !trimmed.isEmpty else { return nil }
         return URL(string: trimmed.contains("://") ? trimmed : "https://\(trimmed)")
     }
+
+    private var rowOpacity: CGFloat = 0.05
+
+    let item: PasswordItem
+    /// Decrypts a ciphertext for the given field ("password" or "note").
+    let decrypt: (_ ciphertext: String, _ field: String) throws -> String
+    let onCopyPassword: () -> Void
+    /// Asks for confirmation; the button sits at the bottom of the list.
+    let onDelete: () -> Void
 
     var body: some View {
         Form {
@@ -79,6 +82,7 @@ struct PasswordInspector: View {
                 }
                 .onTapGesture { copy(.url) { Pasteboard.copy(item.url) } }
             }
+            .listRowBackground(tint?.opacity(rowOpacity))
 
             if let note, !note.isEmpty {
                 Section {
@@ -89,6 +93,7 @@ struct PasswordInspector: View {
                     }
                     .onTapGesture { copy(.note) { Pasteboard.copy(note) } }
                 }
+                .listRowBackground(tint?.opacity(rowOpacity))
             }
 
             Section {
@@ -96,6 +101,7 @@ struct PasswordInspector: View {
                     Text(item.lastUpdated, format: .dateTime)
                 }
             }
+            .listRowBackground(tint?.opacity(rowOpacity))
 
             Section {
                 Button("global.delete", systemImage: "trash", role: .destructive) {
@@ -105,6 +111,7 @@ struct PasswordInspector: View {
                 .foregroundStyle(.red)
                 .tint(.red)
             }
+            .listRowBackground(tint?.opacity(rowOpacity))
         }
         .frame(maxHeight: .infinity)
         .formStyle(.grouped)
@@ -112,7 +119,7 @@ struct PasswordInspector: View {
         .background {
             #if os(iOS)
             tint?
-                .opacity(0.1)
+                .opacity(0.11)
                 .ignoresSafeArea()
             #endif
         }
@@ -122,7 +129,6 @@ struct PasswordInspector: View {
         .task(id: item.url) {
             tint = await WebsiteIconStore.shared.dominantColor(for: item.url)
         }
-        .navigationTitle("")
         .navigationBarTitleDisplayMode(.inline)
         #endif
         .task(id: item.id) {

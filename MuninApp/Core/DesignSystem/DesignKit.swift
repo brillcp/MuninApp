@@ -2,6 +2,7 @@ import CoreGraphics
 
 /// Munin's design tokens.
 enum DesignKit {
+    /// Spacing tokens, for paddings and stack spacing.
     enum Spacing {
         enum Primitive {
             static let s0: CGFloat = 0

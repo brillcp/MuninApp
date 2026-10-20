@@ -1,6 +1,12 @@
 import SwiftUI
 
 extension View {
+    /// The main screens' toolbar.
+    ///
+    /// - macOS: a Bark-coloured window toolbar with the title drawn as a white
+    ///   toolbar item. macOS has no API for the window title's colour, so the
+    ///   system title is removed. `subtitle` isn't shown.
+    /// - iOS: the system navigation title and subtitle, and a Lock button.
     func barkToolbar(title: LocalizedStringKey, subtitle: LocalizedStringKey) -> some View {
         #if os(macOS)
         toolbarBackground(Color(.bark), for: .windowToolbar)
@@ -27,9 +33,10 @@ extension View {
     }
 }
 
-/// Locks Munin (same as ⌘L). In the Vault and 2FA toolbars.
+/// Locks Munin (same as ⌘L), with a light haptic. In the Vault and 2FA toolbars.
 struct LockToolbarButton: View {
     @Environment(VaultSession.self) private var session
+    /// Bumped on every tap, to trigger the haptic.
     @State private var taps = 0
 
     var body: some View {

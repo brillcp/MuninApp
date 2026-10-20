@@ -13,10 +13,15 @@ struct AddAccountView: View {
 
     @Environment(\.dismiss) private var dismiss
 
+    /// The last error, shown at the bottom of the form.
     @State private var errorMessage: String?
+    /// True while accounts are being encrypted and uploaded.
     @State private var isSaving = false
+    /// iOS: shows the camera scanner.
     @State private var isScanning = false
+    /// Mac: shows the image file picker.
     @State private var isImportingFile = false
+    /// iOS: the screenshot picked from Photos.
     @State private var photoItem: PhotosPickerItem?
 
     var body: some View {
@@ -74,6 +79,7 @@ struct AddAccountView: View {
 
     // MARK: - Input
 
+    /// Parses an otpauth link (pasted, or read from a QR code) and saves its accounts.
     private func submit(text: String) {
         do {
             save(try OTPAuthParser.parse(text))
@@ -82,6 +88,7 @@ struct AddAccountView: View {
         }
     }
 
+    /// Saves an account typed in by hand.
     private func submitManual(issuer: String, name: String, secret: String, digits: Int) {
         guard let secretData = Base32.decode(secret) else {
             errorMessage = OTPAuthParser.ParseError.invalidSecret.localizedDescription
@@ -95,6 +102,7 @@ struct AddAccountView: View {
         )])
     }
 
+    /// Reads the QR codes in an image and saves the accounts from the first one that parses.
     private func submit(imageData: Data) {
         let messages = QRCodeReader.messages(in: imageData)
         guard !messages.isEmpty else {
@@ -111,6 +119,7 @@ struct AddAccountView: View {
     }
 
     #if os(iOS)
+    /// Loads the picked screenshot and reads its QR code.
     private func loadPhoto(_ item: PhotosPickerItem) async {
         defer { photoItem = nil }
         guard let data = try? await item.loadTransferable(type: Data.self) else {
@@ -120,6 +129,7 @@ struct AddAccountView: View {
         submit(imageData: data)
     }
     #else
+    /// Reads the chosen image file and its QR code.
     private func importFile(_ result: Result<URL, any Error>) {
         guard case .success(let url) = result else { return }
         let accessing = url.startAccessingSecurityScopedResource()
@@ -134,6 +144,8 @@ struct AddAccountView: View {
 
     // MARK: - Save
 
+    /// Encrypts and uploads the accounts, then closes the sheet. If they were
+    /// all added before, it stays open and says so.
     private func save(_ accounts: [OTPAccount]) {
         errorMessage = nil
         isSaving = true
@@ -159,8 +171,11 @@ struct AddAccountView: View {
 
 /// Camera scan (iPhone) or an image of a QR code.
 private struct QRCodeSection: View {
+    /// iOS: set to show the camera scanner.
     @Binding var isScanning: Bool
+    /// Mac: set to show the image file picker.
     @Binding var isImportingFile: Bool
+    /// iOS: the screenshot picked from Photos.
     @Binding var photoItem: PhotosPickerItem?
 
     var body: some View {
@@ -193,7 +208,9 @@ private struct QRCodeSection: View {
 
 /// A pasted otpauth:// or otpauth-migration:// link.
 private struct LinkSection: View {
+    /// Called with the pasted link.
     let onSubmit: (String) -> Void
+    /// The link field's text.
     @State private var link = ""
 
     var body: some View {
@@ -215,10 +232,15 @@ private struct LinkSection: View {
 
 /// Issuer, account and setup key typed in by hand.
 private struct ManualEntrySection: View {
+    /// Called with the typed issuer, account name, Base32 setup key and digit count.
     let onSubmit: (_ issuer: String, _ name: String, _ secret: String, _ digits: Int) -> Void
+    /// The service's name.
     @State private var issuer = ""
+    /// The account's name at the service.
     @State private var name = ""
+    /// The Base32 setup key.
     @State private var secret = ""
+    /// Digits per code: 6 or 8.
     @State private var digits = 6
 
     var body: some View {

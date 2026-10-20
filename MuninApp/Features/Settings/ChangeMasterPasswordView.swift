@@ -7,8 +7,11 @@ struct ChangeMasterPasswordView: View {
     @Environment(VaultSession.self) private var session
     @Environment(\.dismiss) private var dismiss
 
+    /// The current master password.
     @State private var current = ""
+    /// The new master password.
     @State private var password = ""
+    /// The new master password, typed again.
     @State private var confirmation = ""
 
     var body: some View {
@@ -68,10 +71,12 @@ struct ChangeMasterPasswordView: View {
         #endif
     }
 
+    /// Whether Save is enabled: a current password, and a long enough new one typed twice.
     private var isValid: Bool {
         !current.isEmpty && password.count >= VaultSession.minimumPasswordLength && password == confirmation
     }
 
+    /// What's wrong with the new password, shown under its fields.
     private var problem: LocalizedStringKey? {
         if !password.isEmpty, password.count < VaultSession.minimumPasswordLength {
             return LocalizedKey("masterPassword.tooShort", VaultSession.minimumPasswordLength)
@@ -82,6 +87,7 @@ struct ChangeMasterPasswordView: View {
         return nil
     }
 
+    /// Changes the master password and closes the sheet on success.
     private func save() {
         guard isValid else { return }
         Task {

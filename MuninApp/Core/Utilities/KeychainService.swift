@@ -2,35 +2,59 @@ import Foundation
 import LocalAuthentication
 import Security
 
+/// Reads and writes the app's Keychain items.
+///
+/// Everything lives in the data protection keychain under the app's bundle
+/// identifier. Session tokens and the user are this-device-only; the legacy
+/// vault key is synced through iCloud Keychain; the biometric copy of the
+/// vault key needs Face ID / Touch ID to read.
 nonisolated enum KeychainService {
+    /// The Keychain service all items are stored under.
     private static let service = Bundle.main.bundleIdentifier ?? "dev.gidlof.Munin"
+    /// Account for the Supabase access token.
     private static let supabaseAccount = "supabase.token"
+    /// Account for the Supabase refresh token.
     private static let supabaseRefreshAccount = "supabase.refresh_token"
+    /// Account for the signed-in user's ID.
     private static let userIDAccount = "supabase.user_id"
+    /// Account for the signed-in user's email.
     private static let emailAccount = "supabase.email"
 
     // MARK: - Supabase session
 
+    /// Saves the Supabase access token.
     static func saveSupabaseToken(_ token: String) { save(token, account: supabaseAccount) }
+    /// The saved Supabase access token.
     static func loadSupabaseToken() -> String? { load(account: supabaseAccount) }
+    /// Deletes the Supabase access token.
     static func deleteSupabaseToken() { delete(account: supabaseAccount) }
 
+    /// Saves the Supabase refresh token.
     static func saveSupabaseRefreshToken(_ token: String) { save(token, account: supabaseRefreshAccount) }
+    /// The saved Supabase refresh token.
     static func loadSupabaseRefreshToken() -> String? { load(account: supabaseRefreshAccount) }
+    /// Deletes the Supabase refresh token.
     static func deleteSupabaseRefreshToken() { delete(account: supabaseRefreshAccount) }
 
     // MARK: - Signed-in user
 
+    /// Saves the signed-in user's ID.
     static func saveUserID(_ id: String) { save(id, account: userIDAccount) }
+    /// The saved user ID.
     static func loadUserID() -> String? { load(account: userIDAccount) }
+    /// Deletes the saved user ID.
     static func deleteUserID() { delete(account: userIDAccount) }
 
+    /// Saves the signed-in user's email.
     static func saveEmail(_ email: String) { save(email, account: emailAccount) }
+    /// The saved email.
     static func loadEmail() -> String? { load(account: emailAccount) }
+    /// Deletes the saved email.
     static func deleteEmail() { delete(account: emailAccount) }
 
     // MARK: - iCloud Keychain (synced to the user's other Apple devices)
 
+    /// Reads a synced item.
     static func loadSynced(account: String) -> Data? {
         var query = baseQuery(account: account)
         query[kSecAttrSynchronizable as String] = true
@@ -42,6 +66,7 @@ nonisolated enum KeychainService {
         return result as? Data
     }
 
+    /// Saves an item that syncs to the user's other devices through iCloud Keychain.
     static func saveSynced(_ data: Data, account: String) {
         var query = baseQuery(account: account)
         query[kSecAttrSynchronizable as String] = true
@@ -52,6 +77,7 @@ nonisolated enum KeychainService {
         SecItemAdd(query as CFDictionary, nil)
     }
 
+    /// Deletes a synced item, on every device.
     static func deleteSynced(account: String) {
         var query = baseQuery(account: account)
         query[kSecAttrSynchronizable as String] = true
@@ -60,10 +86,15 @@ nonisolated enum KeychainService {
 
     // MARK: - Biometrics (this device only)
 
+    /// The outcome of reading a biometric item.
     enum BiometricRead {
+        /// The user authenticated; the item's data.
         case success(Data)
+        /// No item was found.
         case notFound
+        /// The user dismissed the prompt.
         case canceled
+        /// Authentication failed, or another Keychain error.
         case failed
     }
 
@@ -109,12 +140,14 @@ nonisolated enum KeychainService {
         }
     }
 
+    /// Deletes a biometric item. Doesn't prompt.
     static func deleteBiometric(account: String) {
         delete(account: account)
     }
 
     // MARK: - Private
 
+    /// Reads a this-device item as a UTF-8 string.
     private static func load(account: String) -> String? {
         var query = baseQuery(account: account)
         query[kSecReturnData as String] = true
@@ -126,6 +159,7 @@ nonisolated enum KeychainService {
         return String(data: data, encoding: .utf8)
     }
 
+    /// Saves a string as a this-device item, replacing any existing one.
     private static func save(_ value: String, account: String) {
         delete(account: account)
         var query = baseQuery(account: account)
@@ -134,10 +168,12 @@ nonisolated enum KeychainService {
         SecItemAdd(query as CFDictionary, nil)
     }
 
+    /// Deletes the non-synced item for `account`.
     private static func delete(account: String) {
         SecItemDelete(baseQuery(account: account) as CFDictionary)
     }
 
+    /// The query attributes every item shares: class, service and account.
     private static func baseQuery(account: String) -> [String: Any] {
         [
             kSecClass as String: kSecClassGenericPassword,

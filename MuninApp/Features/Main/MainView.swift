@@ -3,11 +3,19 @@ import SwiftUI
 import AppKit
 #endif
 
-/// Sidebar on Mac and iPad, tab bar on iPhone.
+/// The unlocked app: a sidebar on Mac and iPad, a tab bar on iPhone.
+///
+/// The Munin section holds Vault and 2FA. On iOS there are also a Settings tab
+/// (the Mac has a Settings window, ⌘, instead) and a Search tab. Search comes
+/// last with the `.search` role, so iOS 26 shows it as its own button at the
+/// trailing edge of the tab bar, and selecting it opens the search field.
+/// Opening a password from Search selects it in the Vault tab, which handles
+/// editing and deleting. On the Mac the sidebar's bottom bar links to Settings.
 struct MainView: View {
     @Environment(AuthManager.self) private var auth
     @Environment(VaultSession.self) private var session
 
+    /// The tabs.
     enum Section: Hashable {
         case vault
         case codes
@@ -15,12 +23,14 @@ struct MainView: View {
         case settings
     }
 
+    /// The selected tab.
     @State private var selection: Section = .vault
     /// From the app (also used by the Mac menu bar), shared by Vault and Search.
     @Environment(VaultViewModel.self) private var vaultModel
     /// Shared by the 2FA and Search tabs.
     @State private var codesModel: CodesViewModel
 
+    /// Creates the 2FA view model for `session`.
     init(session: VaultSession) {
         _codesModel = State(initialValue: CodesViewModel(session: session))
     }
@@ -40,7 +50,6 @@ struct MainView: View {
                 }
             }
             #if os(iOS)
-            // The Mac has a Settings window (⌘,) instead.
             Tab("settings.title", systemImage: "gearshape", value: Section.settings) {
                 NavigationStack {
                     SettingsView()
@@ -48,10 +57,8 @@ struct MainView: View {
                         .navigationBarTitleDisplayMode(.inline)
                 }
             }
-            // Last, so iOS 26 shows it as its own bubble next to the tab bar.
             Tab(value: Section.search, role: .search) {
                 SearchView(vaultModel: vaultModel, codesModel: codesModel) { item in
-                    // Open the password in the Vault tab, which handles edit and delete.
                     vaultModel.selection = item.id
                     selection = .vault
                 }
@@ -60,8 +67,6 @@ struct MainView: View {
         }
         .tabViewStyle(.sidebarAdaptable)
         #if os(iOS)
-        // As in PokedexUI: the .search tab becomes its own button at the trailing
-        // edge, and selecting it opens the search field.
         .tabViewSearchActivation(.searchTabSelection)
         #endif
         #if os(macOS)
@@ -97,8 +102,11 @@ struct MainView: View {
 /// rendered into a non-template image in fixed colours (the accent, or white
 /// on the selected row), which the sidebar can't recolour.
 private struct SidebarTabLabel: View {
+    /// The tab's name.
     let title: LocalizedStringKey
+    /// The tab's SF Symbol.
     let systemImage: String
+    /// Whether the tab is selected, so the Mac icon turns white.
     let isSelected: Bool
 
     var body: some View {
@@ -118,6 +126,8 @@ private struct SidebarTabLabel: View {
     }
 
     #if os(macOS)
+    /// The symbol rendered as a non-template image in the accent colour, or
+    /// white when selected. Nil if the symbol doesn't exist.
     private var coloredSymbol: NSImage? {
         let color = isSelected ? NSColor.white : NSColor(resource: .accent)
         let configuration = NSImage.SymbolConfiguration(pointSize: 13, weight: .regular)

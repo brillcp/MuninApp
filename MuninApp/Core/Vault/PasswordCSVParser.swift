@@ -6,8 +6,11 @@ import Foundation
 /// `username`, `password`, `note`; others are ignored. Handles quoted fields
 /// with commas, quotes ("") and line breaks. Runs in memory only.
 enum PasswordCSVParser {
+    /// Why a file couldn't be imported.
     enum ParseError: LocalizedError {
+        /// The file isn't UTF-8 text.
         case unreadable
+        /// The header has no `name` or no `password` column.
         case missingColumns
 
         var errorDescription: String? {
@@ -18,6 +21,10 @@ enum PasswordCSVParser {
         }
     }
 
+    /// Parses a CSV export into password fields.
+    ///
+    /// Skips blank rows and rows with neither a name nor a URL, or with
+    /// neither a username nor a password.
     static func parse(_ data: Data) throws -> [PasswordFields] {
         guard var text = String(data: data, encoding: .utf8) else { throw ParseError.unreadable }
         if text.hasPrefix("\u{FEFF}") { text.removeFirst() }
@@ -30,6 +37,7 @@ enum PasswordCSVParser {
         )
         guard columns["name"] != nil, columns["password"] != nil else { throw ParseError.missingColumns }
 
+        /// The row's value in `column`, or an empty string if the column or value is missing.
         func value(_ column: String, in row: [String]) -> String {
             guard let index = columns[column], index < row.count else { return "" }
             return row[index]

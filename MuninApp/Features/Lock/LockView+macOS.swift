@@ -21,7 +21,7 @@ struct LockView: View {
     }
 }
 
-/// Right-hand panel. Add the image to the "LockArtwork" image set.
+/// The artwork on the right of the Mac lock screen, from the "munin" image set.
 private struct LockArtwork: View {
     var body: some View {
         Image("munin")
