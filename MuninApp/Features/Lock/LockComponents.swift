@@ -29,7 +29,7 @@ enum LockStep: Hashable {
     var title: LocalizedStringKey? {
         switch self {
         case .signIn:         "lock.step.signIn"
-        case .biometrics:     nil
+        case .biometrics:     "lock.title"
         case .masterPassword: "lock.step.masterPassword"
         case .recoveryKey:    "lock.step.recoveryKey"
         }
@@ -39,9 +39,6 @@ enum LockStep: Hashable {
 /// The lock screen's card: title, account and the current step.
 /// Changing step animates with a bounce.
 struct LockPanel: View {
-    /// iOS stacks the biometrics buttons; the Mac puts them side by side.
-    var stacksButtons = false
-
     @Environment(AuthManager.self) private var auth
     @Environment(VaultSession.self) private var session
     /// Set when the user picks another way to unlock; nil means the default.
@@ -56,12 +53,6 @@ struct LockPanel: View {
                     .font(.title.bold())
             }
 
-            if auth.isSignedIn {
-                if step == .biometrics || step == .masterPassword, let email = auth.email {
-                    LockButton("\(email) · Switch", style: .tertiary) { go(to: .signIn) }
-                }
-            }
-
             if isWorking {
                 ProgressView()
                     .controlSize(.large)
@@ -71,6 +62,12 @@ struct LockPanel: View {
             } else {
                 stepView
                     .transition(.blurReplace)
+            }
+
+            if auth.isSignedIn {
+                if step == .biometrics || step == .masterPassword, let email = auth.email {
+                    LockButton("\(email) · Switch", style: .tertiary) { go(to: .signIn) }
+                }
             }
 
             if let errorMessage {
@@ -109,7 +106,7 @@ struct LockPanel: View {
         case .signIn:
             LockSignInStep(onCancel: auth.isSignedIn ? { go(to: nil) } : nil)
         case .biometrics:
-            LockBiometricsStep(stacksButtons: stacksButtons) { go(to: .masterPassword) }
+            LockBiometricsStep { go(to: .masterPassword) }
         case .masterPassword:
             LockMasterPasswordStep(
                 focusesField: chosenStep == .masterPassword,
@@ -157,7 +154,6 @@ private struct LockSignInStep: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
             Text("signIn.subtitle")
-                .foregroundStyle(.secondary)
 
             SignInWithAppleButton(.signIn) { request in
                 auth.prepare(request)
@@ -179,13 +175,12 @@ private struct LockSignInStep: View {
 
 /// Face ID / Touch ID, with the master password as the alternative.
 private struct LockBiometricsStep: View {
-    let stacksButtons: Bool
     let onUseMasterPassword: () -> Void
 
     @Environment(VaultSession.self) private var session
 
     var body: some View {
-        layout {
+        HStack(spacing: 16) {
             #if os(macOS)
             LockButton("settings.biometrics.touch", systemImage: "touchid") {
                 Task { await session.unlockWithBiometrics() }
@@ -198,12 +193,6 @@ private struct LockBiometricsStep: View {
 
             LockButton(systemImage: "lock.shield.fill", style: .secondary, action: onUseMasterPassword)
         }
-    }
-
-    private var layout: AnyLayout {
-        stacksButtons
-            ? AnyLayout(VStackLayout(alignment: .leading, spacing: 24))
-            : AnyLayout(HStackLayout(spacing: 16))
     }
 }
 
@@ -329,10 +318,14 @@ struct LockButton: View {
         } label: {
             if let title, let systemImage {
                 Label(title, systemImage: systemImage)
+                    #if os(iOS)
                     .frame(maxWidth: .infinity)
+                    #endif
             } else if let title {
                 Text(title)
+                    #if os(iOS)
                     .frame(maxWidth: .infinity)
+                    #endif
             } else if let systemImage {
                 Image(systemName: systemImage)
             }
