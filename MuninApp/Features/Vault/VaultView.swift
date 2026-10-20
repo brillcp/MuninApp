@@ -78,15 +78,10 @@ extension VaultView {
     @ViewBuilder
     private var columns: some View {
         #if os(macOS)
-        // The detail floats over the list's trailing edge as a glass panel.
-        // (.inspector and HSplitView both animated badly in the sidebar tab.)
         NavigationStack {
             listColumn
                 .overlay(alignment: .trailing) {
                     if viewModel.isShowingDetail {
-                        // A NavigationStack's toolbar in an overlay never shows on
-                        // the Mac (it belongs to the window), so the close button
-                        // is a plain header row instead.
                         VaultItemDetail(viewModel: viewModel, pendingDeletion: $pendingDeletion, onEdit: startEditing)
                             .safeAreaInset(edge: .top, spacing: 0) {
                                 HStack {
@@ -102,11 +97,11 @@ extension VaultView {
                                 }
                                 .padding([.horizontal, .top], 12)
                             }
-                        .frame(width: 340)
-                        .frame(maxHeight: .infinity)
+                            .frame(width: 340)
+                            .frame(maxHeight: .infinity)
                             .glassEffect(in: .rect(cornerRadius: 20))
                             .padding(12)
-                            .transition(.offset(x: 64).combined(with: .opacity))
+                            .transition(.offset(x: 48).combined(with: .opacity))
                     }
                 }
                 .animation(.bouncy(duration: 0.25), value: viewModel.isShowingDetail)

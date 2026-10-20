@@ -181,6 +181,7 @@
 /** Settings **/
 "settings.about" = "About";
 "settings.account" = "Account";
+"settings.autoLock" = "Auto-Lock";
 "settings.biometrics" = "Unlock with Face ID or Touch ID";
 "settings.changeMasterPassword" = "Change Master Password";
 "settings.currentMasterPassword" = "Current master password";
@@ -209,3 +210,10 @@
 "import.error.unreadable" = "Couldn't read the file. Export it as UTF-8 CSV.";
 "import.progress" = "Importing %lld of %lld";
 "import.title" = "Import";
+
+/** Auto-lock **/
+"autoLock.fifteenMinutes" = "After 15 minutes";
+"autoLock.fiveMinutes" = "After 5 minutes";
+"autoLock.immediately" = "Immediately";
+"autoLock.never" = "Never";
+"autoLock.oneMinute" = "After 1 minute";

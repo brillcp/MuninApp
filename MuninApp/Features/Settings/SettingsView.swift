@@ -45,6 +45,11 @@ struct SettingsView: View {
                         Text("settings.locked")
                             .foregroundStyle(.secondary)
                     }
+                    Picker("settings.autoLock", selection: $session.autoLockTimeout) {
+                        ForEach(AutoLockTimeout.allCases) { timeout in
+                            Text(timeout.title).tag(timeout)
+                        }
+                    }
                 }
             }
 

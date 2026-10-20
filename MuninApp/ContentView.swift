@@ -17,6 +17,7 @@ struct ContentView: View {
             }
         }
         .task(id: auth.userID) { await session.prepare(auth: auth) }
+        .autoLock(session)
         // The password list outlives the main view (the menu bar uses it), so
         // drop it explicitly on lock and sign out.
         .onChange(of: session.state) { _, state in

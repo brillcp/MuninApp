@@ -68,6 +68,13 @@ final class VaultSession {
     }
     private static let biometricsDefaultsKey = "munin.biometrics.enabled"
 
+    /// The Settings picker. A preference only (UserDefaults). See `View.autoLock(_:)`.
+    var autoLockTimeout: AutoLockTimeout = (UserDefaults.standard.object(forKey: VaultSession.autoLockDefaultsKey) as? Int)
+        .flatMap(AutoLockTimeout.init(rawValue:)) ?? .fiveMinutes {
+        didSet { UserDefaults.standard.set(autoLockTimeout.rawValue, forKey: Self.autoLockDefaultsKey) }
+    }
+    private static let autoLockDefaultsKey = "munin.autoLock.timeout"
+
     /// The lock screen shows "Unlock with biometrics" only when this is true.
     var offersBiometricUnlock: Bool { canUseBiometrics && isBiometricUnlockEnabled }
 
@@ -268,6 +275,7 @@ final class VaultSession {
         guard state == .unlocked else { return }
         vault = nil
         Task { await WebsiteIconStore.shared.clear() }
+        Pasteboard.clearSensitive()
         errorMessage = nil
         state = .locked
     }
