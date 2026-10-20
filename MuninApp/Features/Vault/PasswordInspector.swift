@@ -13,6 +13,8 @@ struct PasswordInspector: View {
     @State private var revealedPassword: String?
     @State private var note: String?
     @State private var hapticTaps = 0
+    /// The website icon's dominant colour; tints the background.
+    @State private var tint: Color?
     /// The field just copied, for the short "Copied" label.
     @State private var copiedField: Field?
 
@@ -106,12 +108,21 @@ struct PasswordInspector: View {
         }
         .frame(maxHeight: .infinity)
         .formStyle(.grouped)
-        #if os(macOS)
         .scrollContentBackground(.hidden)
-        #endif
+        .background {
+            #if os(iOS)
+            tint?
+                .opacity(0.1)
+                .ignoresSafeArea()
+            #endif
+        }
+        .animation(.easeInOut, value: tint)
         .sensoryFeedback(.impact(weight: .light), trigger: hapticTaps)
         #if os(iOS)
-//        .navigationTitle(item.name)
+        .task(id: item.url) {
+            tint = await WebsiteIconStore.shared.dominantColor(for: item.url)
+        }
+        .navigationTitle("")
         .navigationBarTitleDisplayMode(.inline)
         #endif
         .task(id: item.id) {

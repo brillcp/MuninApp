@@ -1,4 +1,6 @@
 import Foundation
+import ImageIO
+import SwiftUI
 #if os(iOS)
 import UIKit
 #else
@@ -29,6 +31,8 @@ actor WebsiteIconStore {
     /// Image data per host; `nil` once a host is known to have no icon.
     private var icons: [String: Data?] = [:]
     private var inFlight: [String: Task<Data?, Never>] = [:]
+    /// The icon's dominant colour per host; `nil` when there's no icon.
+    private var colors: [String: Color?] = [:]
 
     /// The icon for the item's URL ("kattmat.com" or "https://kattmat.com/login").
     func icon(for urlString: String) async -> Data? {
@@ -44,11 +48,59 @@ actor WebsiteIconStore {
         return data
     }
 
+    /// The dominant colour of the item's icon, for tinting its detail view.
+    func dominantColor(for urlString: String) async -> Color? {
+        guard let host = Self.host(from: urlString) else { return nil }
+        if let cached = colors[host] { return cached }
+        let color = await icon(for: urlString).flatMap(Self.dominantColor(in:))
+        colors[host] = .some(color)
+        return color
+    }
+
     /// Called on lock and sign out.
     func clear() {
         inFlight.values.forEach { $0.cancel() }
         inFlight = [:]
         icons = [:]
+        colors = [:]
+    }
+
+    /// Averages the icon's pixels at 24×24, weighting each by its opacity and
+    /// saturation, so transparent, white, grey and black areas barely count
+    /// and the brand colour wins. Nil for an all-grey icon.
+    private static func dominantColor(in data: Data) -> Color? {
+        guard let source = CGImageSourceCreateWithData(data as CFData, nil),
+              let image = CGImageSourceCreateImageAtIndex(source, 0, nil) else { return nil }
+
+        let side = 24
+        var pixels = [UInt8](repeating: 0, count: side * side * 4)
+        let drawn = pixels.withUnsafeMutableBytes { buffer -> Bool in
+            guard let context = CGContext(
+                data: buffer.baseAddress, width: side, height: side,
+                bitsPerComponent: 8, bytesPerRow: side * 4,
+                space: CGColorSpace(name: CGColorSpace.sRGB)!,
+                bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
+            ) else { return false }
+            context.draw(image, in: CGRect(x: 0, y: 0, width: side, height: side))
+            return true
+        }
+        guard drawn else { return nil }
+
+        var red = 0.0, green = 0.0, blue = 0.0, total = 0.0
+        for index in stride(from: 0, to: pixels.count, by: 4) {
+            let alpha = Double(pixels[index + 3]) / 255
+            guard alpha > 0.1 else { continue }
+            // Un-premultiply.
+            let r = Double(pixels[index]) / 255 / alpha
+            let g = Double(pixels[index + 1]) / 255 / alpha
+            let b = Double(pixels[index + 2]) / 255 / alpha
+            let maximum = max(r, g, b), minimum = min(r, g, b)
+            let saturation = maximum == 0 ? 0 : (maximum - minimum) / maximum
+            let weight = alpha * saturation * saturation
+            red += r * weight; green += g * weight; blue += b * weight; total += weight
+        }
+        guard total > 0.5 else { return nil }
+        return Color(.sRGB, red: red / total, green: green / total, blue: blue / total)
     }
 
     // MARK: - Fetching
