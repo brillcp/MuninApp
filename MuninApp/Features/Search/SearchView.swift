@@ -47,7 +47,6 @@ struct SearchView: View {
                 }
             }
             .navigationTitle("search.title")
-            .barkNavigationBar()
             .task {
                 // The other tabs may not have loaded yet.
                 if !vaultModel.hasLoaded { await vaultModel.refresh(auth: auth) }
@@ -90,9 +89,9 @@ private struct SearchPasswordRow: View {
     let item: PasswordItem
 
     var body: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: DesignKit.Spacing.Primitive.s12) {
             WebsiteIcon(url: item.url)
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: DesignKit.Spacing.Primitive.s2) {
                 Text(item.name)
                 Text(item.username)
                     .font(.subheadline)

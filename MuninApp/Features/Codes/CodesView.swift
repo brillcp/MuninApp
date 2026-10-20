@@ -23,7 +23,7 @@ struct CodesView: View {
             }
             .navigationTitle("codes.title")
             .navigationSplitViewStyle(.prominentDetail)
-            .barkToolbar(title: "codes.title")
+            .barkToolbar(title: "codes.title", subtitle: "\(viewModel.items.count) accounts")
             .toolbar { toolbarContent }
             .refreshable { await viewModel.refresh(auth: auth) }
             .task { await viewModel.refresh(auth: auth) }
@@ -100,7 +100,7 @@ private struct CodesList: View {
         .safeAreaInset(edge: .bottom) {
             if viewModel.undecryptableCount > 0 {
                 undecryptableLabel
-                    .padding(8)
+                    .padding(DesignKit.Spacing.Primitive.s8)
             }
         }
         #else
@@ -118,7 +118,7 @@ private struct CodesList: View {
                 }
             }
         }
-        .listStyle(.insetGrouped)
+        .listStyle(.plain)
         #endif
     }
 

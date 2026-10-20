@@ -29,14 +29,12 @@ struct PasswordInspector: View {
     var body: some View {
         Form {
             Section {
-                VStack(spacing: 12) {
-                    WebsiteIcon(url: item.url, size: 64)
-                    #if os(macOS)
+                VStack(spacing: DesignKit.Spacing.Primitive.s12) {
+                    WebsiteIcon(url: item.url, size: DesignKit.Spacing.Primitive.s64)
                     Text(item.name)
                         .font(.title2.bold())
-                        .multilineTextAlignment(.center)
+                        .multilineTextAlignment(.leading)
                         .textSelection(.enabled)
-                    #endif
                 }
                 .frame(maxWidth: .infinity)
                 .listRowBackground(Color.clear)
@@ -103,6 +101,7 @@ struct PasswordInspector: View {
                     onDelete()
                 }
                 .foregroundStyle(.red)
+                .tint(.red)
             }
         }
         .frame(maxHeight: .infinity)
@@ -112,11 +111,9 @@ struct PasswordInspector: View {
         #endif
         .sensoryFeedback(.impact(weight: .light), trigger: hapticTaps)
         #if os(iOS)
-        .navigationTitle(item.name)
+//        .navigationTitle(item.name)
+        .navigationBarTitleDisplayMode(.inline)
         #endif
-        .barkNavigationBar()
-        // Decrypted when the item is selected; the password stays encrypted
-        // until it's shown or copied.
         .task(id: item.id) {
             revealedPassword = nil
             note = try? decrypt(item.encryptedNote, "note")
@@ -156,8 +153,8 @@ private struct DetailRow<Value: View, Actions: View>: View {
     @ViewBuilder let actions: Actions
 
     var body: some View {
-        HStack(spacing: 16) {
-            VStack(alignment: .leading, spacing: 4) {
+        HStack(spacing: DesignKit.Spacing.Primitive.s16) {
+            VStack(alignment: .leading, spacing: DesignKit.Spacing.Primitive.s4) {
                 Text(label)
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
@@ -173,14 +170,14 @@ private struct DetailRow<Value: View, Actions: View>: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
 
-            HStack(spacing: 16) {
+            HStack(spacing: DesignKit.Spacing.Primitive.s16) {
                 actions
             }
             .labelStyle(.iconOnly)
             .buttonStyle(.borderless)
             .imageScale(.large)
         }
-        .padding(.vertical, 4)
+        .padding(.vertical, DesignKit.Spacing.Primitive.s4)
         .contentShape(.rect)
     }
 }

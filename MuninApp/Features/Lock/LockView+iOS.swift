@@ -5,7 +5,7 @@ import SwiftUI
 /// glass card at the bottom.
 struct LockView: View {
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: DesignKit.Spacing.Primitive.s16) {
             Spacer()
             LockPanel()
             LockVersionLabel()

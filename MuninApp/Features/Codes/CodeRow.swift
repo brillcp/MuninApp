@@ -15,7 +15,7 @@ struct CodeRow: View {
     @State private var didCopy = false
 
     var body: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: DesignKit.Spacing.Primitive.s12) {
             AccountLabel(title: account.title, subtitle: account.subtitle)
                 .equatable()
             Spacer(minLength: 8)
@@ -24,7 +24,7 @@ struct CodeRow: View {
             CountdownGauge(remaining: account.secondsRemaining(at: now), period: account.period)
                 .equatable()
         }
-        .padding(.vertical, 4)
+        .padding(.vertical, DesignKit.Spacing.Primitive.s4)
         .contentShape(Rectangle())
         .onTapGesture(perform: copy)
         .sensoryFeedback(.success, trigger: didCopy) { _, new in new }
@@ -65,7 +65,7 @@ struct AccountLabel: View, Equatable {
     let subtitle: String?
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 2) {
+        VStack(alignment: .leading, spacing: DesignKit.Spacing.Primitive.s2) {
             Text(title)
                 .font(.headline)
             if let subtitle {
@@ -87,7 +87,7 @@ struct CodeCell: View {
     @State private var didCopy = false
 
     var body: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: DesignKit.Spacing.Primitive.s12) {
             CodeText(code: account.code(at: now), didCopy: didCopy)
                 .equatable()
             CountdownGauge(remaining: account.secondsRemaining(at: now), period: account.period)

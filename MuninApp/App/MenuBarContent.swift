@@ -23,11 +23,11 @@ struct MenuBarContent: View {
     }
 
     var body: some View {
-        VStack(spacing: 0) {
+        VStack(spacing: DesignKit.Spacing.Primitive.s0) {
             if session.state == .unlocked {
                 TextField("vault.search.prompt", text: $query)
                     .textFieldStyle(.roundedBorder)
-                    .padding(10)
+                    .padding(DesignKit.Spacing.Primitive.s12)
                 Divider()
                 passwordList
             } else {
@@ -83,7 +83,7 @@ struct MenuBarContent: View {
                 .help(Text("menuBar.quit"))
         }
         .buttonStyle(.borderless)
-        .padding(10)
+        .padding(DesignKit.Spacing.Primitive.s12)
     }
 
     private func updateFilteredItems() {
@@ -130,9 +130,9 @@ private struct MenuBarPasswordRow: View {
     let onCopyPassword: () -> Void
 
     var body: some View {
-        HStack(spacing: 10) {
+        HStack(spacing: DesignKit.Spacing.Primitive.s12) {
             WebsiteIcon(url: item.url, size: 24)
-            VStack(alignment: .leading, spacing: 1) {
+            VStack(alignment: .leading, spacing: DesignKit.Spacing.Primitive.s2) {
                 Text(item.name)
                     .lineLimit(1)
                 Text(item.username)

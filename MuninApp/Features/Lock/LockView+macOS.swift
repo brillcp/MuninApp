@@ -4,14 +4,14 @@ import SwiftUI
 /// Mac lock screen: logo, unlock actions and version on the left, artwork on the right.
 struct LockView: View {
     var body: some View {
-        HStack(spacing: 48) {
-            VStack(alignment: .leading, spacing: 16) {
+        HStack(spacing: DesignKit.Spacing.Primitive.s48) {
+            VStack(alignment: .leading, spacing: DesignKit.Spacing.Primitive.s16) {
                 LockLogo()
                 Spacer()
                 LockPanel()
                 LockVersionLabel()
             }
-            .padding(48)
+            .padding(DesignKit.Spacing.Primitive.s48)
 
             LockArtwork()
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .trailing)

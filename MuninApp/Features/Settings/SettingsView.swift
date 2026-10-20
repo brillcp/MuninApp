@@ -72,6 +72,7 @@ struct SettingsView: View {
         .sheet(item: $recoveryKey) { item in
             RecoveryKeyView(recoveryKey: item.key)
         }
+        .buttonStyle(.plain)
         #if os(macOS)
         .frame(width: 460)
         .fixedSize(horizontal: false, vertical: true)
@@ -93,7 +94,7 @@ private struct AccountHeader: View {
     }
 
     var body: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: DesignKit.Spacing.Primitive.s12) {
             Text(verbatim: initials)
                 .font(.largeTitle.bold())
                 .foregroundStyle(.white)

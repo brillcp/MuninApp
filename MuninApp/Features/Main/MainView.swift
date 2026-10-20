@@ -1,4 +1,7 @@
 import SwiftUI
+#if os(macOS)
+import AppKit
+#endif
 
 /// Sidebar on Mac and iPad, tab bar on iPhone.
 struct MainView: View {
@@ -25,11 +28,15 @@ struct MainView: View {
     var body: some View {
         TabView(selection: $selection) {
             TabSection("main.section.munin") {
-                Tab("main.tab.vault", systemImage: "lock.rectangle.stack", value: Section.vault) {
+                Tab(value: Section.vault) {
                     VaultView(viewModel: vaultModel)
+                } label: {
+                    SidebarTabLabel(title: "main.tab.vault", systemImage: "lock.rectangle.stack", isSelected: selection == .vault)
                 }
-                Tab("main.tab.codes", systemImage: "key.viewfinder", value: Section.codes) {
+                Tab(value: Section.codes) {
                     CodesView(viewModel: codesModel)
+                } label: {
+                    SidebarTabLabel(title: "main.tab.codes", systemImage: "key.viewfinder", isSelected: selection == .codes)
                 }
             }
             #if os(iOS)
@@ -38,7 +45,7 @@ struct MainView: View {
                 NavigationStack {
                     SettingsView()
                         .navigationTitle("settings.title")
-                        .barkNavigationBar()
+                        .navigationBarTitleDisplayMode(.inline)
                 }
             }
             // Last, so iOS 26 shows it as its own bubble next to the tab bar.
@@ -83,4 +90,42 @@ struct MainView: View {
         .environment(VaultViewModel(session: VaultSession()))
         .environment(AuthManager())
         .environment(VaultSession())
+}
+
+/// A tab's label. The Mac sidebar tints SF Symbols with the system accent,
+/// ignoring .tint, .listItemTint and .foregroundStyle, so there the symbol is
+/// rendered into a non-template image in fixed colours (the accent, or white
+/// on the selected row), which the sidebar can't recolour.
+private struct SidebarTabLabel: View {
+    let title: LocalizedStringKey
+    let systemImage: String
+    let isSelected: Bool
+
+    var body: some View {
+        Label {
+            Text(title)
+        } icon: {
+            #if os(macOS)
+            if let image = coloredSymbol {
+                Image(nsImage: image)
+            } else {
+                Image(systemName: systemImage)
+            }
+            #else
+            Image(systemName: systemImage)
+            #endif
+        }
+    }
+
+    #if os(macOS)
+    private var coloredSymbol: NSImage? {
+        let color = isSelected ? NSColor.white : NSColor(resource: .accent)
+        let configuration = NSImage.SymbolConfiguration(pointSize: 13, weight: .regular)
+            .applying(NSImage.SymbolConfiguration(paletteColors: [color]))
+        let image = NSImage(systemSymbolName: systemImage, accessibilityDescription: nil)?
+            .withSymbolConfiguration(configuration)
+        image?.isTemplate = false
+        return image
+    }
+    #endif
 }

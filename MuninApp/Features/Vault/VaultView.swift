@@ -87,7 +87,7 @@ extension VaultView {
             listColumn
                 .overlay(alignment: .trailing) {
                     VaultItemDetail(item: viewModel.selectedItem ?? closingItem, viewModel: viewModel, pendingDeletion: $pendingDeletion, onEdit: startEditing)
-                        .safeAreaInset(edge: .top, spacing: 0) {
+                        .safeAreaInset(edge: .top, spacing: DesignKit.Spacing.Primitive.s0) {
                             HStack {
                                 Button("global.close", systemImage: "xmark") {
                                     hapticTaps += 1
@@ -98,13 +98,21 @@ extension VaultView {
                                 .buttonBorderShape(.circle)
                                 .help("global.close")
                                 Spacer()
+                                Button("global.edit", systemImage: "square.and.pencil") {
+                                    hapticTaps += 1
+                                    if let item = viewModel.selectedItem { startEditing(item) }
+                                }
+                                .labelStyle(.iconOnly)
+                                .buttonStyle(.glass)
+                                .buttonBorderShape(.circle)
+                                .help("global.edit")
                             }
-                            .padding([.horizontal, .top], 12)
+                            .padding([.horizontal, .top], DesignKit.Spacing.Primitive.s12)
                         }
                         .frame(width: 340)
                         .frame(maxHeight: .infinity)
                         .glassEffect(in: .rect(cornerRadius: 20))
-                        .padding(12)
+                        .padding(DesignKit.Spacing.Primitive.s12)
                         .offset(x: isDetailVisible ? 0 : 48)
                         .opacity(isDetailVisible ? 1 : 0)
                         .allowsHitTesting(isDetailVisible)
@@ -145,20 +153,16 @@ extension VaultView {
             onEdit: startEditing
         )
             #if os(macOS)
-            // Drag a CSV export from Finder onto the list to import it.
             .dropDestination(for: URL.self) { urls, _ in
                 guard let url = urls.first(where: { $0.pathExtension.lowercased() == "csv" }) else { return false }
                 prepareImport(from: url)
                 return true
             }
             #endif
-            .navigationTitle("vault.title")
-            .barkToolbar(title: "vault.title")
+            .barkToolbar(title: "vault.title", subtitle: "\(viewModel.items.count) items")
             #if os(macOS)
-            // iOS searches in its own Search tab instead.
             .searchable(text: $viewModel.searchText, prompt: "vault.search.prompt")
             .searchFocused($isSearchFocused)
-            // ⌘F (Edit ▸ Find) focuses the search field.
             .focusedSceneValue(\.searchFocusRequest, searchFocusRequest)
             .onChange(of: searchFocusRequest.count) { isSearchFocused = true }
             #endif
@@ -168,31 +172,15 @@ extension VaultView {
     @ToolbarContentBuilder
     private var toolbarContent: some ToolbarContent {
         #if os(macOS)
-        // Title ---> Create  [Import, Lock]  [Edit, Delete]
         ToolbarItem(placement: .primaryAction) { createButton }
-        // Pushes the groups below to the far right.
         ToolbarSpacer(.flexible, placement: .primaryAction)
         ToolbarItemGroup(placement: .primaryAction) {
             importButton
             LockToolbarButton()
         }
-        ToolbarSpacer(.fixed, placement: .primaryAction)
-        // Always shown, disabled without a selection, so the toolbar keeps its shape.
-        ToolbarItemGroup(placement: .primaryAction) {
-            Button("global.edit", systemImage: "square.and.pencil") {
-                hapticTaps += 1
-                if let item = viewModel.selectedItem { startEditing(item) }
-            }
-            .disabled(viewModel.selectedItem == nil)
-            Button("global.delete", systemImage: "trash", role: .destructive) {
-                hapticTaps += 1
-                pendingDeletion = viewModel.selectedItem
-            }
-            .disabled(viewModel.selectedItem == nil)
-        }
         #else
-        ToolbarItem(placement: .confirmationAction) { importButton }
-        ToolbarItem(placement: .primaryAction) { createButton }
+        ToolbarItem(placement: .primaryAction) { importButton }
+        ToolbarItem(placement: .confirmationAction) { createButton }
         #endif
     }
 
@@ -299,7 +287,7 @@ private struct VaultPasswordList: View {
                 PasswordTitleCell(name: item.name, username: item.username, url: item.url)
             }
         }
-        .listStyle(.insetGrouped)
+        .listStyle(.plain)
         #endif
     }
 }
@@ -352,9 +340,9 @@ private struct PasswordTitleCell: View {
     let url: String
 
     var body: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: DesignKit.Spacing.Primitive.s12) {
             WebsiteIcon(url: url)
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: DesignKit.Spacing.Primitive.s2) {
                 Text(name)
                 Text(username)
                     .font(.subheadline)

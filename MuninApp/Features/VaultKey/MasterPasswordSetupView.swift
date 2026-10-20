@@ -9,13 +9,13 @@ struct MasterPasswordSetupView: View {
     @State private var confirmation = ""
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 20) {
+        VStack(alignment: .leading, spacing: DesignKit.Spacing.Primitive.s24) {
             Text(session.isResettingMasterPassword ? "masterPassword.reset.title" : "masterPassword.create.title")
                 .font(.largeTitle.bold())
             Text("masterPassword.create.message")
                 .foregroundStyle(.secondary)
 
-            VStack(spacing: 12) {
+            VStack(spacing: DesignKit.Spacing.Primitive.s12) {
                 SecureField("masterPassword.field", text: $password)
                     #if os(iOS)
                     .textContentType(.newPassword)
@@ -53,7 +53,7 @@ struct MasterPasswordSetupView: View {
             }
         }
         .frame(maxWidth: 420)
-        .padding(32)
+        .padding(DesignKit.Spacing.Primitive.s32)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 

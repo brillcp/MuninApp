@@ -1,7 +1,7 @@
 import SwiftUI
 
 extension View {
-    func barkToolbar(title: LocalizedStringKey) -> some View {
+    func barkToolbar(title: LocalizedStringKey, subtitle: LocalizedStringKey) -> some View {
         #if os(macOS)
         toolbarBackground(Color(.bark), for: .windowToolbar)
             .toolbarBackgroundVisibility(.visible, for: .windowToolbar)
@@ -15,23 +15,14 @@ extension View {
                 .sharedBackgroundVisibility(.hidden)
             }
         #else
-        barkNavigationBar()
+        self
+            .navigationTitle(title)
+            .navigationSubtitle(subtitle)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     LockToolbarButton()
                 }
             }
-        #endif
-    }
-
-    @ViewBuilder
-    func barkNavigationBar(title: LocalizedStringKey? = nil) -> some View {
-        #if os(iOS)
-        navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(.bark.opacity(0.9), for: .navigationBar)
-            .toolbarBackgroundVisibility(.visible, for: .navigationBar)
-        #else
-        self
         #endif
     }
 }

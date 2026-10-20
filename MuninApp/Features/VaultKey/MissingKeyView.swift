@@ -14,7 +14,7 @@ struct MissingKeyView: View {
         } description: {
             Text("vaultKey.missing.message")
         } actions: {
-            VStack(spacing: 12) {
+            VStack(spacing: DesignKit.Spacing.Primitive.s12) {
                 TextField("vaultKey.missing.placeholder", text: $recoveryKey, axis: .vertical)
                     .textFieldStyle(.roundedBorder)
                     .font(.body.monospaced())

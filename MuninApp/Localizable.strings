@@ -98,7 +98,7 @@
 "main.section.munin" = "Munin";
 "main.tab.codes" = "2FA";
 "main.tab.vault" = "Vault";
-"main.window.title" = "Munin";
+"main.window.title" = "Munin - Secure passwords and 2FA";
 
 /** Menu Bar **/
 "menuBar.copyUsername" = "Copy Username";

@@ -12,6 +12,7 @@ import SwiftUI
         _vaultModel = State(initialValue: VaultViewModel(session: session))
         #if os(macOS)
         TableSelectionStyle.apply(color: NSColor(resource: .wood))
+        AccentColorOverride.apply(color: NSColor(resource: .accent))
         #endif
     }
 

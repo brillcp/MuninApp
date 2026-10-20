@@ -6,7 +6,7 @@ import SwiftUI
 /// App logo and name, top left. Add the logo image to the "Logo" image set.
 struct LockLogo: View {
     var body: some View {
-        HStack(spacing: 16) {
+        HStack(spacing: DesignKit.Spacing.Primitive.s16) {
             Image("Logo")
                 .resizable()
                 .scaledToFit()
@@ -47,7 +47,7 @@ struct LockPanel: View {
     @State private var unlocksAfterSignIn = false
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 24) {
+        VStack(alignment: .leading, spacing: DesignKit.Spacing.Primitive.s24) {
             if let title = step.title {
                 Text(title)
                     .font(.title.bold())
@@ -152,7 +152,7 @@ private struct LockSignInStep: View {
     @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 24) {
+        VStack(alignment: .leading, spacing: DesignKit.Spacing.Primitive.s24) {
             Text("signIn.subtitle")
 
             SignInWithAppleButton(.signIn) { request in
@@ -180,7 +180,7 @@ private struct LockBiometricsStep: View {
     @Environment(VaultSession.self) private var session
 
     var body: some View {
-        HStack(spacing: 16) {
+        HStack(spacing: DesignKit.Spacing.Primitive.s16) {
             #if os(macOS)
             LockButton("settings.biometrics.touch", systemImage: "touchid") {
                 Task { await session.unlockWithBiometrics() }
@@ -207,7 +207,7 @@ private struct LockMasterPasswordStep: View {
     @FocusState private var isFieldFocused: Bool
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 24) {
+        VStack(alignment: .leading, spacing: DesignKit.Spacing.Primitive.s24) {
             SecureField("lock.masterPassword.placeholder", text: $password)
                 .focused($isFieldFocused)
                 .task { if focusesField { isFieldFocused = true } }
@@ -251,7 +251,7 @@ private struct LockRecoveryKeyStep: View {
     @FocusState private var isFieldFocused: Bool
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 24) {
+        VStack(alignment: .leading, spacing: DesignKit.Spacing.Primitive.s24) {
             Text("lock.recovery.message")
                 .foregroundStyle(.secondary)
             TextField("vaultKey.missing.placeholder", text: $recoveryKey, axis: .vertical)

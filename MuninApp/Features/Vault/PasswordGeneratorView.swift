@@ -9,8 +9,8 @@ struct PasswordGeneratorView: View {
     @State private var hapticTaps = 0
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: DesignKit.Spacing.Primitive.s0) {
+            VStack(alignment: .leading, spacing: DesignKit.Spacing.Primitive.s16) {
                 Text(password)
                     .font(.system(.title2, design: .monospaced, weight: .semibold))
                     .textSelection(.enabled)

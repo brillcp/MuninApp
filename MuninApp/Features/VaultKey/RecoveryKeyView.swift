@@ -13,7 +13,7 @@ struct RecoveryKeyView: View {
 
     var body: some View {
         NavigationStack {
-            VStack(alignment: .leading, spacing: 20) {
+            VStack(alignment: .leading, spacing: DesignKit.Spacing.Primitive.s24) {
                 Text("vaultKey.recovery.explanation")
                 Text("vaultKey.recovery.backup")
                     .foregroundStyle(.secondary)
