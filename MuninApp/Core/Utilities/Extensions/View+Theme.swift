@@ -1,9 +1,6 @@
 import SwiftUI
 
 extension View {
-    /// Bark-coloured toolbar with a light title.
-    /// macOS has no API for the window title colour, so the system title is
-    /// hidden and drawn as a toolbar item instead.
     func barkToolbar(title: LocalizedStringKey) -> some View {
         #if os(macOS)
         toolbarBackground(Color(.bark), for: .windowToolbar)
@@ -16,8 +13,6 @@ extension View {
                         .foregroundStyle(.white)
                 }
                 .sharedBackgroundVisibility(.hidden)
-                // The Lock button is placed by each screen on the Mac, so it
-                // can share a group with that screen's buttons.
             }
         #else
         barkNavigationBar()
@@ -29,15 +24,11 @@ extension View {
         #endif
     }
 
-    /// iOS: the navigation bar is Bark with a light, inline (never large) title.
-    /// Mac: no change; sheets keep the system look. `title` is unused there.
     @ViewBuilder
     func barkNavigationBar(title: LocalizedStringKey? = nil) -> some View {
         #if os(iOS)
-        navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(.bark, for: .navigationBar)
-            .toolbarBackgroundVisibility(.visible, for: .navigationBar)
-            .toolbarColorScheme(.dark, for: .navigationBar)
+        navigationBarTitleDisplayMode(.large)
+            .toolbarBackground(.bark.opacity(0.8), for: .navigationBar)
         #else
         self
         #endif

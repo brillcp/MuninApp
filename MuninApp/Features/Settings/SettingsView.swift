@@ -13,19 +13,9 @@ struct SettingsView: View {
         @Bindable var session = session
         Form {
             if auth.isSignedIn {
-                Section("settings.account") {
-                    if let email = auth.email {
-                        LabeledContent("settings.email") {
-                            Text(verbatim: email)
-                                .textSelection(.enabled)
-                        }
-                    }
-                    Button("account.signOut", systemImage: "rectangle.portrait.and.arrow.right", role: .destructive) {
-                        hapticTaps += 1
-                        auth.signOut()
-                    }
-                    .foregroundStyle(.red)
-                    .tint(.red)
+                Section {
+                    AccountHeader(email: auth.email)
+                        .listRowBackground(Color.clear)
                 }
 
                 Section("settings.security") {
@@ -39,13 +29,17 @@ struct SettingsView: View {
                             recoveryKey = RecoveryKeyItem(key: VaultKeyStore.recoveryString(for: vault.key))
                         }
                         if session.canUseBiometrics {
-                            Toggle("settings.biometrics", isOn: $session.isBiometricUnlockEnabled)
+                            #if os(macOS)
+                            Toggle("settings.biometrics.touch", systemImage: "faceid", isOn: $session.isBiometricUnlockEnabled)
+                            #else
+                            Toggle("settings.biometrics.face", systemImage: "faceid", isOn: $session.isBiometricUnlockEnabled)
+                            #endif
                         }
                     } else {
                         Text("settings.locked")
                             .foregroundStyle(.secondary)
                     }
-                    Picker("settings.autoLock", selection: $session.autoLockTimeout) {
+                    Picker("settings.autoLock", systemImage: "lock.fill", selection: $session.autoLockTimeout) {
                         ForEach(AutoLockTimeout.allCases) { timeout in
                             Text(timeout.title).tag(timeout)
                         }
@@ -56,6 +50,17 @@ struct SettingsView: View {
             Section("settings.about") {
                 LabeledContent("settings.version") {
                     Text(verbatim: Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "")
+                }
+            }
+
+            if auth.isSignedIn {
+                Section {
+                    Button("account.signOut", systemImage: "rectangle.portrait.and.arrow.right", role: .destructive) {
+                        hapticTaps += 1
+                        auth.signOut()
+                    }
+                    .foregroundStyle(.red)
+                    .tint(.red)
                 }
             }
         }
@@ -71,6 +76,36 @@ struct SettingsView: View {
         .frame(width: 460)
         .fixedSize(horizontal: false, vertical: true)
         #endif
+    }
+}
+
+/// The signed-in account: a centred accent circle with initials, and the email.
+private struct AccountHeader: View {
+    let email: String?
+
+    /// Sign in with Apple only gives Munin the email, so the initials come from
+    /// its first part: "viktor.gidlof@…" → "VG", "viktor@…" → "V".
+    private var initials: String {
+        guard let local = email?.split(separator: "@").first else { return "?" }
+        let parts = local.split(whereSeparator: { ".-_+".contains($0) })
+        let letters = parts.prefix(2).compactMap(\.first)
+        return letters.isEmpty ? "?" : String(letters).uppercased()
+    }
+
+    var body: some View {
+        VStack(spacing: 12) {
+            Text(verbatim: initials)
+                .font(.largeTitle.bold())
+                .foregroundStyle(.white)
+                .frame(width: 88, height: 88)
+                .background(.accent, in: .circle)
+            if let email {
+                Text(verbatim: email)
+                    .font(.headline)
+                    .textSelection(.enabled)
+            }
+        }
+        .frame(maxWidth: .infinity)
     }
 }
 

@@ -16,15 +16,12 @@ struct CodeRow: View {
 
     var body: some View {
         HStack(spacing: 12) {
+            CountdownGauge(remaining: account.secondsRemaining(at: now), period: account.period)
+                .equatable()
             AccountLabel(title: account.title, subtitle: account.subtitle)
                 .equatable()
-
             Spacer(minLength: 8)
-
             CodeText(code: account.code(at: now), didCopy: didCopy)
-                .equatable()
-
-            CountdownGauge(remaining: account.secondsRemaining(at: now), period: account.period)
                 .equatable()
         }
         .padding(.vertical, 4)

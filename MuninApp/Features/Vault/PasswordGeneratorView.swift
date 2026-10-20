@@ -25,7 +25,7 @@ struct PasswordGeneratorView: View {
                         regenerate()
                     }
                     .labelStyle(.iconOnly)
-                    Button("global.copy", systemImage: "doc.on.doc") {
+                    Button("global.copy", systemImage: "square.on.square") {
                         hapticTaps += 1
                         Pasteboard.copySensitive(password)
                     }

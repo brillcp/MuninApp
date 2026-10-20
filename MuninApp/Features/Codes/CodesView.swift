@@ -109,7 +109,7 @@ private struct CodesList: View {
                 CodeRow(account: item.account, clock: clock)
                     .contextMenu {
                         Button("global.delete", systemImage: "trash", role: .destructive) { pendingDeletion = item }
-                        Button("global.copy", systemImage: "doc.on.doc", role: .confirm) { pendingDeletion = item }
+                        Button("global.copy", systemImage: "square.on.square", role: .confirm) { pendingDeletion = item }
                     }
             }
             if viewModel.undecryptableCount > 0 {
@@ -118,13 +118,13 @@ private struct CodesList: View {
                 }
             }
         }
-        .listStyle(.plain)
+        .listStyle(.insetGrouped)
         #endif
     }
 
     @ViewBuilder
     private func codeMenu(for item: VaultItem) -> some View {
-        Button("codes.copyCode", systemImage: "doc.on.doc") { CodeRow.copyCode(of: item.account) }
+        Button("codes.copyCode", systemImage: "square.on.square") { CodeRow.copyCode(of: item.account) }
         Divider()
         Button("global.delete", systemImage: "trash", role: .destructive) { pendingDeletion = item }
     }

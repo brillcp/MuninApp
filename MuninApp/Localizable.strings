@@ -85,7 +85,7 @@
 "lock.step.masterPassword" = "Use master password";
 "lock.step.recoveryKey" = "Enter recovery key";
 "lock.step.signIn" = "Sign in";
-"lock.switchAccount" = "Switch account";
+"lock.switchAccount" = "Switch";
 "lock.title" = "Unlock your vault";
 "lock.unlock" = "Unlock";
 "lock.unlockWithBiometrics" = "Unlock with biometrics";
@@ -180,12 +180,11 @@
 
 /** Settings **/
 "settings.about" = "About";
-"settings.account" = "Account";
 "settings.autoLock" = "Auto-Lock";
-"settings.biometrics" = "Unlock with Face ID or Touch ID";
+"settings.biometrics.face" = "Unlock with Face ID ";
+"settings.biometrics.touch" = "Unlock with Touch ID";
 "settings.changeMasterPassword" = "Change Master Password";
 "settings.currentMasterPassword" = "Current master password";
-"settings.email" = "Email";
 "settings.locked" = "Unlock Munin to change security settings.";
 "settings.security" = "Security";
 "settings.title" = "Settings";

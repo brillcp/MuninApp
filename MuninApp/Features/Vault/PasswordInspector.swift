@@ -7,6 +7,8 @@ struct PasswordInspector: View {
     /// Decrypts a ciphertext for the given field ("password" or "note").
     let decrypt: (_ ciphertext: String, _ field: String) throws -> String
     let onCopyPassword: () -> Void
+    /// Asks for confirmation; the button sits at the bottom of the list.
+    let onDelete: () -> Void
 
     @State private var revealedPassword: String?
     @State private var note: String?
@@ -25,104 +27,90 @@ struct PasswordInspector: View {
     }
 
     var body: some View {
-        VStack {
-            List {
-                Section {
-                    VStack(spacing: 12) {
-                        WebsiteIcon(url: item.url, size: 64)
-                        #if os(macOS)
-                        Text(item.name)
-                            .font(.title2.bold())
-                            .multilineTextAlignment(.center)
-                            .textSelection(.enabled)
-                        #endif
-                    }
-                    .frame(maxWidth: .infinity)
-                    .listRowBackground(Color.clear)
+        List {
+            Section {
+                VStack(spacing: 12) {
+                    WebsiteIcon(url: item.url, size: 64)
+                    #if os(macOS)
+                    Text(item.name)
+                        .font(.title2.bold())
+                        .multilineTextAlignment(.center)
+                        .textSelection(.enabled)
+                    #endif
                 }
+                .frame(maxWidth: .infinity)
+                .listRowBackground(Color.clear)
+            }
 
-                Section {
-                    CopyableRow(label: "password.field.url", isCopied: copiedField == .url) {
-                        copy(.url) { Pasteboard.copy(item.url) }
-                    } value: {
-                        HStack {
-                            Text(item.url)
-                            if let websiteURL {
-                                Button("passwordInspector.openWebsite", systemImage: "arrow.up.right.square.fill") {
-                                    hapticTaps += 1
-                                    openURL(websiteURL)
-                                }
-                                .labelStyle(.iconOnly)
-                                .buttonStyle(.borderless)
-                            }
+            Section {
+                DetailRow(label: "password.field.username", isCopied: copiedField == .username) {
+                    Text(item.username)
+                } actions: {
+                    copyButton(.username) { Pasteboard.copy(item.username) }
+                }
+                .onTapGesture { copy(.username) { Pasteboard.copy(item.username) } }
+
+                DetailRow(label: "password.field.password", isCopied: copiedField == .password) {
+                    Text(revealedPassword ?? "••••••••••••")
+                        .font(.body.monospaced())
+                } actions: {
+                    Button(LocalizedStringKey(revealedPassword == nil ? "passwordInspector.show" : "passwordInspector.hide"),
+                           systemImage: revealedPassword == nil ? "eye" : "eye.slash") {
+                        hapticTaps += 1
+                        if revealedPassword == nil {
+                            revealedPassword = try? decrypt(item.encryptedPassword, "password")
+                        } else {
+                            revealedPassword = nil
                         }
                     }
-                    CopyableRow(label: "password.field.username", isCopied: copiedField == .username) {
-                        copy(.username) { Pasteboard.copy(item.username) }
-                    } value: {
-                        Text(item.username)
-                    }
+                    copyButton(.password, perform: onCopyPassword)
                 }
+                .onTapGesture { copy(.password, perform: onCopyPassword) }
 
-                Section("password.field.password") {
-                    HStack {
-                        Group {
-                            if copiedField == .password {
-                                Text("global.copied")
-                                    .foregroundStyle(.tint)
-                            } else {
-                                Text(revealedPassword ?? "••••••••")
-                                    .font(.body.monospaced())
-                            }
-                        }
-                        Spacer()
-                        Button(LocalizedStringKey(revealedPassword == nil ? "passwordInspector.show" : "passwordInspector.hide"),
-                               systemImage: revealedPassword == nil ? "eye" : "eye.slash") {
+                DetailRow(label: "password.field.url", isCopied: copiedField == .url) {
+                    Text(item.url)
+                } actions: {
+                    if let websiteURL {
+                        Button("passwordInspector.openWebsite", systemImage: "arrow.up.right.square.fill") {
                             hapticTaps += 1
-                            if revealedPassword == nil {
-                                revealedPassword = try? decrypt(item.encryptedPassword, "password")
-                            } else {
-                                revealedPassword = nil
-                            }
+                            openURL(websiteURL)
                         }
-                               .labelStyle(.iconOnly)
-                               .buttonStyle(.borderless)
-                    }
-                    .contentShape(Rectangle())
-                    .onTapGesture { copy(.password, perform: onCopyPassword) }
-                }
-
-                if let note, !note.isEmpty {
-                    Section("password.field.note") {
-                        Group {
-                            if copiedField == .note {
-                                Text("global.copied")
-                                    .foregroundStyle(.tint)
-                            } else {
-                                Text(note)
-                            }
-                        }
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .contentShape(Rectangle())
-                        .onTapGesture { copy(.note) { Pasteboard.copy(note) } }
                     }
                 }
+                .onTapGesture { copy(.url) { Pasteboard.copy(item.url) } }
+            }
 
+            if let note, !note.isEmpty {
                 Section {
-                    LabeledContent("password.field.lastUpdated") {
-                        Text(item.lastUpdated, format: .dateTime)
+                    DetailRow(label: "password.field.note", isCopied: copiedField == .note) {
+                        Text(note)
+                    } actions: {
+                        EmptyView()
                     }
+                    .onTapGesture { copy(.note) { Pasteboard.copy(note) } }
                 }
+            }
+
+            Section {
+                LabeledContent("password.field.lastUpdated") {
+                    Text(item.lastUpdated, format: .dateTime)
+                }
+            }
+
+            Section {
+                Button("global.delete", systemImage: "trash", role: .destructive) {
+                    hapticTaps += 1
+                    onDelete()
+                }
+                .foregroundStyle(.red)
             }
         }
         .frame(maxHeight: .infinity)
         #if os(macOS)
         .listStyle(.inset)
+        .scrollContentBackground(.hidden)
         #else
         .listStyle(.insetGrouped)
-        #endif
-        #if os(macOS)
-        .scrollContentBackground(.hidden)
         #endif
         .sensoryFeedback(.impact(weight: .light), trigger: hapticTaps)
         #if os(iOS)
@@ -141,6 +129,12 @@ struct PasswordInspector: View {
         }
     }
 
+    private func copyButton(_ field: Field, perform: @escaping () -> Void) -> some View {
+        Button("global.copy", systemImage: "square.on.square") {
+            copy(field, perform: perform)
+        }
+    }
+
     private func copy(_ field: Field, perform: () -> Void) {
         perform()
         hapticTaps += 1
@@ -154,24 +148,41 @@ struct PasswordInspector: View {
     }
 }
 
-/// A labeled row that copies its value when tapped, showing "Copied" briefly.
-private struct CopyableRow<Value: View>: View {
+/// A field: its label small above the value, with icon buttons on the
+/// trailing side. Tapping the row copies (set by the caller); the value
+/// briefly reads "Copied".
+private struct DetailRow<Value: View, Actions: View>: View {
     let label: LocalizedStringKey
     let isCopied: Bool
-    let onCopy: () -> Void
     @ViewBuilder let value: Value
+    @ViewBuilder let actions: Actions
 
     var body: some View {
-        LabeledContent(label) {
-            if isCopied {
-                Text("global.copied")
-                    .foregroundStyle(.tint)
-            } else {
-                value
+        HStack(spacing: 16) {
+            VStack(alignment: .leading, spacing: 4) {
+                Text(label)
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                Group {
+                    if isCopied {
+                        Text("global.copied")
+                            .foregroundStyle(.tint)
+                    } else {
+                        value
+                    }
+                }
+                .transition(.blurReplace)
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
+
+            HStack(spacing: 16) {
+                actions
+            }
+            .labelStyle(.iconOnly)
+            .buttonStyle(.borderless)
+            .imageScale(.large)
         }
+        .padding(.vertical, 4)
         .contentShape(.rect)
-        .transition(.blurReplace)
-        .onTapGesture(perform: onCopy)
     }
 }

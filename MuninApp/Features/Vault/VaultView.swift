@@ -133,11 +133,14 @@ extension VaultView {
             #endif
             .navigationTitle("vault.title")
             .barkToolbar(title: "vault.title")
+            #if os(macOS)
+            // iOS searches in its own Search tab instead.
             .searchable(text: $viewModel.searchText, prompt: "vault.search.prompt")
             .searchFocused($isSearchFocused)
             // ⌘F (Edit ▸ Find) focuses the search field.
             .focusedSceneValue(\.searchFocusRequest, searchFocusRequest)
             .onChange(of: searchFocusRequest.count) { isSearchFocused = true }
+            #endif
             .toolbar { toolbarContent }
     }
 
@@ -235,7 +238,7 @@ private struct VaultPasswordList: View {
                         Pasteboard.copy(item.username)
                     }
                     .disabled(item.username.isEmpty)
-                    Button("vault.copyPassword", systemImage: "doc.on.doc") {
+                    Button("vault.copyPassword", systemImage: "square.on.square") {
                         Task { await viewModel.copyPassword(item, auth: auth) }
                     }
                     Button("global.edit", systemImage: "square.and.pencil") { onEdit(item) }
@@ -275,7 +278,7 @@ private struct VaultPasswordList: View {
                 PasswordTitleCell(name: item.name, username: item.username, url: item.url)
             }
         }
-        .listStyle(.plain)
+        .listStyle(.insetGrouped)
         #endif
     }
 }
@@ -298,12 +301,14 @@ private struct VaultItemDetail: View {
                     try viewModel.decrypt(ciphertext, field: field, auth: auth)
                 } onCopyPassword: {
                     Task { await viewModel.copyPassword(item, auth: auth) }
+                } onDelete: {
+                    pendingDeletion = item
                 }
                 .id(item.id)
             }
         }
         #if os(iOS)
-        // iOS: on the detail screen. (Mac: in VaultView's toolbar.)
+        // iOS: Edit on the detail screen. (Mac: in VaultView's toolbar.)
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Button("global.edit", systemImage: "square.and.pencil") {
@@ -312,13 +317,7 @@ private struct VaultItemDetail: View {
                 }
                 .disabled(viewModel.selectedItem == nil)
             }
-            ToolbarItem(placement: .primaryAction) {
-                Button("global.delete", systemImage: "trash", role: .destructive) {
-                    hapticTaps += 1
-                    pendingDeletion = viewModel.selectedItem
-                }
-                .disabled(viewModel.selectedItem == nil)
-            }
+            // Delete is at the bottom of the detail list.
         }
         .sensoryFeedback(.impact(weight: .light), trigger: hapticTaps)
         #endif

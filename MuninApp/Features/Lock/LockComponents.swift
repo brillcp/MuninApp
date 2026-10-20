@@ -26,10 +26,10 @@ enum LockStep: Hashable {
     case masterPassword
     case recoveryKey
 
-    var title: LocalizedStringKey {
+    var title: LocalizedStringKey? {
         switch self {
         case .signIn:         "lock.step.signIn"
-        case .biometrics:     "lock.title"
+        case .biometrics:     nil
         case .masterPassword: "lock.step.masterPassword"
         case .recoveryKey:    "lock.step.recoveryKey"
         }
@@ -51,10 +51,16 @@ struct LockPanel: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
-            Text(step.title)
-                .font(.title.bold())
+            if let title = step.title {
+                Text(title)
+                    .font(.title.bold())
+            }
 
-            LockAccountRow(email: auth.email)
+            if auth.isSignedIn {
+                if step == .biometrics || step == .masterPassword, let email = auth.email {
+                    LockButton("\(email) · Switch", style: .tertiary) { go(to: .signIn) }
+                }
+            }
 
             if isWorking {
                 ProgressView()
@@ -67,12 +73,6 @@ struct LockPanel: View {
                     .transition(.blurReplace)
             }
 
-            if auth.isSignedIn {
-                if step != .signIn {
-                    LockSecondaryButton("lock.switchAccount") { go(to: .signIn) }
-                }
-            }
-
             if let errorMessage {
                 Text(errorMessage)
                     .font(.footnote)
@@ -82,23 +82,18 @@ struct LockPanel: View {
         .padding()
         .frame(maxWidth: .infinity, alignment: .leading)
         #if os(iOS)
-        // The glass card sits on the artwork on iOS; the Mac shows it plain.
         .glassEffect(in: .rect(cornerRadius: 24))
         #endif
         .disabled(isWorking)
         .animation(.bouncy, value: step)
         .animation(.bouncy, value: isWorking)
-        // A new account (or signing out) starts from its default step.
         .onChange(of: auth.userID) { chosenStep = nil }
-        // A finished sign-in (also the same account again, after "Switch
-        // account") goes back to unlocking and starts biometrics.
         .onChange(of: auth.isSigningIn) { wasSigningIn, isSigningIn in
             guard wasSigningIn, !isSigningIn, auth.isSignedIn, auth.signInError == nil else { return }
             chosenStep = nil
             unlocksAfterSignIn = true
             startUnlockIfReady()
         }
-        // A new account is checked first; unlock once it's locked and ready.
         .onChange(of: session.state) { startUnlockIfReady() }
     }
 
@@ -112,14 +107,11 @@ struct LockPanel: View {
     private var stepView: some View {
         switch step {
         case .signIn:
-            // Signed in already means "Switch account": offer a way back.
             LockSignInStep(onCancel: auth.isSignedIn ? { go(to: nil) } : nil)
         case .biometrics:
             LockBiometricsStep(stacksButtons: stacksButtons) { go(to: .masterPassword) }
         case .masterPassword:
             LockMasterPasswordStep(
-                // Focus the field when the user chose this step, not when it's
-                // the default (so the iOS keyboard doesn't pop up at launch).
                 focusesField: chosenStep == .masterPassword,
                 onUseBiometrics: session.offersBiometricUnlock ? { go(to: .biometrics) } : nil,
                 onForgotPassword: { go(to: .recoveryKey) }
@@ -179,7 +171,7 @@ private struct LockSignInStep: View {
             .controlSize(.large)
 
             if let onCancel {
-                LockSecondaryButton("global.cancel", action: onCancel)
+                LockButton("global.cancel", style: .tertiary, action: onCancel)
             }
         }
     }
@@ -194,10 +186,17 @@ private struct LockBiometricsStep: View {
 
     var body: some View {
         layout {
-            LockPrimaryButton("lock.unlockWithBiometrics", systemImage: "touchid") {
+            #if os(macOS)
+            LockButton("settings.biometrics.touch", systemImage: "touchid") {
                 Task { await session.unlockWithBiometrics() }
             }
-            LockSecondaryButton("lock.useMasterPassword", action: onUseMasterPassword)
+            #else
+            LockButton("settings.biometrics.face", systemImage: "faceid") {
+                Task { await session.unlockWithBiometrics() }
+            }
+            #endif
+
+            LockButton(systemImage: "lock.shield.fill", style: .secondary, action: onUseMasterPassword)
         }
     }
 
@@ -230,13 +229,19 @@ private struct LockMasterPasswordStep: View {
                 .onSubmit(unlock)
                 .colorScheme(.light)
 
-            LockPrimaryButton("lock.unlock", action: unlock)
-                .disabled(password.isEmpty)
+            HStack {
+                LockButton("lock.unlock", action: unlock)
+                    .disabled(password.isEmpty)
 
-            if let onUseBiometrics {
-                LockSecondaryButton("lock.useBiometrics", action: onUseBiometrics)
+                if let onUseBiometrics {
+                    #if os(iOS)
+                    LockButton(systemImage: "faceid", style: .secondary, action: onUseBiometrics)
+                    #else
+                    LockButton(systemImage: "touchid", style: .secondary, action: onUseBiometrics)
+                    #endif
+                }
             }
-            LockSecondaryButton("lock.forgotMasterPassword", action: onForgotPassword)
+            LockButton("lock.forgotMasterPassword", style: .tertiary, action: onForgotPassword)
         }
     }
 
@@ -272,69 +277,83 @@ private struct LockRecoveryKeyStep: View {
                 #endif
                 .colorScheme(.light)
 
-            LockPrimaryButton("lock.recovery.continue") { session.unlock(recoveryKey: recoveryKey) }
+            LockButton("lock.recovery.continue") { session.unlock(recoveryKey: recoveryKey) }
                 .disabled(recoveryKey.isEmpty)
-            LockSecondaryButton("global.cancel", action: onCancel)
+            LockButton("global.cancel", style: .tertiary, action: onCancel)
         }
     }
 }
 
 // MARK: - Shared pieces
 
-/// The main action: full width, filled with the accent color.
-struct LockPrimaryButton: View {
-    let title: LocalizedStringKey
-    var systemImage: String?
-    let action: () -> Void
-
-    init(_ title: LocalizedStringKey, systemImage: String? = nil, action: @escaping () -> Void) {
-        self.title = title
-        self.systemImage = systemImage
-        self.action = action
+/// Lock screen button. `.primary` for the main action (prominent glass),
+/// `.secondary` for alternatives like switch method, forgot password or cancel,
+/// `.tertiary` for plain text links.
+struct LockButton: View {
+    enum Style {
+        case primary
+        case secondary
+        /// No glass, just plain text.
+        case tertiary
     }
 
     @State private var taps = 0
 
+    var title: LocalizedStringKey? = nil
+    let systemImage: String?
+    let style: Style
+    let action: () -> Void
+
+    init(
+        _ title: LocalizedStringKey? = nil,
+        systemImage: String? = nil,
+        style: Style = .primary,
+        action: @escaping () -> Void
+    ) {
+        self.title = title
+        self.systemImage = systemImage
+        self.style = style
+        self.action = action
+    }
+
     var body: some View {
+        styled(button)
+            .controlSize(.large)
+            .sensoryFeedback(.impact(weight: .light), trigger: taps)
+    }
+
+    private var button: some View {
         Button {
             taps += 1
             action()
         } label: {
-            Group {
-                if let systemImage {
-                    Label(title, systemImage: systemImage)
-                } else {
-                    Text(title)
-                }
+            if let title, let systemImage {
+                Label(title, systemImage: systemImage)
+                    .frame(maxWidth: .infinity)
+            } else if let title {
+                Text(title)
+                    .frame(maxWidth: .infinity)
+            } else if let systemImage {
+                Image(systemName: systemImage)
             }
-            .frame(maxWidth: .infinity)
         }
-        .buttonStyle(.glassProminent)
-        .controlSize(.large)
-        .sensoryFeedback(.impact(weight: .light), trigger: taps)
-    }
-}
-
-/// Alternative actions (switch method, forgot password, cancel): plain white text.
-struct LockSecondaryButton: View {
-    let title: LocalizedStringKey
-    let action: () -> Void
-
-    init(_ title: LocalizedStringKey, action: @escaping () -> Void) {
-        self.title = title
-        self.action = action
     }
 
-    @State private var taps = 0
-
-    var body: some View {
-        Button(title) {
-            taps += 1
-            action()
+    /// The glass styles are different types, so branch rather than pick one inline.
+    @ViewBuilder
+    private func styled(_ button: some View) -> some View {
+        switch style {
+        case .primary:
+            button.buttonStyle(.glassProminent)
+        case .secondary:
+            button
+                .buttonStyle(.glass)
+                .tint(.primary)
+        case .tertiary:
+            button
+                .buttonStyle(.plain)
+                .foregroundStyle(.primary)
         }
-        .sensoryFeedback(.impact(weight: .light), trigger: taps)
-            .buttonStyle(.borderless)
-            .tint(.primary)
     }
 }
 
@@ -344,15 +363,10 @@ struct LockAccountRow: View {
 
     var body: some View {
         if let email {
-            HStack {
-                Text(verbatim: initials)
-                    .foregroundStyle(.white)
-                    .frame(width: 44, height: 44)
-                    .background(.accent, in: .circle)
-                Text(email)
-                    .lineLimit(1)
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
+            Text("Signed in as: \(email)")
+                .lineLimit(1)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .font(.callout)
         }
     }
 

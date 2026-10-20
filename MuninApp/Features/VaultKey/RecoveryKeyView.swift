@@ -25,7 +25,7 @@ struct RecoveryKeyView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background(.quaternary, in: RoundedRectangle(cornerRadius: 10))
 
-                Button(LocalizedStringKey(didCopy ? "global.copied" : "vaultKey.recovery.copy"), systemImage: didCopy ? "checkmark" : "doc.on.doc") {
+                Button(LocalizedStringKey(didCopy ? "global.copied" : "vaultKey.recovery.copy"), systemImage: didCopy ? "checkmark" : "square.on.square") {
                     #if os(iOS)
                     UIPasteboard.general.string = recoveryKey
                     #else
