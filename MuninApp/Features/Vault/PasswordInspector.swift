@@ -29,8 +29,8 @@ struct PasswordInspector: View {
     var body: some View {
         Form {
             Section {
-                VStack(spacing: DesignKit.Spacing.Primitive.s12) {
-                    WebsiteIcon(url: item.url, size: DesignKit.Spacing.Primitive.s64)
+                VStack(spacing: DesignKit.Spacing.Primitive.s16) {
+                    WebsiteIcon(url: item.url, size: DesignKit.Spacing.Primitive.s72)
                     Text(item.name)
                         .font(.title2.bold())
                         .multilineTextAlignment(.leading)

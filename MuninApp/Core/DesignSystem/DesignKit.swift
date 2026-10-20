@@ -16,6 +16,7 @@ enum DesignKit {
             static let s48: CGFloat = 48
             static let s56: CGFloat = 56
             static let s64: CGFloat = 64
+            static let s72: CGFloat = 72
         }
     }
 }
