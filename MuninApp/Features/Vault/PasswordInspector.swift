@@ -145,7 +145,7 @@ struct PasswordInspector: View {
             revealedPassword = nil
             note = nil
         }
-        .tint(tint)
+        .tint(tint ?? .accent)
     }
 
     /// An icon button that copies a field.

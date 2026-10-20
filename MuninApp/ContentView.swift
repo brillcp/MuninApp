@@ -9,8 +9,9 @@ import Playgrounds
 /// lock and sign-out. That list outlives the main view (the Mac menu bar uses
 /// it too), so it has to be cleared explicitly.
 ///
-/// Locking and unlocking cross-fade the two. A plain fade: blurring the
-/// whole window during the swap stuttered. It's a ZStack rather than a Group: a Group passes its
+/// On iOS, locking and unlocking cross-fade the two with a slight zoom
+/// (blurring the whole window during the swap stuttered). The Mac swaps them
+/// without animation: the transition crashed there. It's a ZStack rather than a Group: a Group passes its
 /// `.animation` to each child separately, so an inserted or removed child
 /// never sees the value change and the transition doesn't run.
 struct ContentView: View {
@@ -27,9 +28,13 @@ struct ContentView: View {
                     SignedInContent()
                 }
             }
+            #if os(iOS)
             .transition(.opacity.combined(with: .scale(1.1)))
+            #endif
         }
+        #if os(iOS)
         .animation(.smooth(duration: 0.45), value: showsLockScreen)
+        #endif
         .task(id: auth.userID) { await session.prepare(auth: auth) }
         .autoLock(session)
         .onChange(of: session.state) { _, state in
