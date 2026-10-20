@@ -14,7 +14,7 @@ struct LockView: View {
             .background {
                 Color.clear
                     .overlay {
-                        Image("munin")
+                        Image("corpus")
                             .resizable()
                             .scaledToFill()
                     }

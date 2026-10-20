@@ -24,7 +24,7 @@ struct LockView: View {
 /// The artwork on the right of the Mac lock screen, from the "munin" image set.
 private struct LockArtwork: View {
     var body: some View {
-        Image("munin")
+        Image("corpus")
             .resizable()
             .scaledToFit()
     }
