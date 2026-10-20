@@ -82,7 +82,6 @@ struct PasswordInspector: View {
                 }
                 .onTapGesture { copy(.url) { Pasteboard.copy(item.url) } }
             }
-            .listRowBackground(tint?.opacity(rowOpacity))
 
             if let note, !note.isEmpty {
                 Section {
@@ -93,7 +92,6 @@ struct PasswordInspector: View {
                     }
                     .onTapGesture { copy(.note) { Pasteboard.copy(note) } }
                 }
-                .listRowBackground(tint?.opacity(rowOpacity))
             }
 
             Section {
@@ -101,7 +99,6 @@ struct PasswordInspector: View {
                     Text(item.lastUpdated, format: .dateTime)
                 }
             }
-            .listRowBackground(tint?.opacity(rowOpacity))
 
             Section {
                 Button("global.delete", systemImage: "trash", role: .destructive) {
@@ -111,7 +108,6 @@ struct PasswordInspector: View {
                 .foregroundStyle(.red)
                 .tint(.red)
             }
-            .listRowBackground(tint?.opacity(rowOpacity))
         }
         .frame(maxHeight: .infinity)
         .formStyle(.grouped)
@@ -119,7 +115,7 @@ struct PasswordInspector: View {
         .background {
             #if os(iOS)
             tint?
-                .opacity(0.11)
+                .opacity(0.12)
                 .ignoresSafeArea()
             #endif
         }
@@ -139,6 +135,7 @@ struct PasswordInspector: View {
             revealedPassword = nil
             note = nil
         }
+        .tint(tint)
     }
 
     private func copyButton(_ field: Field, perform: @escaping () -> Void) -> some View {
