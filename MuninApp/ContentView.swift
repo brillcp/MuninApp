@@ -42,16 +42,17 @@ struct ContentView: View {
         }
     }
 
-    /// True while signed out, locked, or still checking the vault's state.
+    /// True while signed out, locked, checking the vault's state, or after
+    /// failing to open it (the lock screen then shows an alert).
     private var showsLockScreen: Bool {
-        !auth.isSignedIn || session.state == .locked || session.state == .checking
+        !auth.isSignedIn || session.state == .locked || session.state == .checking || session.failureMessage != nil
     }
 }
 
 /// What a signed-in user sees, depending on the vault's state.
 ///
-/// The locked and checking states render nothing here, because `ContentView`
-/// shows its lock screen for them instead.
+/// The locked, checking and failed states render nothing here, because
+/// `ContentView` shows its lock screen for them instead.
 private struct SignedInContent: View {
     @Environment(AuthManager.self) private var auth
     @Environment(VaultSession.self) private var session
@@ -74,14 +75,8 @@ private struct SignedInContent: View {
             } onRetry: {
                 await session.prepare(auth: auth)
             }
-        case .failed(let message):
-            ContentUnavailableView {
-                Label("errors.openVault.title", systemImage: "exclamationmark.triangle")
-            } description: {
-                Text(message)
-            } actions: {
-                Button("global.tryAgain") { Task { await session.prepare(auth: auth) } }
-            }
+        case .failed:
+            EmptyView()
         }
     }
 }

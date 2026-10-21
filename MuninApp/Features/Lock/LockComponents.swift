@@ -44,7 +44,8 @@ enum LockStep: Hashable {
 
 /// The lock screen's card: title, account and the current step.
 ///
-/// Changing step animates with a bounce. While something is working, a
+/// Changing step animates with a bounce. If the vault couldn't be opened
+/// (Munin unreachable, for example), an alert offers Try Again and Sign Out. While something is working, a
 /// spinner takes the place of the step's buttons. Right after Sign in with
 /// Apple, Face ID / Touch ID starts on its own once the vault is ready.
 struct LockPanel: View {
@@ -56,6 +57,7 @@ struct LockPanel: View {
     @State private var unlocksAfterSignIn = false
 
     var body: some View {
+        @Bindable var session = session
         VStack(alignment: .leading, spacing: DesignKit.Spacing.Primitive.s24) {
             if let title = step.title {
                 Text(title)
@@ -101,6 +103,12 @@ struct LockPanel: View {
             startUnlockIfReady()
         }
         .onChange(of: session.state) { startUnlockIfReady() }
+        .alert("errors.openVault.title", item: $session.failureMessage) { _ in
+            Button("global.tryAgain") { Task { await session.prepare(auth: auth) } }
+            Button("account.signOut", role: .destructive) { auth.signOut() }
+        } message: { message in
+            Text(message)
+        }
     }
 
     /// The step to show: sign-in while signed out, else the user's choice,

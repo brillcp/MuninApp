@@ -40,6 +40,18 @@ final class VaultSession {
     /// The last error, shown on the lock screen or in Settings.
     private(set) var errorMessage: String?
 
+    /// Why the vault couldn't be opened, while in the `.failed` state.
+    ///
+    /// Drives the lock screen's "Couldn't open your vault" alert. Setting it
+    /// (the alert dismissing) does nothing: the alert's buttons retry or sign
+    /// out, which leaves the failed state.
+    var failureMessage: String? {
+        get {
+            if case .failed(let message) = state { message } else { nil }
+        }
+        set { }
+    }
+
     /// Set once after a brand-new vault is created, to show the recovery key.
     var newRecoveryKey: NewRecoveryKey?
 
