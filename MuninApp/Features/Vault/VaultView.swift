@@ -28,6 +28,9 @@ struct VaultView: View {
     /// Mac: whether the detail panel is slid in. Follows the selection, one
     /// update later (see `columns`).
     @State private var isDetailVisible = false
+    /// Mac: the item shown in the panel. Kept after deselecting, so the panel
+    /// animates out with its content instead of going blank first.
+    @State private var panelItem: PasswordItem?
 
     var body: some View {
         columns
@@ -91,8 +94,8 @@ extension VaultView {
     /// Form's first layout, so its content grew in from a zero frame. Selecting
     /// a password fills the panel without animation, and one update later the
     /// panel slides and fades in with a bounce. Switching between passwords
-    /// doesn't animate. While it closes, the last item stays in the panel so it
-    /// fades out with it instead of going blank.
+    /// doesn't animate. While it closes, the last item stays in the panel
+    /// (`panelItem`) so it animates out with it instead of going blank.
     ///
     /// A NavigationSplitView nested in the sidebar tab gave the detail the
     /// outer sidebar's width as an extra leading inset, and an HSplitView or
@@ -107,7 +110,7 @@ extension VaultView {
                 .overlay(alignment: .trailing) {
                     if isDetailVisible {
                         VaultItemDetail(
-                            item: viewModel.selectedItem,
+                            item: panelItem,
                             viewModel: viewModel,
                             pendingDeletion: $pendingDeletion,
                             onEdit: startEditing
@@ -135,12 +138,11 @@ extension VaultView {
                         .transition(.opacity.combined(with: .offset(x: 40)))
                     }
                 }
-                .onChange(of: viewModel.selectedItem) { oldItem, newItem in
-                    withAnimation {
-                        isDetailVisible.toggle()
-                    }
+                .onChange(of: viewModel.selectedItem) { _, newItem in
+                    if let newItem { panelItem = newItem }
+                    isDetailVisible = newItem != nil
                 }
-                .animation(DesignKit.Motion.bouncy, value: isDetailVisible)
+                .animation(DesignKit.Motion.quickBouncy, value: isDetailVisible)
         }
         #else
         NavigationSplitView {
