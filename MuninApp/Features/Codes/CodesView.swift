@@ -28,8 +28,8 @@ struct CodesView: View {
                 )
             }
             .navigationTitle("codes.title")
+            .navigationSubtitle(LocalizedKey("codes.subtitle", viewModel.items.count))
             .navigationSplitViewStyle(.prominentDetail)
-            .barkToolbar(title: "codes.title", subtitle: "\(viewModel.items.count) accounts")
             .toolbar { toolbarContent }
             .refreshable { await viewModel.refresh(auth: auth) }
             .task { await viewModel.refresh(auth: auth) }
@@ -59,6 +59,7 @@ private extension CodesView {
     @ToolbarContentBuilder
     var toolbarContent: some ToolbarContent {
         #if os(macOS)
+        ToolbarItem(placement: .navigation, content: LockToolbarButton.init)
         ToolbarItem(placement: .primaryAction) { addButton }
         ToolbarSpacer(.flexible, placement: .primaryAction)
         ToolbarItemGroup(placement: .primaryAction) {
@@ -67,7 +68,6 @@ private extension CodesView {
                 Task { await viewModel.refresh(auth: auth) }
             }
             .keyboardShortcut("r")
-            LockToolbarButton()
         }
         #else
         ToolbarItem(placement: .primaryAction) { addButton }

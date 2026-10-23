@@ -165,7 +165,8 @@ private extension VaultView {
             pendingDeletion: $pendingDeletion,
             onEdit: startEditing
         )
-        .barkToolbar(title: "vault.title", subtitle: "\(viewModel.items.count) items")
+        .navigationTitle("vault.title")
+        .navigationSubtitle(LocalizedKey("vault.subtitle", viewModel.items.count))
         .toolbar { toolbarContent }
         #if os(macOS)
         .dropDestination(for: URL.self) { urls, _ in
@@ -188,11 +189,11 @@ private extension VaultView {
     @ToolbarContentBuilder
     var toolbarContent: some ToolbarContent {
         #if os(macOS)
+        ToolbarItem(placement: .navigation, content: LockToolbarButton.init)
         ToolbarItem(placement: .primaryAction) { createButton }
         ToolbarSpacer(.flexible, placement: .primaryAction)
         ToolbarItemGroup(placement: .primaryAction) {
             importButton
-            LockToolbarButton()
         }
         ToolbarItem(placement: .primaryAction) { sortMenu }
         #else
