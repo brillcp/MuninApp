@@ -6,11 +6,6 @@ import SwiftUI
 /// view (`PasswordInspector`). A new item starts with the name field focused;
 /// editing doesn't move focus.
 struct PasswordEditorView: View {
-    /// Editing an existing item rather than creating one.
-    let isEditing: Bool
-    /// Encrypts and saves the fields. A thrown error is shown in the sheet.
-    let onSave: (PasswordFields) async throws -> Void
-
     @Environment(\.dismiss) private var dismiss
     /// The fields being edited, in plain text while the sheet is open.
     @State private var fields: PasswordFields
@@ -24,6 +19,11 @@ struct PasswordEditorView: View {
     @State private var hapticTaps = 0
     /// Whether the name field has keyboard focus.
     @FocusState private var isNameFocused: Bool
+
+    /// Editing an existing item rather than creating one.
+    let isEditing: Bool
+    /// Encrypts and saves the fields. A thrown error is shown in the sheet.
+    let onSave: (PasswordFields) async throws -> Void
 
     /// Creates the editor, prefilled with `fields` when editing.
     init(fields: PasswordFields = PasswordFields(), isEditing: Bool = false, onSave: @escaping (PasswordFields) async throws -> Void) {
@@ -111,9 +111,11 @@ struct PasswordEditorView: View {
         .frame(minWidth: 440, minHeight: 420)
         #endif
     }
+}
 
+private extension PasswordEditorView {
     /// Saves the fields and closes the sheet, or shows the error.
-    private func save() {
+    func save() {
         isSaving = true
         errorMessage = nil
         Task {

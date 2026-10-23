@@ -10,19 +10,27 @@ import Observation
 /// the main window and the Mac menu bar.
 @Observable
 final class VaultViewModel {
+    /// A column the list can be sorted by.
+    enum SortColumn: Hashable {
+        /// The item's name.
+        case title
+        /// When the item was last edited.
+        case dateEdited
+    }
+
+    /// Rows from a CSV that aren't in the vault yet, and how many were already there.
+    struct ImportPlan: Identifiable {
+        let id = UUID()
+        /// The rows to import.
+        let newItems: [PasswordFields]
+        /// How many rows were skipped as duplicates.
+        let duplicateCount: Int
+    }
+
     /// Read at use time, so a changed master password (new proof) and a lock are picked up.
     private let session: VaultSession
-
-    /// Creates a view model that reads the vault key from `session`.
-    init(session: VaultSession) {
-        self.session = session
-    }
-
-    /// The unlocked vault, or `VaultError.keyMissing` while locked.
-    private func unlockedVault() throws -> UnlockedVault {
-        guard let vault = session.vault else { throw VaultError.keyMissing }
-        return vault
-    }
+    /// UserDefaults key for `sortOrder`: the column, plus ".reverse" when descending.
+    private static let sortDefaultsKey = "munin.vault.sort"
 
     /// Every password item, decrypted as far as the list needs.
     private(set) var items: [PasswordItem] = [] {
@@ -35,6 +43,12 @@ final class VaultViewModel {
     private(set) var errorMessage: String?
     /// True once the first load has finished, successfully or not.
     private(set) var hasLoaded = false
+    /// `items` filtered by `searchText` and sorted by `sortOrder`.
+    private(set) var visibleItems: [PasswordItem] = []
+    /// The item matching `selection`, if it still exists.
+    private(set) var selectedItem: PasswordItem?
+    /// Progress while importing, e.g. 12 of 79.
+    private(set) var importProgress: (done: Int, total: Int)?
 
     /// The Mac search field's text; filters `visibleItems` by name and username.
     var searchText = "" {
@@ -48,15 +62,19 @@ final class VaultViewModel {
             saveSortOrder()
         }
     }
-
-    /// A column the list can be sorted by.
-    enum SortColumn: Hashable {
-        /// The item's name.
-        case title
-        /// When the item was last edited.
-        case dateEdited
+    /// The selected item's id.
+    var selection: PasswordItem.ID? {
+        didSet { recomputeSelectedItem() }
     }
 
+    /// Creates a view model that reads the vault key from `session`.
+    init(session: VaultSession) {
+        self.session = session
+    }
+}
+
+// MARK: - Public functions
+extension VaultViewModel {
     /// The sort menu's column. Setting it keeps the current direction.
     var sortColumn: SortColumn {
         get { sortOrder.first?.keyPath == \PasswordItem.name as PartialKeyPath<PasswordItem> ? .title : .dateEdited }
@@ -70,60 +88,6 @@ final class VaultViewModel {
         set { sortOrder = [Self.comparator(for: sortColumn, order: newValue)] }
     }
 
-    /// The comparator for a column and direction.
-    private static func comparator(for column: SortColumn, order: SortOrder) -> KeyPathComparator<PasswordItem> {
-        switch column {
-        case .title: KeyPathComparator(\PasswordItem.name, order: order)
-        case .dateEdited: KeyPathComparator(\PasswordItem.lastUpdated, order: order)
-        }
-    }
-
-    /// UserDefaults key for `sortOrder`: the column, plus ".reverse" when descending.
-    private static let sortDefaultsKey = "munin.vault.sort"
-
-    /// The sort order saved by the last launch, or newest first.
-    private static func savedSortOrder() -> [KeyPathComparator<PasswordItem>] {
-        switch UserDefaults.standard.string(forKey: sortDefaultsKey) {
-        case "name": [KeyPathComparator(\PasswordItem.name)]
-        case "name.reverse": [KeyPathComparator(\PasswordItem.name, order: .reverse)]
-        case "lastUpdated": [KeyPathComparator(\PasswordItem.lastUpdated)]
-        default: [KeyPathComparator(\PasswordItem.lastUpdated, order: .reverse)]
-        }
-    }
-
-    /// Saves the primary sort column and direction. A comparator can't be
-    /// stored directly, so it's saved as a short key.
-    private func saveSortOrder() {
-        guard let primary = sortOrder.first else { return }
-        let column = primary.keyPath == \PasswordItem.name as PartialKeyPath<PasswordItem> ? "name" : "lastUpdated"
-        let key = primary.order == .reverse ? "\(column).reverse" : column
-        UserDefaults.standard.set(key, forKey: Self.sortDefaultsKey)
-    }
-    /// The selected item's id.
-    var selection: PasswordItem.ID? {
-        didSet { recomputeSelectedItem() }
-    }
-
-    /// `items` filtered by `searchText` and sorted by `sortOrder`.
-    private(set) var visibleItems: [PasswordItem] = []
-    /// The item matching `selection`, if it still exists.
-    private(set) var selectedItem: PasswordItem?
-
-    /// Recomputes `visibleItems`. Stored rather than computed, so it only
-    /// changes when its inputs do.
-    private func recomputeVisibleItems() {
-        let filtered = searchText.isEmpty ? items : items.filter {
-            $0.name.localizedCaseInsensitiveContains(searchText)
-                || $0.username.localizedCaseInsensitiveContains(searchText)
-        }
-        visibleItems = filtered.sorted(using: sortOrder)
-    }
-
-    /// Recomputes `selectedItem` from `selection` and `items`.
-    private func recomputeSelectedItem() {
-        selectedItem = selection.flatMap { id in items.first { $0.id == id } }
-    }
-
     /// Drops everything decrypted. Called when the vault locks or the user signs out.
     func clear() {
         items = []
@@ -132,8 +96,6 @@ final class VaultViewModel {
         errorMessage = nil
         hasLoaded = false
     }
-
-    // MARK: - Loading
 
     /// Loads the items from Munin and decrypts their name, URL and username.
     /// Items that fail to decrypt are counted in `errorMessage`.
@@ -166,8 +128,6 @@ final class VaultViewModel {
         }
     }
 
-    // MARK: - Create
-
     /// Encrypts every field, saves the new item to Munin and adds it to the list.
     func create(_ fields: PasswordFields, auth: AuthManager) async throws {
         let vault = try unlockedVault()
@@ -176,20 +136,6 @@ final class VaultViewModel {
         let saved = try await MuninService(tokenProvider: auth.tokenProvider).createPassword(body)
         items.append(try Self.item(from: saved, key: key, userID: userID))
     }
-
-    // MARK: - Import
-
-    /// Rows from a CSV that aren't in the vault yet, and how many were already there.
-    struct ImportPlan: Identifiable {
-        let id = UUID()
-        /// The rows to import.
-        let newItems: [PasswordFields]
-        /// How many rows were skipped as duplicates.
-        let duplicateCount: Int
-    }
-
-    /// Progress while importing, e.g. 12 of 79.
-    private(set) var importProgress: (done: Int, total: Int)?
 
     /// Same name, username and website as an existing item (or an earlier row) counts as a duplicate.
     func planImport(_ rows: [PasswordFields]) -> ImportPlan {
@@ -223,8 +169,6 @@ final class VaultViewModel {
         return saved
     }
 
-    // MARK: - Edit
-
     /// Encrypts the new fields and replaces the item on Munin (with the master
     /// password proof), then updates it in the list.
     func update(_ item: PasswordItem, with fields: PasswordFields, auth: AuthManager) async throws {
@@ -238,8 +182,6 @@ final class VaultViewModel {
         }
     }
 
-    // MARK: - Delete
-
     /// Deletes the item on Munin (with the master password proof) and removes
     /// it from the list, deselecting it if needed.
     func delete(_ item: PasswordItem, auth: AuthManager) async {
@@ -252,8 +194,6 @@ final class VaultViewModel {
             errorMessage = error.muninDescription
         }
     }
-
-    // MARK: - Copy
 
     /// Decrypts the password just long enough to copy it, then bumps last updated.
     func copyPassword(_ item: PasswordItem, auth: AuthManager) async {
@@ -271,19 +211,66 @@ final class VaultViewModel {
         }
     }
 
-    // MARK: - Reveal
-
     /// Decrypts one encrypted field (password or note) for display.
     func decrypt(_ ciphertext: String, field: String, auth: AuthManager) throws -> String {
         let vault = try unlockedVault()
         let (key, userID) = (vault.key, vault.userID)
         return try VaultCrypto.open(ciphertext, field: field, key: key, userID: userID)
     }
+}
 
-    // MARK: - Helpers
+// MARK: - Private functions
+private extension VaultViewModel {
+    /// The unlocked vault, or `VaultError.keyMissing` while locked.
+    func unlockedVault() throws -> UnlockedVault {
+        guard let vault = session.vault else { throw VaultError.keyMissing }
+        return vault
+    }
+
+    /// Recomputes `visibleItems`. Stored rather than computed, so it only
+    /// changes when its inputs do.
+    func recomputeVisibleItems() {
+        let filtered = searchText.isEmpty ? items : items.filter {
+            $0.name.localizedCaseInsensitiveContains(searchText)
+                || $0.username.localizedCaseInsensitiveContains(searchText)
+        }
+        visibleItems = filtered.sorted(using: sortOrder)
+    }
+
+    /// Recomputes `selectedItem` from `selection` and `items`.
+    func recomputeSelectedItem() {
+        selectedItem = selection.flatMap { id in items.first { $0.id == id } }
+    }
+
+    /// Saves the primary sort column and direction. A comparator can't be
+    /// stored directly, so it's saved as a short key.
+    func saveSortOrder() {
+        guard let primary = sortOrder.first else { return }
+        let column = primary.keyPath == \PasswordItem.name as PartialKeyPath<PasswordItem> ? "name" : "lastUpdated"
+        let key = primary.order == .reverse ? "\(column).reverse" : column
+        UserDefaults.standard.set(key, forKey: Self.sortDefaultsKey)
+    }
+
+    /// The comparator for a column and direction.
+    static func comparator(for column: SortColumn, order: SortOrder) -> KeyPathComparator<PasswordItem> {
+        switch column {
+        case .title: KeyPathComparator(\PasswordItem.name, order: order)
+        case .dateEdited: KeyPathComparator(\PasswordItem.lastUpdated, order: order)
+        }
+    }
+
+    /// The sort order saved by the last launch, or newest first.
+    static func savedSortOrder() -> [KeyPathComparator<PasswordItem>] {
+        switch UserDefaults.standard.string(forKey: sortDefaultsKey) {
+        case "name": [KeyPathComparator(\PasswordItem.name)]
+        case "name.reverse": [KeyPathComparator(\PasswordItem.name, order: .reverse)]
+        case "lastUpdated": [KeyPathComparator(\PasswordItem.lastUpdated)]
+        default: [KeyPathComparator(\PasswordItem.lastUpdated, order: .reverse)]
+        }
+    }
 
     /// Encrypts each field separately, bound to its column.
-    private static func seal(_ fields: PasswordFields, key: SymmetricKey, userID: String) throws -> PasswordFieldsBody {
+    static func seal(_ fields: PasswordFields, key: SymmetricKey, userID: String) throws -> PasswordFieldsBody {
         /// Encrypts one field.
         func seal(_ value: String, _ field: String) throws -> String {
             try VaultCrypto.seal(value, field: field, key: key, userID: userID)
@@ -298,7 +285,7 @@ final class VaultViewModel {
     }
 
     /// Decrypts an item's name, URL and username; password and note stay encrypted.
-    private static func item(from entry: EncryptedPassword, key: SymmetricKey, userID: String) throws -> PasswordItem {
+    static func item(from entry: EncryptedPassword, key: SymmetricKey, userID: String) throws -> PasswordItem {
         PasswordItem(
             id: entry.id,
             name: try VaultCrypto.open(entry.name, field: "name", key: key, userID: userID),

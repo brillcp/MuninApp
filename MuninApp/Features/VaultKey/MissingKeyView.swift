@@ -3,15 +3,15 @@ import SwiftUI
 /// Shown when Munin has data but this device has no vault key for it, and no
 /// master password is set up. Paste the recovery key to restore the vault.
 struct MissingKeyView: View {
-    /// Restores the vault from the recovery key. Returns false if the key is invalid.
-    let onRestore: (String) -> Bool
-    /// Checks Munin again.
-    let onRetry: () async -> Void
-
     /// The pasted recovery key.
     @State private var recoveryKey = ""
     /// Set when the last restore attempt had an invalid key.
     @State private var didFail = false
+
+    /// Restores the vault from the recovery key. Returns false if the key is invalid.
+    let onRestore: (String) -> Bool
+    /// Checks Munin again.
+    let onRetry: () async -> Void
 
     var body: some View {
         ContentUnavailableView {

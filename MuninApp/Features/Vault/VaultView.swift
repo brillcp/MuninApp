@@ -5,8 +5,6 @@ import UniformTypeIdentifiers
 /// and creating, editing, deleting and importing passwords.
 struct VaultView: View {
     @Environment(AuthManager.self) private var auth
-    /// The passwords and their selection.
-    @Bindable var viewModel: VaultViewModel
     /// Shows the New Password sheet.
     @State private var isCreating = false
     /// The item being edited, with its password and note decrypted for the editor.
@@ -31,6 +29,9 @@ struct VaultView: View {
     /// Mac: the item shown in the panel. Kept after deselecting, so the panel
     /// animates out with its content instead of going blank first.
     @State private var panelItem: PasswordItem?
+
+    /// The passwords and their selection.
+    @Bindable var viewModel: VaultViewModel
 
     var body: some View {
         columns
@@ -85,7 +86,7 @@ struct VaultView: View {
     }
 }
 
-extension VaultView {
+private extension VaultView {
     /// The list and the detail.
     ///
     /// Mac: the list, with the detail floating over its trailing edge as a
@@ -103,7 +104,7 @@ extension VaultView {
     ///
     /// iOS: a NavigationSplitView, so tapping a row pushes the detail on iPhone.
     @ViewBuilder
-    private var columns: some View {
+    var columns: some View {
         #if os(macOS)
         NavigationStack {
             listColumn
@@ -158,7 +159,7 @@ extension VaultView {
     /// vault opens (after unlocking), and ⌘F focuses it again.
     ///
     /// The list itself is `VaultPasswordList`, its own invalidation boundary.
-    private var listColumn: some View {
+    var listColumn: some View {
         VaultPasswordList(
             viewModel: viewModel,
             pendingDeletion: $pendingDeletion,
@@ -185,7 +186,7 @@ extension VaultView {
     /// Mac: Create after the title, then Import and Lock at the far right.
     /// Edit and Delete are in the detail panel. iOS: Import and Create.
     @ToolbarContentBuilder
-    private var toolbarContent: some ToolbarContent {
+    var toolbarContent: some ToolbarContent {
         #if os(macOS)
         ToolbarItem(placement: .primaryAction) { createButton }
         ToolbarSpacer(.flexible, placement: .primaryAction)
@@ -201,7 +202,7 @@ extension VaultView {
     }
 
     /// Sorts the list: by title or date edited, then ascending or descending.
-    private var sortMenu: some View {
+    var sortMenu: some View {
         Menu("vault.sort", systemImage: "arrow.up.arrow.down") {
             Picker("vault.sort", selection: $viewModel.sortColumn) {
                 Label("vault.sort.title", systemImage: "textformat")
@@ -222,7 +223,7 @@ extension VaultView {
     }
 
     /// Opens the New Password sheet. Prominent glass in the accent colour.
-    private var createButton: some View {
+    var createButton: some View {
         Button("vault.createItem", systemImage: "plus.square.on.square") {
             hapticTaps += 1
             isCreating = true
@@ -232,7 +233,7 @@ extension VaultView {
     }
 
     /// Opens the CSV file picker. Disabled until loaded and while an import runs.
-    private var importButton: some View {
+    var importButton: some View {
         Button("import.button", systemImage: "folder.badge.plus") {
             hapticTaps += 1
             isPickingImportFile = true
@@ -241,7 +242,7 @@ extension VaultView {
     }
 
     /// Reads the CSV (picked or dropped from Finder) in memory and asks to confirm.
-    private func prepareImport(from url: URL) {
+    func prepareImport(from url: URL) {
         let isScoped = url.startAccessingSecurityScopedResource()
         defer { if isScoped { url.stopAccessingSecurityScopedResource() } }
         do {
@@ -253,7 +254,7 @@ extension VaultView {
     }
 
     /// Decrypts the item's password and note and opens the editor with them.
-    private func startEditing(_ item: PasswordItem) {
+    func startEditing(_ item: PasswordItem) {
         guard let password = try? viewModel.decrypt(item.encryptedPassword, field: "password", auth: auth),
               let note = try? viewModel.decrypt(item.encryptedNote, field: "note", auth: auth) else { return }
         editing = EditDraft(item: item, fields: PasswordFields(
@@ -278,14 +279,14 @@ private struct EditDraft: Identifiable {
 /// detail. iOS: a list whose rows push the detail column (a Table doesn't
 /// navigate when the split view is collapsed on iPhone).
 private struct VaultPasswordList: View {
+    @Environment(AuthManager.self) private var auth
+
     /// The passwords, selection and sort order.
     @Bindable var viewModel: VaultViewModel
     /// Set by the context menu's Delete, to ask for confirmation.
     @Binding var pendingDeletion: PasswordItem?
     /// Called by the context menu's Edit.
     let onEdit: (PasswordItem) -> Void
-
-    @Environment(AuthManager.self) private var auth
 
     var body: some View {
         rows
@@ -333,6 +334,10 @@ private struct VaultPasswordList: View {
 /// iOS adds an Edit button to the toolbar; on the Mac, Edit is in the panel's
 /// header. Delete is at the bottom of the detail on both.
 private struct VaultItemDetail: View {
+    @Environment(AuthManager.self) private var auth
+    /// Bumped by buttons for a light haptic.
+    @State private var hapticTaps = 0
+
     /// The item to show; nil shows nothing.
     let item: PasswordItem?
     /// Decrypts and copies the item's fields.
@@ -341,11 +346,6 @@ private struct VaultItemDetail: View {
     @Binding var pendingDeletion: PasswordItem?
     /// Called by Edit.
     let onEdit: (PasswordItem) -> Void
-
-    /// Bumped by buttons for a light haptic.
-    @State private var hapticTaps = 0
-
-    @Environment(AuthManager.self) private var auth
 
     var body: some View {
         Group {

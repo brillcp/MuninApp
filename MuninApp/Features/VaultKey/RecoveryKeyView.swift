@@ -9,11 +9,12 @@ import AppKit
 ///
 /// The recovery key resets a forgotten master password.
 struct RecoveryKeyView: View {
-    /// The recovery key, formatted in groups of four characters.
-    let recoveryKey: String
     @Environment(\.dismiss) private var dismiss
     /// Set after copying, to show "Copied" on the button.
     @State private var didCopy = false
+
+    /// The recovery key, formatted in groups of four characters.
+    let recoveryKey: String
 
     var body: some View {
         NavigationStack {

@@ -22,7 +22,7 @@ struct MenuBarContent: View {
     @State private var copied: CopiedField?
 
     /// Identifies one copied field in one row.
-    private struct CopiedField: Equatable {
+    fileprivate struct CopiedField: Equatable {
         /// The row's item.
         let id: PasswordItem.ID
         /// Which of the row's fields was copied.
@@ -53,10 +53,12 @@ struct MenuBarContent: View {
             }
         }
     }
+}
 
+private extension MenuBarContent {
     /// The filtered passwords, with a spinner while loading and an empty
     /// state when nothing matches.
-    private var passwordList: some View {
+    var passwordList: some View {
         List(filteredItems) { item in
             MenuBarPasswordRow(
                 item: item,
@@ -76,7 +78,7 @@ struct MenuBarContent: View {
     }
 
     /// Open (brings up the main window), Lock (while unlocked) and Quit.
-    private var footer: some View {
+    var footer: some View {
         HStack {
             Button("menuBar.open") {
                 openWindow(id: MyApp.mainWindowID)
@@ -98,7 +100,7 @@ struct MenuBarContent: View {
 
     /// Sorts the vault's items by name and filters them by the query
     /// (name, username or URL), storing the result in `filteredItems`.
-    private func updateFilteredItems() {
+    func updateFilteredItems() {
         let sorted = vaultModel.items.sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
         let trimmed = query.trimmingCharacters(in: .whitespaces)
         guard !trimmed.isEmpty else {
@@ -113,21 +115,21 @@ struct MenuBarContent: View {
     }
 
     /// Copies the item's username and shows "Copied" on its row.
-    private func copyUsername(_ item: PasswordItem) {
+    func copyUsername(_ item: PasswordItem) {
         Pasteboard.copy(item.username)
         showCopied(CopiedField(id: item.id, field: .username))
     }
 
     /// Decrypts and copies the item's password (cleared from the clipboard
     /// after a minute) and shows "Copied" on its row.
-    private func copyPassword(_ item: PasswordItem) {
+    func copyPassword(_ item: PasswordItem) {
         Task { await vaultModel.copyPassword(item, auth: auth) }
         showCopied(CopiedField(id: item.id, field: .password))
     }
 
     /// Shows the "Copied" label for `field`, then hides it after a moment
     /// unless something else was copied in the meantime.
-    private func showCopied(_ field: CopiedField) {
+    func showCopied(_ field: CopiedField) {
         copied = field
         Task {
             try? await Task.sleep(for: .seconds(1.2))

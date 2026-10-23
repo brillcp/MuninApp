@@ -110,10 +110,12 @@ struct LockPanel: View {
             Text(message)
         }
     }
+}
 
+private extension LockPanel {
     /// The step to show: sign-in while signed out, else the user's choice,
     /// else biometrics when offered, else the master password.
-    private var step: LockStep {
+    var step: LockStep {
         guard auth.isSignedIn else { return .signIn }
         if let chosenStep { return chosenStep }
         return session.offersBiometricUnlock ? .biometrics : .masterPassword
@@ -121,7 +123,7 @@ struct LockPanel: View {
 
     /// The current step's view.
     @ViewBuilder
-    private var stepView: some View {
+    var stepView: some View {
         switch step {
         case .signIn:
             LockSignInStep(onCancel: auth.isSignedIn ? { go(to: nil) } : nil)
@@ -139,18 +141,18 @@ struct LockPanel: View {
     }
 
     /// True while signing in, unlocking, or checking the vault after sign-in.
-    private var isWorking: Bool {
+    var isWorking: Bool {
         auth.isSigningIn || session.isWorking || (auth.isSignedIn && session.state == .checking)
     }
 
     /// The sign-in error on the sign-in step, otherwise the session's error.
-    private var errorMessage: String? {
+    var errorMessage: String? {
         step == .signIn ? auth.signInError : session.errorMessage
     }
 
     /// Starts Face ID / Touch ID once, after a sign-in, when the vault has
     /// reached the locked state.
-    private func startUnlockIfReady() {
+    func startUnlockIfReady() {
         guard unlocksAfterSignIn, session.state == .locked else { return }
         unlocksAfterSignIn = false
         if session.offersBiometricUnlock {
@@ -159,7 +161,7 @@ struct LockPanel: View {
     }
 
     /// Moves to `step` and clears the error. `nil` goes back to the default step.
-    private func go(to step: LockStep?) {
+    func go(to step: LockStep?) {
         session.clearError()
         chosenStep = step
     }
@@ -169,11 +171,11 @@ struct LockPanel: View {
 
 /// Signed out: Sign in with Apple.
 private struct LockSignInStep: View {
-    /// Set when switching account, to go back to unlocking.
-    var onCancel: (() -> Void)?
-
     @Environment(AuthManager.self) private var auth
     @Environment(\.colorScheme) private var colorScheme
+
+    /// Set when switching account, to go back to unlocking.
+    var onCancel: (() -> Void)?
 
     var body: some View {
         VStack(alignment: .leading, spacing: DesignKit.Spacing.Primitive.s24) {
@@ -199,10 +201,10 @@ private struct LockSignInStep: View {
 
 /// Face ID / Touch ID, with the master password as the alternative.
 private struct LockBiometricsStep: View {
+    @Environment(VaultSession.self) private var session
+
     /// Called by the master password button.
     let onUseMasterPassword: () -> Void
-
-    @Environment(VaultSession.self) private var session
 
     var body: some View {
         HStack(spacing: DesignKit.Spacing.Primitive.s16) {
@@ -223,6 +225,12 @@ private struct LockBiometricsStep: View {
 
 /// Master password field. Offers biometrics (if available) and the recovery key.
 private struct LockMasterPasswordStep: View {
+    @Environment(VaultSession.self) private var session
+    /// The typed master password, cleared as soon as it's submitted.
+    @State private var password = ""
+    /// Whether the password field has keyboard focus.
+    @FocusState private var isFieldFocused: Bool
+
     /// Focuses the field on appear: true when the user chose this step
     /// rather than landing on it by default.
     let focusesField: Bool
@@ -230,12 +238,6 @@ private struct LockMasterPasswordStep: View {
     let onUseBiometrics: (() -> Void)?
     /// Called by "Forgot master password?".
     let onForgotPassword: () -> Void
-
-    @Environment(VaultSession.self) private var session
-    /// The typed master password, cleared as soon as it's submitted.
-    @State private var password = ""
-    /// Whether the password field has keyboard focus.
-    @FocusState private var isFieldFocused: Bool
 
     var body: some View {
         VStack(alignment: .leading, spacing: DesignKit.Spacing.Primitive.s24) {
@@ -279,14 +281,14 @@ private struct LockMasterPasswordStep: View {
 /// Only reachable through "Forgot master password?", so the field is always
 /// focused on appear.
 private struct LockRecoveryKeyStep: View {
-    /// Called by Cancel.
-    let onCancel: () -> Void
-
     @Environment(VaultSession.self) private var session
     /// The typed or pasted recovery key.
     @State private var recoveryKey = ""
     /// Whether the recovery key field has keyboard focus.
     @FocusState private var isFieldFocused: Bool
+
+    /// Called by Cancel.
+    let onCancel: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: DesignKit.Spacing.Primitive.s24) {
@@ -360,9 +362,11 @@ struct LockButton: View {
             .controlSize(.large)
             .sensoryFeedback(.impact(weight: .light), trigger: taps)
     }
+}
 
+private extension LockButton {
     /// The unstyled button: title and/or icon, full width on iOS.
-    private var button: some View {
+    var button: some View {
         Button {
             taps += 1
             action()
@@ -392,7 +396,7 @@ struct LockButton: View {
     /// Applies the style. The glass styles are different types, so branch
     /// rather than pick one inline.
     @ViewBuilder
-    private func styled(_ button: some View) -> some View {
+    func styled(_ button: some View) -> some View {
         switch style {
         case .primary:
             button.buttonStyle(.glassProminent)
@@ -426,9 +430,11 @@ struct LockAccountRow: View {
                 .font(.callout)
         }
     }
+}
 
+private extension LockAccountRow {
     /// The email's first two letters, capitalised.
-    private var initials: String {
+    var initials: String {
         String((email ?? "").prefix(2)).capitalized
     }
 }

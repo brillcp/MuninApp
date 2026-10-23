@@ -4,15 +4,15 @@ import SwiftUI
 ///
 /// A new password is generated on appear and whenever a setting changes.
 struct PasswordGeneratorView: View {
-    /// Called by Fill Password with the generated password.
-    let onFill: (String) -> Void
-
     /// The generator's settings.
     @State private var generator = PasswordGenerator()
     /// The current password.
     @State private var password = ""
     /// Bumped by buttons for a light haptic.
     @State private var hapticTaps = 0
+
+    /// Called by Fill Password with the generated password.
+    let onFill: (String) -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: DesignKit.Spacing.Primitive.s0) {
@@ -77,15 +77,17 @@ struct PasswordGeneratorView: View {
         .presentationDetents([.medium, .large])
         #endif
     }
+}
 
+private extension PasswordGeneratorView {
     /// Generates a new password with the current settings.
-    private func regenerate() {
+    func regenerate() {
         password = generator.generate()
     }
 
     /// The strength label and colour, from the password's entropy:
     /// weak under 60 bits, good under 80, strong above.
-    private var strength: (title: LocalizedStringKey, color: Color) {
+    var strength: (title: LocalizedStringKey, color: Color) {
         switch generator.entropy {
         case ..<60:  return ("passwordGenerator.strength.weak", .red)
         case ..<80:  return ("passwordGenerator.strength.good", .orange)

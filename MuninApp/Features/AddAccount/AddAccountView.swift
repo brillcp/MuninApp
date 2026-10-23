@@ -8,9 +8,6 @@ import VisionKit
 /// Add accounts from a QR code (camera, screenshot), an otpauth link, or by
 /// hand. A Google Authenticator export QR code adds all its accounts at once.
 struct AddAccountView: View {
-    /// Encrypts and uploads; returns how many were new.
-    let onAdd: ([OTPAccount]) async throws -> Int
-
     @Environment(\.dismiss) private var dismiss
 
     /// The last error, shown at the bottom of the form.
@@ -23,6 +20,9 @@ struct AddAccountView: View {
     @State private var isImportingFile = false
     /// iOS: the screenshot picked from Photos.
     @State private var photoItem: PhotosPickerItem?
+
+    /// Encrypts and uploads; returns how many were new.
+    let onAdd: ([OTPAccount]) async throws -> Int
 
     var body: some View {
         NavigationStack {
@@ -54,8 +54,6 @@ struct AddAccountView: View {
             }
             #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
-            #endif
-            #if os(iOS)
             .fullScreenCover(isPresented: $isScanning) {
                 ScannerSheet { value in
                     isScanning = false
@@ -76,11 +74,11 @@ struct AddAccountView: View {
         .frame(minWidth: 460, minHeight: 540)
         #endif
     }
+}
 
-    // MARK: - Input
-
+private extension AddAccountView {
     /// Parses an otpauth link (pasted, or read from a QR code) and saves its accounts.
-    private func submit(text: String) {
+    func submit(text: String) {
         do {
             save(try OTPAuthParser.parse(text))
         } catch {
@@ -89,7 +87,7 @@ struct AddAccountView: View {
     }
 
     /// Saves an account typed in by hand.
-    private func submitManual(issuer: String, name: String, secret: String, digits: Int) {
+    func submitManual(issuer: String, name: String, secret: String, digits: Int) {
         guard let secretData = Base32.decode(secret) else {
             errorMessage = OTPAuthParser.ParseError.invalidSecret.localizedDescription
             return
@@ -103,7 +101,7 @@ struct AddAccountView: View {
     }
 
     /// Reads the QR codes in an image and saves the accounts from the first one that parses.
-    private func submit(imageData: Data) {
+    func submit(imageData: Data) {
         let messages = QRCodeReader.messages(in: imageData)
         guard !messages.isEmpty else {
             errorMessage = Localized("addAccount.error.noQRCode")
@@ -120,7 +118,7 @@ struct AddAccountView: View {
 
     #if os(iOS)
     /// Loads the picked screenshot and reads its QR code.
-    private func loadPhoto(_ item: PhotosPickerItem) async {
+    func loadPhoto(_ item: PhotosPickerItem) async {
         defer { photoItem = nil }
         guard let data = try? await item.loadTransferable(type: Data.self) else {
             errorMessage = Localized("addAccount.error.loadImage")
@@ -130,7 +128,7 @@ struct AddAccountView: View {
     }
     #else
     /// Reads the chosen image file and its QR code.
-    private func importFile(_ result: Result<URL, any Error>) {
+    func importFile(_ result: Result<URL, any Error>) {
         guard case .success(let url) = result else { return }
         let accessing = url.startAccessingSecurityScopedResource()
         defer { if accessing { url.stopAccessingSecurityScopedResource() } }
@@ -146,7 +144,7 @@ struct AddAccountView: View {
 
     /// Encrypts and uploads the accounts, then closes the sheet. If they were
     /// all added before, it stays open and says so.
-    private func save(_ accounts: [OTPAccount]) {
+    func save(_ accounts: [OTPAccount]) {
         errorMessage = nil
         isSaving = true
         Task {
@@ -208,10 +206,10 @@ private struct QRCodeSection: View {
 
 /// A pasted otpauth:// or otpauth-migration:// link.
 private struct LinkSection: View {
-    /// Called with the pasted link.
-    let onSubmit: (String) -> Void
     /// The link field's text.
     @State private var link = ""
+    /// Called with the pasted link.
+    let onSubmit: (String) -> Void
 
     var body: some View {
         Section {
@@ -232,8 +230,6 @@ private struct LinkSection: View {
 
 /// Issuer, account and setup key typed in by hand.
 private struct ManualEntrySection: View {
-    /// Called with the typed issuer, account name, Base32 setup key and digit count.
-    let onSubmit: (_ issuer: String, _ name: String, _ secret: String, _ digits: Int) -> Void
     /// The service's name.
     @State private var issuer = ""
     /// The account's name at the service.
@@ -242,6 +238,8 @@ private struct ManualEntrySection: View {
     @State private var secret = ""
     /// Digits per code: 6 or 8.
     @State private var digits = 6
+    /// Called with the typed issuer, account name, Base32 setup key and digit count.
+    let onSubmit: (_ issuer: String, _ name: String, _ secret: String, _ digits: Int) -> Void
 
     var body: some View {
         Section {

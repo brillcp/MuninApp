@@ -7,16 +7,14 @@ import AppKit
 
 /// One 2FA account in the iOS list: name, current code and countdown. Tap to copy the code.
 struct CodeRow: View {
+    /// Briefly true after copying, to show "Copied" instead of the code.
+    @State private var didCopy = false
+
     /// The account whose code is shown.
     let account: OTPAccount
     /// Passed in (not from the environment): the Mac table's cells don't get
     /// the environment. Reading `clock.now` here still makes each row update itself.
     let clock: CodeClock
-    /// The current time, read from the clock so the row redraws every second.
-    private var now: Date { clock.now }
-
-    /// Briefly true after copying, to show "Copied" instead of the code.
-    @State private var didCopy = false
 
     var body: some View {
         HStack(spacing: DesignKit.Spacing.Primitive.s12) {
@@ -36,17 +34,9 @@ struct CodeRow: View {
         .accessibilityElement(children: .combine)
         .accessibilityHint("codes.row.copyHint")
     }
+}
 
-    /// Copies the current code and shows "Copied" for a moment.
-    private func copy() {
-        Self.copyCode(of: account)
-        didCopy = true
-        Task {
-            try? await Task.sleep(for: .seconds(1.2))
-            didCopy = false
-        }
-    }
-
+extension CodeRow {
     /// Copies the account's current code to the clipboard.
     static func copyCode(of account: OTPAccount) {
         #if os(iOS)
@@ -62,6 +52,21 @@ struct CodeRow: View {
         guard code.count > 4 else { return code }
         let middle = code.index(code.startIndex, offsetBy: code.count / 2)
         return String(code[..<middle]) + " " + String(code[middle...])
+    }
+}
+
+private extension CodeRow {
+    /// The current time, read from the clock so the row redraws every second.
+    var now: Date { clock.now }
+
+    /// Copies the current code and shows "Copied" for a moment.
+    func copy() {
+        Self.copyCode(of: account)
+        didCopy = true
+        Task {
+            try? await Task.sleep(for: .seconds(1.2))
+            didCopy = false
+        }
     }
 }
 
@@ -88,15 +93,13 @@ struct AccountLabel: View, Equatable {
 
 /// The code and countdown for the Mac table's Code column. Click to copy.
 struct CodeCell: View {
+    /// Briefly true after copying, to show "Copied" instead of the code.
+    @State private var didCopy = false
+
     /// The account whose code is shown.
     let account: OTPAccount
     /// The screen's clock, passed in because table cells don't get the environment.
     let clock: CodeClock
-    /// The current time, read from the clock so the cell redraws every second.
-    private var now: Date { clock.now }
-
-    /// Briefly true after copying, to show "Copied" instead of the code.
-    @State private var didCopy = false
 
     var body: some View {
         HStack(spacing: DesignKit.Spacing.Primitive.s12) {
@@ -118,6 +121,11 @@ struct CodeCell: View {
         .accessibilityElement(children: .combine)
         .accessibilityHint("codes.row.copyHint")
     }
+}
+
+private extension CodeCell {
+    /// The current time, read from the clock so the cell redraws every second.
+    var now: Date { clock.now }
 }
 
 /// The code. Only redraws when the code rotates or is copied.

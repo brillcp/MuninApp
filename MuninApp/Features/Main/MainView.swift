@@ -12,9 +12,6 @@ import AppKit
 /// Opening a password from Search selects it in the Vault tab, which handles
 /// editing and deleting. On the Mac the sidebar's bottom bar links to Settings.
 struct MainView: View {
-    @Environment(AuthManager.self) private var auth
-    @Environment(VaultSession.self) private var session
-
     /// The tabs.
     enum Section: Hashable {
         case vault
@@ -23,6 +20,8 @@ struct MainView: View {
         case settings
     }
 
+    @Environment(AuthManager.self) private var auth
+    @Environment(VaultSession.self) private var session
     /// The selected tab.
     @State private var selection: Section = .vault
     /// From the app (also used by the Mac menu bar), shared by Vault and Search.

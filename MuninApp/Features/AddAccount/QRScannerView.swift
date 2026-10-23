@@ -5,9 +5,9 @@ internal import Vision
 
 /// Full-screen camera that reports the first QR code it sees.
 struct ScannerSheet: View {
+    @Environment(\.dismiss) private var dismiss
     /// Called with the QR code's text.
     let onFound: (String) -> Void
-    @Environment(\.dismiss) private var dismiss
 
     var body: some View {
         NavigationStack {

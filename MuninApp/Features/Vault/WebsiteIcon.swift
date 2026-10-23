@@ -4,13 +4,13 @@ import SwiftUI
 ///
 /// Icons come from `WebsiteIconStore`, which keeps them in memory only.
 struct WebsiteIcon: View {
+    /// The loaded icon.
+    @State private var image: Image?
+
     /// The item's website.
     let url: String
     /// The icon's width and height in points.
     var size: CGFloat = 42.0
-
-    /// The loaded icon.
-    @State private var image: Image?
 
     var body: some View {
         Group {

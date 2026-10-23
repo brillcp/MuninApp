@@ -6,6 +6,9 @@ import SwiftUI
 /// decrypted while the item is selected. Tapping a row copies its value. On
 /// iOS the background and tint use the website icon's dominant colour.
 struct PasswordInspector: View {
+    /// A field that can be copied.
+    fileprivate enum Field { case url, username, password, note }
+
     @Environment(\.openURL) private var openURL
 
     /// The decrypted password while it's shown.
@@ -18,17 +21,6 @@ struct PasswordInspector: View {
     @State private var tint: Color?
     /// The field just copied, for the short "Copied" label.
     @State private var copiedField: Field?
-
-    /// A field that can be copied.
-    private enum Field { case url, username, password, note }
-
-    /// The item's website; "kattmat.com" opens as https.
-    private var websiteURL: URL? {
-        let trimmed = item.url.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmed.isEmpty else { return nil }
-        return URL(string: trimmed.contains("://") ? trimmed : "https://\(trimmed)")
-    }
-
     /// Opacity for tinted row backgrounds.
     private var rowOpacity: CGFloat = 0.05
 
@@ -148,16 +140,25 @@ struct PasswordInspector: View {
         }
         .tint(tint ?? .accent)
     }
+}
+
+private extension PasswordInspector {
+    /// The item's website; "kattmat.com" opens as https.
+    var websiteURL: URL? {
+        let trimmed = item.url.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return nil }
+        return URL(string: trimmed.contains("://") ? trimmed : "https://\(trimmed)")
+    }
 
     /// An icon button that copies a field.
-    private func copyButton(_ field: Field, perform: @escaping () -> Void) -> some View {
+    func copyButton(_ field: Field, perform: @escaping () -> Void) -> some View {
         Button("global.copy", systemImage: "square.on.square") {
             copy(field, perform: perform)
         }
     }
 
     /// Runs the copy and shows "Copied" on that row for a moment.
-    private func copy(_ field: Field, perform: () -> Void) {
+    func copy(_ field: Field, perform: () -> Void) {
         perform()
         hapticTaps += 1
         withAnimation(DesignKit.Motion.standard) { copiedField = field }

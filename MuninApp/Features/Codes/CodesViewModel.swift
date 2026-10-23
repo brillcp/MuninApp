@@ -7,6 +7,9 @@ import Observation
 /// views from the decrypted accounts.
 @Observable
 final class CodesViewModel {
+    /// Read at use time, so a changed master password (new proof) and a lock are picked up.
+    private let session: VaultSession
+
     /// The decrypted accounts.
     private(set) var items: [VaultItem] = []
     /// The last load or delete error.
@@ -18,22 +21,14 @@ final class CodesViewModel {
     /// Entries that didn't decrypt with this device's key.
     private(set) var undecryptableCount = 0
 
-    /// Read at use time, so a changed master password (new proof) and a lock are picked up.
-    private let session: VaultSession
-
     /// Creates a view model that reads the vault key from `session`.
     init(session: VaultSession) {
         self.session = session
     }
+}
 
-    /// The unlocked vault, or `VaultError.keyMissing` while locked.
-    private func unlockedVault() throws -> UnlockedVault {
-        guard let vault = session.vault else { throw VaultError.keyMissing }
-        return vault
-    }
-
-    // MARK: - Loading
-
+// MARK: - Public functions
+extension CodesViewModel {
     /// Loads the entries from Munin and decrypts them. Signs out if Munin
     /// rejects the token.
     func refresh(auth: AuthManager) async {
@@ -63,23 +58,6 @@ final class CodesViewModel {
         }
     }
 
-    /// Decrypts the entries into `items`, counting the ones that fail.
-    private func decrypt(_ entries: [EncryptedEntry], key: SymmetricKey, userID: String) {
-        var decrypted: [VaultItem] = []
-        var failures = 0
-        for entry in entries {
-            if let account = try? VaultCrypto.open(entry.ciphertext, key: key, userID: userID) {
-                decrypted.append(VaultItem(id: entry.id, account: account))
-            } else {
-                failures += 1
-            }
-        }
-        items = decrypted
-        undecryptableCount = failures
-    }
-
-    // MARK: - Changes
-
     /// Encrypts and uploads accounts, skipping exact duplicates. Returns how many were added.
     @discardableResult
     func add(_ accounts: [OTPAccount], auth: AuthManager) async throws -> Int {
@@ -107,9 +85,33 @@ final class CodesViewModel {
             errorMessage = error.muninDescription
         }
     }
+}
+
+// MARK: - Private functions
+private extension CodesViewModel {
+    /// The unlocked vault, or `VaultError.keyMissing` while locked.
+    func unlockedVault() throws -> UnlockedVault {
+        guard let vault = session.vault else { throw VaultError.keyMissing }
+        return vault
+    }
+
+    /// Decrypts the entries into `items`, counting the ones that fail.
+    func decrypt(_ entries: [EncryptedEntry], key: SymmetricKey, userID: String) {
+        var decrypted: [VaultItem] = []
+        var failures = 0
+        for entry in entries {
+            if let account = try? VaultCrypto.open(entry.ciphertext, key: key, userID: userID) {
+                decrypted.append(VaultItem(id: entry.id, account: account))
+            } else {
+                failures += 1
+            }
+        }
+        items = decrypted
+        undecryptableCount = failures
+    }
 
     /// Forgets everything loaded.
-    private func reset() {
+    func reset() {
         items = []
         errorMessage = nil
         undecryptableCount = 0

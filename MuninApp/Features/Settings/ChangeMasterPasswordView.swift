@@ -70,14 +70,16 @@ struct ChangeMasterPasswordView: View {
         .frame(minWidth: 420, minHeight: 320)
         #endif
     }
+}
 
+private extension ChangeMasterPasswordView {
     /// Whether Save is enabled: a current password, and a long enough new one typed twice.
-    private var isValid: Bool {
+    var isValid: Bool {
         !current.isEmpty && password.count >= VaultSession.minimumPasswordLength && password == confirmation
     }
 
     /// What's wrong with the new password, shown under its fields.
-    private var problem: LocalizedStringKey? {
+    var problem: LocalizedStringKey? {
         if !password.isEmpty, password.count < VaultSession.minimumPasswordLength {
             return LocalizedKey("masterPassword.tooShort", VaultSession.minimumPasswordLength)
         }
@@ -88,7 +90,7 @@ struct ChangeMasterPasswordView: View {
     }
 
     /// Changes the master password and closes the sheet on success.
-    private func save() {
+    func save() {
         guard isValid else { return }
         Task {
             if await session.changeMasterPassword(current: current, new: password, auth: auth) {

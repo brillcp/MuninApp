@@ -8,13 +8,6 @@ import SwiftUI
 /// NavigationStack (not inside it), as in Apple's search tab examples, so the
 /// tab bar can turn the Search tab into its own search field.
 struct SearchView: View {
-    /// The passwords to search.
-    let vaultModel: VaultViewModel
-    /// The 2FA accounts to search.
-    let codesModel: CodesViewModel
-    /// Tapping a password opens it in the Vault tab.
-    let onOpenPassword: (PasswordItem) -> Void
-
     @Environment(AuthManager.self) private var auth
     /// The search field's text.
     @State private var query = ""
@@ -24,6 +17,13 @@ struct SearchView: View {
     @State private var codes: [VaultItem] = []
     /// One clock for the code rows.
     @State private var clock = CodeClock()
+
+    /// The passwords to search.
+    let vaultModel: VaultViewModel
+    /// The 2FA accounts to search.
+    let codesModel: CodesViewModel
+    /// Tapping a password opens it in the Vault tab.
+    let onOpenPassword: (PasswordItem) -> Void
 
     var body: some View {
         NavigationStack {
@@ -66,15 +66,17 @@ struct SearchView: View {
         .onChange(of: vaultModel.items) { updateResults() }
         .onChange(of: codesModel.items) { updateResults() }
     }
+}
 
+private extension SearchView {
     /// The query without surrounding spaces.
-    private var trimmedQuery: String {
+    var trimmedQuery: String {
         query.trimmingCharacters(in: .whitespaces)
     }
 
     /// Filters passwords (name, username, URL) and 2FA accounts (title,
     /// subtitle) by the query. An empty query shows nothing.
-    private func updateResults() {
+    func updateResults() {
         guard !trimmedQuery.isEmpty else {
             passwords = []
             codes = []
@@ -90,7 +92,6 @@ struct SearchView: View {
                 || ($0.account.subtitle?.localizedCaseInsensitiveContains(trimmedQuery) ?? false)
         }
     }
-
 }
 
 /// A password result: icon, name, username and a disclosure chevron.

@@ -41,10 +41,12 @@ struct ContentView: View {
             if state != .unlocked { vaultModel.clear() }
         }
     }
+}
 
+private extension ContentView {
     /// True while signed out, locked, checking the vault's state, or after
     /// failing to open it (the lock screen then shows an alert).
-    private var showsLockScreen: Bool {
+    var showsLockScreen: Bool {
         !auth.isSignedIn || session.state == .locked || session.state == .checking || session.failureMessage != nil
     }
 }

@@ -3,8 +3,6 @@ import SwiftUI
 /// The 2FA screen: every account's current code, with add, refresh and delete.
 struct CodesView: View {
     @Environment(AuthManager.self) private var auth
-    /// Loads, adds and deletes the accounts.
-    let viewModel: CodesViewModel
     /// Shows the Add Account sheet.
     @State private var isAdding = false
     /// The account waiting for delete confirmation.
@@ -13,6 +11,9 @@ struct CodesView: View {
     @State private var hapticTaps = 0
     /// One clock for the code rows.
     @State private var clock = CodeClock()
+
+    /// Loads, adds and deletes the accounts.
+    let viewModel: CodesViewModel
 
     var body: some View {
         NavigationStack {
@@ -48,13 +49,15 @@ struct CodesView: View {
             }
         }
     }
+}
 
+private extension CodesView {
     /// The toolbar's buttons.
     ///
     /// Mac: Add after the title, then Refresh and Lock at the far right.
     /// iOS: Add (Lock comes from `barkToolbar`).
     @ToolbarContentBuilder
-    private var toolbarContent: some ToolbarContent {
+    var toolbarContent: some ToolbarContent {
         #if os(macOS)
         ToolbarItem(placement: .primaryAction) { addButton }
         ToolbarSpacer(.flexible, placement: .primaryAction)
@@ -72,7 +75,7 @@ struct CodesView: View {
     }
 
     /// Opens the Add Account sheet (⌘N). Disabled until the accounts have loaded.
-    private var addButton: some View {
+    var addButton: some View {
         Button("codes.add", systemImage: "plus") {
             hapticTaps += 1
             isAdding = true
