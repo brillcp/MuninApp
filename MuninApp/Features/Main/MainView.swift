@@ -78,10 +78,10 @@ struct MainView: View {
                         Text("settings.title")
                     }
                 } icon: {
-                    Image(systemName: "person.crop.circle")
+                    Image(systemName: "gearshape.fill")
                 }
             }
-            .buttonStyle(.borderless)
+            .buttonStyle(.glassProminent)
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.vertical)
         }
