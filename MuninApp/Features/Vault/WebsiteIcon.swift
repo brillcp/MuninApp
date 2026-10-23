@@ -18,19 +18,22 @@ struct WebsiteIcon: View {
                 image
                     .resizable()
                     .scaledToFit()
+                    .transition(.opacity)
             } else {
                 Image(systemName: "globe")
                     .font(.system(size: size * 0.6))
                     .foregroundStyle(.tertiary)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .background(.quaternary)
+                    .transition(.opacity)
             }
         }
         .frame(width: size, height: size)
         .clipShape(.rect(cornerRadius: DesignKit.Spacing.Primitive.s12))
         .task(id: url) {
             let data = await WebsiteIconStore.shared.icon(for: url)
-            image = data.flatMap(PlatformImage.init(data:)).map(Image.init(platformImage:))
+            let loaded = data.flatMap(PlatformImage.init(data:)).map(Image.init(platformImage:))
+            withAnimation(DesignKit.Motion.easeInOut) { image = loaded }
         }
     }
 }

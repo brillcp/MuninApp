@@ -25,7 +25,7 @@ enum DesignKit {
     /// Animation tokens, for implicit and explicit animations.
     enum Motion {
         /// The system default, for small state changes like copy feedback.
-        static let standard: Animation = .default
+        static let linear: Animation = .linear(duration: 0.25)
         /// A springy bounce, for content that changes step or size.
         static let bouncy: Animation = .bouncy
         /// A short bounce, for showing and hiding panels.

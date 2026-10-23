@@ -65,6 +65,9 @@ struct MainView: View {
             #endif
         }
         .tabViewStyle(.sidebarAdaptable)
+        #if os(macOS)
+        .focusedSceneValue(\.mainSection, $selection)
+        #endif
         #if os(iOS)
         .tabViewSearchActivation(.searchTabSelection)
         #endif

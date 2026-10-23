@@ -36,6 +36,7 @@ import SwiftUI
         .commands {
             LockCommands(session: session)
             FindCommands()
+            SectionCommands()
         }
 
         Settings {

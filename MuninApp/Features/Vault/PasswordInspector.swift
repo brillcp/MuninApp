@@ -161,11 +161,11 @@ private extension PasswordInspector {
     func copy(_ field: Field, perform: () -> Void) {
         perform()
         hapticTaps += 1
-        withAnimation(DesignKit.Motion.standard) { copiedField = field }
+        withAnimation(DesignKit.Motion.linear) { copiedField = field }
         Task {
             try? await Task.sleep(for: .seconds(1.2))
             if copiedField == field {
-                withAnimation(DesignKit.Motion.standard) { copiedField = nil }
+                withAnimation(DesignKit.Motion.linear) { copiedField = nil }
             }
         }
     }

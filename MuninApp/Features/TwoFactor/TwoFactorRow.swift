@@ -30,7 +30,7 @@ struct TwoFactorRow: View {
         .contentShape(Rectangle())
         .onTapGesture(perform: copy)
         .sensoryFeedback(.success, trigger: didCopy) { _, new in new }
-        .animation(DesignKit.Motion.standard, value: didCopy)
+        .animation(DesignKit.Motion.linear, value: didCopy)
         .accessibilityElement(children: .combine)
         .accessibilityHint("codes.row.copyHint")
     }
@@ -117,7 +117,7 @@ struct TwoFactorCell: View {
                 didCopy = false
             }
         }
-        .animation(DesignKit.Motion.standard, value: didCopy)
+        .animation(DesignKit.Motion.linear, value: didCopy)
         .accessibilityElement(children: .combine)
         .accessibilityHint("codes.row.copyHint")
     }
@@ -140,7 +140,7 @@ private struct CodeText: View, Equatable {
             .font(.system(.title2, design: .monospaced, weight: .semibold))
             .foregroundStyle(didCopy ? .accent : .primary)
             .monospacedDigit()
-            .animation(DesignKit.Motion.standard, value: code)
+            .animation(DesignKit.Motion.linear, value: code)
     }
 }
 
