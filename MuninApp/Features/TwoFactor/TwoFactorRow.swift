@@ -6,7 +6,7 @@ import AppKit
 #endif
 
 /// One 2FA account in the iOS list: name, current code and countdown. Tap to copy the code.
-struct CodeRow: View {
+struct TwoFactorRow: View {
     /// Briefly true after copying, to show "Copied" instead of the code.
     @State private var didCopy = false
 
@@ -14,7 +14,7 @@ struct CodeRow: View {
     let account: OTPAccount
     /// Passed in (not from the environment): the Mac table's cells don't get
     /// the environment. Reading `clock.now` here still makes each row update itself.
-    let clock: CodeClock
+    let clock: TwoFactorClock
 
     var body: some View {
         HStack(spacing: DesignKit.Spacing.Primitive.s12) {
@@ -36,7 +36,7 @@ struct CodeRow: View {
     }
 }
 
-extension CodeRow {
+extension TwoFactorRow {
     /// Copies the account's current code to the clipboard.
     static func copyCode(of account: OTPAccount) {
         #if os(iOS)
@@ -55,7 +55,7 @@ extension CodeRow {
     }
 }
 
-private extension CodeRow {
+private extension TwoFactorRow {
     /// The current time, read from the clock so the row redraws every second.
     var now: Date { clock.now }
 
@@ -92,14 +92,14 @@ struct AccountLabel: View, Equatable {
 }
 
 /// The code and countdown for the Mac table's Code column. Click to copy.
-struct CodeCell: View {
+struct TwoFactorCell: View {
     /// Briefly true after copying, to show "Copied" instead of the code.
     @State private var didCopy = false
 
     /// The account whose code is shown.
     let account: OTPAccount
     /// The screen's clock, passed in because table cells don't get the environment.
-    let clock: CodeClock
+    let clock: TwoFactorClock
 
     var body: some View {
         HStack(spacing: DesignKit.Spacing.Primitive.s12) {
@@ -110,7 +110,7 @@ struct CodeCell: View {
         }
         .contentShape(Rectangle())
         .onTapGesture {
-            CodeRow.copyCode(of: account)
+            TwoFactorRow.copyCode(of: account)
             didCopy = true
             Task {
                 try? await Task.sleep(for: .seconds(1.2))
@@ -123,7 +123,7 @@ struct CodeCell: View {
     }
 }
 
-private extension CodeCell {
+private extension TwoFactorCell {
     /// The current time, read from the clock so the cell redraws every second.
     var now: Date { clock.now }
 }
@@ -136,7 +136,7 @@ private struct CodeText: View, Equatable {
     let didCopy: Bool
 
     var body: some View {
-        (didCopy ? Text("global.copied") : Text(verbatim: CodeRow.formatted(code)))
+        (didCopy ? Text("global.copied") : Text(verbatim: TwoFactorRow.formatted(code)))
             .font(.system(.title2, design: .monospaced, weight: .semibold))
             .foregroundStyle(didCopy ? .accent : .primary)
             .monospacedDigit()

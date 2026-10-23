@@ -15,7 +15,7 @@ struct MainView: View {
     /// The tabs.
     enum Section: Hashable {
         case vault
-        case codes
+        case twoFactor
         case search
         case settings
     }
@@ -27,11 +27,11 @@ struct MainView: View {
     /// From the app (also used by the Mac menu bar), shared by Vault and Search.
     @Environment(VaultViewModel.self) private var vaultModel
     /// Shared by the 2FA and Search tabs.
-    @State private var codesModel: CodesViewModel
+    @State private var twoFactorModel: TwoFactorViewModel
 
     /// Creates the 2FA view model for `session`.
     init(session: VaultSession) {
-        _codesModel = State(initialValue: CodesViewModel(session: session))
+        _twoFactorModel = State(initialValue: TwoFactorViewModel(session: session))
     }
 
     var body: some View {
@@ -42,10 +42,10 @@ struct MainView: View {
                 } label: {
                     SidebarTabLabel(title: "main.tab.vault", systemImage: "lock.rectangle.stack", isSelected: selection == .vault)
                 }
-                Tab(value: Section.codes) {
-                    CodesView(viewModel: codesModel)
+                Tab(value: Section.twoFactor) {
+                    TwoFactorView(viewModel: twoFactorModel)
                 } label: {
-                    SidebarTabLabel(title: "main.tab.codes", systemImage: "key.viewfinder", isSelected: selection == .codes)
+                    SidebarTabLabel(title: "main.tab.codes", systemImage: "key.viewfinder", isSelected: selection == .twoFactor)
                 }
             }
             #if os(iOS)
@@ -57,7 +57,7 @@ struct MainView: View {
                 }
             }
             Tab(value: Section.search, role: .search) {
-                SearchView(vaultModel: vaultModel, codesModel: codesModel) { item in
+                SearchView(vaultModel: vaultModel, twoFactorModel: twoFactorModel) { item in
                     vaultModel.selection = item.id
                     selection = .vault
                 }

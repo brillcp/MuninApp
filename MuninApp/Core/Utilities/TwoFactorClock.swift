@@ -7,7 +7,7 @@ import Observation
 /// updates itself. Passing the time as a `Date` didn't work in the Mac table:
 /// it only redraws rows whose data changed, so the countdown froze.
 @Observable
-final class CodeClock {
+final class TwoFactorClock {
     /// The current time, updated on every whole second while `run()` is active.
     private(set) var now = Date.now
 

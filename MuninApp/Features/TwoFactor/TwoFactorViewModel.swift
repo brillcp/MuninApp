@@ -6,7 +6,7 @@ import Observation
 /// unlocked vault key, and adds/removes entries. Codes are calculated in the
 /// views from the decrypted accounts.
 @Observable
-final class CodesViewModel {
+final class TwoFactorViewModel {
     /// Read at use time, so a changed master password (new proof) and a lock are picked up.
     private let session: VaultSession
 
@@ -28,7 +28,7 @@ final class CodesViewModel {
 }
 
 // MARK: - Public functions
-extension CodesViewModel {
+extension TwoFactorViewModel {
     /// Loads the entries from Munin and decrypts them. Signs out if Munin
     /// rejects the token.
     func refresh(auth: AuthManager) async {
@@ -88,7 +88,7 @@ extension CodesViewModel {
 }
 
 // MARK: - Private functions
-private extension CodesViewModel {
+private extension TwoFactorViewModel {
     /// The unlocked vault, or `VaultError.keyMissing` while locked.
     func unlockedVault() throws -> UnlockedVault {
         guard let vault = session.vault else { throw VaultError.keyMissing }

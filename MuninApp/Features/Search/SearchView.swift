@@ -16,12 +16,12 @@ struct SearchView: View {
     /// Matching 2FA accounts, filtered the same way.
     @State private var codes: [VaultItem] = []
     /// One clock for the code rows.
-    @State private var clock = CodeClock()
+    @State private var clock = TwoFactorClock()
 
     /// The passwords to search.
     let vaultModel: VaultViewModel
     /// The 2FA accounts to search.
-    let codesModel: CodesViewModel
+    let twoFactorModel: TwoFactorViewModel
     /// Tapping a password opens it in the Vault tab.
     let onOpenPassword: (PasswordItem) -> Void
 
@@ -41,7 +41,7 @@ struct SearchView: View {
                 if !codes.isEmpty {
                     Section("search.section.codes") {
                         ForEach(codes) { item in
-                            CodeRow(account: item.account, clock: clock)
+                            TwoFactorRow(account: item.account, clock: clock)
                         }
                     }
                 }
@@ -57,14 +57,14 @@ struct SearchView: View {
             .navigationTitle("search.title")
             .task {
                 if !vaultModel.hasLoaded { await vaultModel.refresh(auth: auth) }
-                if !codesModel.hasLoaded { await codesModel.refresh(auth: auth) }
+                if !twoFactorModel.hasLoaded { await twoFactorModel.refresh(auth: auth) }
             }
             .task(clock.run)
         }
         .searchable(text: $query, prompt: "search.prompt")
         .onChange(of: query, initial: true) { updateResults() }
         .onChange(of: vaultModel.items) { updateResults() }
-        .onChange(of: codesModel.items) { updateResults() }
+        .onChange(of: twoFactorModel.items) { updateResults() }
     }
 }
 
@@ -87,7 +87,7 @@ private extension SearchView {
                 || $0.username.localizedCaseInsensitiveContains(trimmedQuery)
                 || $0.url.localizedCaseInsensitiveContains(trimmedQuery)
         }
-        codes = codesModel.items.filter {
+        codes = twoFactorModel.items.filter {
             $0.account.title.localizedCaseInsensitiveContains(trimmedQuery)
                 || ($0.account.subtitle?.localizedCaseInsensitiveContains(trimmedQuery) ?? false)
         }

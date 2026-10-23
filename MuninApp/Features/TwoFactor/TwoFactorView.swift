@@ -1,7 +1,7 @@
 import SwiftUI
 
 /// The 2FA screen: every account's current code, with add, refresh and delete.
-struct CodesView: View {
+struct TwoFactorView: View {
     @Environment(AuthManager.self) private var auth
     /// Shows the Add Account sheet.
     @State private var isAdding = false
@@ -10,16 +10,16 @@ struct CodesView: View {
     /// Bumped by toolbar buttons for a light haptic.
     @State private var hapticTaps = 0
     /// One clock for the code rows.
-    @State private var clock = CodeClock()
+    @State private var clock = TwoFactorClock()
 
     /// Loads, adds and deletes the accounts.
-    let viewModel: CodesViewModel
+    let viewModel: TwoFactorViewModel
 
     var body: some View {
         NavigationStack {
-            CodesList(viewModel: viewModel, clock: clock, pendingDeletion: $pendingDeletion)
+            TwoFactorList(viewModel: viewModel, clock: clock, pendingDeletion: $pendingDeletion)
             .overlay {
-                CodesEmptyState(
+                TwoFactorEmptyState(
                     errorMessage: viewModel.items.isEmpty ? viewModel.errorMessage : nil,
                     isEmpty: viewModel.items.isEmpty && viewModel.undecryptableCount == 0,
                     hasLoaded: viewModel.hasLoaded,
@@ -51,7 +51,7 @@ struct CodesView: View {
     }
 }
 
-private extension CodesView {
+private extension TwoFactorView {
     /// The toolbar's buttons.
     ///
     /// Mac: Add after the title, then Refresh and Lock at the far right.
@@ -90,18 +90,18 @@ private extension CodesView {
 /// Its own view, so the 2FA screen's chrome doesn't re-evaluate with it. The
 /// Mac table has no selection, so rows aren't selectable; right-click a cell
 /// for its menu.
-private struct CodesList: View {
+private struct TwoFactorList: View {
     /// The accounts to show.
-    let viewModel: CodesViewModel
+    let viewModel: TwoFactorViewModel
     /// The screen's clock, passed to every row.
-    let clock: CodeClock
+    let clock: TwoFactorClock
     /// Set by a row's Delete action, to ask for confirmation.
     @Binding var pendingDeletion: VaultItem?
 
     var body: some View {
         List {
             ForEach(viewModel.items) { item in
-                CodeRow(account: item.account, clock: clock)
+                TwoFactorRow(account: item.account, clock: clock)
                     .contextMenu {
                         Button("global.delete", systemImage: "trash", role: .destructive) { pendingDeletion = item }
                         Button("global.copy", systemImage: "square.on.square", role: .confirm) { pendingDeletion = item }
@@ -119,7 +119,7 @@ private struct CodesList: View {
     /// A Mac cell's context menu: Copy Code and Delete.
     @ViewBuilder
     private func codeMenu(for item: VaultItem) -> some View {
-        Button("codes.copyCode", systemImage: "square.on.square") { CodeRow.copyCode(of: item.account) }
+        Button("codes.copyCode", systemImage: "square.on.square") { TwoFactorRow.copyCode(of: item.account) }
         Divider()
         Button("global.delete", systemImage: "trash", role: .destructive) { pendingDeletion = item }
     }
@@ -133,7 +133,7 @@ private struct CodesList: View {
 }
 
 /// Error, empty and loading states for the codes list.
-private struct CodesEmptyState: View {
+private struct TwoFactorEmptyState: View {
     /// A load error to show, if the list is empty because loading failed.
     let errorMessage: String?
     /// Whether there are no accounts.
@@ -172,7 +172,7 @@ private struct CodesEmptyState: View {
 }
 
 #Preview {
-    CodesView(viewModel: CodesViewModel(session: VaultSession()))
+    TwoFactorView(viewModel: TwoFactorViewModel(session: VaultSession()))
         .environment(AuthManager())
         .environment(VaultSession())
 }
