@@ -51,7 +51,7 @@ struct ChangeMasterPasswordView: View {
             #endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("global.cancel") { dismiss() }
+                    Button("global.cancel", action: dismiss.callAsFunction)
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     if session.isWorking {
@@ -64,8 +64,8 @@ struct ChangeMasterPasswordView: View {
                 }
             }
         }
-        .onAppear { session.clearError() }
-        .onDisappear { session.clearError() }
+        .onAppear(perform: session.clearError)
+        .onDisappear(perform: session.clearError)
         #if os(macOS)
         .frame(minWidth: 420, minHeight: 320)
         #endif

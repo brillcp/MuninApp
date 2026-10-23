@@ -33,7 +33,7 @@ struct CodesView: View {
             .toolbar { toolbarContent }
             .refreshable { await viewModel.refresh(auth: auth) }
             .task { await viewModel.refresh(auth: auth) }
-            .task { await clock.run() }
+            .task(clock.run)
             .sensoryFeedback(.impact(weight: .light), trigger: hapticTaps)
             .sheet(isPresented: $isAdding) {
                 AddAccountView { accounts in

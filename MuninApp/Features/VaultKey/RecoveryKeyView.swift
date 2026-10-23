@@ -50,7 +50,7 @@ struct RecoveryKeyView: View {
             #endif
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("global.done") { dismiss() }
+                    Button("global.done", action: dismiss.callAsFunction)
                 }
             }
         }

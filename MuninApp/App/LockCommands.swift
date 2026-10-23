@@ -9,7 +9,7 @@ struct LockCommands: Commands {
 
     var body: some Commands {
         CommandGroup(after: .appSettings) {
-            Button("lock.command", systemImage: "lock") { session.lock() }
+            Button("lock.command", systemImage: "lock", action: session.lock)
                 .keyboardShortcut("l")
         }
     }

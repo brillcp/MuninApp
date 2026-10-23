@@ -59,7 +59,7 @@ struct SearchView: View {
                 if !vaultModel.hasLoaded { await vaultModel.refresh(auth: auth) }
                 if !codesModel.hasLoaded { await codesModel.refresh(auth: auth) }
             }
-            .task { await clock.run() }
+            .task(clock.run)
         }
         .searchable(text: $query, prompt: "search.prompt")
         .onChange(of: query, initial: true) { updateResults() }

@@ -43,7 +43,7 @@ struct MasterPasswordSetupView: View {
 
             HStack {
                 if session.isResettingMasterPassword {
-                    Button("global.cancel") { session.cancelReset() }
+                    Button("global.cancel", action: session.cancelReset)
                 }
                 Button("global.save", action: save)
                     .buttonStyle(.borderedProminent)

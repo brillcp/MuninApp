@@ -86,7 +86,7 @@ private extension MenuBarContent {
             }
             Spacer()
             if session.state == .unlocked {
-                Button("lock.command", systemImage: "lock") { session.lock() }
+                Button("lock.command", systemImage: "lock", action: session.lock)
                     .labelStyle(.iconOnly)
                     .help(Text("lock.command"))
             }

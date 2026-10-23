@@ -105,7 +105,7 @@ struct LockPanel: View {
         .onChange(of: session.state) { startUnlockIfReady() }
         .alert("errors.openVault.title", item: $session.failureMessage) { _ in
             Button("global.tryAgain") { Task { await session.prepare(auth: auth) } }
-            Button("account.signOut", role: .destructive) { auth.signOut() }
+            Button("account.signOut", role: .destructive, action: auth.signOut)
         } message: { message in
             Text(message)
         }
