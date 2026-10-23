@@ -53,6 +53,7 @@ struct PasswordInspector: View {
                 }
                 .frame(maxWidth: .infinity)
                 .listRowBackground(Color.clear)
+                .padding(.vertical, DesignKit.Spacing.Primitive.s8)
             }
 
             Section {
@@ -129,7 +130,7 @@ struct PasswordInspector: View {
                 .ignoresSafeArea()
             #endif
         }
-        .animation(.easeInOut, value: tint)
+        .animation(DesignKit.Motion.easeInOut, value: tint)
         .sensoryFeedback(.impact(weight: .light), trigger: hapticTaps)
         #if os(iOS)
         .task(id: item.url) {
@@ -159,11 +160,11 @@ struct PasswordInspector: View {
     private func copy(_ field: Field, perform: () -> Void) {
         perform()
         hapticTaps += 1
-        withAnimation { copiedField = field }
+        withAnimation(DesignKit.Motion.standard) { copiedField = field }
         Task {
             try? await Task.sleep(for: .seconds(1.2))
             if copiedField == field {
-                withAnimation { copiedField = nil }
+                withAnimation(DesignKit.Motion.standard) { copiedField = nil }
             }
         }
     }

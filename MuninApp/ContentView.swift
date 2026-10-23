@@ -33,7 +33,7 @@ struct ContentView: View {
             #endif
         }
         #if os(iOS)
-        .animation(.smooth(duration: 0.45), value: showsLockScreen)
+        .animation(DesignKit.Motion.slowSmooth, value: showsLockScreen)
         #endif
         .task(id: auth.userID) { await session.prepare(auth: auth) }
         .autoLock(session)

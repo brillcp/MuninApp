@@ -32,7 +32,7 @@ struct CodeRow: View {
         .contentShape(Rectangle())
         .onTapGesture(perform: copy)
         .sensoryFeedback(.success, trigger: didCopy) { _, new in new }
-        .animation(.default, value: didCopy)
+        .animation(DesignKit.Motion.standard, value: didCopy)
         .accessibilityElement(children: .combine)
         .accessibilityHint("codes.row.copyHint")
     }
@@ -114,7 +114,7 @@ struct CodeCell: View {
                 didCopy = false
             }
         }
-        .animation(.default, value: didCopy)
+        .animation(DesignKit.Motion.standard, value: didCopy)
         .accessibilityElement(children: .combine)
         .accessibilityHint("codes.row.copyHint")
     }
@@ -132,7 +132,7 @@ private struct CodeText: View, Equatable {
             .font(.system(.title2, design: .monospaced, weight: .semibold))
             .foregroundStyle(didCopy ? .accent : .primary)
             .monospacedDigit()
-            .animation(.default, value: code)
+            .animation(DesignKit.Motion.standard, value: code)
     }
 }
 
@@ -155,6 +155,6 @@ private struct CountdownGauge: View, Equatable {
         .tint(remaining <= 5 ? Color.red : Color.green)
         .scaleEffect(0.6)
         .accessibilityLabel(LocalizedKey("codes.row.secondsLeft", remaining))
-        .animation(.bouncy, value: remaining)
+        .animation(DesignKit.Motion.quickBouncy, value: remaining)
     }
 }

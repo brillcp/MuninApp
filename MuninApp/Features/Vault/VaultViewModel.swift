@@ -40,9 +40,64 @@ final class VaultViewModel {
     var searchText = "" {
         didSet { recomputeVisibleItems() }
     }
-    /// The table's sort order. Newest first by default.
-    var sortOrder = [KeyPathComparator(\PasswordItem.lastUpdated, order: .reverse)] {
-        didSet { recomputeVisibleItems() }
+    /// The list's sort order, remembered between launches (UserDefaults).
+    /// Newest first by default.
+    var sortOrder = VaultViewModel.savedSortOrder() {
+        didSet {
+            recomputeVisibleItems()
+            saveSortOrder()
+        }
+    }
+
+    /// A column the list can be sorted by.
+    enum SortColumn: Hashable {
+        /// The item's name.
+        case title
+        /// When the item was last edited.
+        case dateEdited
+    }
+
+    /// The sort menu's column. Setting it keeps the current direction.
+    var sortColumn: SortColumn {
+        get { sortOrder.first?.keyPath == \PasswordItem.name as PartialKeyPath<PasswordItem> ? .title : .dateEdited }
+        set { sortOrder = [Self.comparator(for: newValue, order: sortDirection)] }
+    }
+
+    /// The sort menu's direction: `.forward` is ascending, `.reverse` descending.
+    /// Setting it keeps the current column.
+    var sortDirection: SortOrder {
+        get { sortOrder.first?.order ?? .reverse }
+        set { sortOrder = [Self.comparator(for: sortColumn, order: newValue)] }
+    }
+
+    /// The comparator for a column and direction.
+    private static func comparator(for column: SortColumn, order: SortOrder) -> KeyPathComparator<PasswordItem> {
+        switch column {
+        case .title: KeyPathComparator(\PasswordItem.name, order: order)
+        case .dateEdited: KeyPathComparator(\PasswordItem.lastUpdated, order: order)
+        }
+    }
+
+    /// UserDefaults key for `sortOrder`: the column, plus ".reverse" when descending.
+    private static let sortDefaultsKey = "munin.vault.sort"
+
+    /// The sort order saved by the last launch, or newest first.
+    private static func savedSortOrder() -> [KeyPathComparator<PasswordItem>] {
+        switch UserDefaults.standard.string(forKey: sortDefaultsKey) {
+        case "name": [KeyPathComparator(\PasswordItem.name)]
+        case "name.reverse": [KeyPathComparator(\PasswordItem.name, order: .reverse)]
+        case "lastUpdated": [KeyPathComparator(\PasswordItem.lastUpdated)]
+        default: [KeyPathComparator(\PasswordItem.lastUpdated, order: .reverse)]
+        }
+    }
+
+    /// Saves the primary sort column and direction. A comparator can't be
+    /// stored directly, so it's saved as a short key.
+    private func saveSortOrder() {
+        guard let primary = sortOrder.first else { return }
+        let column = primary.keyPath == \PasswordItem.name as PartialKeyPath<PasswordItem> ? "name" : "lastUpdated"
+        let key = primary.order == .reverse ? "\(column).reverse" : column
+        UserDefaults.standard.set(key, forKey: Self.sortDefaultsKey)
     }
     /// The selected item's id.
     var selection: PasswordItem.ID? {

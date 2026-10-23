@@ -154,6 +154,12 @@
 "vault.delete.title" = "Delete Password?";
 "vault.empty.title" = "No items";
 "vault.search.prompt" = "Search all items";
+"vault.sort" = "Sort";
+"vault.sort.ascending" = "Ascending";
+"vault.sort.dateEdited" = "Date Edited";
+"vault.sort.descending" = "Descending";
+"vault.sort.direction" = "Order";
+"vault.sort.title" = "Title";
 "vault.title" = "Vault";
 
 /** Vault Key **/

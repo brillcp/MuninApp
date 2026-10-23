@@ -28,59 +28,57 @@ struct VaultView: View {
     /// Mac: whether the detail panel is slid in. Follows the selection, one
     /// update later (see `columns`).
     @State private var isDetailVisible = false
-    /// Mac: the item that was showing, kept only while the panel slides out.
-    @State private var closingItem: PasswordItem?
 
     var body: some View {
         columns
-        .sensoryFeedback(.impact(weight: .light), trigger: hapticTaps)
-        .task { await viewModel.refresh(auth: auth) }
-        .sheet(isPresented: $isCreating) {
-            PasswordEditorView { fields in
-                try await viewModel.create(fields, auth: auth)
-            }
-        }
-        .confirmationDialog("vault.delete.title", item: $pendingDeletion, titleVisibility: .visible) { item in
-            Button(LocalizedKey("vault.delete.button", item.name), role: .destructive) {
-                Task { await viewModel.delete(item, auth: auth) }
-            }
-        } message: { item in
-            Text(LocalizedKey("vault.delete.message", item.name))
-        }
-        .sheet(item: $editing) { draft in
-            PasswordEditorView(fields: draft.fields, isEditing: true) { fields in
-                try await viewModel.update(draft.item, with: fields, auth: auth)
-            }
-        }
-        .fileImporter(isPresented: $isPickingImportFile, allowedContentTypes: [.commaSeparatedText]) { result in
-            if case .success(let url) = result { prepareImport(from: url) }
-        }
-        .confirmationDialog("import.confirm.title", item: $importPlan, titleVisibility: .visible) { plan in
-            Button(LocalizedKey("import.confirm.button", plan.newItems.count)) {
-                Task {
-                    let saved = await viewModel.runImport(plan, auth: auth)
-                    importMessage = Localized("import.done.message", saved)
+            .sensoryFeedback(.impact(weight: .light), trigger: hapticTaps)
+            .task { await viewModel.refresh(auth: auth) }
+            .sheet(isPresented: $isCreating) {
+                PasswordEditorView { fields in
+                    try await viewModel.create(fields, auth: auth)
                 }
             }
-            .disabled(plan.newItems.isEmpty)
-        } message: { plan in
-            Text(LocalizedKey("import.confirm.message", plan.newItems.count, plan.duplicateCount))
-        }
-        .alert("import.title", item: $importMessage) { _ in
-            Button("global.done") {}
-        } message: { message in
-            Text(message)
-        }
-        .overlay(alignment: .bottom) {
-            if let progress = viewModel.importProgress {
-                ProgressView(value: Double(progress.done), total: Double(max(progress.total, 1))) {
-                    Text(LocalizedKey("import.progress", progress.done, progress.total))
+            .confirmationDialog("vault.delete.title", item: $pendingDeletion, titleVisibility: .visible) { item in
+                Button(LocalizedKey("vault.delete.button", item.name), role: .destructive) {
+                    Task { await viewModel.delete(item, auth: auth) }
                 }
-                .padding()
-                .glassEffect(in: .rect(cornerRadius: 16))
-                .padding()
+            } message: { item in
+                Text(LocalizedKey("vault.delete.message", item.name))
             }
-        }
+            .sheet(item: $editing) { draft in
+                PasswordEditorView(fields: draft.fields, isEditing: true) { fields in
+                    try await viewModel.update(draft.item, with: fields, auth: auth)
+                }
+            }
+            .fileImporter(isPresented: $isPickingImportFile, allowedContentTypes: [.commaSeparatedText]) { result in
+                if case .success(let url) = result { prepareImport(from: url) }
+            }
+            .confirmationDialog("import.confirm.title", item: $importPlan, titleVisibility: .visible) { plan in
+                Button(LocalizedKey("import.confirm.button", plan.newItems.count)) {
+                    Task {
+                        let saved = await viewModel.runImport(plan, auth: auth)
+                        importMessage = Localized("import.done.message", saved)
+                    }
+                }
+                .disabled(plan.newItems.isEmpty)
+            } message: { plan in
+                Text(LocalizedKey("import.confirm.message", plan.newItems.count, plan.duplicateCount))
+            }
+            .alert("import.title", item: $importMessage) { _ in
+                Button("global.done") {}
+            } message: { message in
+                Text(message)
+            }
+            .overlay(alignment: .bottom) {
+                if let progress = viewModel.importProgress {
+                    ProgressView(value: Double(progress.done), total: Double(max(progress.total, 1))) {
+                        Text(LocalizedKey("import.progress", progress.done, progress.total))
+                    }
+                    .padding()
+                    .glassEffect(in: .rect(cornerRadius: 16))
+                    .padding()
+                }
+            }
     }
 }
 
@@ -107,53 +105,42 @@ extension VaultView {
         NavigationStack {
             listColumn
                 .overlay(alignment: .trailing) {
-                    VaultItemDetail(item: viewModel.selectedItem ?? closingItem, viewModel: viewModel, pendingDeletion: $pendingDeletion, onEdit: startEditing)
+                    if isDetailVisible {
+                        VaultItemDetail(
+                            item: viewModel.selectedItem,
+                            viewModel: viewModel,
+                            pendingDeletion: $pendingDeletion,
+                            onEdit: startEditing
+                        )
                         .safeAreaInset(edge: .top, spacing: DesignKit.Spacing.Primitive.s0) {
                             HStack {
-                                Button("global.close", systemImage: "xmark") {
+                                LockButton(systemImage: "xmark", style: .clear) {
                                     hapticTaps += 1
                                     viewModel.selection = nil
                                 }
-                                .labelStyle(.iconOnly)
-                                .buttonStyle(.glass)
-                                .buttonBorderShape(.circle)
                                 .help("global.close")
                                 Spacer()
-                                Button("global.edit", systemImage: "square.and.pencil") {
+                                LockButton(systemImage: "square.and.pencil", style: .clear) {
                                     hapticTaps += 1
                                     if let item = viewModel.selectedItem { startEditing(item) }
                                 }
-                                .labelStyle(.iconOnly)
-                                .buttonStyle(.glass)
-                                .buttonBorderShape(.circle)
                                 .help("global.edit")
                             }
                             .padding([.horizontal, .top], DesignKit.Spacing.Primitive.s12)
                         }
                         .frame(width: 340)
                         .frame(maxHeight: .infinity)
-                        .glassEffect(in: .rect(cornerRadius: 20))
+                        .glassEffect(in: .rect(cornerRadius: DesignKit.Spacing.Primitive.s16))
                         .padding(DesignKit.Spacing.Primitive.s12)
-                        .offset(x: isDetailVisible ? 0 : 48)
-                        .opacity(isDetailVisible ? 1 : 0)
-                        .allowsHitTesting(isDetailVisible)
-                        .accessibilityHidden(!isDetailVisible)
-                }
-                .onChange(of: viewModel.selectedItem) { oldItem, newItem in
-                    switch (oldItem, newItem) {
-                    case (nil, .some):
-                        withAnimation(.bouncy(duration: 0.25)) { isDetailVisible = true }
-                    case (.some(let oldItem), nil):
-                        closingItem = oldItem
-                        withAnimation(.bouncy(duration: 0.25)) {
-                            isDetailVisible = false
-                        } completion: {
-                            closingItem = nil
-                        }
-                    default:
-                        break
+                        .transition(.opacity.combined(with: .offset(x: 40)))
                     }
                 }
+                .onChange(of: viewModel.selectedItem) { oldItem, newItem in
+                    withAnimation {
+                        isDetailVisible.toggle()
+                    }
+                }
+                .animation(DesignKit.Motion.bouncy, value: isDetailVisible)
         }
         #else
         NavigationSplitView {
@@ -165,7 +152,8 @@ extension VaultView {
     }
 
     /// The list's navigation chrome: title, toolbar, and on the Mac the search
-    /// field (⌘F focuses it) and CSV drop from Finder.
+    /// field and CSV drop from Finder. The search field is focused when the
+    /// vault opens (after unlocking), and ⌘F focuses it again.
     ///
     /// The list itself is `VaultPasswordList`, its own invalidation boundary.
     private var listColumn: some View {
@@ -174,21 +162,20 @@ extension VaultView {
             pendingDeletion: $pendingDeletion,
             onEdit: startEditing
         )
-            #if os(macOS)
-            .dropDestination(for: URL.self) { urls, _ in
-                guard let url = urls.first(where: { $0.pathExtension.lowercased() == "csv" }) else { return false }
-                prepareImport(from: url)
-                return true
-            }
-            #endif
-            .barkToolbar(title: "vault.title", subtitle: "\(viewModel.items.count) items")
-            #if os(macOS)
-            .searchable(text: $viewModel.searchText, prompt: "vault.search.prompt")
-            .searchFocused($isSearchFocused)
-            .focusedSceneValue(\.searchFocusRequest, searchFocusRequest)
-            .onChange(of: searchFocusRequest.count) { isSearchFocused = true }
-            #endif
-            .toolbar { toolbarContent }
+        .barkToolbar(title: "vault.title", subtitle: "\(viewModel.items.count) items")
+        .toolbar { toolbarContent }
+        #if os(macOS)
+        .dropDestination(for: URL.self) { urls, _ in
+            guard let url = urls.first(where: { $0.pathExtension.lowercased() == "csv" }) else { return false }
+            prepareImport(from: url)
+            return true
+        }
+        .searchable(text: $viewModel.searchText, prompt: "vault.search.prompt")
+        .searchFocused($isSearchFocused)
+        .focusedSceneValue(\.searchFocusRequest, searchFocusRequest)
+        .onChange(of: searchFocusRequest.count) { isSearchFocused = true }
+        .task { isSearchFocused = true }
+        #endif
     }
 
     /// The toolbar's buttons.
@@ -204,10 +191,32 @@ extension VaultView {
             importButton
             LockToolbarButton()
         }
+        ToolbarItem(placement: .primaryAction) { sortMenu }
         #else
         ToolbarItem(placement: .primaryAction) { importButton }
         ToolbarItem(placement: .confirmationAction) { createButton }
         #endif
+    }
+
+    /// Sorts the list: by title or date edited, then ascending or descending.
+    private var sortMenu: some View {
+        Menu("vault.sort", systemImage: "arrow.up.arrow.down") {
+            Picker("vault.sort", selection: $viewModel.sortColumn) {
+                Label("vault.sort.title", systemImage: "textformat")
+                    .tag(VaultViewModel.SortColumn.title)
+                Label("vault.sort.dateEdited", systemImage: "square.and.pencil")
+                    .tag(VaultViewModel.SortColumn.dateEdited)
+            }
+            .pickerStyle(.inline)
+            Picker("vault.sort.direction", selection: $viewModel.sortDirection) {
+                Label("vault.sort.ascending", systemImage: "arrow.down")
+                    .tag(SortOrder.forward)
+                Label("vault.sort.descending", systemImage: "arrow.up")
+                    .tag(SortOrder.reverse)
+            }
+            .pickerStyle(.inline)
+        }
+        .sensoryFeedback(.selection, trigger: viewModel.sortOrder)
     }
 
     /// Opens the New Password sheet. Prominent glass in the accent colour.
@@ -306,26 +315,13 @@ private struct VaultPasswordList: View {
     /// The table or list itself.
     @ViewBuilder
     private var rows: some View {
-        #if os(macOS)
-        Table(viewModel.visibleItems, selection: $viewModel.selection, sortOrder: $viewModel.sortOrder) {
-            TableColumn("vault.column.title", value: \.name) { item in
-                PasswordTitleCell(name: item.name, username: item.username, url: item.url)
-            }
-            TableColumn("password.field.lastUpdated", value: \.lastUpdated) { item in
-                Text(item.lastUpdated, format: .relative(presentation: .named))
-                    .foregroundStyle(.secondary)
-            }
-        }
-        .tableStyle(.bordered)
-        .onExitCommand { viewModel.selection = nil }
-        #else
         List(viewModel.visibleItems, selection: $viewModel.selection) { item in
             NavigationLink(value: item.id) {
                 PasswordTitleCell(name: item.name, username: item.username, url: item.url)
             }
         }
         .listStyle(.plain)
-        #endif
+        .onExitCommand { viewModel.selection = nil }
     }
 }
 
@@ -389,13 +385,15 @@ private struct PasswordTitleCell: View {
     var body: some View {
         HStack(spacing: DesignKit.Spacing.Primitive.s12) {
             WebsiteIcon(url: url)
-            VStack(alignment: .leading, spacing: DesignKit.Spacing.Primitive.s2) {
+            VStack(alignment: .leading, spacing: DesignKit.Spacing.Primitive.s4) {
                 Text(name)
                 Text(username)
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
         }
+        .padding(.vertical, DesignKit.Spacing.Primitive.s6)
+        .padding(.leading, DesignKit.Spacing.Primitive.s2)
     }
 }
 

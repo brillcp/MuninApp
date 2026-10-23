@@ -93,8 +93,8 @@ struct LockPanel: View {
         .glassEffect(in: .rect(cornerRadius: 24))
         #endif
         .disabled(isWorking)
-        .animation(.bouncy, value: step)
-        .animation(.bouncy, value: isWorking)
+        .animation(DesignKit.Motion.bouncy, value: step)
+        .animation(DesignKit.Motion.bouncy, value: isWorking)
         .onChange(of: auth.userID) { chosenStep = nil }
         .onChange(of: auth.isSigningIn) { wasSigningIn, isSigningIn in
             guard wasSigningIn, !isSigningIn, auth.isSignedIn, auth.signInError == nil else { return }
@@ -324,6 +324,8 @@ struct LockButton: View {
         case primary
         /// Plain glass, for alternatives.
         case secondary
+        /// Clear glass
+        case clear
         /// No glass, just plain text.
         case tertiary
     }
@@ -398,6 +400,11 @@ struct LockButton: View {
             button
                 .buttonStyle(.glass)
                 .tint(.primary)
+        case .clear:
+            button
+                .padding(DesignKit.Spacing.Primitive.s6)
+                .glassEffect()
+                .foregroundStyle(.primary)
         case .tertiary:
             button
                 .buttonStyle(.plain)

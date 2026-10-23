@@ -96,28 +96,6 @@ private struct CodesList: View {
     @Binding var pendingDeletion: VaultItem?
 
     var body: some View {
-        #if os(macOS)
-        Table(viewModel.items) {
-            TableColumn("codes.column.account") { item in
-                AccountLabel(title: item.account.title, subtitle: item.account.subtitle)
-                    .equatable()
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .contentShape(Rectangle())
-                    .contextMenu { codeMenu(for: item) }
-            }
-            TableColumn("codes.column.code") { item in
-                CodeCell(account: item.account, clock: clock)
-                    .contextMenu { codeMenu(for: item) }
-            }
-        }
-        .tableStyle(.bordered)
-        .safeAreaInset(edge: .bottom) {
-            if viewModel.undecryptableCount > 0 {
-                undecryptableLabel
-                    .padding(DesignKit.Spacing.Primitive.s8)
-            }
-        }
-        #else
         List {
             ForEach(viewModel.items) { item in
                 CodeRow(account: item.account, clock: clock)
@@ -133,7 +111,6 @@ private struct CodesList: View {
             }
         }
         .listStyle(.plain)
-        #endif
     }
 
     /// A Mac cell's context menu: Copy Code and Delete.

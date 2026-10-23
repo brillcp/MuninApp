@@ -8,19 +8,6 @@ extension View {
     ///   system title is removed. `subtitle` isn't shown.
     /// - iOS: the system navigation title and subtitle, and a Lock button.
     func barkToolbar(title: LocalizedStringKey, subtitle: LocalizedStringKey) -> some View {
-        #if os(macOS)
-        toolbarBackground(Color(.bark), for: .windowToolbar)
-            .toolbarBackgroundVisibility(.visible, for: .windowToolbar)
-            .toolbar(removing: .title)
-            .toolbar {
-                ToolbarItem(placement: .navigation) {
-                    Text(title)
-                        .font(.title3.bold())
-                        .foregroundStyle(.white)
-                }
-                .sharedBackgroundVisibility(.hidden)
-            }
-        #else
         self
             .navigationTitle(title)
             .navigationSubtitle(subtitle)
@@ -29,7 +16,6 @@ extension View {
                     LockToolbarButton()
                 }
             }
-        #endif
     }
 }
 
