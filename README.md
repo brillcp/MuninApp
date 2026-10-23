@@ -1,34 +1,117 @@
-# MuninApp
+# Munin
 
-iOS + macOS end-to-end encrypted authenticator backed by [Munin](../Munin).
-Tap a row to copy its code.
+Munin is an end-to-end encrypted password manager and authenticator (2FA
+codes) for iPhone, iPad and Mac.
 
-- **End-to-end encrypted.** A per-user AES-256 vault key lives in iCloud Keychain
-  (synchronizable, so it reaches the user's other Apple devices). Entries
-  (issuer, name, secret) are sealed with AES-GCM, bound to the user ID, before
-  upload. Munin stores ciphertext only; codes are calculated on device.
-  Account menu → Show Recovery Key to back the key up; a device without the key
-  can restore from it.
-- **Add accounts:** scan a QR code (iPhone camera), choose a screenshot/image,
-  paste an `otpauth://` link, or enter the setup key. Google Authenticator export
-  QR codes (`otpauth-migration://`) import all their accounts at once.
+This repository is the source code of the Munin apps for iOS and macOS. The
+Munin sync service the apps talk to is not part of this repository.
 
-- **Sign in with Apple → Supabase.** The Apple identity token is exchanged at
-  `/auth/v1/token?grant_type=id_token` for a Supabase session (Keychain,
-  auto-refreshed, modelled on Oden's `SupabaseTokenProvider`). Its JWT is the
-  bearer token for Munin, which scopes every account to the signed-in user.
-- **Networking:** [brillcp/Networking](https://github.com/brillcp/networking),
-  used like Oden (Request / Endpoint / ServiceFactory / Service).
-- **Config:** `Core/Services/APIConfig.swift`: Munin URL, Supabase URL and the
-  publishable key.
-- `Info.plist` allows plain HTTP to local hosts (`NSAllowsLocalNetworking`) for
-  development. Remove it once Munin runs behind HTTPS.
+## Support
 
-## One-time setup
+No support is provided for this code directly. For help with the Munin app or
+your subscription, contact <!-- support email -->.
 
-1. Apple Developer → Identifiers → `dev.gidlof.Munin`: enable **Sign in with Apple**
-   (Xcode's automatic signing usually does this from the entitlement).
-2. Supabase (Munin's project) → Authentication → Sign In / Providers → **Apple**:
-   enable it and add `dev.gidlof.Munin` under Client IDs. Native sign-in needs no
-   secret key.
-3. Paste the project's publishable key into `APIConfig.anonKey`.
+## Contributions
+
+<!-- Pick one: -->
+External contributions are not accepted at the moment. Pull requests will be
+closed without review.
+
+## Security model
+
+Everything you store is encrypted on your device before it's sent to Munin.
+Munin stores ciphertext it can't read, and can't reset your master password
+for you.
+
+### Keys
+
+- **Vault key.** A random 256-bit key, created on your device the first time
+  you set up Munin. It encrypts every password and 2FA account.
+- **Master password.** Turned into a key with PBKDF2-HMAC-SHA256 (600,000
+  rounds, random 16-byte salt), then split with HKDF into a *wrapping key* and
+  a *proof*. The wrapping key encrypts the vault key (AES-256-GCM) and never
+  leaves the device.
+- **Recovery key.** Shown once when you set up Munin. It also wraps the vault
+  key, so it can reset a forgotten master password.
+- **What Munin stores.** The vault key wrapped twice (by the master password
+  and by the recovery key), the KDF settings, and bcrypt hashes of the two
+  proofs. Each wrapped key is bound to your account and to which key wrapped
+  it, so the copies can't be swapped.
+
+### Data
+
+- **Passwords.** Each field (name, website, username, password, note) is
+  encrypted separately with AES-256-GCM and bound to your account and to its
+  field, so ciphertext can't be moved between users or fields.
+- **2FA accounts.** Each account (issuer, name, secret) is encrypted as one
+  item. Codes are calculated on your device.
+- **In memory.** While unlocked, names, websites and usernames are decrypted
+  for the list and search. Passwords and notes stay encrypted until you show
+  or copy them. Locking drops everything decrypted and the vault key.
+
+### Protections
+
+- **Proof for destructive changes.** Edits and deletes are only accepted with
+  your master password's proof. Munin rate-limits wrong proofs.
+- **Face ID / Touch ID.** An optional copy of the vault key, kept in this
+  device's Keychain behind biometrics. It's never synced, and stops working if
+  enrolled faces or fingers change.
+- **Clipboard.** A copied password is cleared after a minute, and when Munin
+  locks. On iOS it's kept off Universal Clipboard.
+- **Auto-lock.** After a chosen time without use, when the Mac sleeps or its
+  screen locks, or on leaving the app.
+
+### What Munin can see
+
+Munin can't read your data, but it does see:
+
+- your account (from Sign in with Apple; you can hide your email),
+- how many items and 2FA accounts you have, their sizes and when they changed.
+
+Website icons are downloaded by the app straight from each website, not
+through Munin. Those websites can see that a request came from your IP
+address. Icons are kept in memory only.
+
+## Reporting a vulnerability
+
+Please report security issues privately to <!-- security email -->, not in
+public issues.
+
+## Building
+
+Requirements:
+
+- Xcode with the iOS 27 and macOS 27 SDKs
+- An Apple Developer account (for signing and Sign in with Apple)
+
+Steps:
+
+1. Clone the repository and open `MuninApp.xcodeproj`.
+2. Under *Signing & Capabilities*, choose your team.
+3. Run the **MuninApp** scheme on an iPhone, iPad or Mac.
+
+Swift packages:
+
+- [brillcp/Networking](https://github.com/brillcp/networking)
+
+Builds from source are meant for reviewing and verifying the code. Signing in
+to the hosted Munin service only works with the official app's bundle
+identifier.
+
+## Project structure
+
+```
+MuninApp/
+├── App/          Commands and the Mac menu bar window
+├── Core/
+│   ├── DesignSystem/   Spacing, motion and AppKit colour overrides
+│   ├── Security/       Vault session, unlocking and auto-lock
+│   ├── Services/       Munin and Supabase Auth requests, website icons
+│   ├── Utilities/      Keychain, clipboard, localisation helpers
+│   └── Vault/          Encryption, keys, TOTP, import parsers
+└── Features/     Lock screen, Vault, 2FA, Search, Settings
+```
+
+## License
+
+See [LICENSE](LICENSE).
