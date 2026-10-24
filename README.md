@@ -1,4 +1,6 @@
-# Munin
+![icon](https://github.com/user-attachments/assets/4947bff9-c02e-41a0-ab7a-0272424aaa4f)
+
+# Munin – Secure and open source password manager and 2 factor authenticator
 
 Munin is an end-to-end encrypted password manager and authenticator (2FA
 codes) for iPhone, iPad and Mac.
