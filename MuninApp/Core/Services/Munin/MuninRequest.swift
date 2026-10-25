@@ -25,11 +25,15 @@ enum MuninRequest: Requestable {
     case createVaultKey(VaultKeyRequestBody)
     /// New master password; needs `currentProof`.
     case replaceVaultKey(VaultKeyRequestBody)
+    /// Whether a subscription is required, and whether the user has one.
+    case subscription
+    /// Links an App Store purchase to the user; Munin checks it with Apple.
+    case linkSubscription(LinkSubscriptionBody)
 
     var httpMethod: HTTP.Method {
         switch self {
-        case .entries, .passwords, .vaultKey:         return .get
-        case .createEntry, .createPassword, .touchPassword, .createVaultKey: return .post
+        case .entries, .passwords, .vaultKey, .subscription: return .get
+        case .createEntry, .createPassword, .touchPassword, .createVaultKey, .linkSubscription: return .post
         case .deleteEntry, .deletePassword:           return .delete
         case .updatePassword, .replaceVaultKey:       return .put
         }
@@ -37,8 +41,8 @@ enum MuninRequest: Requestable {
 
     var encoding: Request.Encoding {
         switch self {
-        case .entries, .deleteEntry, .passwords, .touchPassword, .deletePassword, .vaultKey: return .query
-        case .createEntry, .createPassword, .updatePassword, .createVaultKey, .replaceVaultKey: return .json
+        case .entries, .deleteEntry, .passwords, .touchPassword, .deletePassword, .vaultKey, .subscription: return .query
+        case .createEntry, .createPassword, .updatePassword, .createVaultKey, .replaceVaultKey, .linkSubscription: return .json
         }
     }
 
@@ -51,7 +55,8 @@ enum MuninRequest: Requestable {
         case .createPassword(let body): return body
         case .updatePassword(_, let body): return body
         case .createVaultKey(let body), .replaceVaultKey(let body): return body
-        case .entries, .deleteEntry, .passwords, .touchPassword, .deletePassword, .vaultKey: return nil
+        case .linkSubscription(let body): return body
+        case .entries, .deleteEntry, .passwords, .touchPassword, .deletePassword, .vaultKey, .subscription: return nil
         }
     }
 
@@ -64,6 +69,7 @@ enum MuninRequest: Requestable {
         case .updatePassword(let id, _): return MuninEndpoint.password(id)
         case .deletePassword(let id):    return MuninEndpoint.password(id)
         case .vaultKey, .createVaultKey, .replaceVaultKey: return MuninEndpoint.vaultKey
+        case .subscription, .linkSubscription: return MuninEndpoint.subscription
         }
     }
 }
@@ -139,4 +145,21 @@ nonisolated struct VaultKeyRequestBody: Encodable, Sendable {
     let recoveryProof: String
     /// PUT only: proof from the current master password or the recovery key.
     let currentProof: String?
+}
+
+// MARK: - Subscription
+
+/// `GET` and `POST /v1/subscription` response.
+nonisolated struct SubscriptionStatus: Sendable, Decodable, Equatable {
+    /// Whether changes need an active subscription.
+    let required: Bool
+    /// Whether the user has an active subscription or free trial.
+    let active: Bool
+    /// When the current period ends, if there's a subscription.
+    let expiresAt: Date?
+}
+
+/// `POST /v1/subscription`: a StoreKit transaction ID for Munin to look up with Apple.
+nonisolated struct LinkSubscriptionBody: Encodable, Sendable {
+    let transactionId: String
 }

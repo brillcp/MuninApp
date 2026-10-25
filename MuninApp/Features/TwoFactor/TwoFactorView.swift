@@ -3,6 +3,8 @@ import SwiftUI
 /// The 2FA screen: every account's current code, with add, refresh and delete.
 struct TwoFactorView: View {
     @Environment(AuthManager.self) private var auth
+    /// Read-only without a subscription: no adding or deleting.
+    @Environment(SubscriptionManager.self) private var subscriptions
     /// Shows the Add Account sheet.
     @State private var isAdding = false
     /// The account waiting for delete confirmation.
@@ -31,6 +33,9 @@ struct TwoFactorView: View {
             .navigationSubtitle(LocalizedKey("codes.subtitle", viewModel.items.count))
             .navigationSplitViewStyle(.prominentDetail)
             .toolbar { toolbarContent }
+            .safeAreaInset(edge: .bottom) {
+                if subscriptions.isReadOnly { ReadOnlyBanner() }
+            }
             .refreshable { await viewModel.refresh(auth: auth) }
             .task { await viewModel.refresh(auth: auth) }
             .task(clock.run)
@@ -80,7 +85,7 @@ private extension TwoFactorView {
             hapticTaps += 1
             isAdding = true
         }
-        .disabled(!viewModel.hasLoaded)
+        .disabled(!viewModel.hasLoaded || subscriptions.isReadOnly)
         .keyboardShortcut("n")
     }
 }
@@ -91,6 +96,9 @@ private extension TwoFactorView {
 /// Mac table has no selection, so rows aren't selectable; right-click a cell
 /// for its menu.
 private struct TwoFactorList: View {
+    /// Read-only without a subscription: Delete is disabled.
+    @Environment(SubscriptionManager.self) private var subscriptions
+
     /// The accounts to show.
     let viewModel: TwoFactorViewModel
     /// The screen's clock, passed to every row.
@@ -104,6 +112,7 @@ private struct TwoFactorList: View {
                 TwoFactorRow(account: item.account, clock: clock)
                     .contextMenu {
                         Button("global.delete", systemImage: "trash", role: .destructive) { pendingDeletion = item }
+                            .disabled(subscriptions.isReadOnly)
                         Button("global.copy", systemImage: "square.on.square", role: .confirm) { pendingDeletion = item }
                     }
             }
@@ -122,6 +131,7 @@ private struct TwoFactorList: View {
         Button("codes.copyCode", systemImage: "square.on.square") { TwoFactorRow.copyCode(of: item.account) }
         Divider()
         Button("global.delete", systemImage: "trash", role: .destructive) { pendingDeletion = item }
+            .disabled(subscriptions.isReadOnly)
     }
 
     /// Says how many entries couldn't be decrypted with this vault key.
@@ -175,4 +185,5 @@ private struct TwoFactorEmptyState: View {
     TwoFactorView(viewModel: TwoFactorViewModel(session: VaultSession()))
         .environment(AuthManager())
         .environment(VaultSession())
+        .environment(SubscriptionManager())
 }

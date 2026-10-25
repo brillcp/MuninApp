@@ -1,9 +1,11 @@
+import StoreKit
 import SwiftUI
 
-/// Account, security and about. A Settings window on Mac (⌘,), a tab on iOS.
+/// Account, subscription, security and about. A Settings window on Mac (⌘,), a tab on iOS.
 struct SettingsView: View {
     @Environment(AuthManager.self) private var auth
     @Environment(VaultSession.self) private var session
+    @Environment(SubscriptionManager.self) private var subscriptions
 
     /// Shows the Change Master Password sheet.
     @State private var isChangingPassword = false
@@ -11,6 +13,10 @@ struct SettingsView: View {
     @State private var recoveryKey: RecoveryKeyItem?
     /// Bumped by buttons for a light haptic.
     @State private var hapticTaps = 0
+    /// Shows the paywall.
+    @State private var isShowingPaywall = false
+    /// iOS: shows the App Store's Manage Subscriptions sheet.
+    @State private var isManagingSubscription = false
 
     var body: some View {
         @Bindable var session = session
@@ -19,6 +25,30 @@ struct SettingsView: View {
                 Section {
                     AccountHeader(email: auth.email)
                         .listRowBackground(Color.clear)
+                }
+
+                if let status = subscriptions.status, status.required {
+                    Section("settings.subscription") {
+                        LabeledContent("settings.subscription.status") {
+                            Text(LocalizedStringKey(status.active ? "settings.subscription.active" : "settings.subscription.inactive"))
+                        }
+                        if !status.active {
+                            Button("subscription.subscribe", systemImage: "star") {
+                                hapticTaps += 1
+                                isShowingPaywall = true
+                            }
+                        }
+                        #if os(iOS)
+                        Button("settings.subscription.manage", systemImage: "creditcard") {
+                            hapticTaps += 1
+                            isManagingSubscription = true
+                        }
+                        #else
+                        Link(destination: URL(string: "https://apps.apple.com/account/subscriptions")!) {
+                            Label("settings.subscription.manage", systemImage: "creditcard")
+                        }
+                        #endif
+                    }
                 }
 
                 Section("settings.security") {
@@ -75,6 +105,12 @@ struct SettingsView: View {
         .sheet(item: $recoveryKey) { item in
             RecoveryKeyView(recoveryKey: item.key)
         }
+        .sheet(isPresented: $isShowingPaywall) {
+            PaywallView()
+        }
+        #if os(iOS)
+        .manageSubscriptionsSheet(isPresented: $isManagingSubscription)
+        #endif
         .buttonStyle(.plain)
         #if os(macOS)
         .frame(width: 460)
@@ -125,4 +161,5 @@ private struct RecoveryKeyItem: Identifiable {
     SettingsView()
         .environment(AuthManager())
         .environment(VaultSession())
+        .environment(SubscriptionManager())
 }

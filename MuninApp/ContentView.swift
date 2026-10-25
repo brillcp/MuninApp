@@ -18,6 +18,7 @@ struct ContentView: View {
     @Environment(AuthManager.self) private var auth
     @Environment(VaultSession.self) private var session
     @Environment(VaultViewModel.self) private var vaultModel
+    @Environment(SubscriptionManager.self) private var subscriptions
 
     var body: some View {
         ZStack {
@@ -38,7 +39,10 @@ struct ContentView: View {
         .task(id: auth.userID) { await session.prepare(auth: auth) }
         .autoLock(session)
         .onChange(of: session.state) { _, state in
-            if state != .unlocked { vaultModel.clear() }
+            if state != .unlocked {
+                vaultModel.clear()
+                subscriptions.stop()
+            }
         }
     }
 }
@@ -88,4 +92,5 @@ private struct SignedInContent: View {
         .environment(AuthManager())
         .environment(VaultSession())
         .environment(VaultViewModel(session: VaultSession()))
+        .environment(SubscriptionManager())
 }

@@ -94,6 +94,19 @@ extension MuninService {
         try await tokenProvider.ensureFresh()
         _ = try await service.response(MuninRequest.replaceVaultKey(body))
     }
+
+    /// Whether a subscription is required, and whether the user has one.
+    func subscription() async throws -> SubscriptionStatus {
+        try await tokenProvider.ensureFresh()
+        return try await service.request(MuninRequest.subscription)
+    }
+
+    /// Links an App Store purchase to the user. Munin checks it with Apple and
+    /// returns the resulting status.
+    func linkSubscription(transactionID: String) async throws -> SubscriptionStatus {
+        try await tokenProvider.ensureFresh()
+        return try await service.request(MuninRequest.linkSubscription(LinkSubscriptionBody(transactionId: transactionID)))
+    }
 }
 
 // MARK: - Errors
@@ -109,7 +122,8 @@ extension Error {
                 case .unprocessableEntity: return Localized("errors.munin.vaultFull")
                 case .forbidden: return Localized("errors.munin.proof")
                 case .tooManyRequests: return Localized("errors.munin.tooManyAttempts")
-                default:        return Localized("errors.munin.http", status.rawValue)
+                case .paymentRequired: return Localized("errors.munin.subscriptionRequired")
+                default: return Localized("errors.munin.http", status.rawValue)
                 }
             case .decodingError:
                 return Localized("errors.munin.unexpectedResponse", APIConfig.apiBaseURL.absoluteString)

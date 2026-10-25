@@ -5,6 +5,8 @@ import UniformTypeIdentifiers
 /// and creating, editing, deleting and importing passwords.
 struct VaultView: View {
     @Environment(AuthManager.self) private var auth
+    /// Read-only without a subscription: no creating, importing, editing or deleting.
+    @Environment(SubscriptionManager.self) private var subscriptions
     /// Shows the New Password sheet.
     @State private var isCreating = false
     /// The item being edited, with its password and note decrypted for the editor.
@@ -129,6 +131,7 @@ private extension VaultView {
                                     if let item = viewModel.selectedItem { startEditing(item) }
                                 }
                                 .help("global.edit")
+                                .disabled(subscriptions.isReadOnly)
                             }
                             .padding([.horizontal, .top], DesignKit.Spacing.Primitive.s12)
                         }
@@ -168,9 +171,13 @@ private extension VaultView {
         .navigationTitle("vault.title")
         .navigationSubtitle(LocalizedKey("vault.subtitle", viewModel.items.count))
         .toolbar { toolbarContent }
+        .safeAreaInset(edge: .bottom) {
+            if subscriptions.isReadOnly { ReadOnlyBanner() }
+        }
         #if os(macOS)
         .dropDestination(for: URL.self) { urls, _ in
-            guard let url = urls.first(where: { $0.pathExtension.lowercased() == "csv" }) else { return false }
+            guard !subscriptions.isReadOnly,
+                  let url = urls.first(where: { $0.pathExtension.lowercased() == "csv" }) else { return false }
             prepareImport(from: url)
             return true
         }
@@ -231,6 +238,7 @@ private extension VaultView {
         }
         .buttonStyle(.glassProminent)
         .tint(.accent)
+        .disabled(subscriptions.isReadOnly)
     }
 
     /// Opens the CSV file picker. Disabled until loaded and while an import runs.
@@ -239,7 +247,7 @@ private extension VaultView {
             hapticTaps += 1
             isPickingImportFile = true
         }
-        .disabled(!viewModel.hasLoaded || viewModel.importProgress != nil)
+        .disabled(!viewModel.hasLoaded || viewModel.importProgress != nil || subscriptions.isReadOnly)
     }
 
     /// Reads the CSV (picked or dropped from Finder) in memory and asks to confirm.
@@ -281,6 +289,7 @@ private struct EditDraft: Identifiable {
 /// navigate when the split view is collapsed on iPhone).
 private struct VaultPasswordList: View {
     @Environment(AuthManager.self) private var auth
+    @Environment(SubscriptionManager.self) private var subscriptions
 
     /// The passwords, selection and sort order.
     @Bindable var viewModel: VaultViewModel
@@ -301,8 +310,10 @@ private struct VaultPasswordList: View {
                         Task { await viewModel.copyPassword(item, auth: auth) }
                     }
                     Button("global.edit", systemImage: "square.and.pencil") { onEdit(item) }
+                        .disabled(subscriptions.isReadOnly)
                     Divider()
                     Button("global.delete", systemImage: "trash", role: .destructive) { pendingDeletion = item }
+                        .disabled(subscriptions.isReadOnly)
                 }
             }
             .overlay {
@@ -336,6 +347,7 @@ private struct VaultPasswordList: View {
 /// header. Delete is at the bottom of the detail on both.
 private struct VaultItemDetail: View {
     @Environment(AuthManager.self) private var auth
+    @Environment(SubscriptionManager.self) private var subscriptions
     /// Bumped by buttons for a light haptic.
     @State private var hapticTaps = 0
 
@@ -368,7 +380,7 @@ private struct VaultItemDetail: View {
                     hapticTaps += 1
                     if let item = viewModel.selectedItem { onEdit(item) }
                 }
-                .disabled(viewModel.selectedItem == nil)
+                .disabled(viewModel.selectedItem == nil || subscriptions.isReadOnly)
             }
         }
         .sensoryFeedback(.impact(weight: .light), trigger: hapticTaps)
@@ -437,4 +449,5 @@ private struct VaultEmptyState: View {
 #Preview {
     VaultView(viewModel: VaultViewModel(session: VaultSession()))
         .environment(AuthManager())
+        .environment(SubscriptionManager())
 }

@@ -4,7 +4,7 @@ import SwiftUI
 ///
 /// On the Mac: the main window, a Settings window and a menu bar window.
 /// On iOS: a single window group. All of them share one `AuthManager`, one
-/// `VaultSession` and one `VaultViewModel`.
+/// `VaultSession`, one `VaultViewModel` and one `SubscriptionManager`.
 @main struct MyApp: App {
     /// Sign-in state.
     @State private var auth = AuthManager()
@@ -12,6 +12,8 @@ import SwiftUI
     @State private var session: VaultSession
     /// The password list, shared by the main window and the Mac menu bar.
     @State private var vaultModel: VaultViewModel
+    /// The App Store subscription, shared by the main window and Settings.
+    @State private var subscriptions = SubscriptionManager()
 
     /// Creates the shared models and, on the Mac, applies the AppKit colour
     /// overrides (table selection and accent).
@@ -43,6 +45,7 @@ import SwiftUI
             SettingsView()
                 .environment(auth)
                 .environment(session)
+                .environment(subscriptions)
                 .tint(.accent)
         }
 
@@ -77,6 +80,7 @@ import SwiftUI
             .environment(auth)
             .environment(session)
             .environment(vaultModel)
+            .environment(subscriptions)
             .tint(.accent)
     }
 }

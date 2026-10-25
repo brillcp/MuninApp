@@ -10,6 +10,8 @@ struct PasswordInspector: View {
     fileprivate enum Field { case url, username, password, note }
 
     @Environment(\.openURL) private var openURL
+    /// Read-only without a subscription: Delete is disabled.
+    @Environment(SubscriptionManager.self) private var subscriptions
 
     /// The decrypted password while it's shown.
     @State private var revealedPassword: String?
@@ -110,6 +112,7 @@ struct PasswordInspector: View {
                 }
                 .foregroundStyle(.red)
                 .tint(.red)
+                .disabled(subscriptions.isReadOnly)
             }
         }
         .frame(maxHeight: .infinity)

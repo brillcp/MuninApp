@@ -49,6 +49,7 @@
 "errors.munin.http" = "Munin responded with HTTP %lld.";
 "errors.munin.notFound" = "No Munin API at %@.";
 "errors.munin.proof" = "Munin couldn't verify your master password. Lock Munin, unlock with your master password and try again.";
+"errors.munin.subscriptionRequired" = "Munin is read-only without a subscription. Subscribe to add or change items.";
 "errors.munin.tooManyAttempts" = "Too many attempts. Try again in an hour.";
 "errors.munin.unexpectedResponse" = "Unexpected response from the server. Is %@ Munin?";
 "errors.munin.unreachable" = "Can't reach Munin. %@";
@@ -79,14 +80,14 @@
 "lock.biometrics.notSetUp" = "Unlock with your master password once to use biometrics on this device.";
 "lock.forgotMasterPassword" = "Forgot master password?";
 "lock.masterPassword.placeholder" = "Master password";
-"lock.reason" = "Unlock your vault";
+"lock.reason" = "Unlock my vault";
 "lock.recovery.continue" = "Continue";
 "lock.recovery.message" = "Enter your recovery key to choose a new master password.";
 "lock.step.masterPassword" = "Use master password";
 "lock.step.recoveryKey" = "Enter recovery key";
 "lock.step.signIn" = "Sign in";
 "lock.switchAccount" = "Switch";
-"lock.title" = "Unlock your vault";
+"lock.title" = "Unlock my vault";
 "lock.unlock" = "Unlock";
 "lock.unlockWithBiometrics" = "Unlock with biometrics";
 "lock.useBiometrics" = "Use Biometrics";
@@ -193,6 +194,11 @@
 "settings.currentMasterPassword" = "Current master password";
 "settings.locked" = "Unlock Munin to change security settings.";
 "settings.security" = "Security";
+"settings.subscription" = "Subscription";
+"settings.subscription.active" = "Active";
+"settings.subscription.inactive" = "Not subscribed";
+"settings.subscription.manage" = "Manage Subscription";
+"settings.subscription.status" = "Status";
 "settings.title" = "Settings";
 "settings.version" = "Version";
 
@@ -222,3 +228,10 @@
 "autoLock.immediately" = "Immediately";
 "autoLock.never" = "Never";
 "autoLock.oneMinute" = "After 1 minute";
+
+/** Subscription **/
+"subscription.error.unverified" = "The App Store couldn't verify this purchase.";
+"subscription.message" = "End-to-end encrypted passwords and 2FA codes on all your Apple devices.";
+"subscription.readOnly" = "Read-only. Subscribe to add or change items.";
+"subscription.subscribe" = "Subscribe";
+"subscription.title" = "Munin";

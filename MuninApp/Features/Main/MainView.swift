@@ -26,6 +26,8 @@ struct MainView: View {
     @State private var selection: Section = .vault
     /// From the app (also used by the Mac menu bar), shared by Vault and Search.
     @Environment(VaultViewModel.self) private var vaultModel
+    /// Shows the paywall after unlocking while the vault is read-only.
+    @Environment(SubscriptionManager.self) private var subscriptions
     /// Shared by the 2FA and Search tabs.
     @State private var twoFactorModel: TwoFactorViewModel
 
@@ -35,6 +37,7 @@ struct MainView: View {
     }
 
     var body: some View {
+        @Bindable var subscriptions = subscriptions
         TabView(selection: $selection) {
             TabSection("main.section.munin") {
                 Tab(value: Section.vault) {
@@ -65,6 +68,10 @@ struct MainView: View {
             #endif
         }
         .tabViewStyle(.sidebarAdaptable)
+        .task { await subscriptions.start(auth: auth) }
+        .sheet(isPresented: $subscriptions.isPaywallPresented) {
+            PaywallView()
+        }
         #if os(macOS)
         .focusedSceneValue(\.mainSection, $selection)
         #endif
@@ -97,6 +104,7 @@ struct MainView: View {
         .environment(VaultViewModel(session: VaultSession()))
         .environment(AuthManager())
         .environment(VaultSession())
+        .environment(SubscriptionManager())
 }
 
 /// A tab's label. The Mac sidebar tints SF Symbols with the system accent,
