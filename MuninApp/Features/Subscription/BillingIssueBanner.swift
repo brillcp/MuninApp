@@ -1,4 +1,5 @@
 import SwiftUI
+import StoreKit
 
 /// Shown at the bottom of the Vault and 2FA screens during the billing grace
 /// period: the App Store couldn't renew the subscription, but everything still

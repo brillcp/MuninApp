@@ -88,8 +88,8 @@ private extension TwoFactorView {
     /// iOS: Import and Add (Lock comes from `barkToolbar`).
     @ToolbarContentBuilder
     var toolbarContent: some ToolbarContent {
+        ToolbarItem(placement: .navigation) { LockToolbarButton() }
         #if os(macOS)
-        ToolbarItem(placement: .navigation, content: LockToolbarButton.init)
         ToolbarItem(placement: .primaryAction) { addButton }
         ToolbarSpacer(.flexible, placement: .primaryAction)
         ToolbarItemGroup(placement: .primaryAction) {

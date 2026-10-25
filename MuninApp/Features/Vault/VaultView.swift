@@ -81,7 +81,7 @@ struct VaultView: View {
                         Text(LocalizedKey("import.progress", progress.done, progress.total))
                     }
                     .padding()
-                    .glassEffect(in: .rect(cornerRadius: 16))
+                    .glassEffect(in: .rect(cornerRadius: DesignKit.Spacing.Primitive.s16))
                     .padding()
                 }
             }
@@ -124,13 +124,11 @@ private extension VaultView {
                                     hapticTaps += 1
                                     viewModel.selection = nil
                                 }
-                                .help("global.close")
                                 Spacer()
                                 LockButton(systemImage: "square.and.pencil", style: .clear) {
                                     hapticTaps += 1
                                     if let item = viewModel.selectedItem { startEditing(item) }
                                 }
-                                .help("global.edit")
                                 .disabled(subscriptions.isReadOnly)
                                 .keyboardShortcut("e")
                             }
@@ -140,7 +138,7 @@ private extension VaultView {
                         .frame(maxHeight: .infinity)
                         .glassEffect(in: .rect(cornerRadius: DesignKit.Spacing.Primitive.s16))
                         .padding(DesignKit.Spacing.Primitive.s12)
-                        .transition(.opacity.combined(with: .offset(x: 40)))
+                        .transition(.opacity.combined(with: .offset(x: DesignKit.Spacing.Primitive.s40)))
                     }
                 }
                 .onChange(of: viewModel.selectedItem) { _, newItem in
@@ -200,8 +198,8 @@ private extension VaultView {
     /// Edit and Delete are in the detail panel. iOS: Import and Create.
     @ToolbarContentBuilder
     var toolbarContent: some ToolbarContent {
+        ToolbarItem(placement: .navigation) { LockToolbarButton() }
         #if os(macOS)
-        ToolbarItem(placement: .navigation, content: LockToolbarButton.init)
         ToolbarItem(placement: .primaryAction) { createButton }
         ToolbarSpacer(.flexible, placement: .primaryAction)
         ToolbarItemGroup(placement: .primaryAction) {
@@ -333,7 +331,8 @@ private struct VaultPasswordList: View {
             }
     }
 
-    /// The table or list itself.
+    /// The table or list itself. Rows slide in and out when items are added,
+    /// deleted, imported, or filtered by the search.
     @ViewBuilder
     private var rows: some View {
         List(viewModel.visibleItems, selection: $viewModel.selection) { item in
@@ -342,6 +341,7 @@ private struct VaultPasswordList: View {
             }
         }
         .listStyle(.plain)
+        .animation(DesignKit.Motion.listChange, value: viewModel.visibleItems.map(\.id))
         #if os(macOS)
         .onExitCommand { viewModel.selection = nil }
         #endif

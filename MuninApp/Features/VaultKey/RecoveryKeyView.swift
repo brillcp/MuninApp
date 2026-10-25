@@ -28,7 +28,7 @@ struct RecoveryKeyView: View {
                     .textSelection(.enabled)
                     .padding()
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(.quaternary, in: RoundedRectangle(cornerRadius: 10))
+                    .background(.quaternary, in: RoundedRectangle(cornerRadius: DesignKit.Spacing.Primitive.s12))
 
                 Button(LocalizedStringKey(didCopy ? "global.copied" : "vaultKey.recovery.copy"), systemImage: didCopy ? "checkmark" : "square.on.square") {
                     #if os(iOS)

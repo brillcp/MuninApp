@@ -70,6 +70,9 @@ struct LockPanel: View {
             if isWorking {
                 ProgressView()
                     .controlSize(.large)
+                    #if os(iOS)
+                    .frame(maxWidth: .infinity)
+                    #endif
                     .frame(minHeight: DesignKit.Spacing.Primitive.s48)
                     .transition(.blurReplace)
                     .tint(.white)
@@ -93,7 +96,7 @@ struct LockPanel: View {
         .padding()
         .frame(maxWidth: .infinity, alignment: .leading)
         #if os(iOS)
-        .glassEffect(in: .rect(cornerRadius: 24))
+        .glassEffect(in: .rect(cornerRadius: DesignKit.Spacing.Primitive.s24))
         #endif
         .disabled(isWorking)
         .animation(DesignKit.Motion.bouncy, value: step)
@@ -189,6 +192,9 @@ private struct LockSignInStep: View {
             }
             .signInWithAppleButtonStyle(colorScheme == .dark ? .white : .black)
             .frame(maxWidth: .infinity)
+            #if os(iOS)
+            .frame(maxHeight: DesignKit.Spacing.Primitive.s56)
+            #endif
             .controlSize(.large)
             .clipShape(.capsule)
 

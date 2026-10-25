@@ -62,7 +62,7 @@ struct PasswordInspector: View {
                     Text(revealedPassword ?? "••••••••••••")
                         .font(.body.monospaced())
                 } actions: {
-                    Button(LocalizedStringKey(revealedPassword == nil ? "passwordInspector.show" : "passwordInspector.hide"),
+                    Button(revealedPassword == nil ? "passwordInspector.show" : "passwordInspector.hide",
                            systemImage: revealedPassword == nil ? "eye" : "eye.slash") {
                         hapticTaps += 1
                         if revealedPassword == nil {
