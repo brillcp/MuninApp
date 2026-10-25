@@ -160,6 +160,9 @@ nonisolated struct SubscriptionStatus: Sendable, Decodable, Equatable {
     let active: Bool
     /// When the current period ends, if there's a subscription.
     let expiresAt: Date?
+    /// Whether Apple couldn't charge the renewal and is retrying. Nil from
+    /// Munin versions before this field.
+    let billingIssue: Bool?
 }
 
 /// `POST /v1/subscription`: a StoreKit transaction ID for Munin to look up with Apple.

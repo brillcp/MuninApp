@@ -41,7 +41,11 @@ struct TwoFactorView: View {
             .navigationSplitViewStyle(.prominentDetail)
             .toolbar { toolbarContent }
             .safeAreaInset(edge: .bottom) {
-                if subscriptions.isReadOnly { ReadOnlyBanner() }
+                if subscriptions.isReadOnly {
+                    ReadOnlyBanner()
+                } else if subscriptions.isInGracePeriod {
+                    BillingIssueBanner()
+                }
             }
             .refreshable { await viewModel.refresh(auth: auth) }
             .task { await viewModel.refresh(auth: auth) }

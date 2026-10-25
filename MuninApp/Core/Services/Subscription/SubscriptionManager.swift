@@ -37,6 +37,13 @@ extension SubscriptionManager {
         return status.required && !status.active
     }
 
+    /// True in the billing grace period: still active, but the App Store
+    /// couldn't renew and is retrying the payment.
+    var isInGracePeriod: Bool {
+        guard let status else { return false }
+        return status.active && status.billingIssue == true
+    }
+
     /// The App Store account token for purchases: the Munin user ID.
     func appAccountToken(auth: AuthManager) -> UUID? {
         auth.userID.flatMap(UUID.init(uuidString:))

@@ -261,8 +261,11 @@
 "autoLock.oneMinute" = "After 1 minute";
 
 /** Subscription **/
+"subscription.billingIssue" = "The App Store couldn't renew your subscription. Update your payment method to keep adding and editing.";
 "subscription.error.unverified" = "The App Store couldn't verify this purchase.";
+"subscription.gracePeriod" = "Your subscription couldn't be renewed.";
 "subscription.message" = "End-to-end encrypted passwords and 2FA codes on all your Apple devices.";
 "subscription.readOnly" = "Read-only. Subscribe to add or change items.";
 "subscription.subscribe" = "Subscribe";
 "subscription.title" = "Munin";
+"subscription.updatePayment" = "Update Payment";

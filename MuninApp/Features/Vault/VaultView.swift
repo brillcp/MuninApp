@@ -173,7 +173,11 @@ private extension VaultView {
         .navigationSubtitle(LocalizedKey("vault.subtitle", viewModel.items.count))
         .toolbar { toolbarContent }
         .safeAreaInset(edge: .bottom) {
-            if subscriptions.isReadOnly { ReadOnlyBanner() }
+            if subscriptions.isReadOnly {
+                ReadOnlyBanner()
+            } else if subscriptions.isInGracePeriod {
+                BillingIssueBanner()
+            }
         }
         #if os(macOS)
         .dropDestination(for: URL.self) { urls, _ in

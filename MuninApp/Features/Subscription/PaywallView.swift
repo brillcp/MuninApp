@@ -46,9 +46,13 @@ private extension PaywallView {
 }
 
 /// The paywall's marketing header: app name, what the subscription gives,
-/// and why the last purchase or restore couldn't be linked.
+/// a payment problem with Manage Subscription, and why the last purchase or
+/// restore couldn't be linked.
 private struct PaywallHeader: View {
     @Environment(SubscriptionManager.self) private var subscriptions
+    @Environment(\.openURL) private var openURL
+    /// iOS: shows the App Store's Manage Subscriptions sheet.
+    @State private var isManagingSubscription = false
 
     var body: some View {
         VStack(spacing: DesignKit.Spacing.Primitive.s12) {
@@ -61,6 +65,13 @@ private struct PaywallHeader: View {
             Text("subscription.message")
                 .multilineTextAlignment(.center)
                 .foregroundStyle(.secondary)
+            if subscriptions.status?.billingIssue == true {
+                Text("subscription.billingIssue")
+                    .multilineTextAlignment(.center)
+                    .foregroundStyle(.orange)
+                Button("settings.subscription.manage", systemImage: "creditcard", action: manageSubscription)
+                    .buttonStyle(.glass)
+            }
             if let errorMessage = subscriptions.errorMessage {
                 Text(errorMessage)
                     .multilineTextAlignment(.center)
@@ -68,5 +79,17 @@ private struct PaywallHeader: View {
             }
         }
         .padding(DesignKit.Spacing.Primitive.s24)
+        #if os(iOS)
+        .manageSubscriptionsSheet(isPresented: $isManagingSubscription)
+        #endif
+    }
+
+    /// Opens subscription management, to update the payment method.
+    private func manageSubscription() {
+        #if os(iOS)
+        isManagingSubscription = true
+        #else
+        openURL(AppLinks.manageSubscriptions)
+        #endif
     }
 }
