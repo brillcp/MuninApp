@@ -118,12 +118,25 @@ extension MuninService {
 
 // MARK: - Errors
 
+/// Munin's error body: `{"error": "code"}`.
+private nonisolated struct MuninErrorBody: Decodable {
+    /// The error code, e.g. `subscription_account_mismatch`.
+    let error: String
+}
+
 extension Error {
     /// A short, user-facing explanation of a Munin request failure.
     var muninDescription: String {
         if let networkError = self as? Network.Service.NetworkError {
             switch networkError {
-            case .badServerResponse(let status, _):
+            case .badServerResponse(let status, let data):
+                switch (try? JSONDecoder().decode(MuninErrorBody.self, from: data))?.error {
+                case "subscription_account_mismatch": return Localized("errors.munin.subscriptionOtherAccount")
+                case "subscription_linked_elsewhere": return Localized("errors.munin.subscriptionLinkedElsewhere")
+                case "transaction_not_found": return Localized("errors.munin.transactionNotFound")
+                case "app_store_unavailable", "subscriptions_unavailable": return Localized("errors.munin.appStoreUnavailable")
+                default: break
+                }
                 switch status {
                 case .notFound: return Localized("errors.munin.notFound", APIConfig.apiBaseURL.absoluteString)
                 case .unprocessableEntity: return Localized("errors.munin.vaultFull")

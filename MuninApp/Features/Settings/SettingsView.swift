@@ -1,11 +1,13 @@
 import StoreKit
 import SwiftUI
+import UniformTypeIdentifiers
 
 /// Account, subscription, security and about. A Settings window on Mac (⌘,), a tab on iOS.
 struct SettingsView: View {
     @Environment(AuthManager.self) private var auth
     @Environment(VaultSession.self) private var session
     @Environment(SubscriptionManager.self) private var subscriptions
+    @Environment(\.openURL) private var openURL
 
     /// Shows the Change Master Password sheet.
     @State private var isChangingPassword = false
@@ -25,6 +27,16 @@ struct SettingsView: View {
     @State private var isDeletingAccount = false
     /// Why deleting the account failed, shown in an alert.
     @State private var deletionError: String?
+    /// The export waiting for confirmation.
+    @State private var pendingExport: ExportKind?
+    /// True while an export is loaded and decrypted.
+    @State private var isPreparingExport = false
+    /// The decrypted export, held only until the save panel closes.
+    @State private var exportDocument: ExportDocument?
+    /// Shows the save panel for `exportDocument`.
+    @State private var isSavingExport = false
+    /// Why an export failed, shown in an alert.
+    @State private var exportError: String?
 
     var body: some View {
         @Bindable var session = session
@@ -54,7 +66,7 @@ struct SettingsView: View {
                             isManagingSubscription = true
                         }
                         #else
-                        Link(destination: URL(string: "https://apps.apple.com/account/subscriptions")!) {
+                        Link(destination: AppLinks.manageSubscriptions) {
                             Label("settings.subscription.manage", systemImage: "creditcard")
                         }
                         #endif
@@ -90,6 +102,18 @@ struct SettingsView: View {
                 }
             }
 
+            if auth.isSignedIn {
+                Section {
+                    Button("settings.export.passwords", systemImage: "square.and.arrow.up", action: confirmPasswordExport)
+                    Button("settings.export.twoFactor", systemImage: "square.and.arrow.up", action: confirmTwoFactorExport)
+                } header: {
+                    Text("settings.data")
+                } footer: {
+                    Text(LocalizedStringKey(session.vault == nil ? "settings.export.locked" : "settings.export.footer"))
+                }
+                .disabled(session.vault == nil || isPreparingExport)
+            }
+
             Section("settings.about") {
                 LabeledContent("settings.version") {
                     Text(verbatim: Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "")
@@ -110,7 +134,7 @@ struct SettingsView: View {
                     }
                     .foregroundStyle(.red)
                     .tint(.red)
-                    Button("account.delete", systemImage: "person.crop.circle.badge.xmark", role: .destructive, action: confirmDeletion)
+                    Button("account.delete", systemImage: "xmark.octagon.fill", role: .destructive, action: confirmDeletion)
                         .foregroundStyle(.red)
                         .tint(.red)
                         .disabled(session.vault == nil || isDeletingAccount)
@@ -134,10 +158,31 @@ struct SettingsView: View {
         }
         .confirmationDialog("account.delete.title", isPresented: $isConfirmingDeletion, titleVisibility: .visible) {
             Button("account.delete", role: .destructive, action: deleteAccount)
+            if subscriptions.status?.active == true {
+                Button("settings.subscription.manage", action: manageSubscription)
+            }
         } message: {
             Text("account.delete.message")
         }
         .alert("account.delete.failed", item: $deletionError) { _ in
+            Button("global.done") {}
+        } message: { message in
+            Text(message)
+        }
+        .confirmationDialog("settings.export.title", item: $pendingExport, titleVisibility: .visible) { kind in
+            Button("settings.export.confirm") { export(kind) }
+        } message: { _ in
+            Text("settings.export.message")
+        }
+        .fileExporter(
+            isPresented: $isSavingExport,
+            document: exportDocument,
+            contentType: exportDocument?.contentType ?? .plainText,
+            defaultFilename: exportDocument?.filename,
+            onCompletion: exportSaved
+        )
+        .onChange(of: isSavingExport, savePanelChanged)
+        .alert("settings.export.failed", item: $exportError) { _ in
             Button("global.done") {}
         } message: { message in
             Text(message)
@@ -147,8 +192,7 @@ struct SettingsView: View {
         #endif
         .buttonStyle(.plain)
         #if os(macOS)
-        .frame(width: 460)
-        .fixedSize(horizontal: false, vertical: true)
+        .frame(width: 460, height: 620)
         #endif
     }
 }
@@ -162,6 +206,62 @@ private extension SettingsView {
             defer { isRestoring = false }
             await subscriptions.restore(auth: auth)
         }
+    }
+
+    /// Asks before exporting the passwords.
+    func confirmPasswordExport() {
+        hapticTaps += 1
+        pendingExport = .passwords
+    }
+
+    /// Asks before exporting the 2FA accounts.
+    func confirmTwoFactorExport() {
+        hapticTaps += 1
+        pendingExport = .twoFactor
+    }
+
+    /// Loads and decrypts the export, then opens the save panel.
+    func export(_ kind: ExportKind) {
+        guard let vault = session.vault else { return }
+        Task {
+            isPreparingExport = true
+            defer { isPreparingExport = false }
+            do {
+                switch kind {
+                case .passwords:
+                    let data = try await VaultExporter.passwordsCSV(vault: vault, auth: auth)
+                    exportDocument = ExportDocument(data: data, contentType: .commaSeparatedText, filename: Localized("settings.export.passwords.filename"))
+                case .twoFactor:
+                    let data = try await VaultExporter.twoFactorLinks(vault: vault, auth: auth)
+                    exportDocument = ExportDocument(data: data, contentType: .plainText, filename: Localized("settings.export.twoFactor.filename"))
+                }
+                isSavingExport = true
+            } catch {
+                exportError = error.muninDescription
+            }
+        }
+    }
+
+    /// Shows why saving failed.
+    func exportSaved(_ result: Result<URL, any Error>) {
+        if case .failure(let error) = result {
+            exportError = error.localizedDescription
+        }
+    }
+
+    /// Drops the decrypted export from memory when the save panel closes,
+    /// whether it was saved or cancelled.
+    func savePanelChanged() {
+        if !isSavingExport { exportDocument = nil }
+    }
+
+    /// Opens subscription management: the system sheet on iOS, the App Store page on Mac.
+    func manageSubscription() {
+        #if os(iOS)
+        isManagingSubscription = true
+        #else
+        openURL(AppLinks.manageSubscriptions)
+        #endif
     }
 
     /// Asks before deleting the account.
@@ -213,6 +313,16 @@ private struct AccountHeader: View {
         }
         .frame(maxWidth: .infinity)
     }
+}
+
+/// What Settings can export.
+private enum ExportKind: Identifiable {
+    /// The passwords, as CSV.
+    case passwords
+    /// The 2FA accounts, as `otpauth` links.
+    case twoFactor
+
+    var id: Self { self }
 }
 
 /// A recovery key, presented as a sheet item.

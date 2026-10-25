@@ -1,6 +1,7 @@
 import SwiftUI
+import UniformTypeIdentifiers
 
-/// The 2FA screen: every account's current code, with add, refresh and delete.
+/// The 2FA screen: every account's current code, with add, import, refresh and delete.
 struct TwoFactorView: View {
     @Environment(AuthManager.self) private var auth
     /// Read-only without a subscription: no adding or deleting.
@@ -13,6 +14,12 @@ struct TwoFactorView: View {
     @State private var hapticTaps = 0
     /// One clock for the code rows.
     @State private var clock = TwoFactorClock()
+    /// Shows the file picker for importing a 2FA export.
+    @State private var isPickingImportFile = false
+    /// A read import file waiting for confirmation.
+    @State private var importPlan: TwoFactorImportPlan?
+    /// Shown after an import: how many were added, or why the file couldn't be read.
+    @State private var importMessage: String?
 
     /// Loads, adds and deletes the accounts.
     let viewModel: TwoFactorViewModel
@@ -45,6 +52,20 @@ struct TwoFactorView: View {
                     try await viewModel.add(accounts, auth: auth)
                 }
             }
+            .fileImporter(isPresented: $isPickingImportFile, allowedContentTypes: [.plainText, .text], onCompletion: importFilePicked)
+            .confirmationDialog("codes.import.confirm.title", item: $importPlan, titleVisibility: .visible) { plan in
+                Button(LocalizedKey("codes.import.confirm.button", plan.accounts.count)) { runImport(plan) }
+                    .disabled(plan.accounts.isEmpty)
+            } message: { plan in
+                Text(plan.failedLines > 0
+                     ? LocalizedKey("codes.import.confirm.messageWithFailures", plan.accounts.count, plan.duplicateCount, plan.failedLines)
+                     : LocalizedKey("codes.import.confirm.message", plan.accounts.count, plan.duplicateCount))
+            }
+            .alert("codes.import.title", item: $importMessage) { _ in
+                Button("global.done") {}
+            } message: { message in
+                Text(message)
+            }
             .confirmationDialog("codes.delete.title", item: $pendingDeletion, titleVisibility: .visible) { item in
                 Button(LocalizedKey("codes.delete.button", item.account.title), role: .destructive) {
                     Task { await viewModel.delete(item, auth: auth) }
@@ -59,8 +80,8 @@ struct TwoFactorView: View {
 private extension TwoFactorView {
     /// The toolbar's buttons.
     ///
-    /// Mac: Add after the title, then Refresh and Lock at the far right.
-    /// iOS: Add (Lock comes from `barkToolbar`).
+    /// Mac: Add after the title, then Import, Refresh and Lock at the far right.
+    /// iOS: Import and Add (Lock comes from `barkToolbar`).
     @ToolbarContentBuilder
     var toolbarContent: some ToolbarContent {
         #if os(macOS)
@@ -68,6 +89,7 @@ private extension TwoFactorView {
         ToolbarItem(placement: .primaryAction) { addButton }
         ToolbarSpacer(.flexible, placement: .primaryAction)
         ToolbarItemGroup(placement: .primaryAction) {
+            importButton
             Button("global.refresh", systemImage: "arrow.clockwise") {
                 hapticTaps += 1
                 Task { await viewModel.refresh(auth: auth) }
@@ -75,8 +97,55 @@ private extension TwoFactorView {
             .keyboardShortcut("r")
         }
         #else
+        ToolbarItem(placement: .primaryAction) { importButton }
         ToolbarItem(placement: .primaryAction) { addButton }
         #endif
+    }
+
+    /// Opens the file picker for a 2FA export (one `otpauth://` link per line).
+    var importButton: some View {
+        Button("codes.import.button", systemImage: "folder.badge.plus", action: pickImportFile)
+            .disabled(!viewModel.hasLoaded || subscriptions.isReadOnly)
+    }
+
+    /// Shows the file picker.
+    func pickImportFile() {
+        hapticTaps += 1
+        isPickingImportFile = true
+    }
+
+    /// Reads the picked file in memory and asks to confirm the new accounts.
+    func importFilePicked(_ result: Result<URL, any Error>) {
+        guard case .success(let url) = result else { return }
+        let isScoped = url.startAccessingSecurityScopedResource()
+        defer { if isScoped { url.stopAccessingSecurityScopedResource() } }
+        guard let data = try? Data(contentsOf: url), let text = String(data: data, encoding: .utf8) else {
+            importMessage = Localized("import.error.unreadable")
+            return
+        }
+        let parsed = OTPAuthParser.parseLines(text)
+        guard !parsed.accounts.isEmpty else {
+            importMessage = Localized("codes.import.error.empty")
+            return
+        }
+        let accounts = viewModel.newAccounts(in: parsed.accounts)
+        importPlan = TwoFactorImportPlan(
+            accounts: accounts,
+            duplicateCount: parsed.accounts.count - accounts.count,
+            failedLines: parsed.failedLines
+        )
+    }
+
+    /// Encrypts and uploads the plan's accounts, then says how many were added.
+    func runImport(_ plan: TwoFactorImportPlan) {
+        Task {
+            do {
+                let added = try await viewModel.add(plan.accounts, auth: auth)
+                importMessage = Localized("codes.import.done", added)
+            } catch {
+                importMessage = error.muninDescription
+            }
+        }
     }
 
     /// Opens the Add Account sheet (⌘N). Disabled until the accounts have loaded.
@@ -88,6 +157,17 @@ private extension TwoFactorView {
         .disabled(!viewModel.hasLoaded || subscriptions.isReadOnly)
         .keyboardShortcut("n")
     }
+}
+
+/// Accounts from an import file that aren't in Munin yet, waiting for confirmation.
+private struct TwoFactorImportPlan: Identifiable {
+    let id = UUID()
+    /// The accounts to add.
+    let accounts: [OTPAccount]
+    /// How many were already in Munin, or repeated in the file.
+    let duplicateCount: Int
+    /// How many lines weren't a 2FA link.
+    let failedLines: Int
 }
 
 /// The codes: Mac, a bordered table like the vault; iOS, a list (tap a row to copy).
@@ -113,7 +193,7 @@ private struct TwoFactorList: View {
                     .contextMenu {
                         Button("global.delete", systemImage: "trash", role: .destructive) { pendingDeletion = item }
                             .disabled(subscriptions.isReadOnly)
-                        Button("global.copy", systemImage: "square.on.square", role: .confirm) { pendingDeletion = item }
+                        Button("codes.copyCode", systemImage: "square.on.square") { TwoFactorRow.copyCode(of: item.account) }
                     }
             }
             if viewModel.undecryptableCount > 0 {

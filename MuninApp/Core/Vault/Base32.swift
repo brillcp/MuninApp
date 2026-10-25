@@ -12,6 +12,26 @@ enum Base32 {
         return table
     }()
 
+    /// Encodes data as Base32 without padding, the form `otpauth` links use.
+    static func encode(_ data: Data) -> String {
+        var buffer: UInt32 = 0
+        var bitCount = 0
+        var output = ""
+
+        for byte in data {
+            buffer = (buffer << 8) | UInt32(byte)
+            bitCount += 8
+            while bitCount >= 5 {
+                bitCount -= 5
+                output.append(alphabet[Int((buffer >> UInt32(bitCount)) & 31)])
+            }
+        }
+        if bitCount > 0 {
+            output.append(alphabet[Int((buffer << UInt32(5 - bitCount)) & 31)])
+        }
+        return output
+    }
+
     /// Decodes a Base32 string. Nil if it contains other characters or decodes to nothing.
     static func decode(_ string: String) -> Data? {
         var buffer: UInt32 = 0

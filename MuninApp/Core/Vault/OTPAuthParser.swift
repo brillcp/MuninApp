@@ -41,6 +41,24 @@ enum OTPAuthParser {
         }
     }
 
+    /// Parses a file with one `otpauth://` or `otpauth-migration://` link per
+    /// line, such as Munin's 2FA export. Blank lines are ignored; lines that
+    /// aren't a supported link are counted in `failedLines`.
+    static func parseLines(_ text: String) -> (accounts: [OTPAccount], failedLines: Int) {
+        var accounts: [OTPAccount] = []
+        var failedLines = 0
+        for line in text.split(whereSeparator: \.isNewline) {
+            let link = line.trimmingCharacters(in: .whitespaces)
+            guard !link.isEmpty else { continue }
+            if let parsed = try? parse(link) {
+                accounts += parsed
+            } else {
+                failedLines += 1
+            }
+        }
+        return (accounts, failedLines)
+    }
+
     // MARK: - otpauth://
 
     /// Parses a single `otpauth://totp/…` URL. The issuer comes from the

@@ -75,6 +75,12 @@ extension TwoFactorViewModel {
         return added
     }
 
+    /// The accounts from an import that aren't in Munin yet, without repeats.
+    func newAccounts(in accounts: [OTPAccount]) -> [OTPAccount] {
+        var seen = Set(items.map(\.account))
+        return accounts.filter { seen.insert($0).inserted }
+    }
+
     /// Deletes an entry on Munin (with the master password proof) and removes it from the list.
     func delete(_ item: VaultItem, auth: AuthManager) async {
         do {
