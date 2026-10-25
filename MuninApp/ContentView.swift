@@ -32,7 +32,7 @@ struct ContentView: View {
             #if os(iOS)
             .transition(.opacity.combined(with: .scale(1.1)))
             #else
-            .transition(.blurReplace)
+            .transition(.opacity.combined(with: .scale(1.1)))
             #endif
         }
         .animation(DesignKit.Motion.slowSmooth, value: showsLockScreen)

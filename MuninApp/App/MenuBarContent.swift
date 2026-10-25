@@ -45,6 +45,7 @@ struct MenuBarContent: View {
             footer
         }
         .frame(width: 320, height: 420)
+        .tint(.primary)
         .onChange(of: query, initial: true) { updateFilteredItems() }
         .onChange(of: vaultModel.items) { updateFilteredItems() }
         .task(id: session.state) {
@@ -66,8 +67,9 @@ private extension MenuBarContent {
                 onCopyUsername: { copyUsername(item) },
                 onCopyPassword: { copyPassword(item) }
             )
+            .listRowSeparatorTint(.secondary)
         }
-        .listStyle(.plain)
+        .listStyle(.sidebar)
         .overlay {
             if !vaultModel.hasLoaded {
                 ProgressView()
@@ -154,14 +156,16 @@ private struct MenuBarPasswordRow: View {
 
     var body: some View {
         HStack(spacing: DesignKit.Spacing.Primitive.s12) {
-            WebsiteIcon(url: item.url, size: 24)
+            WebsiteIcon(url: item.url, size: DesignKit.Spacing.Primitive.s24)
             VStack(alignment: .leading, spacing: DesignKit.Spacing.Primitive.s2) {
                 Text(item.name)
                     .lineLimit(1)
-                Text(item.username)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                    .lineLimit(1)
+                if !item.username.isEmpty {
+                    Text(item.username)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                }
             }
             Spacer()
             if copiedField != nil {
@@ -177,6 +181,7 @@ private struct MenuBarPasswordRow: View {
         }
         .labelStyle(.iconOnly)
         .buttonStyle(.borderless)
+        .frame(height: DesignKit.Spacing.Primitive.s48)
     }
 }
 #endif

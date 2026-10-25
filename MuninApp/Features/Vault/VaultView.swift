@@ -411,9 +411,11 @@ private struct PasswordTitleCell: View {
             WebsiteIcon(url: url)
             VStack(alignment: .leading, spacing: DesignKit.Spacing.Primitive.s4) {
                 Text(name)
-                Text(username)
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
+                if !username.isEmpty {
+                    Text(username)
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
             }
         }
         .padding(.vertical, DesignKit.Spacing.Primitive.s6)

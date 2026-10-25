@@ -30,8 +30,7 @@ import SwiftUI
     var body: some Scene {
         #if os(macOS)
         Window("main.window.title", id: Self.mainWindowID) {
-            root
-                .frame(minWidth: 900, minHeight: 600)
+            root.frame(minWidth: 900, minHeight: 600)
         }
         .defaultSize(width: 1100, height: 860)
         .windowResizability(.contentMinSize)
@@ -49,7 +48,7 @@ import SwiftUI
                 .tint(.accent)
         }
 
-        MenuBarExtra("main.window.title", systemImage: DesignKit.Icon.twoFactor) {
+        MenuBarExtra("main.window.title", image: DesignKit.Asset.menuBarIcon) {
             MenuBarContent()
                 .environment(auth)
                 .environment(session)

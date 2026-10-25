@@ -44,7 +44,7 @@ enum DesignKit {
         // MARK: Sections
         /// The Vault: passwords.
         static let vault = "lock.rectangle.stack"
-        /// 2FA accounts, and the Mac menu bar item.
+        /// 2FA accounts.
         static let twoFactor = "key.viewfinder"
         /// Settings.
         static let settings = "gearshape"
@@ -168,5 +168,8 @@ enum DesignKit {
         static let appIcon = "icon-512"
         /// The raven artwork behind the lock screen.
         static let lockArtwork = "corpus"
+        /// The raven silhouette in the Mac menu bar: a template image, sized
+        /// for the menu bar (18 pt high) in the asset itself.
+        static let menuBarIcon = "munin-silouette"
     }
 }
