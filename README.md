@@ -60,8 +60,8 @@ for you.
   enrolled faces or fingers change.
 - **Clipboard.** A copied password is cleared after a minute, and when Munin
   locks. On iOS it's kept off Universal Clipboard.
-- **Auto-lock.** After a chosen time without use, when the Mac sleeps or its
-  screen locks, or on leaving the app.
+- **Auto-lock.** A chosen time after leaving the app (or right away), and
+  when the Mac sleeps or its screen locks.
 
 ### What Munin can see
 

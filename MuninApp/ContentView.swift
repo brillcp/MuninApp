@@ -39,15 +39,24 @@ struct ContentView: View {
         .task(id: auth.userID) { await session.prepare(auth: auth) }
         .autoLock(session)
         .onChange(of: session.state) { _, state in
-            if state != .unlocked {
-                vaultModel.clear()
-                subscriptions.stop()
-            }
+            if state != .unlocked { clearOnLock() }
         }
     }
 }
 
 private extension ContentView {
+    /// Drops the decrypted passwords and the subscription state on lock or
+    /// sign-out. The list's row animation is disabled for this, so the rows
+    /// don't animate away during the lock transition.
+    func clearOnLock() {
+        var transaction = Transaction()
+        transaction.disablesAnimations = true
+        withTransaction(transaction) {
+            vaultModel.clear()
+            subscriptions.stop()
+        }
+    }
+
     /// True while signed out, locked, checking the vault's state, or after
     /// failing to open it (the lock screen then shows an alert).
     var showsLockScreen: Bool {
