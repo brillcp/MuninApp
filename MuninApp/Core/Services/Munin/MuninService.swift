@@ -1,15 +1,15 @@
 import Foundation
 import Networking
 
-/// Typed access to Munin's API. Every call refreshes the Supabase JWT first if needed.
+/// Typed access to Munin's API. Every call refreshes the JWT first if needed.
 final class MuninService {
     /// The configured network service.
     private let service: Network.Service
     /// Supplies and refreshes the bearer token.
-    private let tokenProvider: SupabaseTokenProvider
+    private let tokenProvider: AuthTokenProvider
 
     /// Pass `proof` for deletes and password edits; Munin rejects them without it.
-    init(tokenProvider: SupabaseTokenProvider, proof: String? = nil) {
+    init(tokenProvider: AuthTokenProvider, proof: String? = nil) {
         self.tokenProvider = tokenProvider
         service = MuninServiceFactory.makeService(tokenProvider: tokenProvider, proof: proof)
     }

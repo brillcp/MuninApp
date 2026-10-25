@@ -9,7 +9,7 @@ enum MuninServiceFactory {
     /// A service for Munin's API that authenticates with `tokenProvider` and,
     /// when given, sends `proof` in the proof header on every request.
     static func makeService(
-        tokenProvider: SupabaseTokenProvider,
+        tokenProvider: AuthTokenProvider,
         proof: String? = nil,
         interceptors: [any NetworkInterceptor] = []
     ) -> Network.Service {

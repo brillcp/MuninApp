@@ -108,7 +108,7 @@ MuninApp/
 ├── Core/
 │   ├── DesignSystem/   Spacing, motion and AppKit colour overrides
 │   ├── Security/       Vault session, unlocking and auto-lock
-│   ├── Services/       Munin and Supabase Auth requests, website icons
+│   ├── Services/       Munin and sign-in requests, website icons
 │   ├── Utilities/      Keychain, clipboard, localisation helpers
 │   └── Vault/          Encryption, keys, TOTP, import parsers
 └── Features/     Lock screen, Vault, 2FA, Search, Settings

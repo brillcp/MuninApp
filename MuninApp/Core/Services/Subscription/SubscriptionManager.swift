@@ -12,7 +12,7 @@ import StoreKit
 @Observable
 final class SubscriptionManager {
     /// The monthly subscription's product ID in App Store Connect.
-    static let productID = "dev.gidlof.Munin.monthly"
+    static let productID = "munin.monthly.sub"
 
     /// Listens to `Transaction.updates` while the vault is unlocked.
     private var updatesTask: Task<Void, Never>?

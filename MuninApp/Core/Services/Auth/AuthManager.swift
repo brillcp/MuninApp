@@ -2,30 +2,30 @@ import AuthenticationServices
 import Foundation
 import Observation
 
-/// Sign in with Apple, exchanged for a Supabase session. Views observe `isSignedIn`.
+/// Sign in with Apple, exchanged for a session. Views observe `isSignedIn`.
 ///
 /// The user's ID and email are kept in the Keychain; the session tokens are
-/// held by `SupabaseTokenProvider`.
+/// held by `AuthTokenProvider`.
 @Observable
 final class AuthManager {
-    /// Whether a Supabase session exists.
+    /// Whether a session exists.
     private(set) var isSignedIn: Bool
     /// The signed-in user's email, as given by Sign in with Apple.
     private(set) var email: String?
-    /// Supabase user ID; Munin scopes the user's data to it.
+    /// User ID; Munin scopes the user's data to it.
     private(set) var userID: String?
-    /// True while the Apple identity token is being exchanged with Supabase.
+    /// True while the Apple identity token is being exchanged with the auth server.
     private(set) var isSigningIn = false
     /// The last sign-in error, shown on the sign-in step.
     private(set) var signInError: String?
 
-    /// Supplies and refreshes the Supabase JWT for requests to Munin.
-    let tokenProvider: SupabaseTokenProvider
-    /// The raw nonce of the sign-in in progress, sent to Supabase with the identity token.
+    /// Supplies and refreshes the JWT for requests to Munin.
+    let tokenProvider: AuthTokenProvider
+    /// The raw nonce of the sign-in in progress, sent to the auth server with the identity token.
     private var currentNonce: String?
 
     /// Restores the signed-in state, email and user ID from the previous launch.
-    init(tokenProvider: SupabaseTokenProvider = .shared) {
+    init(tokenProvider: AuthTokenProvider = .shared) {
         self.tokenProvider = tokenProvider
         isSignedIn = tokenProvider.hasSession
         Self.moveUserFromUserDefaults()
@@ -48,7 +48,7 @@ final class AuthManager {
     }
 
     /// Configures the Apple request. Apple gets the SHA-256 of a fresh nonce;
-    /// Supabase later gets the raw nonce to match against the identity token.
+    /// The auth server later gets the raw nonce to match against the identity token.
     func prepare(_ request: ASAuthorizationAppleIDRequest) {
         let nonce = Nonce.random()
         currentNonce = nonce
@@ -58,7 +58,7 @@ final class AuthManager {
     }
 
     /// Finishes Sign in with Apple: exchanges the identity token for a
-    /// Supabase session and stores the user. Cancelling is not an error.
+    /// session and stores the user. Cancelling is not an error.
     func complete(_ result: Result<ASAuthorization, any Error>) async {
         switch result {
         case .failure(let error):
@@ -86,7 +86,7 @@ final class AuthManager {
                 isSignedIn = true
                 signInError = nil
             } catch {
-                signInError = Localized("signIn.error.supabase", error.localizedDescription)
+                signInError = Localized("signIn.error.failed", error.localizedDescription)
             }
         }
     }

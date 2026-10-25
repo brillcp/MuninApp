@@ -1,8 +1,8 @@
 import Foundation
 import Networking
 
-/// Endpoints on the Supabase Auth base URL (`/auth/v1`).
-enum SupabaseAuthEndpoint: EndpointType {
+/// Endpoints on the auth base URL (`/auth/v1`).
+enum AuthEndpoint: EndpointType {
     /// `/token`, for both the identity token and the refresh token grants.
     case token
 
@@ -13,7 +13,7 @@ enum SupabaseAuthEndpoint: EndpointType {
     }
 }
 
-/// Sign in with Apple: trades Apple's identity token for a Supabase session.
+/// Sign in with Apple: trades Apple's identity token for a session.
 struct AppleIDTokenRequest: Requestable {
     /// Apple's identity token (a JWT).
     let idToken: String
@@ -26,7 +26,7 @@ struct AppleIDTokenRequest: Requestable {
     var parameters: HTTP.Parameters { [:] }
     var query: HTTP.Parameters { ["grant_type": "id_token"] }
     var body: (any Encodable & Sendable)? { IDTokenBody(provider: "apple", idToken: idToken, nonce: nonce) }
-    var endpoint: EndpointType { SupabaseAuthEndpoint.token }
+    var endpoint: EndpointType { AuthEndpoint.token }
 }
 
 /// Refresh-token exchange: trades a stored refresh token for a fresh session.
@@ -40,7 +40,7 @@ struct RefreshTokenRequest: Requestable {
     var parameters: HTTP.Parameters { [:] }
     var query: HTTP.Parameters { ["grant_type": "refresh_token"] }
     var body: (any Encodable & Sendable)? { RefreshBody(refreshToken: refreshToken) }
-    var endpoint: EndpointType { SupabaseAuthEndpoint.token }
+    var endpoint: EndpointType { AuthEndpoint.token }
 }
 
 // MARK: - Bodies
@@ -69,7 +69,7 @@ nonisolated private struct RefreshBody: Encodable, Sendable {
 // MARK: - Response
 
 /// Response from `/auth/v1/token` for both grant types.
-nonisolated struct SupabaseSession: Sendable, Decodable {
+nonisolated struct AuthSession: Sendable, Decodable {
     /// The JWT sent to Munin as the bearer token.
     let accessToken: String
     /// Exchanged for a new session when the access token expires.
@@ -79,7 +79,7 @@ nonisolated struct SupabaseSession: Sendable, Decodable {
     /// The signed-in user.
     let user: User?
 
-    /// The Supabase user in a session response.
+    /// The user in a session response.
     struct User: Sendable, Decodable {
         let id: String
         let email: String?

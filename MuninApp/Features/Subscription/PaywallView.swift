@@ -43,9 +43,10 @@ private extension PaywallView {
 private struct PaywallHeader: View {
     var body: some View {
         VStack(spacing: DesignKit.Spacing.Primitive.s12) {
-            Image(systemName: "lock.shield.fill")
-                .font(.system(size: 56))
-                .foregroundStyle(.tint)
+            Image("icon-512")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 128)
             Text("subscription.title")
                 .font(.largeTitle.bold())
             Text("subscription.message")

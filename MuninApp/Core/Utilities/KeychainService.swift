@@ -11,30 +11,30 @@ import Security
 nonisolated enum KeychainService {
     /// The Keychain service all items are stored under.
     private static let service = Bundle.main.bundleIdentifier ?? "dev.gidlof.Munin"
-    /// Account for the Supabase access token.
-    private static let supabaseAccount = "supabase.token"
-    /// Account for the Supabase refresh token.
-    private static let supabaseRefreshAccount = "supabase.refresh_token"
+    /// Account for the access token.
+    private static let accessTokenAccount = "auth.token"
+    /// Account for the refresh token.
+    private static let refreshTokenAccount = "auth.refresh_token"
     /// Account for the signed-in user's ID.
-    private static let userIDAccount = "supabase.user_id"
+    private static let userIDAccount = "auth.user_id"
     /// Account for the signed-in user's email.
-    private static let emailAccount = "supabase.email"
+    private static let emailAccount = "auth.email"
 
-    // MARK: - Supabase session
+    // MARK: - Session
 
-    /// Saves the Supabase access token.
-    static func saveSupabaseToken(_ token: String) { save(token, account: supabaseAccount) }
-    /// The saved Supabase access token.
-    static func loadSupabaseToken() -> String? { load(account: supabaseAccount) }
-    /// Deletes the Supabase access token.
-    static func deleteSupabaseToken() { delete(account: supabaseAccount) }
+    /// Saves the access token.
+    static func saveAccessToken(_ token: String) { save(token, account: accessTokenAccount) }
+    /// The saved access token.
+    static func loadAccessToken() -> String? { load(account: accessTokenAccount) }
+    /// Deletes the access token.
+    static func deleteAccessToken() { delete(account: accessTokenAccount) }
 
-    /// Saves the Supabase refresh token.
-    static func saveSupabaseRefreshToken(_ token: String) { save(token, account: supabaseRefreshAccount) }
-    /// The saved Supabase refresh token.
-    static func loadSupabaseRefreshToken() -> String? { load(account: supabaseRefreshAccount) }
-    /// Deletes the Supabase refresh token.
-    static func deleteSupabaseRefreshToken() { delete(account: supabaseRefreshAccount) }
+    /// Saves the refresh token.
+    static func saveRefreshToken(_ token: String) { save(token, account: refreshTokenAccount) }
+    /// The saved refresh token.
+    static func loadRefreshToken() -> String? { load(account: refreshTokenAccount) }
+    /// Deletes the refresh token.
+    static func deleteRefreshToken() { delete(account: refreshTokenAccount) }
 
     // MARK: - Signed-in user
 

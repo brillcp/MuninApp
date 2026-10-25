@@ -3,9 +3,9 @@ import Networking
 
 /// The one place that decides what a backend or auth error means.
 extension Error {
-    /// The Supabase session can't be reused: the token is missing, or the auth
+    /// The session can't be reused: the token is missing, or the auth
     /// server rejected a refresh outright. The user needs to sign in again.
-    var invalidatesSupabaseSession: Bool {
+    var invalidatesAuthSession: Bool {
         if self is TokenProvidableError { return true }
         guard let status = httpStatus else { return false }
         switch status {

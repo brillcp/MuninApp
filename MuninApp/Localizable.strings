@@ -99,7 +99,7 @@
 "main.section.munin" = "Munin";
 "main.tab.codes" = "2FA";
 "main.tab.vault" = "Vault";
-"main.window.title" = "Munin - Secure passwords and 2FA";
+"main.window.title" = "Munin";
 
 /** Menu Bar **/
 "menuBar.copyUsername" = "Copy Username";
@@ -139,9 +139,9 @@
 "scanner.title" = "Scan QR Code";
 
 /** Sign In **/
-"signIn.error.missingAnonKey" = "Set APIConfig.anonKey to your Supabase publishable key.";
+"signIn.error.missingAnonKey" = "Set APIConfig.anonKey to your publishable key.";
 "signIn.error.noIdentityToken" = "Apple didn't return an identity token. Try again.";
-"signIn.error.supabase" = "Supabase sign-in failed. %@";
+"signIn.error.failed" = "Sign-in failed. %@";
 "signIn.subtitle" = "Secure and safe vault for passwords and codes.";
 "signIn.title" = "Munin";
 

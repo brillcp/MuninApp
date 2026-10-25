@@ -92,7 +92,7 @@ private extension VaultView {
     /// The list and the detail.
     ///
     /// Mac: the list, with the detail floating over its trailing edge as a
-    /// glass panel with Close and Edit buttons. The panel is always in the
+    /// glass panel with Close and Edit (⌘E) buttons. The panel is always in the
     /// hierarchy, just hidden: inserting it with a transition also animated the
     /// Form's first layout, so its content grew in from a zero frame. Selecting
     /// a password fills the panel without animation, and one update later the
@@ -132,6 +132,7 @@ private extension VaultView {
                                 }
                                 .help("global.edit")
                                 .disabled(subscriptions.isReadOnly)
+                                .keyboardShortcut("e")
                             }
                             .padding([.horizontal, .top], DesignKit.Spacing.Primitive.s12)
                         }
@@ -230,7 +231,7 @@ private extension VaultView {
         .sensoryFeedback(.selection, trigger: viewModel.sortOrder)
     }
 
-    /// Opens the New Password sheet. Prominent glass in the accent colour.
+    /// Opens the New Password sheet (⌘N). Prominent glass in the accent colour.
     var createButton: some View {
         Button("vault.createItem", systemImage: "plus.square.on.square") {
             hapticTaps += 1
@@ -239,6 +240,7 @@ private extension VaultView {
         .buttonStyle(.glassProminent)
         .tint(.accent)
         .disabled(subscriptions.isReadOnly)
+        .keyboardShortcut("n")
     }
 
     /// Opens the CSV file picker. Disabled until loaded and while an import runs.
@@ -343,8 +345,8 @@ private struct VaultPasswordList: View {
 /// The selected password's detail, or nothing. Its own view, so it only
 /// updates when the selection or that item changes.
 ///
-/// iOS adds an Edit button to the toolbar; on the Mac, Edit is in the panel's
-/// header. Delete is at the bottom of the detail on both.
+/// iOS adds an Edit button (⌘E) to the toolbar; on the Mac, Edit (⌘E) is in
+/// the panel's header. Delete is at the bottom of the detail on both.
 private struct VaultItemDetail: View {
     @Environment(AuthManager.self) private var auth
     @Environment(SubscriptionManager.self) private var subscriptions
@@ -381,6 +383,7 @@ private struct VaultItemDetail: View {
                     if let item = viewModel.selectedItem { onEdit(item) }
                 }
                 .disabled(viewModel.selectedItem == nil || subscriptions.isReadOnly)
+                .keyboardShortcut("e")
             }
         }
         .sensoryFeedback(.impact(weight: .light), trigger: hapticTaps)

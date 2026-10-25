@@ -7,14 +7,17 @@ import SwiftUI
 /// The image comes from the "Logo" image set.
 struct LockLogo: View {
     var body: some View {
-        HStack(spacing: DesignKit.Spacing.Primitive.s16) {
-            Image("Logo")
+        VStack(alignment: .leading, spacing: DesignKit.Spacing.Primitive.s16) {
+            Image("icon-512")
                 .resizable()
                 .scaledToFit()
-                .frame(width: 38, height: 38)
+                .frame(width: DesignKit.Spacing.Primitive.s64)
             Text("main.window.title")
-                .font(.title2.bold())
+                .font(.title.bold())
                 .foregroundStyle(.primary)
+            Text("subscription.message")
+                .font(.title3)
+                .foregroundStyle(.secondary)
         }
     }
 }
@@ -67,7 +70,7 @@ struct LockPanel: View {
             if isWorking {
                 ProgressView()
                     .controlSize(.large)
-                    .frame(maxWidth: .infinity, minHeight: 50)
+                    .frame(minHeight: DesignKit.Spacing.Primitive.s48)
                     .transition(.blurReplace)
                     .tint(.white)
             } else {
@@ -179,8 +182,6 @@ private struct LockSignInStep: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: DesignKit.Spacing.Primitive.s24) {
-            Text("signIn.subtitle")
-
             SignInWithAppleButton(.signIn) { request in
                 auth.prepare(request)
             } onCompletion: { result in
@@ -188,9 +189,8 @@ private struct LockSignInStep: View {
             }
             .signInWithAppleButtonStyle(colorScheme == .dark ? .white : .black)
             .frame(maxWidth: .infinity)
-            .frame(height: 50)
-            .clipShape(.capsule)
             .controlSize(.large)
+            .clipShape(.capsule)
 
             if let onCancel {
                 LockButton("global.cancel", style: .tertiary, action: onCancel)
