@@ -338,7 +338,9 @@ private struct VaultPasswordList: View {
             }
         }
         .listStyle(.plain)
+        #if os(macOS)
         .onExitCommand { viewModel.selection = nil }
+        #endif
     }
 }
 
