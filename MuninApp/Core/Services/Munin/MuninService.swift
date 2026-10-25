@@ -107,6 +107,13 @@ extension MuninService {
         try await tokenProvider.ensureFresh()
         return try await service.request(MuninRequest.linkSubscription(LinkSubscriptionBody(transactionId: transactionID)))
     }
+
+    /// Deletes the account: the vault key, passwords, 2FA accounts, the
+    /// subscription link and the user. Needs a proof once a master password is set up.
+    func deleteAccount() async throws {
+        try await tokenProvider.ensureFresh()
+        _ = try await service.response(MuninRequest.deleteAccount)
+    }
 }
 
 // MARK: - Errors

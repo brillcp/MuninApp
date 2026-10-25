@@ -17,6 +17,8 @@ struct PaywallView: View {
         }
         .storeButton(.visible, for: .restorePurchases)
         .storeButton(.visible, for: .cancellation)
+        .subscriptionStorePolicyDestination(url: AppLinks.privacyPolicy, for: .privacyPolicy)
+        .subscriptionStorePolicyDestination(url: AppLinks.termsOfUse, for: .termsOfService)
         .inAppPurchaseOptions(purchaseOptions)
         .onInAppPurchaseCompletion(perform: purchaseCompleted)
         .tint(.accent)

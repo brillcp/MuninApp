@@ -98,6 +98,13 @@ final class AuthManager {
         isSignedIn = false
     }
 
+    /// Deletes the account and everything in it on Munin, then signs out.
+    /// `proof` comes from the unlocked vault.
+    func deleteAccount(proof: String?) async throws {
+        try await MuninService(tokenProvider: tokenProvider, proof: proof).deleteAccount()
+        signOut()
+    }
+
     /// Stores the user's ID and email in memory and in the Keychain (nil deletes them).
     private func setUser(id: String?, email: String?) {
         userID = id

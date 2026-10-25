@@ -29,19 +29,21 @@ enum MuninRequest: Requestable {
     case subscription
     /// Links an App Store purchase to the user; Munin checks it with Apple.
     case linkSubscription(LinkSubscriptionBody)
+    /// Deletes the account and everything in it; needs a proof once a master password is set up.
+    case deleteAccount
 
     var httpMethod: HTTP.Method {
         switch self {
         case .entries, .passwords, .vaultKey, .subscription: return .get
         case .createEntry, .createPassword, .touchPassword, .createVaultKey, .linkSubscription: return .post
-        case .deleteEntry, .deletePassword:           return .delete
+        case .deleteEntry, .deletePassword, .deleteAccount: return .delete
         case .updatePassword, .replaceVaultKey:       return .put
         }
     }
 
     var encoding: Request.Encoding {
         switch self {
-        case .entries, .deleteEntry, .passwords, .touchPassword, .deletePassword, .vaultKey, .subscription: return .query
+        case .entries, .deleteEntry, .passwords, .touchPassword, .deletePassword, .vaultKey, .subscription, .deleteAccount: return .query
         case .createEntry, .createPassword, .updatePassword, .createVaultKey, .replaceVaultKey, .linkSubscription: return .json
         }
     }
@@ -56,7 +58,7 @@ enum MuninRequest: Requestable {
         case .updatePassword(_, let body): return body
         case .createVaultKey(let body), .replaceVaultKey(let body): return body
         case .linkSubscription(let body): return body
-        case .entries, .deleteEntry, .passwords, .touchPassword, .deletePassword, .vaultKey, .subscription: return nil
+        case .entries, .deleteEntry, .passwords, .touchPassword, .deletePassword, .vaultKey, .subscription, .deleteAccount: return nil
         }
     }
 
@@ -70,6 +72,7 @@ enum MuninRequest: Requestable {
         case .deletePassword(let id):    return MuninEndpoint.password(id)
         case .vaultKey, .createVaultKey, .replaceVaultKey: return MuninEndpoint.vaultKey
         case .subscription, .linkSubscription: return MuninEndpoint.subscription
+        case .deleteAccount:             return MuninEndpoint.account
         }
     }
 }

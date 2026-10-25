@@ -18,6 +18,8 @@ enum MuninEndpoint: EndpointType {
 
     /// `/subscription`: the user's App Store subscription.
     case subscription
+    /// `/account`: the user's account and everything in it.
+    case account
 
     var path: String {
         switch self {
@@ -28,6 +30,7 @@ enum MuninEndpoint: EndpointType {
         case .passwordTouch(let id):  return "passwords/\(id.uuidString)/touch"
         case .vaultKey:               return "vault-key"
         case .subscription:           return "subscription"
+        case .account:                return "account"
         }
     }
 }

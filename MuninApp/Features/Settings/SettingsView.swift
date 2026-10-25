@@ -17,6 +17,14 @@ struct SettingsView: View {
     @State private var isShowingPaywall = false
     /// iOS: shows the App Store's Manage Subscriptions sheet.
     @State private var isManagingSubscription = false
+    /// True while Restore Purchases runs.
+    @State private var isRestoring = false
+    /// Shows the Delete Account confirmation.
+    @State private var isConfirmingDeletion = false
+    /// True while the account is being deleted.
+    @State private var isDeletingAccount = false
+    /// Why deleting the account failed, shown in an alert.
+    @State private var deletionError: String?
 
     var body: some View {
         @Bindable var session = session
@@ -38,6 +46,8 @@ struct SettingsView: View {
                                 isShowingPaywall = true
                             }
                         }
+                        Button("settings.subscription.restore", systemImage: "arrow.clockwise", action: restorePurchases)
+                            .disabled(isRestoring)
                         #if os(iOS)
                         Button("settings.subscription.manage", systemImage: "creditcard") {
                             hapticTaps += 1
@@ -84,6 +94,12 @@ struct SettingsView: View {
                 LabeledContent("settings.version") {
                     Text(verbatim: Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "")
                 }
+                Link(destination: AppLinks.privacyPolicy) {
+                    Label("settings.privacyPolicy", systemImage: "hand.raised")
+                }
+                Link(destination: AppLinks.termsOfUse) {
+                    Label("settings.termsOfUse", systemImage: "doc.text")
+                }
             }
 
             if auth.isSignedIn {
@@ -94,6 +110,14 @@ struct SettingsView: View {
                     }
                     .foregroundStyle(.red)
                     .tint(.red)
+                    Button("account.delete", systemImage: "person.crop.circle.badge.xmark", role: .destructive, action: confirmDeletion)
+                        .foregroundStyle(.red)
+                        .tint(.red)
+                        .disabled(session.vault == nil || isDeletingAccount)
+                } footer: {
+                    if session.vault == nil {
+                        Text("account.delete.locked")
+                    }
                 }
             }
         }
@@ -108,6 +132,16 @@ struct SettingsView: View {
         .sheet(isPresented: $isShowingPaywall) {
             PaywallView()
         }
+        .confirmationDialog("account.delete.title", isPresented: $isConfirmingDeletion, titleVisibility: .visible) {
+            Button("account.delete", role: .destructive, action: deleteAccount)
+        } message: {
+            Text("account.delete.message")
+        }
+        .alert("account.delete.failed", item: $deletionError) { _ in
+            Button("global.done") {}
+        } message: { message in
+            Text(message)
+        }
         #if os(iOS)
         .manageSubscriptionsSheet(isPresented: $isManagingSubscription)
         #endif
@@ -116,6 +150,37 @@ struct SettingsView: View {
         .frame(width: 460)
         .fixedSize(horizontal: false, vertical: true)
         #endif
+    }
+}
+
+private extension SettingsView {
+    /// Syncs App Store purchases and links any active subscription to this account.
+    func restorePurchases() {
+        hapticTaps += 1
+        Task {
+            isRestoring = true
+            defer { isRestoring = false }
+            await subscriptions.restore(auth: auth)
+        }
+    }
+
+    /// Asks before deleting the account.
+    func confirmDeletion() {
+        hapticTaps += 1
+        isConfirmingDeletion = true
+    }
+
+    /// Deletes the account on Munin with the unlocked vault's proof, then signs out.
+    func deleteAccount() {
+        Task {
+            isDeletingAccount = true
+            defer { isDeletingAccount = false }
+            do {
+                try await auth.deleteAccount(proof: session.vault?.proof)
+            } catch {
+                deletionError = error.muninDescription
+            }
+        }
     }
 }
 

@@ -1,6 +1,11 @@
 /* Localizable.strings */
 
 /** Account **/
+"account.delete" = "Delete Account";
+"account.delete.failed" = "Couldn't Delete Account";
+"account.delete.locked" = "Unlock Munin to delete your account.";
+"account.delete.message" = "This permanently deletes your Munin account, passwords and 2FA accounts. It can't be undone.\n\nYour App Store subscription isn't cancelled. Cancel it under Manage Subscription first.";
+"account.delete.title" = "Delete Your Munin Account?";
 "account.showRecoveryKey" = "Show Recovery Key";
 "account.signOut" = "Sign Out";
 
@@ -192,13 +197,16 @@
 "settings.biometrics.touch" = "Unlock with Touch ID";
 "settings.changeMasterPassword" = "Change Master Password";
 "settings.currentMasterPassword" = "Current master password";
+"settings.privacyPolicy" = "Privacy Policy";
 "settings.locked" = "Unlock Munin to change security settings.";
 "settings.security" = "Security";
 "settings.subscription" = "Subscription";
 "settings.subscription.active" = "Active";
 "settings.subscription.inactive" = "Not subscribed";
 "settings.subscription.manage" = "Manage Subscription";
+"settings.subscription.restore" = "Restore Purchases";
 "settings.subscription.status" = "Status";
+"settings.termsOfUse" = "Terms of Use";
 "settings.title" = "Settings";
 "settings.version" = "Version";
 
