@@ -7,7 +7,7 @@ struct LockToolbarButton: View {
     @State private var taps = 0
 
     var body: some View {
-        Button("lock.command", systemImage: "lock") {
+        Button("lock.command", systemImage: DesignKit.Icon.lock) {
             taps += 1
             session.lock()
         }

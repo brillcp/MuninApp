@@ -11,7 +11,7 @@ struct BillingIssueBanner: View {
 
     var body: some View {
         HStack(spacing: DesignKit.Spacing.Primitive.s12) {
-            Label("subscription.gracePeriod", systemImage: "exclamationmark.triangle.fill")
+            Label("subscription.gracePeriod", systemImage: DesignKit.Icon.billingIssue)
                 .font(.callout)
                 .foregroundStyle(.orange)
             Spacer()

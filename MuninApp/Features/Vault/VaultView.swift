@@ -120,12 +120,12 @@ private extension VaultView {
                         )
                         .safeAreaInset(edge: .top, spacing: DesignKit.Spacing.Primitive.s0) {
                             HStack {
-                                LockButton(systemImage: "xmark", style: .clear) {
+                                LockButton(systemImage: DesignKit.Icon.close, style: .clear) {
                                     hapticTaps += 1
                                     viewModel.selection = nil
                                 }
                                 Spacer()
-                                LockButton(systemImage: "square.and.pencil", style: .clear) {
+                                LockButton(systemImage: DesignKit.Icon.edit, style: .clear) {
                                     hapticTaps += 1
                                     if let item = viewModel.selectedItem { startEditing(item) }
                                 }
@@ -214,18 +214,18 @@ private extension VaultView {
 
     /// Sorts the list: by title or date edited, then ascending or descending.
     var sortMenu: some View {
-        Menu("vault.sort", systemImage: "arrow.up.arrow.down") {
+        Menu("vault.sort", systemImage: DesignKit.Icon.sort) {
             Picker("vault.sort", selection: $viewModel.sortColumn) {
-                Label("vault.sort.title", systemImage: "textformat")
+                Label("vault.sort.title", systemImage: DesignKit.Icon.sortByTitle)
                     .tag(VaultViewModel.SortColumn.title)
-                Label("vault.sort.dateEdited", systemImage: "square.and.pencil")
+                Label("vault.sort.dateEdited", systemImage: DesignKit.Icon.sortByDateEdited)
                     .tag(VaultViewModel.SortColumn.dateEdited)
             }
             .pickerStyle(.inline)
             Picker("vault.sort.direction", selection: $viewModel.sortDirection) {
-                Label("vault.sort.ascending", systemImage: "arrow.down")
+                Label("vault.sort.ascending", systemImage: DesignKit.Icon.ascending)
                     .tag(SortOrder.forward)
-                Label("vault.sort.descending", systemImage: "arrow.up")
+                Label("vault.sort.descending", systemImage: DesignKit.Icon.descending)
                     .tag(SortOrder.reverse)
             }
             .pickerStyle(.inline)
@@ -235,7 +235,7 @@ private extension VaultView {
 
     /// Opens the New Password sheet (⌘N). Prominent glass in the accent colour.
     var createButton: some View {
-        Button("vault.createItem", systemImage: "plus.square.on.square") {
+        Button("vault.createItem", systemImage: DesignKit.Icon.createPassword) {
             hapticTaps += 1
             isCreating = true
         }
@@ -247,7 +247,7 @@ private extension VaultView {
 
     /// Opens the CSV file picker. Disabled until loaded and while an import runs.
     var importButton: some View {
-        Button("import.button", systemImage: "folder.badge.plus") {
+        Button("import.button", systemImage: DesignKit.Icon.importFile) {
             hapticTaps += 1
             isPickingImportFile = true
         }
@@ -306,17 +306,17 @@ private struct VaultPasswordList: View {
         rows
             .contextMenu(forSelectionType: PasswordItem.ID.self) { ids in
                 if ids.count == 1, let id = ids.first, let item = viewModel.items.first(where: { $0.id == id }) {
-                    Button("vault.copyUsername", systemImage: "person") {
+                    Button("vault.copyUsername", systemImage: DesignKit.Icon.username) {
                         Pasteboard.copy(item.username)
                     }
                     .disabled(item.username.isEmpty)
-                    Button("vault.copyPassword", systemImage: "square.on.square") {
+                    Button("vault.copyPassword", systemImage: DesignKit.Icon.copy) {
                         Task { await viewModel.copyPassword(item, auth: auth) }
                     }
-                    Button("global.edit", systemImage: "square.and.pencil") { onEdit(item) }
+                    Button("global.edit", systemImage: DesignKit.Icon.edit) { onEdit(item) }
                         .disabled(subscriptions.isReadOnly)
                     Divider()
-                    Button("global.delete", systemImage: "trash", role: .destructive) { pendingDeletion = item }
+                    Button("global.delete", systemImage: DesignKit.Icon.delete, role: .destructive) { pendingDeletion = item }
                         .disabled(subscriptions.isReadOnly)
                 }
             }
@@ -384,7 +384,7 @@ private struct VaultItemDetail: View {
         #if os(iOS)
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
-                Button("global.edit", systemImage: "square.and.pencil") {
+                Button("global.edit", systemImage: DesignKit.Icon.edit) {
                     hapticTaps += 1
                     if let item = viewModel.selectedItem { onEdit(item) }
                 }
@@ -437,7 +437,7 @@ private struct VaultEmptyState: View {
     var body: some View {
         if let errorMessage {
             ContentUnavailableView {
-                Label("errors.loadVault.title", systemImage: "exclamationmark.triangle")
+                Label("errors.loadVault.title", systemImage: DesignKit.Icon.warning)
             } description: {
                 Text(errorMessage)
             } actions: {
@@ -445,7 +445,7 @@ private struct VaultEmptyState: View {
             }
         } else if isEmpty {
             if hasLoaded {
-                ContentUnavailableView("vault.empty.title", systemImage: "lock.rectangle.stack")
+                ContentUnavailableView("vault.empty.title", systemImage: DesignKit.Icon.vault)
             } else {
                 ProgressView()
             }

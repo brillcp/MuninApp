@@ -36,7 +36,7 @@ struct AddAccountView: View {
                 ManualEntrySection(onSubmit: submitManual)
                 if let errorMessage {
                     Section {
-                        Label(errorMessage, systemImage: "exclamationmark.triangle")
+                        Label(errorMessage, systemImage: DesignKit.Icon.warning)
                             .foregroundStyle(.red)
                     }
                 }
@@ -183,17 +183,17 @@ private struct QRCodeSection: View {
                 Button {
                     isScanning = true
                 } label: {
-                    Label("addAccount.scanQRCode", systemImage: "qrcode.viewfinder")
+                    Label("addAccount.scanQRCode", systemImage: DesignKit.Icon.scanQRCode)
                 }
             }
             PhotosPicker(selection: $photoItem, matching: .images) {
-                Label("addAccount.chooseScreenshot", systemImage: "photo")
+                Label("addAccount.chooseScreenshot", systemImage: DesignKit.Icon.chooseImage)
             }
             #else
             Button {
                 isImportingFile = true
             } label: {
-                Label("addAccount.chooseImage", systemImage: "photo")
+                Label("addAccount.chooseImage", systemImage: DesignKit.Icon.chooseImage)
             }
             #endif
         } header: {

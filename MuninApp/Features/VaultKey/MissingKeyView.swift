@@ -15,7 +15,7 @@ struct MissingKeyView: View {
 
     var body: some View {
         ContentUnavailableView {
-            Label("vaultKey.missing.title", systemImage: "key.slash")
+            Label("vaultKey.missing.title", systemImage: DesignKit.Icon.missingKey)
         } description: {
             Text("vaultKey.missing.message")
         } actions: {

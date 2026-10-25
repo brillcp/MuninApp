@@ -7,7 +7,7 @@ struct ReadOnlyBanner: View {
 
     var body: some View {
         HStack(spacing: DesignKit.Spacing.Primitive.s12) {
-            Label("subscription.readOnly", systemImage: "lock.fill")
+            Label("subscription.readOnly", systemImage: DesignKit.Icon.locked)
                 .font(.callout)
             Spacer()
             Button("subscription.subscribe", action: showPaywall)

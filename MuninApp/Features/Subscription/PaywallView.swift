@@ -56,7 +56,7 @@ private struct PaywallHeader: View {
 
     var body: some View {
         VStack(spacing: DesignKit.Spacing.Primitive.s12) {
-            Image("icon-512")
+            Image(DesignKit.Asset.appIcon)
                 .resizable()
                 .scaledToFit()
                 .frame(width: 128)
@@ -69,7 +69,7 @@ private struct PaywallHeader: View {
                 Text("subscription.billingIssue")
                     .multilineTextAlignment(.center)
                     .foregroundStyle(.orange)
-                Button("settings.subscription.manage", systemImage: "creditcard", action: manageSubscription)
+                Button("settings.subscription.manage", systemImage: DesignKit.Icon.manageSubscription, action: manageSubscription)
                     .buttonStyle(.glass)
             }
             if let errorMessage = subscriptions.errorMessage {

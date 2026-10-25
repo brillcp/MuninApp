@@ -49,7 +49,7 @@ struct SearchView: View {
             .listStyle(.plain)
             .overlay {
                 if trimmedQuery.isEmpty {
-                    ContentUnavailableView("search.empty.title", systemImage: "magnifyingglass", description: Text("search.empty.message"))
+                    ContentUnavailableView("search.empty.title", systemImage: DesignKit.Icon.search, description: Text("search.empty.message"))
                 } else if passwords.isEmpty && codes.isEmpty {
                     ContentUnavailableView.search(text: trimmedQuery)
                 }
@@ -109,7 +109,7 @@ private struct SearchPasswordRow: View {
                     .foregroundStyle(.secondary)
             }
             Spacer()
-            Image(systemName: "chevron.right")
+            Image(systemName: DesignKit.Icon.disclosure)
                 .font(.footnote)
                 .foregroundStyle(.tertiary)
         }

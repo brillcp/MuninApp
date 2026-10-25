@@ -38,7 +38,7 @@ struct MenuBarContent: View {
                 Divider()
                 passwordList
             } else {
-                ContentUnavailableView("lock.title", systemImage: "lock")
+                ContentUnavailableView("lock.title", systemImage: DesignKit.Icon.lock)
                     .frame(maxHeight: .infinity)
             }
             Divider()
@@ -86,11 +86,11 @@ private extension MenuBarContent {
             }
             Spacer()
             if session.state == .unlocked {
-                Button("lock.command", systemImage: "lock", action: session.lock)
+                Button("lock.command", systemImage: DesignKit.Icon.lock, action: session.lock)
                     .labelStyle(.iconOnly)
                     .help(Text("lock.command"))
             }
-            Button("menuBar.quit", systemImage: "power") { NSApp.terminate(nil) }
+            Button("menuBar.quit", systemImage: DesignKit.Icon.quit) { NSApp.terminate(nil) }
                 .labelStyle(.iconOnly)
                 .help(Text("menuBar.quit"))
         }
@@ -169,10 +169,10 @@ private struct MenuBarPasswordRow: View {
                     .font(.caption)
                     .foregroundStyle(.accent)
             }
-            Button("menuBar.copyUsername", systemImage: "person", action: onCopyUsername)
+            Button("menuBar.copyUsername", systemImage: DesignKit.Icon.username, action: onCopyUsername)
                 .help(Text("menuBar.copyUsername"))
                 .disabled(item.username.isEmpty)
-            Button("vault.copyPassword", systemImage: "key", action: onCopyPassword)
+            Button("vault.copyPassword", systemImage: DesignKit.Icon.password, action: onCopyPassword)
                 .help(Text("vault.copyPassword"))
         }
         .labelStyle(.iconOnly)

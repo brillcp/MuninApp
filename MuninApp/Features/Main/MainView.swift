@@ -43,16 +43,16 @@ struct MainView: View {
                 Tab(value: Section.vault) {
                     VaultView(viewModel: vaultModel)
                 } label: {
-                    SidebarTabLabel(title: "main.tab.vault", systemImage: "lock.rectangle.stack", isSelected: selection == .vault)
+                    SidebarTabLabel(title: "main.tab.vault", systemImage: DesignKit.Icon.vault, isSelected: selection == .vault)
                 }
                 Tab(value: Section.twoFactor) {
                     TwoFactorView(viewModel: twoFactorModel)
                 } label: {
-                    SidebarTabLabel(title: "main.tab.codes", systemImage: "key.viewfinder", isSelected: selection == .twoFactor)
+                    SidebarTabLabel(title: "main.tab.codes", systemImage: DesignKit.Icon.twoFactor, isSelected: selection == .twoFactor)
                 }
             }
             #if os(iOS)
-            Tab("settings.title", systemImage: "gearshape", value: Section.settings) {
+            Tab("settings.title", systemImage: DesignKit.Icon.settings, value: Section.settings) {
                 NavigationStack {
                     SettingsView()
                         .navigationTitle("settings.title")
@@ -88,7 +88,7 @@ struct MainView: View {
                         Text("settings.title")
                     }
                 } icon: {
-                    Image(systemName: "gearshape.fill")
+                    Image(systemName: DesignKit.Icon.settingsSelected)
                 }
             }
             .buttonStyle(.glassProminent)

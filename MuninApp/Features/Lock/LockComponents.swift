@@ -8,7 +8,7 @@ import SwiftUI
 struct LockLogo: View {
     var body: some View {
         VStack(alignment: .leading, spacing: DesignKit.Spacing.Primitive.s16) {
-            Image("icon-512")
+            Image(DesignKit.Asset.appIcon)
                 .resizable()
                 .scaledToFit()
                 .frame(width: DesignKit.Spacing.Primitive.s64)
@@ -215,16 +215,16 @@ private struct LockBiometricsStep: View {
     var body: some View {
         HStack(spacing: DesignKit.Spacing.Primitive.s16) {
             #if os(macOS)
-            LockButton("settings.biometrics.touch", systemImage: "touchid") {
+            LockButton("settings.biometrics.touch", systemImage: DesignKit.Icon.touchID) {
                 Task { await session.unlockWithBiometrics() }
             }
             #else
-            LockButton("settings.biometrics.face", systemImage: "faceid") {
+            LockButton("settings.biometrics.face", systemImage: DesignKit.Icon.faceID) {
                 Task { await session.unlockWithBiometrics() }
             }
             #endif
 
-            LockButton(systemImage: "lock.shield.fill", style: .secondary, action: onUseMasterPassword)
+            LockButton(systemImage: DesignKit.Icon.useMasterPassword, style: .secondary, action: onUseMasterPassword)
         }
     }
 }
@@ -263,9 +263,9 @@ private struct LockMasterPasswordStep: View {
 
                 if let onUseBiometrics {
                     #if os(iOS)
-                    LockButton(systemImage: "faceid", style: .secondary, action: onUseBiometrics)
+                    LockButton(systemImage: DesignKit.Icon.faceID, style: .secondary, action: onUseBiometrics)
                     #else
-                    LockButton(systemImage: "touchid", style: .secondary, action: onUseBiometrics)
+                    LockButton(systemImage: DesignKit.Icon.touchID, style: .secondary, action: onUseBiometrics)
                     #endif
                 }
             }

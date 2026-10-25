@@ -63,7 +63,7 @@ struct PasswordInspector: View {
                         .font(.body.monospaced())
                 } actions: {
                     Button(revealedPassword == nil ? "passwordInspector.show" : "passwordInspector.hide",
-                           systemImage: revealedPassword == nil ? "eye" : "eye.slash") {
+                           systemImage: revealedPassword == nil ? DesignKit.Icon.showPassword : DesignKit.Icon.hidePassword) {
                         hapticTaps += 1
                         if revealedPassword == nil {
                             revealedPassword = try? decrypt(item.encryptedPassword, "password")
@@ -79,7 +79,7 @@ struct PasswordInspector: View {
                     Text(item.url)
                 } actions: {
                     if let websiteURL {
-                        Button("passwordInspector.openWebsite", systemImage: "arrow.up.right.square.fill") {
+                        Button("passwordInspector.openWebsite", systemImage: DesignKit.Icon.openWebsite) {
                             hapticTaps += 1
                             openURL(websiteURL)
                         }
@@ -106,7 +106,7 @@ struct PasswordInspector: View {
             }
 
             Section {
-                Button("global.delete", systemImage: "trash", role: .destructive) {
+                Button("global.delete", systemImage: DesignKit.Icon.delete, role: .destructive) {
                     hapticTaps += 1
                     onDelete()
                 }
@@ -155,7 +155,7 @@ private extension PasswordInspector {
 
     /// An icon button that copies a field.
     func copyButton(_ field: Field, perform: @escaping () -> Void) -> some View {
-        Button("global.copy", systemImage: "square.on.square") {
+        Button("global.copy", systemImage: DesignKit.Icon.copy) {
             copy(field, perform: perform)
         }
     }

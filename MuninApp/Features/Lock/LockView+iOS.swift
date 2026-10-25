@@ -14,7 +14,7 @@ struct LockView: View {
             .background {
                 Color.clear
                     .overlay {
-                        Image("corpus")
+                        Image(DesignKit.Asset.lockArtwork)
                             .resizable()
                             .scaledToFill()
                     }

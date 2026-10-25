@@ -57,7 +57,7 @@ struct PasswordEditorView: View {
                 Section("password.field.password") {
                     HStack {
                         SecureField("password.field.password", text: $fields.password)
-                        Button("passwordEditor.generate", systemImage: "wand.and.stars") {
+                        Button("passwordEditor.generate", systemImage: DesignKit.Icon.generatePassword) {
                             hapticTaps += 1
                             isGenerating = true
                         }

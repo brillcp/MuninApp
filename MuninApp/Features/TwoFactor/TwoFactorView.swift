@@ -94,7 +94,7 @@ private extension TwoFactorView {
         ToolbarSpacer(.flexible, placement: .primaryAction)
         ToolbarItemGroup(placement: .primaryAction) {
             importButton
-            Button("global.refresh", systemImage: "arrow.clockwise") {
+            Button("global.refresh", systemImage: DesignKit.Icon.refresh) {
                 hapticTaps += 1
                 Task { await viewModel.refresh(auth: auth) }
             }
@@ -108,7 +108,7 @@ private extension TwoFactorView {
 
     /// Opens the file picker for a 2FA export (one `otpauth://` link per line).
     var importButton: some View {
-        Button("codes.import.button", systemImage: "folder.badge.plus", action: pickImportFile)
+        Button("codes.import.button", systemImage: DesignKit.Icon.importFile, action: pickImportFile)
             .disabled(!viewModel.hasLoaded || subscriptions.isReadOnly)
     }
 
@@ -154,7 +154,7 @@ private extension TwoFactorView {
 
     /// Opens the Add Account sheet (⌘N). Disabled until the accounts have loaded.
     var addButton: some View {
-        Button("codes.add", systemImage: "plus") {
+        Button("codes.add", systemImage: DesignKit.Icon.add) {
             hapticTaps += 1
             isAdding = true
         }
@@ -195,9 +195,9 @@ private struct TwoFactorList: View {
             ForEach(viewModel.items) { item in
                 TwoFactorRow(account: item.account, clock: clock)
                     .contextMenu {
-                        Button("global.delete", systemImage: "trash", role: .destructive) { pendingDeletion = item }
+                        Button("global.delete", systemImage: DesignKit.Icon.delete, role: .destructive) { pendingDeletion = item }
                             .disabled(subscriptions.isReadOnly)
-                        Button("codes.copyCode", systemImage: "square.on.square") { TwoFactorRow.copyCode(of: item.account) }
+                        Button("codes.copyCode", systemImage: DesignKit.Icon.copy) { TwoFactorRow.copyCode(of: item.account) }
                     }
             }
             if viewModel.undecryptableCount > 0 {
@@ -212,15 +212,15 @@ private struct TwoFactorList: View {
     /// A Mac cell's context menu: Copy Code and Delete.
     @ViewBuilder
     private func codeMenu(for item: VaultItem) -> some View {
-        Button("codes.copyCode", systemImage: "square.on.square") { TwoFactorRow.copyCode(of: item.account) }
+        Button("codes.copyCode", systemImage: DesignKit.Icon.copy) { TwoFactorRow.copyCode(of: item.account) }
         Divider()
-        Button("global.delete", systemImage: "trash", role: .destructive) { pendingDeletion = item }
+        Button("global.delete", systemImage: DesignKit.Icon.delete, role: .destructive) { pendingDeletion = item }
             .disabled(subscriptions.isReadOnly)
     }
 
     /// Says how many entries couldn't be decrypted with this vault key.
     private var undecryptableLabel: some View {
-        Label(LocalizedKey("codes.undecryptable", viewModel.undecryptableCount), systemImage: "exclamationmark.lock")
+        Label(LocalizedKey("codes.undecryptable", viewModel.undecryptableCount), systemImage: DesignKit.Icon.undecryptable)
             .font(.footnote)
             .foregroundStyle(.secondary)
     }
@@ -242,7 +242,7 @@ private struct TwoFactorEmptyState: View {
     var body: some View {
         if let errorMessage {
             ContentUnavailableView {
-                Label("errors.loadVault.title", systemImage: "wifi.exclamationmark")
+                Label("errors.loadVault.title", systemImage: DesignKit.Icon.offline)
             } description: {
                 Text(errorMessage)
             } actions: {
@@ -251,7 +251,7 @@ private struct TwoFactorEmptyState: View {
         } else if isEmpty {
             if hasLoaded {
                 ContentUnavailableView {
-                    Label("codes.empty.title", systemImage: "lock.shield")
+                    Label("codes.empty.title", systemImage: DesignKit.Icon.noAccounts)
                 } description: {
                     Text("codes.empty.message")
                 } actions: {

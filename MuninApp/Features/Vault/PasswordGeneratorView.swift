@@ -23,15 +23,15 @@ struct PasswordGeneratorView: View {
                     .frame(maxWidth: .infinity, minHeight: 60, alignment: .topLeading)
 
                 HStack {
-                    Label(strength.title, systemImage: "checkmark.shield.fill")
+                    Label(strength.title, systemImage: DesignKit.Icon.passwordStrength)
                         .foregroundStyle(strength.color)
                     Spacer()
-                    Button("passwordGenerator.regenerate", systemImage: "arrow.counterclockwise") {
+                    Button("passwordGenerator.regenerate", systemImage: DesignKit.Icon.regenerate) {
                         hapticTaps += 1
                         regenerate()
                     }
                     .labelStyle(.iconOnly)
-                    Button("global.copy", systemImage: "square.on.square") {
+                    Button("global.copy", systemImage: DesignKit.Icon.copy) {
                         hapticTaps += 1
                         Pasteboard.copySensitive(password)
                     }

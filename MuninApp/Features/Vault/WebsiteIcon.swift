@@ -20,7 +20,7 @@ struct WebsiteIcon: View {
                     .scaledToFit()
                     .transition(.opacity)
             } else {
-                Image(systemName: "globe")
+                Image(systemName: DesignKit.Icon.website)
                     .font(.system(size: size * 0.6))
                     .foregroundStyle(.tertiary)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)

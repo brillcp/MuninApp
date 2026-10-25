@@ -37,4 +37,136 @@ enum DesignKit {
         /// A slow, smooth curve, for full-screen transitions like the lock screen.
         static let slowSmooth: Animation = .smooth(duration: 0.45)
     }
+
+    /// SF Symbol names, by what they stand for. Use with `systemImage:` and
+    /// `Image(systemName:)`.
+    enum Icon {
+        // MARK: Sections
+        /// The Vault: passwords.
+        static let vault = "lock.rectangle.stack"
+        /// 2FA accounts, and the Mac menu bar item.
+        static let twoFactor = "key.viewfinder"
+        /// Settings.
+        static let settings = "gearshape"
+        /// Settings, when its sidebar tab is selected.
+        static let settingsSelected = "gearshape.fill"
+        /// Search.
+        static let search = "magnifyingglass"
+
+        // MARK: Actions
+        /// Add a 2FA account.
+        static let add = "plus"
+        /// Create a password.
+        static let createPassword = "plus.square.on.square"
+        /// Copy a value.
+        static let copy = "square.on.square"
+        /// A value was just copied.
+        static let copied = "checkmark"
+        /// Edit an item.
+        static let edit = "square.and.pencil"
+        /// Delete an item.
+        static let delete = "trash"
+        /// Close a panel.
+        static let close = "xmark"
+        /// Reload from Munin.
+        static let refresh = "arrow.clockwise"
+        /// Generate a new password in the generator.
+        static let regenerate = "arrow.counterclockwise"
+        /// Open the password generator.
+        static let generatePassword = "wand.and.stars"
+        /// Import from a file.
+        static let importFile = "folder.badge.plus"
+        /// Export to a file.
+        static let export = "square.and.arrow.up"
+        /// Open an item's website.
+        static let openWebsite = "arrow.up.right.square.fill"
+        /// Reveal a password.
+        static let showPassword = "eye"
+        /// Hide a revealed password.
+        static let hidePassword = "eye.slash"
+        /// A row that opens more detail.
+        static let disclosure = "chevron.right"
+        /// Quit the app (Mac menu bar).
+        static let quit = "power"
+
+        // MARK: Sorting
+        /// The sort menu.
+        static let sort = "arrow.up.arrow.down"
+        /// Sort by title.
+        static let sortByTitle = "textformat"
+        /// Sort by date edited.
+        static let sortByDateEdited = "square.and.pencil"
+        /// Ascending order.
+        static let ascending = "arrow.down"
+        /// Descending order.
+        static let descending = "arrow.up"
+
+        // MARK: Items
+        /// A website, and the placeholder for a missing website icon.
+        static let website = "globe"
+        /// A username.
+        static let username = "person"
+        /// A password (Mac menu bar copy).
+        static let password = "key"
+        /// Scan a 2FA QR code.
+        static let scanQRCode = "qrcode.viewfinder"
+        /// Choose an image or screenshot with a QR code.
+        static let chooseImage = "photo"
+        /// No 2FA accounts yet.
+        static let noAccounts = "lock.shield"
+
+        // MARK: Lock and security
+        /// Lock Munin.
+        static let lock = "lock"
+        /// Locked: read-only mode and auto-lock.
+        static let locked = "lock.fill"
+        /// The master password.
+        static let masterPassword = "lock.shield"
+        /// Unlock with the master password instead of biometrics.
+        static let useMasterPassword = "lock.shield.fill"
+        /// The recovery key.
+        static let recoveryKey = "key"
+        /// The vault key is missing on this device.
+        static let missingKey = "key.slash"
+        /// Face ID.
+        static let faceID = "faceid"
+        /// Touch ID.
+        static let touchID = "touchid"
+        /// A generated password's strength.
+        static let passwordStrength = "checkmark.shield.fill"
+
+        // MARK: Account and subscription
+        /// Subscribe.
+        static let subscribe = "star"
+        /// Restore App Store purchases.
+        static let restorePurchases = "arrow.clockwise"
+        /// Manage the App Store subscription.
+        static let manageSubscription = "creditcard"
+        /// Sign out.
+        static let signOut = "rectangle.portrait.and.arrow.right"
+        /// Delete the account.
+        static let deleteAccount = "xmark.octagon.fill"
+        /// The privacy policy.
+        static let privacyPolicy = "hand.raised"
+        /// The terms of use.
+        static let termsOfUse = "doc.text"
+
+        // MARK: Status
+        /// Something went wrong.
+        static let warning = "exclamationmark.triangle"
+        /// The App Store couldn't renew the subscription.
+        static let billingIssue = "exclamationmark.triangle.fill"
+        /// Munin couldn't be reached.
+        static let offline = "wifi.exclamationmark"
+        /// Items that couldn't be decrypted.
+        static let undecryptable = "exclamationmark.lock"
+    }
+
+    /// Image names in the asset catalog.
+    enum Asset {
+        /// The app icon, shown on the lock screen and the paywall.
+        static let appIcon = "icon-512"
+        /// The raven artwork behind the lock screen.
+        static let lockArtwork = "corpus"
+    }
 }

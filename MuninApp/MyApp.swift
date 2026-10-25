@@ -49,7 +49,7 @@ import SwiftUI
                 .tint(.accent)
         }
 
-        MenuBarExtra("main.window.title", systemImage: "key.viewfinder") {
+        MenuBarExtra("main.window.title", systemImage: DesignKit.Icon.twoFactor) {
             MenuBarContent()
                 .environment(auth)
                 .environment(session)

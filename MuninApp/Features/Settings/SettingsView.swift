@@ -53,21 +53,21 @@ struct SettingsView: View {
                             Text(LocalizedStringKey(status.active ? "settings.subscription.active" : "settings.subscription.inactive"))
                         }
                         if !status.active {
-                            Button("subscription.subscribe", systemImage: "star") {
+                            Button("subscription.subscribe", systemImage: DesignKit.Icon.subscribe) {
                                 hapticTaps += 1
                                 isShowingPaywall = true
                             }
                         }
-                        Button("settings.subscription.restore", systemImage: "arrow.clockwise", action: restorePurchases)
+                        Button("settings.subscription.restore", systemImage: DesignKit.Icon.restorePurchases, action: restorePurchases)
                             .disabled(isRestoring)
                         #if os(iOS)
-                        Button("settings.subscription.manage", systemImage: "creditcard") {
+                        Button("settings.subscription.manage", systemImage: DesignKit.Icon.manageSubscription) {
                             hapticTaps += 1
                             isManagingSubscription = true
                         }
                         #else
                         Link(destination: AppLinks.manageSubscriptions) {
-                            Label("settings.subscription.manage", systemImage: "creditcard")
+                            Label("settings.subscription.manage", systemImage: DesignKit.Icon.manageSubscription)
                         }
                         #endif
                     }
@@ -75,26 +75,26 @@ struct SettingsView: View {
 
                 Section("settings.security") {
                     if let vault = session.vault {
-                        Button("settings.changeMasterPassword", systemImage: "lock.shield") {
+                        Button("settings.changeMasterPassword", systemImage: DesignKit.Icon.masterPassword) {
                             hapticTaps += 1
                             isChangingPassword = true
                         }
-                        Button("account.showRecoveryKey", systemImage: "key") {
+                        Button("account.showRecoveryKey", systemImage: DesignKit.Icon.recoveryKey) {
                             hapticTaps += 1
                             recoveryKey = RecoveryKeyItem(key: VaultKeyStore.recoveryString(for: vault.key))
                         }
                         if session.canUseBiometrics {
                             #if os(macOS)
-                            Toggle("settings.biometrics.touch", systemImage: "faceid", isOn: $session.isBiometricUnlockEnabled)
+                            Toggle("settings.biometrics.touch", systemImage: DesignKit.Icon.touchID, isOn: $session.isBiometricUnlockEnabled)
                             #else
-                            Toggle("settings.biometrics.face", systemImage: "faceid", isOn: $session.isBiometricUnlockEnabled)
+                            Toggle("settings.biometrics.face", systemImage: DesignKit.Icon.faceID, isOn: $session.isBiometricUnlockEnabled)
                             #endif
                         }
                     } else {
                         Text("settings.locked")
                             .foregroundStyle(.secondary)
                     }
-                    Picker("settings.autoLock", systemImage: "lock.fill", selection: $session.autoLockTimeout) {
+                    Picker("settings.autoLock", systemImage: DesignKit.Icon.locked, selection: $session.autoLockTimeout) {
                         ForEach(AutoLockTimeout.allCases) { timeout in
                             Text(timeout.title).tag(timeout)
                         }
@@ -104,8 +104,8 @@ struct SettingsView: View {
 
             if auth.isSignedIn {
                 Section {
-                    Button("settings.export.passwords", systemImage: "square.and.arrow.up", action: confirmPasswordExport)
-                    Button("settings.export.twoFactor", systemImage: "square.and.arrow.up", action: confirmTwoFactorExport)
+                    Button("settings.export.passwords", systemImage: DesignKit.Icon.export, action: confirmPasswordExport)
+                    Button("settings.export.twoFactor", systemImage: DesignKit.Icon.export, action: confirmTwoFactorExport)
                 } header: {
                     Text("settings.data")
                 } footer: {
@@ -119,22 +119,22 @@ struct SettingsView: View {
                     Text(verbatim: Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "")
                 }
                 Link(destination: AppLinks.privacyPolicy) {
-                    Label("settings.privacyPolicy", systemImage: "hand.raised")
+                    Label("settings.privacyPolicy", systemImage: DesignKit.Icon.privacyPolicy)
                 }
                 Link(destination: AppLinks.termsOfUse) {
-                    Label("settings.termsOfUse", systemImage: "doc.text")
+                    Label("settings.termsOfUse", systemImage: DesignKit.Icon.termsOfUse)
                 }
             }
 
             if auth.isSignedIn {
                 Section {
-                    Button("account.signOut", systemImage: "rectangle.portrait.and.arrow.right", role: .destructive) {
+                    Button("account.signOut", systemImage: DesignKit.Icon.signOut, role: .destructive) {
                         hapticTaps += 1
                         auth.signOut()
                     }
                     .foregroundStyle(.red)
                     .tint(.red)
-                    Button("account.delete", systemImage: "xmark.octagon.fill", role: .destructive, action: confirmDeletion)
+                    Button("account.delete", systemImage: DesignKit.Icon.deleteAccount, role: .destructive, action: confirmDeletion)
                         .foregroundStyle(.red)
                         .tint(.red)
                         .disabled(session.vault == nil || isDeletingAccount)
