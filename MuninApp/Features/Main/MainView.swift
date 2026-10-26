@@ -41,7 +41,7 @@ struct MainView: View {
         TabView(selection: $selection) {
             TabSection("main.section.munin") {
                 Tab(value: Section.vault) {
-                    VaultView(viewModel: vaultModel)
+                    VaultView(viewModel: vaultModel, twoFactorModel: twoFactorModel)
                 } label: {
                     SidebarTabLabel(title: "main.tab.vault", systemImage: DesignKit.Icon.vault, isSelected: selection == .vault)
                 }

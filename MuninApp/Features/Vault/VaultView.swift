@@ -34,6 +34,8 @@ struct VaultView: View {
 
     /// The passwords and their selection.
     @Bindable var viewModel: VaultViewModel
+    /// The 2FA accounts, for 2FA secrets in an imported CSV.
+    let twoFactorModel: TwoFactorViewModel
 
     var body: some View {
         columns
@@ -60,15 +62,14 @@ struct VaultView: View {
                 if case .success(let url) = result { prepareImport(from: url) }
             }
             .confirmationDialog("import.confirm.title", item: $importPlan, titleVisibility: .visible) { plan in
-                Button(LocalizedKey("import.confirm.button", plan.newItems.count)) {
-                    Task {
-                        let saved = await viewModel.runImport(plan, auth: auth)
-                        importMessage = Localized("import.done.message", saved)
-                    }
-                }
-                .disabled(plan.newItems.isEmpty)
+                Button(plan.twoFactorAccounts.isEmpty
+                       ? LocalizedKey("import.confirm.button", plan.newItems.count)
+                       : LocalizedKey("import.confirm.buttonAll")) { runImport(plan) }
+                    .disabled(plan.newItems.isEmpty && plan.twoFactorAccounts.isEmpty)
             } message: { plan in
-                Text(LocalizedKey("import.confirm.message", plan.newItems.count, plan.duplicateCount))
+                Text(plan.twoFactorAccounts.isEmpty
+                     ? LocalizedKey("import.confirm.message", plan.newItems.count, plan.duplicateCount)
+                     : LocalizedKey("import.confirm.messageWithCodes", plan.newItems.count, plan.twoFactorAccounts.count, plan.duplicateCount))
             }
             .alert("import.title", item: $importMessage) { _ in
                 Button("global.done") {}
@@ -254,15 +255,43 @@ private extension VaultView {
         .disabled(!viewModel.hasLoaded || viewModel.importProgress != nil || subscriptions.isReadOnly)
     }
 
-    /// Reads the CSV (picked or dropped from Finder) in memory and asks to confirm.
+    /// Reads the CSV (picked or dropped from Finder) in memory and asks to
+    /// confirm. Its 2FA accounts are checked against the 2FA list, which is
+    /// loaded first if the 2FA screen hasn't been opened yet.
     func prepareImport(from url: URL) {
         let isScoped = url.startAccessingSecurityScopedResource()
         defer { if isScoped { url.stopAccessingSecurityScopedResource() } }
+        let parsed: PasswordCSVParser.Import
         do {
-            let rows = try PasswordCSVParser.parse(try Data(contentsOf: url))
-            importPlan = viewModel.planImport(rows)
+            parsed = try PasswordCSVParser.parse(try Data(contentsOf: url))
         } catch {
             importMessage = error.localizedDescription
+            return
+        }
+        Task {
+            if !parsed.twoFactorAccounts.isEmpty, !twoFactorModel.hasLoaded {
+                await twoFactorModel.refresh(auth: auth)
+            }
+            let newAccounts = twoFactorModel.newAccounts(in: parsed.twoFactorAccounts)
+            importPlan = viewModel.planImport(parsed.passwords, twoFactorAccounts: newAccounts)
+        }
+    }
+
+    /// Imports the plan's passwords, then its 2FA accounts, and says how many
+    /// of each were added.
+    func runImport(_ plan: VaultViewModel.ImportPlan) {
+        Task {
+            let saved = await viewModel.runImport(plan, auth: auth)
+            guard !plan.twoFactorAccounts.isEmpty else {
+                importMessage = Localized("import.done.message", saved)
+                return
+            }
+            do {
+                let added = try await twoFactorModel.add(plan.twoFactorAccounts, auth: auth)
+                importMessage = Localized("import.done.messageWithCodes", saved, added)
+            } catch {
+                importMessage = Localized("import.done.message", saved) + "\n\n" + error.muninDescription
+            }
         }
     }
 
@@ -458,7 +487,7 @@ private struct VaultEmptyState: View {
 }
 
 #Preview {
-    VaultView(viewModel: VaultViewModel(session: VaultSession()))
+    VaultView(viewModel: VaultViewModel(session: VaultSession()), twoFactorModel: TwoFactorViewModel(session: VaultSession()))
         .environment(AuthManager())
         .environment(SubscriptionManager())
 }

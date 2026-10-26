@@ -18,13 +18,16 @@ final class VaultViewModel {
         case dateEdited
     }
 
-    /// Rows from a CSV that aren't in the vault yet, and how many were already there.
+    /// Rows from a CSV that aren't in the vault yet, how many were already
+    /// there, and the file's new 2FA accounts.
     struct ImportPlan: Identifiable {
         let id = UUID()
         /// The rows to import.
         let newItems: [PasswordFields]
         /// How many rows were skipped as duplicates.
         let duplicateCount: Int
+        /// 2FA accounts from the file that aren't in Munin yet.
+        let twoFactorAccounts: [OTPAccount]
     }
 
     /// Read at use time, so a changed master password (new proof) and a lock are picked up.
@@ -137,8 +140,10 @@ extension VaultViewModel {
         items.append(try Self.item(from: saved, key: key, userID: userID))
     }
 
-    /// Same name, username and website as an existing item (or an earlier row) counts as a duplicate.
-    func planImport(_ rows: [PasswordFields]) -> ImportPlan {
+    /// Same name, username and website as an existing item (or an earlier row)
+    /// counts as a duplicate. `twoFactorAccounts` are already filtered against
+    /// the 2FA list, and are carried along to be added with the passwords.
+    func planImport(_ rows: [PasswordFields], twoFactorAccounts: [OTPAccount]) -> ImportPlan {
         /// A case- and whitespace-insensitive key for duplicate checks.
         func key(_ name: String, _ username: String, _ url: String) -> String {
             [name, username, url].map { $0.trimmingCharacters(in: .whitespaces).lowercased() }.joined(separator: "\u{1F}")
@@ -148,7 +153,7 @@ extension VaultViewModel {
         for row in rows where seen.insert(key(row.name, row.username, row.url)).inserted {
             newItems.append(row)
         }
-        return ImportPlan(newItems: newItems, duplicateCount: rows.count - newItems.count)
+        return ImportPlan(newItems: newItems, duplicateCount: rows.count - newItems.count, twoFactorAccounts: twoFactorAccounts)
     }
 
     /// Encrypts and uploads each row like a manually created item. Returns how many were saved.
