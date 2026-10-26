@@ -129,7 +129,3 @@ private extension PasswordEditorView {
         }
     }
 }
-
-#Preview {
-    PasswordEditorView { _ in }
-}

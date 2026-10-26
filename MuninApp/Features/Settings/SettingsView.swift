@@ -331,10 +331,3 @@ private struct RecoveryKeyItem: Identifiable {
     let key: String
     var id: String { key }
 }
-
-#Preview {
-    SettingsView()
-        .environment(AuthManager())
-        .environment(VaultSession())
-        .environment(SubscriptionManager())
-}

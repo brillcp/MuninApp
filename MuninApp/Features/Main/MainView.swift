@@ -99,14 +99,6 @@ struct MainView: View {
     }
 }
 
-#Preview {
-    MainView(session: VaultSession())
-        .environment(VaultViewModel(session: VaultSession()))
-        .environment(AuthManager())
-        .environment(VaultSession())
-        .environment(SubscriptionManager())
-}
-
 /// A tab's label. The Mac sidebar tints SF Symbols with the system accent,
 /// ignoring .tint, .listItemTint and .foregroundStyle, so there the symbol is
 /// rendered into a non-template image in fixed colours (the accent, or white

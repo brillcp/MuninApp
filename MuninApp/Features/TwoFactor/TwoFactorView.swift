@@ -264,10 +264,3 @@ private struct TwoFactorEmptyState: View {
         }
     }
 }
-
-#Preview {
-    TwoFactorView(viewModel: TwoFactorViewModel(session: VaultSession()))
-        .environment(AuthManager())
-        .environment(VaultSession())
-        .environment(SubscriptionManager())
-}

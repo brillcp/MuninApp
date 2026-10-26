@@ -95,7 +95,3 @@ private extension PasswordGeneratorView {
         }
     }
 }
-
-#Preview {
-    PasswordGeneratorView { _ in }
-}

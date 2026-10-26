@@ -30,15 +30,4 @@ private struct LockArtwork: View {
     }
 }
 
-#Preview("Biometrics") {
-    LockView()
-        .environment(VaultSession(biometricsAvailable: true))
-        .environment(AuthManager())
-}
-
-#Preview("Master password") {
-    LockView()
-        .environment(VaultSession(biometricsAvailable: false))
-        .environment(AuthManager())
-}
 #endif

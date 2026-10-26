@@ -268,7 +268,3 @@ private struct ManualEntrySection: View {
         }
     }
 }
-
-#Preview {
-    AddAccountView { accounts in accounts.count }
-}

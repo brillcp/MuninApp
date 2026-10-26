@@ -83,9 +83,3 @@ private extension MasterPasswordSetupView {
         Task { await session.setMasterPassword(password, auth: auth) }
     }
 }
-
-#Preview {
-    MasterPasswordSetupView()
-        .environment(AuthManager())
-        .environment(VaultSession())
-}

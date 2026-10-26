@@ -485,9 +485,3 @@ private struct VaultEmptyState: View {
         }
     }
 }
-
-#Preview {
-    VaultView(viewModel: VaultViewModel(session: VaultSession()), twoFactorModel: TwoFactorViewModel(session: VaultSession()))
-        .environment(AuthManager())
-        .environment(SubscriptionManager())
-}

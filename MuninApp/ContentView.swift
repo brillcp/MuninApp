@@ -95,11 +95,3 @@ private struct SignedInContent: View {
         }
     }
 }
-
-#Preview {
-    ContentView()
-        .environment(AuthManager())
-        .environment(VaultSession())
-        .environment(VaultViewModel(session: VaultSession()))
-        .environment(SubscriptionManager())
-}
