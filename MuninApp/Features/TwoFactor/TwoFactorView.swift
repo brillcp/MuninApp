@@ -101,8 +101,8 @@ private extension TwoFactorView {
             .keyboardShortcut("r")
         }
         #else
-        ToolbarItem(placement: .primaryAction) { importButton }
         ToolbarItem(placement: .primaryAction) { addButton }
+        ToolbarItem(placement: .secondaryAction) { importButton }
         #endif
     }
 
@@ -158,6 +158,7 @@ private extension TwoFactorView {
             hapticTaps += 1
             isAdding = true
         }
+        .buttonStyle(.glassProminent)
         .disabled(!viewModel.hasLoaded || subscriptions.isReadOnly)
         .keyboardShortcut("n")
     }

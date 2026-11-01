@@ -208,8 +208,11 @@ private extension VaultView {
         }
         ToolbarItem(placement: .primaryAction) { sortMenu }
         #else
-        ToolbarItem(placement: .primaryAction) { importButton }
         ToolbarItem(placement: .confirmationAction) { createButton }
+        ToolbarItemGroup(placement: .secondaryAction) {
+            importButton
+            sortMenu
+        }
         #endif
     }
 
@@ -241,7 +244,6 @@ private extension VaultView {
             isCreating = true
         }
         .buttonStyle(.glassProminent)
-        .tint(.accent)
         .disabled(subscriptions.isReadOnly)
         .keyboardShortcut("n")
     }
