@@ -33,8 +33,9 @@ struct SearchView: View {
                     Section("search.section.passwords") {
                         ForEach(passwords) { item in
                             NavigationLink(value: item.id) {
-                                SearchPasswordRow(item: item)
+                                PasswordTitleCell(item: item)
                             }
+                            .listRowSeparator(.hidden)
                         }
                     }
                 }
@@ -93,24 +94,6 @@ private extension SearchView {
         codes = twoFactorModel.items.filter {
             $0.account.title.localizedCaseInsensitiveContains(trimmedQuery)
                 || ($0.account.subtitle?.localizedCaseInsensitiveContains(trimmedQuery) ?? false)
-        }
-    }
-}
-
-/// A password result: icon, name and username.
-private struct SearchPasswordRow: View {
-    /// The password item.
-    let item: PasswordItem
-
-    var body: some View {
-        HStack(spacing: DesignKit.Spacing.Primitive.s12) {
-            WebsiteIcon(url: item.url)
-            VStack(alignment: .leading, spacing: DesignKit.Spacing.Primitive.s2) {
-                Text(item.name)
-                Text(item.username)
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-            }
         }
     }
 }
