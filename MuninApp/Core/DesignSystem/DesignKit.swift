@@ -84,8 +84,6 @@ enum DesignKit {
         static let showPassword = "eye"
         /// Hide a revealed password.
         static let hidePassword = "eye.slash"
-        /// A row that opens more detail.
-        static let disclosure = "chevron.right"
         /// Quit the app (Mac menu bar).
         static let quit = "power"
 

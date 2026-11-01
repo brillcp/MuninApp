@@ -70,6 +70,15 @@ final class VaultSession {
         biometricsOverride ?? LAContext().canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: nil)
     }
 
+    /// Whether this device unlocks with Face ID rather than Touch ID, for the
+    /// lock screen's and Settings' labels and icons. iPhone and iPad Pro have
+    /// Face ID; Macs, iPad Air and iPad mini have Touch ID.
+    var usesFaceID: Bool {
+        let context = LAContext()
+        _ = context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: nil)
+        return context.biometryType == .faceID
+    }
+
     /// Previews only: the canvas and most simulators have no Face ID / Touch ID.
     private let biometricsOverride: Bool?
 
@@ -120,6 +129,9 @@ final class VaultSession {
     private var isNewVault = false
     /// Recovery key proof, for PUT /v1/vault-key when resetting.
     private var resetProof: String?
+    /// The request for the wrapped vault key, started by `prepare`. A master
+    /// password unlock waits for it if the lock screen showed before it finished.
+    private var recordFetch: Task<VaultKeyRecord?, any Error>?
 
     // MARK: - Startup
 
@@ -130,6 +142,12 @@ final class VaultSession {
     /// account has no data yet. With data but no key anywhere, the recovery
     /// key is asked for. Signing out deletes this device's biometric copy of
     /// the previous user's key.
+    ///
+    /// When this device has a Face ID / Touch ID copy of the key, the lock
+    /// screen shows straight away and Munin is asked in the background, since
+    /// that copy doesn't need Munin. If Munin then rejects the session, the
+    /// user is signed out (which locks); if Munin has no vault key, the vault
+    /// leaves the unlocked or locked state for the setup it needs.
     func prepare(auth: AuthManager) async {
         let previousUserID = userID
         clear()
@@ -139,13 +157,20 @@ final class VaultSession {
             return
         }
         self.userID = userID
-        state = .checking
+        let unlocksWithoutMunin = offersBiometricUnlock && VaultKeyStore.hasBiometric(userID: userID)
+        state = unlocksWithoutMunin ? .locked : .checking
         do {
             let service = MuninService(tokenProvider: auth.tokenProvider)
-            if let record = try await service.vaultKey() {
+            let fetch = Task { try await service.vaultKey() }
+            recordFetch = fetch
+            if let record = try await fetch.value {
                 self.record = record
-                state = .locked
-            } else if let legacyKey = VaultKeyStore.loadLegacy(userID: userID) {
+                if state == .checking { state = .locked }
+                return
+            }
+            // No vault key on Munin: anything unlocked from this device's copy is out of date.
+            vault = nil
+            if let legacyKey = VaultKeyStore.loadLegacy(userID: userID) {
                 pendingKey = legacyKey
                 state = .needsMasterPassword
             } else if try await service.entries().isEmpty, try await service.passwords().isEmpty {
@@ -162,7 +187,8 @@ final class VaultSession {
         } catch let error where error.isMuninAuthRejection {
             auth.signOut()
         } catch {
-            state = .failed(error.muninDescription)
+            // Already unlocked with Face ID / Touch ID: carry on, the lists show their own errors.
+            if state != .unlocked { state = .failed(error.muninDescription) }
         }
     }
 
@@ -286,11 +312,17 @@ final class VaultSession {
 
     /// Unlocks by deriving a key from the master password and unwrapping the
     /// vault key with it. A wrong password fails to unwrap.
+    ///
+    /// If the lock screen showed before Munin sent the wrapped key, waits for it.
     func unlock(masterPassword: String) async {
-        guard state == .locked, let userID, let record, !isWorking else { return }
+        guard state == .locked, let userID, !isWorking else { return }
         isWorking = true
         defer { isWorking = false }
         errorMessage = nil
+        if self.record == nil, let recordFetch {
+            self.record = try? await recordFetch.value
+        }
+        guard let record, state == .locked else { return }
         do {
             let parameters = try JSONDecoder().decode(KDFParameters.self, from: Data(record.kdf.utf8))
             let keys = try await Self.derive(password: masterPassword, parameters: parameters)
@@ -356,6 +388,7 @@ final class VaultSession {
         vault = nil
         userID = nil
         record = nil
+        recordFetch = nil
         pendingKey = nil
         resetProof = nil
         isNewVault = false

@@ -3,7 +3,7 @@ import Foundation
 /// Server addresses and public keys the app talks to.
 enum APIConfig {
     /// Munin's API, on Cloud Run.
-    static let apiBaseURL = URL(string: "https://munin-877897891391.us-central1.run.app/v1")!
+    static let apiBaseURL = URL(string: "https://munin-baemyjv7oq-ew.a.run.app/v1")!
     /// Munin's auth project.
     static let authProjectURL = "https://sdmkixehvwtqxmcudrxv.supabase.co"
     /// Base URL for auth: the Apple identity token exchange and token refresh.

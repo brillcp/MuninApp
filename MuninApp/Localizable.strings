@@ -168,6 +168,7 @@
 "vault.copyPassword" = "Copy Password";
 "vault.createItem" = "Create Item";
 "vault.delete.button" = "Delete %@";
+"vault.saveFailed.title" = "Couldn't Save Change";
 "vault.delete.message" = "%@ will be removed from all of your devices. This can't be undone.";
 "vault.delete.title" = "Delete Password?";
 "vault.empty.title" = "No items";
@@ -205,7 +206,7 @@
 /** Settings **/
 "settings.about" = "About";
 "settings.autoLock" = "Auto-Lock";
-"settings.biometrics.face" = "Unlock with Face ID ";
+"settings.biometrics.face" = "Unlock with Face ID";
 "settings.biometrics.touch" = "Unlock with Touch ID";
 "settings.changeMasterPassword" = "Change Master Password";
 "settings.currentMasterPassword" = "Current master password";

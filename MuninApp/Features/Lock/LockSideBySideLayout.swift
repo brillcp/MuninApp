@@ -1,8 +1,8 @@
-#if os(macOS)
 import SwiftUI
 
-/// Mac lock screen: logo, unlock actions and version on the left, artwork on the right.
-struct LockView: View {
+/// The lock screen on the Mac and in a full-width iPad window: logo, unlock
+/// actions and version on the left, artwork on the right.
+struct LockSideBySideLayout: View {
     var body: some View {
         HStack(spacing: DesignKit.Spacing.Primitive.s48) {
             VStack(alignment: .leading, spacing: DesignKit.Spacing.Primitive.s16) {
@@ -21,7 +21,7 @@ struct LockView: View {
     }
 }
 
-/// The artwork on the right of the Mac lock screen, from the "munin" image set.
+/// The artwork on the right of the lock screen.
 private struct LockArtwork: View {
     var body: some View {
         Image(DesignKit.Asset.lockArtwork)
@@ -29,5 +29,3 @@ private struct LockArtwork: View {
             .scaledToFit()
     }
 }
-
-#endif

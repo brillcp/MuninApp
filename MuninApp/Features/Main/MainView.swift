@@ -9,8 +9,8 @@ import AppKit
 /// (the Mac has a Settings window, ⌘, instead) and a Search tab. Search comes
 /// last with the `.search` role, so iOS 26 shows it as its own button at the
 /// trailing edge of the tab bar, and selecting it opens the search field.
-/// Opening a password from Search selects it in the Vault tab, which handles
-/// editing and deleting. On the Mac the sidebar's bottom bar links to Settings.
+/// Search opens passwords in its own navigation stack. On the Mac the
+/// sidebar's bottom bar links to Settings.
 struct MainView: View {
     /// The tabs.
     enum Section: Hashable {
@@ -38,6 +38,7 @@ struct MainView: View {
 
     var body: some View {
         @Bindable var subscriptions = subscriptions
+        @Bindable var vaultModel = vaultModel
         TabView(selection: $selection) {
             TabSection("main.section.munin") {
                 Tab(value: Section.vault) {
@@ -60,10 +61,7 @@ struct MainView: View {
                 }
             }
             Tab(value: Section.search, role: .search) {
-                SearchView(vaultModel: vaultModel, twoFactorModel: twoFactorModel) { item in
-                    vaultModel.selection = item.id
-                    selection = .vault
-                }
+                SearchView(vaultModel: vaultModel, twoFactorModel: twoFactorModel)
             }
             #endif
         }
@@ -71,6 +69,11 @@ struct MainView: View {
         .task { await subscriptions.start(auth: auth) }
         .sheet(isPresented: $subscriptions.isPaywallPresented) {
             PaywallView()
+        }
+        .alert("vault.saveFailed.title", item: $vaultModel.failureMessage) { _ in
+            Button("global.done") {}
+        } message: { message in
+            Text(message)
         }
         #if os(macOS)
         .focusedSceneValue(\.mainSection, $selection)

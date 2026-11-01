@@ -56,6 +56,8 @@ enum LockStep: Hashable {
 struct LockPanel: View {
     @Environment(AuthManager.self) private var auth
     @Environment(VaultSession.self) private var session
+    /// Downloads the password list while unlocking.
+    @Environment(VaultViewModel.self) private var vaultModel
     /// Set when the user picks another way to unlock; nil means the default.
     @State private var chosenStep: LockStep?
     /// After Sign in with Apple: start Face ID / Touch ID once the vault is ready.
@@ -69,19 +71,8 @@ struct LockPanel: View {
                     .font(.title.bold())
             }
 
-            if isWorking {
-                ProgressView()
-                    .controlSize(.large)
-                    #if os(iOS)
-                    .frame(maxWidth: .infinity)
-                    #endif
-                    .frame(minHeight: DesignKit.Spacing.Primitive.s48)
-                    .transition(.blurReplace)
-                    .tint(.white)
-            } else {
-                stepView
-                    .transition(.blurReplace)
-            }
+            stepView
+                .transition(.blurReplace)
 
             if auth.isSignedIn {
                 if step == .biometrics || step == .masterPassword, let email = auth.email {
@@ -97,12 +88,8 @@ struct LockPanel: View {
         }
         .padding()
         .frame(maxWidth: .infinity, alignment: .leading)
-        #if os(iOS)
-        .glassEffect(in: .rect(cornerRadius: DesignKit.Spacing.Primitive.s24))
-        #endif
         .disabled(isWorking)
         .animation(DesignKit.Motion.bouncy, value: step)
-        .animation(DesignKit.Motion.bouncy, value: isWorking)
         .onChange(of: auth.userID) { chosenStep = nil }
         .onChange(of: auth.isSigningIn) { wasSigningIn, isSigningIn in
             guard wasSigningIn, !isSigningIn, auth.isSignedIn, auth.signInError == nil else { return }
@@ -164,7 +151,7 @@ private extension LockPanel {
         guard unlocksAfterSignIn, session.state == .locked else { return }
         unlocksAfterSignIn = false
         if session.offersBiometricUnlock {
-            Task { await session.unlockWithBiometrics() }
+            Task { await session.unlockWithBiometrics(prefetchingInto: vaultModel, auth: auth) }
         }
     }
 
@@ -193,12 +180,13 @@ private struct LockSignInStep: View {
                 Task { await auth.complete(result) }
             }
             .signInWithAppleButtonStyle(colorScheme == .dark ? .white : .black)
-            .frame(maxWidth: .infinity)
-            #if os(iOS)
-            .frame(maxHeight: DesignKit.Spacing.Primitive.s56)
-            #endif
+            .frame(maxWidth: .infinity, maxHeight: DesignKit.Spacing.Primitive.s56)
             .controlSize(.large)
             .clipShape(.capsule)
+            .opacity(auth.isSigningIn ? 0.6 : 1)
+            .overlay {
+                if auth.isSigningIn { ProgressView() }
+            }
 
             if let onCancel {
                 LockButton("global.cancel", style: .tertiary, action: onCancel)
@@ -209,31 +197,43 @@ private struct LockSignInStep: View {
 
 /// Face ID / Touch ID, with the master password as the alternative.
 private struct LockBiometricsStep: View {
+    @Environment(AuthManager.self) private var auth
     @Environment(VaultSession.self) private var session
+    /// Downloads the password list while unlocking.
+    @Environment(VaultViewModel.self) private var vaultModel
 
     /// Called by the master password button.
     let onUseMasterPassword: () -> Void
 
     var body: some View {
         HStack(spacing: DesignKit.Spacing.Primitive.s16) {
-            #if os(macOS)
-            LockButton("settings.biometrics.touch", systemImage: DesignKit.Icon.touchID) {
-                Task { await session.unlockWithBiometrics() }
-            }
-            #else
-            LockButton("settings.biometrics.face", systemImage: DesignKit.Icon.faceID) {
-                Task { await session.unlockWithBiometrics() }
-            }
-            #endif
-
+            LockButton(
+                session.usesFaceID ? "settings.biometrics.face" : "settings.biometrics.touch",
+                systemImage: session.usesFaceID ? DesignKit.Icon.faceID : DesignKit.Icon.touchID,
+                isLoading: isUnlocking,
+                action: unlockWithBiometrics
+            )
             LockButton(systemImage: DesignKit.Icon.useMasterPassword, style: .secondary, action: onUseMasterPassword)
         }
+    }
+
+    /// True while unlocking, or while the vault's state is still being checked.
+    private var isUnlocking: Bool {
+        session.isWorking || session.state == .checking
+    }
+
+    /// Unlocks with Face ID / Touch ID while the password list downloads.
+    private func unlockWithBiometrics() {
+        Task { await session.unlockWithBiometrics(prefetchingInto: vaultModel, auth: auth) }
     }
 }
 
 /// Master password field. Offers biometrics (if available) and the recovery key.
 private struct LockMasterPasswordStep: View {
+    @Environment(AuthManager.self) private var auth
     @Environment(VaultSession.self) private var session
+    /// Downloads the password list while unlocking.
+    @Environment(VaultViewModel.self) private var vaultModel
     /// The typed master password, cleared as soon as it's submitted.
     @State private var password = ""
     /// Whether the password field has keyboard focus.
@@ -260,15 +260,15 @@ private struct LockMasterPasswordStep: View {
                 .colorScheme(.light)
 
             HStack {
-                LockButton("lock.unlock", action: unlock)
+                LockButton("lock.unlock", isLoading: session.isWorking || session.state == .checking, action: unlock)
                     .disabled(password.isEmpty)
 
                 if let onUseBiometrics {
-                    #if os(iOS)
-                    LockButton(systemImage: DesignKit.Icon.faceID, style: .secondary, action: onUseBiometrics)
-                    #else
-                    LockButton(systemImage: DesignKit.Icon.touchID, style: .secondary, action: onUseBiometrics)
-                    #endif
+                    LockButton(
+                        systemImage: session.usesFaceID ? DesignKit.Icon.faceID : DesignKit.Icon.touchID,
+                        style: .secondary,
+                        action: onUseBiometrics
+                    )
                 }
             }
             LockButton("lock.forgotMasterPassword", style: .tertiary, action: onForgotPassword)
@@ -280,7 +280,7 @@ private struct LockMasterPasswordStep: View {
         guard !password.isEmpty else { return }
         let entered = password
         password = ""
-        Task { await session.unlock(masterPassword: entered) }
+        Task { await session.unlock(masterPassword: entered, prefetchingInto: vaultModel, auth: auth) }
     }
 }
 
@@ -349,6 +349,8 @@ struct LockButton: View {
     let systemImage: String?
     /// The button's look.
     let style: Style
+    /// Shows a spinner in place of the label, keeping the button's size.
+    let isLoading: Bool
     /// Runs on tap.
     let action: () -> Void
 
@@ -357,11 +359,13 @@ struct LockButton: View {
         _ title: LocalizedStringKey? = nil,
         systemImage: String? = nil,
         style: Style = .primary,
+        isLoading: Bool = false,
         action: @escaping () -> Void
     ) {
         self.title = title
         self.systemImage = systemImage
         self.style = style
+        self.isLoading = isLoading
         self.action = action
     }
 
@@ -373,31 +377,39 @@ struct LockButton: View {
 }
 
 private extension LockButton {
-    /// The unstyled button: title and/or icon, full width on iOS.
+    /// The unstyled button: title and/or icon. Its width comes from
+    /// `.buttonSizing`, set by the lock screen layout.
     var button: some View {
         Button {
             taps += 1
             action()
         } label: {
-            if let title, let systemImage {
-                Label {
-                    Text(title)
-                } icon: {
-                    Image(systemName: systemImage)
-                        .font(.title2)
+            label
+                .opacity(isLoading ? 0 : 1)
+                .overlay {
+                    if isLoading {
+                        ProgressView().controlSize(.small)
+                    }
                 }
-                #if os(iOS)
-                .frame(maxWidth: .infinity)
-                #endif
-            } else if let title {
+        }
+        .animation(DesignKit.Motion.linear, value: isLoading)
+    }
+
+    /// The title and/or icon.
+    @ViewBuilder
+    var label: some View {
+        if let title, let systemImage {
+            Label {
                 Text(title)
-                    #if os(iOS)
-                    .frame(maxWidth: .infinity)
-                    #endif
-            } else if let systemImage {
+            } icon: {
                 Image(systemName: systemImage)
                     .font(.title2)
             }
+        } else if let title {
+            Text(title)
+        } else if let systemImage {
+            Image(systemName: systemImage)
+                .font(.title2)
         }
     }
 
@@ -448,8 +460,6 @@ private extension LockAccountRow {
 }
 
 /// The app's version, at the bottom of the lock screen.
-///
-/// On iOS it gets a shadow so it stays readable on the artwork background.
 struct LockVersionLabel: View {
     var body: some View {
         Text(LocalizedKey("lock.version", Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? ""))

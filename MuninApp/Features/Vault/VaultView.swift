@@ -10,7 +10,7 @@ struct VaultView: View {
     /// Shows the New Password sheet.
     @State private var isCreating = false
     /// The item being edited, with its password and note decrypted for the editor.
-    @State private var editing: EditDraft?
+    @State private var editing: VaultViewModel.EditDraft?
     /// The item waiting for delete confirmation.
     @State private var pendingDeletion: PasswordItem?
     /// Shows the CSV file picker.
@@ -43,19 +43,19 @@ struct VaultView: View {
             .task { await viewModel.refresh(auth: auth) }
             .sheet(isPresented: $isCreating) {
                 PasswordEditorView { fields in
-                    try await viewModel.create(fields, auth: auth)
+                    try viewModel.create(fields, auth: auth)
                 }
             }
             .confirmationDialog("vault.delete.title", item: $pendingDeletion, titleVisibility: .visible) { item in
                 Button(LocalizedKey("vault.delete.button", item.name), role: .destructive) {
-                    Task { await viewModel.delete(item, auth: auth) }
+                    viewModel.delete(item, auth: auth)
                 }
             } message: { item in
                 Text(LocalizedKey("vault.delete.message", item.name))
             }
             .sheet(item: $editing) { draft in
                 PasswordEditorView(fields: draft.fields, isEditing: true) { fields in
-                    try await viewModel.update(draft.item, with: fields, auth: auth)
+                    try viewModel.update(draft.item, with: fields, auth: auth)
                 }
             }
             .fileImporter(isPresented: $isPickingImportFile, allowedContentTypes: [.commaSeparatedText]) { result in
@@ -113,12 +113,7 @@ private extension VaultView {
             listColumn
                 .overlay(alignment: .trailing) {
                     if isDetailVisible {
-                        VaultItemDetail(
-                            item: panelItem,
-                            viewModel: viewModel,
-                            pendingDeletion: $pendingDeletion,
-                            onEdit: startEditing
-                        )
+                        PasswordDetail(item: panelItem, viewModel: viewModel)
                         .safeAreaInset(edge: .top, spacing: DesignKit.Spacing.Primitive.s0) {
                             HStack {
                                 LockButton(systemImage: DesignKit.Icon.close, style: .clear) {
@@ -152,7 +147,7 @@ private extension VaultView {
         NavigationSplitView {
             listColumn
         } detail: {
-            VaultItemDetail(item: viewModel.selectedItem, viewModel: viewModel, pendingDeletion: $pendingDeletion, onEdit: startEditing)
+            PasswordDetail(item: viewModel.selectedItem, viewModel: viewModel)
         }
         #endif
     }
@@ -196,7 +191,7 @@ private extension VaultView {
     /// The toolbar's buttons.
     ///
     /// Mac: Create after the title, then Import and Lock at the far right.
-    /// Edit and Delete are in the detail panel. iOS: Import and Create.
+    /// Edit and Delete are in the detail panel. iOS: Sort, Import and Create.
     @ToolbarContentBuilder
     var toolbarContent: some ToolbarContent {
         ToolbarItem(placement: .navigation) { LockToolbarButton() }
@@ -299,22 +294,10 @@ private extension VaultView {
 
     /// Decrypts the item's password and note and opens the editor with them.
     func startEditing(_ item: PasswordItem) {
-        guard let password = try? viewModel.decrypt(item.encryptedPassword, field: "password", auth: auth),
-              let note = try? viewModel.decrypt(item.encryptedNote, field: "note", auth: auth) else { return }
-        editing = EditDraft(item: item, fields: PasswordFields(
-            name: item.name, url: item.url, username: item.username, password: password, note: note
-        ))
+        editing = viewModel.editDraft(for: item, auth: auth)
     }
 }
 
-/// An item being edited and its decrypted fields, presented as a sheet item.
-private struct EditDraft: Identifiable {
-    /// The item as stored.
-    let item: PasswordItem
-    /// Its fields in plain text, for the editor.
-    let fields: PasswordFields
-    var id: UUID { item.id }
-}
 
 /// The password table (Mac) or list (iOS), with its context menu and empty
 /// states.
@@ -364,67 +347,40 @@ private struct VaultPasswordList: View {
 
     /// The table or list itself. Rows slide in and out when items are added,
     /// deleted, imported, or filtered by the search.
+    ///
+    /// Sorted by title, the rows are split into letter sections (also while
+    /// searching), with an A–Z index on iPhone. Sorted by date edited, flat.
     @ViewBuilder
     private var rows: some View {
-        List(viewModel.visibleItems, selection: $viewModel.selection) { item in
-            NavigationLink(value: item.id) {
-                PasswordTitleCell(name: item.name, username: item.username, url: item.url)
+        List(selection: $viewModel.selection) {
+            if viewModel.sections.isEmpty {
+                ForEach(viewModel.visibleItems, content: row)
+            } else {
+                ForEach(viewModel.sections) { section in
+                    Section(section.letter) {
+                        ForEach(section.items, content: row)
+                    }
+                    #if os(iOS)
+                    .sectionIndexLabel(section.letter)
+                    #endif
+                }
             }
         }
         .listStyle(.plain)
+        #if os(iOS)
+        .listSectionIndexVisibility(UIDevice.current.userInterfaceIdiom == .phone ? .visible : .hidden)
+        #endif
         .animation(DesignKit.Motion.listChange, value: viewModel.visibleItems.map(\.id))
         #if os(macOS)
         .onExitCommand { viewModel.selection = nil }
         #endif
     }
-}
 
-/// The selected password's detail, or nothing. Its own view, so it only
-/// updates when the selection or that item changes.
-///
-/// iOS adds an Edit button (⌘E) to the toolbar; on the Mac, Edit (⌘E) is in
-/// the panel's header. Delete is at the bottom of the detail on both.
-private struct VaultItemDetail: View {
-    @Environment(AuthManager.self) private var auth
-    @Environment(SubscriptionManager.self) private var subscriptions
-    /// Bumped by buttons for a light haptic.
-    @State private var hapticTaps = 0
-
-    /// The item to show; nil shows nothing.
-    let item: PasswordItem?
-    /// Decrypts and copies the item's fields.
-    let viewModel: VaultViewModel
-    /// Set by the detail's Delete, to ask for confirmation.
-    @Binding var pendingDeletion: PasswordItem?
-    /// Called by Edit.
-    let onEdit: (PasswordItem) -> Void
-
-    var body: some View {
-        Group {
-            if let item {
-                PasswordInspector(item: item) { ciphertext, field in
-                    try viewModel.decrypt(ciphertext, field: field, auth: auth)
-                } onCopyPassword: {
-                    Task { await viewModel.copyPassword(item, auth: auth) }
-                } onDelete: {
-                    pendingDeletion = item
-                }
-                .id(item.id)
-            }
+    /// A row that pushes or selects its item.
+    private func row(_ item: PasswordItem) -> some View {
+        NavigationLink(value: item.id) {
+            PasswordTitleCell(name: item.name, username: item.username, url: item.url)
         }
-        #if os(iOS)
-        .toolbar {
-            ToolbarItem(placement: .primaryAction) {
-                Button("global.edit", systemImage: DesignKit.Icon.edit) {
-                    hapticTaps += 1
-                    if let item = viewModel.selectedItem { onEdit(item) }
-                }
-                .disabled(viewModel.selectedItem == nil || subscriptions.isReadOnly)
-                .keyboardShortcut("e")
-            }
-        }
-        .sensoryFeedback(.impact(weight: .light), trigger: hapticTaps)
-        #endif
     }
 }
 

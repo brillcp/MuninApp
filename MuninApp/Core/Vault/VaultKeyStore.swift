@@ -74,6 +74,11 @@ nonisolated enum VaultKeyStore {
         }
     }
 
+    /// Whether this device has a biometric copy of the user's key. Doesn't prompt.
+    static func hasBiometric(userID: String) -> Bool {
+        KeychainService.hasBiometric(account: biometricAccount(userID: userID))
+    }
+
     /// Deletes this device's biometric copy.
     static func deleteBiometric(userID: String) {
         KeychainService.deleteBiometric(account: biometricAccount(userID: userID))

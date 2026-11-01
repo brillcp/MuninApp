@@ -36,7 +36,7 @@ struct ContentView: View {
             #endif
         }
         .animation(DesignKit.Motion.slowSmooth, value: showsLockScreen)
-        .task(id: auth.userID) { await session.prepare(auth: auth) }
+        .task(id: auth.userID, prepare)
         .autoLock(session)
         .onChange(of: session.state) { _, state in
             if state != .unlocked { clearOnLock() }
@@ -45,6 +45,11 @@ struct ContentView: View {
 }
 
 private extension ContentView {
+    /// Works out the vault's state for the signed-in user.
+    func prepare() async {
+        await session.prepare(auth: auth)
+    }
+
     /// Drops the decrypted passwords and the subscription state on lock or
     /// sign-out. The list's row animation is disabled for this, so the rows
     /// don't animate away during the lock transition.

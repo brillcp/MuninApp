@@ -140,6 +140,17 @@ nonisolated enum KeychainService {
         }
     }
 
+    /// Whether a biometric item exists. Doesn't prompt.
+    static func hasBiometric(account: String) -> Bool {
+        let context = LAContext()
+        context.interactionNotAllowed = true
+        var query = baseQuery(account: account)
+        query[kSecMatchLimit as String] = kSecMatchLimitOne
+        query[kSecUseAuthenticationContext as String] = context
+        let status = SecItemCopyMatching(query as CFDictionary, nil)
+        return status == errSecSuccess || status == errSecInteractionNotAllowed
+    }
+
     /// Deletes a biometric item. Doesn't prompt.
     static func deleteBiometric(account: String) {
         delete(account: account)

@@ -3,6 +3,9 @@ import SwiftUI
 
 /// iOS search tab: passwords and 2FA codes in one list, in two sections.
 ///
+/// Tapping a password opens it in Search's own navigation stack, where it can
+/// also be edited and deleted; the Vault tab stays as it was.
+///
 /// Nothing is remembered between searches. Both lists load on appear in case
 /// their tabs haven't been opened yet. The `.searchable` modifier sits on the
 /// NavigationStack (not inside it), as in Apple's search tab examples, so the
@@ -22,8 +25,6 @@ struct SearchView: View {
     let vaultModel: VaultViewModel
     /// The 2FA accounts to search.
     let twoFactorModel: TwoFactorViewModel
-    /// Tapping a password opens it in the Vault tab.
-    let onOpenPassword: (PasswordItem) -> Void
 
     var body: some View {
         NavigationStack {
@@ -31,10 +32,9 @@ struct SearchView: View {
                 if !passwords.isEmpty {
                     Section("search.section.passwords") {
                         ForEach(passwords) { item in
-                            Button { onOpenPassword(item) } label: {
+                            NavigationLink(value: item.id) {
                                 SearchPasswordRow(item: item)
                             }
-                            .foregroundStyle(.primary)
                         }
                     }
                 }
@@ -55,6 +55,9 @@ struct SearchView: View {
                 }
             }
             .navigationTitle("search.title")
+            .navigationDestination(for: PasswordItem.ID.self) { id in
+                PasswordDetail(item: vaultModel.items.first { $0.id == id }, viewModel: vaultModel, dismissesWhenDeleted: true)
+            }
             .task {
                 if !vaultModel.hasLoaded { await vaultModel.refresh(auth: auth) }
                 if !twoFactorModel.hasLoaded { await twoFactorModel.refresh(auth: auth) }
@@ -94,7 +97,7 @@ private extension SearchView {
     }
 }
 
-/// A password result: icon, name, username and a disclosure chevron.
+/// A password result: icon, name and username.
 private struct SearchPasswordRow: View {
     /// The password item.
     let item: PasswordItem
@@ -108,10 +111,6 @@ private struct SearchPasswordRow: View {
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
-            Spacer()
-            Image(systemName: DesignKit.Icon.disclosure)
-                .font(.footnote)
-                .foregroundStyle(.tertiary)
         }
     }
 }

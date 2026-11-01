@@ -30,10 +30,33 @@ final class VaultViewModel {
         let twoFactorAccounts: [OTPAccount]
     }
 
+    /// An item being edited and its decrypted fields, presented as a sheet item.
+    struct EditDraft: Identifiable {
+        /// The item as stored.
+        let item: PasswordItem
+        /// Its fields in plain text, for the editor.
+        let fields: PasswordFields
+        var id: UUID { item.id }
+    }
+
+    /// A letter section of the list when it's sorted by title.
+    struct LetterSection: Identifiable {
+        /// A–Z, Å, Ä, Ö, or # for digits and symbols.
+        let letter: String
+        /// The section's items, in the list's sort order.
+        let items: [PasswordItem]
+        var id: String { letter }
+    }
+
     /// Read at use time, so a changed master password (new proof) and a lock are picked up.
     private let session: VaultSession
+    /// The encrypted passwords, fetched while an unlock is in progress so the
+    /// list can appear as soon as it succeeds. Used once, by `refresh`.
+    private var prefetchTask: Task<[EncryptedPassword], any Error>?
     /// UserDefaults key for `sortOrder`: the column, plus ".reverse" when descending.
     private static let sortDefaultsKey = "munin.vault.sort"
+    /// The section letters in ascending order: #, A–Z, then Å, Ä, Ö.
+    private static let sectionLetters = ["#"] + "ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖ".map(String.init)
 
     /// Every password item, decrypted as far as the list needs.
     private(set) var items: [PasswordItem] = [] {
@@ -48,17 +71,23 @@ final class VaultViewModel {
     private(set) var hasLoaded = false
     /// `items` filtered by `searchText` and sorted by `sortOrder`.
     private(set) var visibleItems: [PasswordItem] = []
+    /// `visibleItems` split into letter sections when sorted by title. Empty
+    /// when sorted by date edited, so the list stays flat.
+    private(set) var sections: [LetterSection] = []
     /// The item matching `selection`, if it still exists.
     private(set) var selectedItem: PasswordItem?
     /// Progress while importing, e.g. 12 of 79.
     private(set) var importProgress: (done: Int, total: Int)?
+    /// Why a create, edit or delete that already showed in the list couldn't
+    /// be saved to Munin (the change is undone). Shown in an alert.
+    var failureMessage: String?
 
     /// The Mac search field's text; filters `visibleItems` by name and username.
     var searchText = "" {
         didSet { recomputeVisibleItems() }
     }
     /// The list's sort order, remembered between launches (UserDefaults).
-    /// Newest first by default.
+    /// Alphabetical (A–Z) by default.
     var sortOrder = VaultViewModel.savedSortOrder() {
         didSet {
             recomputeVisibleItems()
@@ -87,7 +116,7 @@ extension VaultViewModel {
     /// The sort menu's direction: `.forward` is ascending, `.reverse` descending.
     /// Setting it keeps the current column.
     var sortDirection: SortOrder {
-        get { sortOrder.first?.order ?? .reverse }
+        get { sortOrder.first?.order ?? .forward }
         set { sortOrder = [Self.comparator(for: sortColumn, order: newValue)] }
     }
 
@@ -100,14 +129,39 @@ extension VaultViewModel {
         hasLoaded = false
     }
 
+    /// Starts fetching the encrypted passwords while an unlock is in progress.
+    /// They stay encrypted until `refresh` decrypts them, after the unlock
+    /// succeeds. Signed out, any earlier prefetch is dropped.
+    func prefetch(auth: AuthManager) {
+        guard auth.isSignedIn else {
+            prefetchTask = nil
+            return
+        }
+        let service = MuninService(tokenProvider: auth.tokenProvider)
+        prefetchTask = Task { try await service.passwords() }
+    }
+
+    /// Drops a prefetch, after an unlock failed or was cancelled.
+    func discardPrefetch() {
+        prefetchTask?.cancel()
+        prefetchTask = nil
+    }
+
     /// Loads the items from Munin and decrypts their name, URL and username.
+    /// Uses the prefetched passwords the first time, if they arrived.
     /// Items that fail to decrypt are counted in `errorMessage`.
     func refresh(auth: AuthManager) async {
         guard auth.isSignedIn else { return }
         do {
             let vault = try unlockedVault()
             let (key, userID) = (vault.key, vault.userID)
-            let encrypted = try await MuninService(tokenProvider: auth.tokenProvider).passwords()
+            let encrypted: [EncryptedPassword]
+            if let prefetched = prefetchTask, let value = try? await prefetched.value {
+                encrypted = value
+            } else {
+                encrypted = try await MuninService(tokenProvider: auth.tokenProvider).passwords()
+            }
+            prefetchTask = nil
             var decrypted: [PasswordItem] = []
             var failures = 0
             for entry in encrypted {
@@ -131,13 +185,31 @@ extension VaultViewModel {
         }
     }
 
-    /// Encrypts every field, saves the new item to Munin and adds it to the list.
-    func create(_ fields: PasswordFields, auth: AuthManager) async throws {
+    /// Encrypts every field and adds the item to the list straight away, then
+    /// saves it to Munin in the background. Until Munin answers the item has a
+    /// temporary id, replaced by Munin's. If saving fails, the item is removed
+    /// again and `failureMessage` says why. Throws only if it can't encrypt.
+    func create(_ fields: PasswordFields, auth: AuthManager) throws {
         let vault = try unlockedVault()
         let (key, userID) = (vault.key, vault.userID)
         let body = try Self.seal(fields, key: key, userID: userID)
-        let saved = try await MuninService(tokenProvider: auth.tokenProvider).createPassword(body)
-        items.append(try Self.item(from: saved, key: key, userID: userID))
+        let placeholder = PasswordItem(
+            id: UUID(), name: fields.name, url: fields.url, username: fields.username,
+            encryptedPassword: body.password, encryptedNote: body.note, lastUpdated: .now
+        )
+        items.append(placeholder)
+        let service = MuninService(tokenProvider: auth.tokenProvider)
+        Task {
+            do {
+                let saved = try Self.item(from: try await service.createPassword(body), key: key, userID: userID)
+                if let index = items.firstIndex(where: { $0.id == placeholder.id }) { items[index] = saved }
+                if selection == placeholder.id { selection = saved.id }
+            } catch {
+                items.removeAll { $0.id == placeholder.id }
+                if selection == placeholder.id { selection = nil }
+                failureMessage = error.muninDescription
+            }
+        }
     }
 
     /// Same name, username and website as an existing item (or an earlier row)
@@ -163,7 +235,7 @@ extension VaultViewModel {
         var saved = 0
         for fields in plan.newItems {
             do {
-                try await create(fields, auth: auth)
+                try await upload(fields, auth: auth)
                 saved += 1
             } catch {
                 errorMessage = error.muninDescription
@@ -174,29 +246,48 @@ extension VaultViewModel {
         return saved
     }
 
-    /// Encrypts the new fields and replaces the item on Munin (with the master
-    /// password proof), then updates it in the list.
-    func update(_ item: PasswordItem, with fields: PasswordFields, auth: AuthManager) async throws {
+    /// Encrypts the new fields and shows them in the list straight away, then
+    /// replaces the item on Munin (with the master password proof) in the
+    /// background. If that fails, the old version comes back and
+    /// `failureMessage` says why. Throws only if it can't encrypt.
+    func update(_ item: PasswordItem, with fields: PasswordFields, auth: AuthManager) throws {
         let vault = try unlockedVault()
         let (key, userID) = (vault.key, vault.userID)
         let body = try Self.seal(fields, key: key, userID: userID)
-        let saved = try await MuninService(tokenProvider: auth.tokenProvider, proof: vault.proof).updatePassword(id: item.id, body)
-        let updated = try Self.item(from: saved, key: key, userID: userID)
-        if let index = items.firstIndex(where: { $0.id == item.id }) {
-            items[index] = updated
+        guard let index = items.firstIndex(where: { $0.id == item.id }) else { return }
+        let original = items[index]
+        items[index] = PasswordItem(
+            id: item.id, name: fields.name, url: fields.url, username: fields.username,
+            encryptedPassword: body.password, encryptedNote: body.note, lastUpdated: .now
+        )
+        let service = MuninService(tokenProvider: auth.tokenProvider, proof: vault.proof)
+        Task {
+            do {
+                let saved = try Self.item(from: try await service.updatePassword(id: item.id, body), key: key, userID: userID)
+                if let index = items.firstIndex(where: { $0.id == item.id }) { items[index] = saved }
+            } catch {
+                if let index = items.firstIndex(where: { $0.id == item.id }) { items[index] = original }
+                failureMessage = error.muninDescription
+            }
         }
     }
 
-    /// Deletes the item on Munin (with the master password proof) and removes
-    /// it from the list, deselecting it if needed.
-    func delete(_ item: PasswordItem, auth: AuthManager) async {
-        do {
-            let vault = try unlockedVault()
-            try await MuninService(tokenProvider: auth.tokenProvider, proof: vault.proof).deletePassword(id: item.id)
-            if selection == item.id { selection = nil }
-            items.removeAll { $0.id == item.id }
-        } catch {
-            errorMessage = error.muninDescription
+    /// Removes the item from the list straight away (deselecting it), then
+    /// deletes it on Munin (with the master password proof) in the background.
+    /// If that fails, the item comes back and `failureMessage` says why.
+    func delete(_ item: PasswordItem, auth: AuthManager) {
+        guard let vault = try? unlockedVault(),
+              let index = items.firstIndex(where: { $0.id == item.id }) else { return }
+        if selection == item.id { selection = nil }
+        items.remove(at: index)
+        let service = MuninService(tokenProvider: auth.tokenProvider, proof: vault.proof)
+        Task {
+            do {
+                try await service.deletePassword(id: item.id)
+            } catch {
+                items.insert(item, at: min(index, items.count))
+                failureMessage = error.muninDescription
+            }
         }
     }
 
@@ -216,6 +307,16 @@ extension VaultViewModel {
         }
     }
 
+    /// The item with its password and note decrypted, for the editor. Nil if
+    /// they can't be decrypted (for example while locked).
+    func editDraft(for item: PasswordItem, auth: AuthManager) -> EditDraft? {
+        guard let password = try? decrypt(item.encryptedPassword, field: "password", auth: auth),
+              let note = try? decrypt(item.encryptedNote, field: "note", auth: auth) else { return nil }
+        return EditDraft(item: item, fields: PasswordFields(
+            name: item.name, url: item.url, username: item.username, password: password, note: note
+        ))
+    }
+
     /// Decrypts one encrypted field (password or note) for display.
     func decrypt(_ ciphertext: String, field: String, auth: AuthManager) throws -> String {
         let vault = try unlockedVault()
@@ -226,6 +327,16 @@ extension VaultViewModel {
 
 // MARK: - Private functions
 private extension VaultViewModel {
+    /// Encrypts every field, saves the new item to Munin and adds it to the
+    /// list once Munin has it. Used by the import, which counts what was saved.
+    func upload(_ fields: PasswordFields, auth: AuthManager) async throws {
+        let vault = try unlockedVault()
+        let (key, userID) = (vault.key, vault.userID)
+        let body = try Self.seal(fields, key: key, userID: userID)
+        let saved = try await MuninService(tokenProvider: auth.tokenProvider).createPassword(body)
+        items.append(try Self.item(from: saved, key: key, userID: userID))
+    }
+
     /// The unlocked vault, or `VaultError.keyMissing` while locked.
     func unlockedVault() throws -> UnlockedVault {
         guard let vault = session.vault else { throw VaultError.keyMissing }
@@ -240,6 +351,7 @@ private extension VaultViewModel {
                 || $0.username.localizedCaseInsensitiveContains(searchText)
         }
         visibleItems = filtered.sorted(using: sortOrder)
+        sections = sortColumn == .title ? Self.sections(for: visibleItems, order: sortDirection) : []
     }
 
     /// Recomputes `selectedItem` from `selection` and `items`.
@@ -256,6 +368,26 @@ private extension VaultViewModel {
         UserDefaults.standard.set(key, forKey: Self.sortDefaultsKey)
     }
 
+    /// Groups items by their name's first letter, keeping their order within
+    /// each section. Sections run #, A–Z, Å, Ä, Ö, reversed when descending.
+    static func sections(for items: [PasswordItem], order: SortOrder) -> [LetterSection] {
+        let grouped = Dictionary(grouping: items, by: sectionLetter(for:))
+        let letters = order == .reverse ? Array(sectionLetters.reversed()) : sectionLetters
+        return letters.compactMap { letter in
+            grouped[letter].map { LetterSection(letter: letter, items: $0) }
+        }
+    }
+
+    /// The name's first letter in upper case, with accents dropped except on
+    /// Å, Ä and Ö. Digits, symbols, other letters and empty names get #.
+    static func sectionLetter(for item: PasswordItem) -> String {
+        guard let first = item.name.trimmingCharacters(in: .whitespacesAndNewlines).first else { return "#" }
+        let letter = String(first).uppercased()
+        if ["Å", "Ä", "Ö"].contains(letter) { return letter }
+        let folded = letter.folding(options: .diacriticInsensitive, locale: nil)
+        return sectionLetters.contains(folded) ? folded : "#"
+    }
+
     /// The comparator for a column and direction.
     static func comparator(for column: SortColumn, order: SortOrder) -> KeyPathComparator<PasswordItem> {
         switch column {
@@ -264,13 +396,13 @@ private extension VaultViewModel {
         }
     }
 
-    /// The sort order saved by the last launch, or newest first.
+    /// The sort order saved by the last launch, or alphabetical (A–Z).
     static func savedSortOrder() -> [KeyPathComparator<PasswordItem>] {
         switch UserDefaults.standard.string(forKey: sortDefaultsKey) {
-        case "name": [KeyPathComparator(\PasswordItem.name)]
         case "name.reverse": [KeyPathComparator(\PasswordItem.name, order: .reverse)]
         case "lastUpdated": [KeyPathComparator(\PasswordItem.lastUpdated)]
-        default: [KeyPathComparator(\PasswordItem.lastUpdated, order: .reverse)]
+        case "lastUpdated.reverse": [KeyPathComparator(\PasswordItem.lastUpdated, order: .reverse)]
+        default: [KeyPathComparator(\PasswordItem.name)]
         }
     }
 
