@@ -50,13 +50,14 @@ private extension PaywallView {
 /// restore couldn't be linked.
 private struct PaywallHeader: View {
     @Environment(SubscriptionManager.self) private var subscriptions
+    @Environment(\.colorScheme) private var colorScheme
     @Environment(\.openURL) private var openURL
     /// iOS: shows the App Store's Manage Subscriptions sheet.
     @State private var isManagingSubscription = false
 
     var body: some View {
         VStack(spacing: DesignKit.Spacing.Primitive.s12) {
-            Image(DesignKit.Asset.appIcon)
+            Image(colorScheme == .light ? DesignKit.Asset.appIcon : DesignKit.Asset.appIconDark)
                 .resizable()
                 .scaledToFit()
                 .frame(width: 128)

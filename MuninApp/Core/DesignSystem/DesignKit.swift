@@ -166,6 +166,7 @@ enum DesignKit {
     enum Asset {
         /// The app icon, shown on the lock screen and the paywall.
         static let appIcon = "icon-512"
+        static let appIconDark = "icon-dark-512"
         /// The raven artwork behind the lock screen.
         static let lockArtwork = "corpus"
         /// The raven silhouette in the Mac menu bar: a template image, sized

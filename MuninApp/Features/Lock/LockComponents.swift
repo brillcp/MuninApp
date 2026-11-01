@@ -6,9 +6,11 @@ import SwiftUI
 /// The app's logo and name, shown at the top left of the Mac lock screen.
 /// The image comes from the "Logo" image set.
 struct LockLogo: View {
+    @Environment(\.colorScheme) private var colorScheme
+
     var body: some View {
         VStack(alignment: .leading, spacing: DesignKit.Spacing.Primitive.s16) {
-            Image(DesignKit.Asset.appIcon)
+            Image(colorScheme == .light ? DesignKit.Asset.appIcon : DesignKit.Asset.appIconDark)
                 .resizable()
                 .scaledToFit()
                 .frame(width: DesignKit.Spacing.Primitive.s64)
