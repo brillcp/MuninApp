@@ -4,13 +4,22 @@ import Security
 
 /// Reads and writes the app's Keychain items.
 ///
-/// Everything lives in the data protection keychain under the app's bundle
-/// identifier. Session tokens and the user are this-device-only; the legacy
-/// vault key is synced through iCloud Keychain; the biometric copy of the
-/// vault key needs Face ID / Touch ID to read.
+/// Everything lives in the data protection keychain under one service, in a
+/// keychain group shared with the AutoFill extension, so both see the same
+/// session and the same Face ID / Touch ID copy of the vault key. Session
+/// tokens and the user are this-device-only; the legacy vault key is synced
+/// through iCloud Keychain (outside the shared group); the biometric copy of
+/// the vault key needs Face ID / Touch ID to read.
+///
+/// Items saved before the shared group existed are moved into it the first
+/// time they're read.
 nonisolated enum KeychainService {
-    /// The Keychain service all items are stored under.
-    private static let service = Bundle.main.bundleIdentifier ?? "dev.gidlof.Munin"
+    /// The Keychain service all items are stored under: the app's bundle
+    /// identifier, also from the extension.
+    private static let service = "dev.gidlof.Munin"
+    /// The keychain group shared by the app and the AutoFill extension
+    /// (`MuninKeychainGroup` in Info.plist, with the team prefix filled in).
+    private static let sharedGroup = Bundle.main.object(forInfoDictionaryKey: "MuninKeychainGroup") as? String
     /// Account for the access token.
     private static let accessTokenAccount = "auth.token"
     /// Account for the refresh token.
@@ -56,7 +65,7 @@ nonisolated enum KeychainService {
 
     /// Reads a synced item.
     static func loadSynced(account: String) -> Data? {
-        var query = baseQuery(account: account)
+        var query = baseQuery(account: account, inSharedGroup: false)
         query[kSecAttrSynchronizable as String] = true
         query[kSecReturnData as String] = true
         query[kSecMatchLimit as String] = kSecMatchLimitOne
@@ -68,7 +77,7 @@ nonisolated enum KeychainService {
 
     /// Saves an item that syncs to the user's other devices through iCloud Keychain.
     static func saveSynced(_ data: Data, account: String) {
-        var query = baseQuery(account: account)
+        var query = baseQuery(account: account, inSharedGroup: false)
         query[kSecAttrSynchronizable as String] = true
         SecItemDelete(query as CFDictionary)
         query[kSecValueData as String] = data
@@ -79,7 +88,7 @@ nonisolated enum KeychainService {
 
     /// Deletes a synced item, on every device.
     static func deleteSynced(account: String) {
-        var query = baseQuery(account: account)
+        var query = baseQuery(account: account, inSharedGroup: false)
         query[kSecAttrSynchronizable as String] = true
         SecItemDelete(query as CFDictionary)
     }
@@ -121,7 +130,7 @@ nonisolated enum KeychainService {
         // The lock screen has its own "Use Master Password" button.
         context.localizedFallbackTitle = ""
 
-        var query = baseQuery(account: account)
+        var query = baseQuery(account: account, inSharedGroup: false)
         query[kSecReturnData as String] = true
         query[kSecMatchLimit as String] = kSecMatchLimitOne
         query[kSecUseAuthenticationContext as String] = context
@@ -130,6 +139,10 @@ nonisolated enum KeychainService {
         switch SecItemCopyMatching(query as CFDictionary, &result) {
         case errSecSuccess:
             guard let data = result as? Data else { return .failed }
+            if !hasBiometric(account: account, inSharedGroup: true) {
+                // Saved before the shared group: move it there for the AutoFill extension.
+                _ = saveBiometric(data, account: account)
+            }
             return .success(data)
         case errSecItemNotFound:
             return .notFound
@@ -141,10 +154,12 @@ nonisolated enum KeychainService {
     }
 
     /// Whether a biometric item exists. Doesn't prompt.
-    static func hasBiometric(account: String) -> Bool {
+    /// - Parameter inSharedGroup: Only look in the shared group; otherwise
+    ///   also finds an item saved before it existed.
+    static func hasBiometric(account: String, inSharedGroup: Bool = false) -> Bool {
         let context = LAContext()
         context.interactionNotAllowed = true
-        var query = baseQuery(account: account)
+        var query = baseQuery(account: account, inSharedGroup: inSharedGroup)
         query[kSecMatchLimit as String] = kSecMatchLimitOne
         query[kSecUseAuthenticationContext as String] = context
         let status = SecItemCopyMatching(query as CFDictionary, nil)
@@ -153,26 +168,39 @@ nonisolated enum KeychainService {
 
     /// Deletes a biometric item. Doesn't prompt.
     static func deleteBiometric(account: String) {
-        delete(account: account)
+        deleteEverywhere(account: account)
     }
 
     // MARK: - Private
 
     /// Reads a this-device item as a UTF-8 string.
+    /// Reads an item from the shared group. One saved before the group
+    /// existed is moved into it.
     private static func load(account: String) -> String? {
-        var query = baseQuery(account: account)
+        if let data = read(baseQuery(account: account)) {
+            return String(data: data, encoding: .utf8)
+        }
+        guard sharedGroup != nil,
+              let data = read(baseQuery(account: account, inSharedGroup: false)),
+              let value = String(data: data, encoding: .utf8) else { return nil }
+        save(value, account: account)
+        return value
+    }
+
+    /// The data of the first item matching `query`, without prompting.
+    private static func read(_ query: [String: Any]) -> Data? {
+        var query = query
         query[kSecReturnData as String] = true
         query[kSecMatchLimit as String] = kSecMatchLimitOne
-
         var result: CFTypeRef?
-        guard SecItemCopyMatching(query as CFDictionary, &result) == errSecSuccess,
-              let data = result as? Data else { return nil }
-        return String(data: data, encoding: .utf8)
+        guard SecItemCopyMatching(query as CFDictionary, &result) == errSecSuccess else { return nil }
+        return result as? Data
     }
 
     /// Saves a string as a this-device item, replacing any existing one.
+    /// Saves to the shared group, replacing the item wherever it was.
     private static func save(_ value: String, account: String) {
-        delete(account: account)
+        deleteEverywhere(account: account)
         var query = baseQuery(account: account)
         query[kSecValueData as String] = Data(value.utf8)
         query[kSecAttrAccessible as String] = kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
@@ -180,18 +208,31 @@ nonisolated enum KeychainService {
     }
 
     /// Deletes the non-synced item for `account`.
+    /// Deletes the item in every group this app can reach, including one
+    /// saved before the shared group.
     private static func delete(account: String) {
-        SecItemDelete(baseQuery(account: account) as CFDictionary)
+        deleteEverywhere(account: account)
+    }
+
+    /// Deletes the item in every group this app can reach.
+    private static func deleteEverywhere(account: String) {
+        SecItemDelete(baseQuery(account: account, inSharedGroup: false) as CFDictionary)
     }
 
     /// The query attributes every item shares: class, service and account.
-    private static func baseQuery(account: String) -> [String: Any] {
-        [
+    /// The query for one item. In the shared group by default; without it,
+    /// a search covers every group the app can reach.
+    private static func baseQuery(account: String, inSharedGroup: Bool = true) -> [String: Any] {
+        var query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: service,
             kSecAttrAccount as String: account,
             // macOS: use the iOS-style keychain, so there's no login-keychain prompt.
             kSecUseDataProtectionKeychain as String: true,
         ]
+        if inSharedGroup, let sharedGroup {
+            query[kSecAttrAccessGroup as String] = sharedGroup
+        }
+        return query
     }
 }

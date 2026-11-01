@@ -91,8 +91,9 @@ final class AuthManager {
         }
     }
 
-    /// Deletes the session tokens and the stored user.
+    /// Deletes the session tokens, the stored user and the AutoFill keyboard suggestions.
     func signOut() {
+        AutoFillIdentities.removeAll()
         tokenProvider.reset()
         setUser(id: nil, email: nil)
         isSignedIn = false

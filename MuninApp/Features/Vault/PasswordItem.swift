@@ -32,3 +32,15 @@ struct PasswordFields {
     /// A free-form note.
     var note = ""
 }
+
+extension PasswordItem {
+    /// The website's domain in lower case, without "www.", for AutoFill: nil
+    /// if the URL has no host. "https://www.github.com/login" → "github.com".
+    var domain: String? {
+        let trimmed = url.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return nil }
+        let host = URL(string: trimmed)?.host ?? URL(string: "https://\(trimmed)")?.host
+        guard let host = host?.lowercased(), !host.isEmpty else { return nil }
+        return host.hasPrefix("www.") ? String(host.dropFirst(4)) : host
+    }
+}

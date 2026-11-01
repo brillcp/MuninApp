@@ -126,6 +126,8 @@ enum DesignKit {
         static let recoveryKey = "key"
         /// The vault key is missing on this device.
         static let missingKey = "key.slash"
+        /// Set up AutoFill.
+        static let autoFill = "key.horizontal"
         /// Face ID.
         static let faceID = "faceid"
         /// Touch ID.

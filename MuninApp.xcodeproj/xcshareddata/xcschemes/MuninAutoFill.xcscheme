@@ -57,15 +57,19 @@
       allowLocationSimulation = "YES"
       launchAutomaticallySubstyle = "2"
       queueDebuggingEnabled = "No">
-      <BuildableProductRunnable
-         runnableDebuggingMode = "0">
+      <RemoteRunnable
+         runnableDebuggingMode = "0"
+         BundleIdentifier = "dev.gidlof.Munin"
+         RemotePath = "/var/containers/Bundle/Application/A61F4880-FFB0-4AB1-A569-EE0F5FE93C41/MuninApp.app">
+      </RemoteRunnable>
+      <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "000000000000000100000000"
             BuildableName = "MuninApp.app"
             ReferencedContainer = "container:MuninApp.xcodeproj">
          </BuildableReference>
-      </BuildableProductRunnable>
+      </MacroExpansion>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"

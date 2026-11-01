@@ -1,3 +1,4 @@
+import AuthenticationServices
 import StoreKit
 import SwiftUI
 import UniformTypeIdentifiers
@@ -50,7 +51,7 @@ struct SettingsView: View {
                 if let status = subscriptions.status, status.required {
                     Section("settings.subscription") {
                         LabeledContent("settings.subscription.status") {
-                            Text(LocalizedStringKey(status.active ? "settings.subscription.active" : "settings.subscription.inactive"))
+                            Text(status.active ? "settings.subscription.active" : "settings.subscription.inactive")
                         }
                         if !status.active {
                             Button("subscription.subscribe", systemImage: DesignKit.Icon.subscribe) {
@@ -95,6 +96,7 @@ struct SettingsView: View {
                             Text(timeout.title).tag(timeout)
                         }
                     }
+                    Button("settings.autoFill", systemImage: DesignKit.Icon.autoFill, action: openAutoFillSettings)
                 }
             }
 
@@ -105,7 +107,7 @@ struct SettingsView: View {
                 } header: {
                     Text("settings.data")
                 } footer: {
-                    Text(LocalizedStringKey(session.vault == nil ? "settings.export.locked" : "settings.export.footer"))
+                    Text(session.vault == nil ? "settings.export.locked" : "settings.export.footer")
                 }
                 .disabled(session.vault == nil || isPreparingExport)
             }
@@ -249,6 +251,13 @@ private extension SettingsView {
     /// whether it was saved or cancelled.
     func savePanelChanged() {
         if !isSavingExport { exportDocument = nil }
+    }
+
+    /// Opens subscription management: the system sheet on iOS, the App Store page on Mac.
+    /// Opens the system's AutoFill & Passwords settings, where Munin is turned on.
+    func openAutoFillSettings() {
+        hapticTaps += 1
+        Task { try? await ASSettingsHelper.openCredentialProviderAppSettings() }
     }
 
     /// Opens subscription management: the system sheet on iOS, the App Store page on Mac.

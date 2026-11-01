@@ -33,7 +33,7 @@ final class AuthTokenProvider: TokenProvidable {
     init() {
         cachedToken = KeychainService.loadAccessToken()
         cachedRefreshToken = KeychainService.loadRefreshToken()
-        cachedExpiresAt = UserDefaults.standard.object(forKey: Self.expiryKey) as? Date
+        cachedExpiresAt = cachedToken.flatMap(Self.expiry(of:))
 
         let server = ServerConfig(
             baseURL: APIConfig.authBaseURL,
@@ -61,7 +61,6 @@ extension AuthTokenProvider {
         cachedToken = nil
         cachedRefreshToken = nil
         cachedExpiresAt = nil
-        UserDefaults.standard.removeObject(forKey: Self.expiryKey)
         KeychainService.deleteAccessToken()
         KeychainService.deleteRefreshToken()
     }
@@ -82,30 +81,55 @@ extension AuthTokenProvider {
 
     /// Refreshes the JWT if it's missing, expired, or within `refreshLeeway`
     /// of expiry. No-op if a valid token is cached.
+    ///
+    /// The app and the AutoFill extension share the session through the
+    /// Keychain, so before refreshing it rereads the Keychain: the other one
+    /// may have refreshed already, and the auth server rotates the refresh
+    /// token, so using an old one could end the session.
     func ensureFresh() async throws {
-        if cachedToken != nil,
-           let cachedExpiresAt,
-           cachedExpiresAt.timeIntervalSinceNow > refreshLeeway {
-            return
-        }
+        if isFresh { return }
+        reloadFromKeychain()
+        if isFresh { return }
         try await refreshShared()
     }
 }
 
 private extension AuthTokenProvider {
-    /// UserDefaults key for the access token's expiry date (not a secret).
-    static let expiryKey = "auth.token.expires_at"
+    /// Whether the cached access token is valid for longer than `refreshLeeway`.
+    var isFresh: Bool {
+        guard cachedToken != nil, let cachedExpiresAt else { return false }
+        return cachedExpiresAt.timeIntervalSinceNow > refreshLeeway
+    }
+
+    /// Picks up a session the other process (app or AutoFill) saved.
+    func reloadFromKeychain() {
+        cachedToken = KeychainService.loadAccessToken()
+        cachedRefreshToken = KeychainService.loadRefreshToken()
+        cachedExpiresAt = cachedToken.flatMap(Self.expiry(of:))
+    }
+
+    /// The access token's expiry, from the `exp` claim in its payload. The
+    /// token isn't verified here; Munin does that.
+    static func expiry(of token: String) -> Date? {
+        let parts = token.split(separator: ".")
+        guard parts.count == 3 else { return nil }
+        var base64 = parts[1].replacingOccurrences(of: "-", with: "+").replacingOccurrences(of: "_", with: "/")
+        base64 += String(repeating: "=", count: (4 - base64.count % 4) % 4)
+        struct Claims: Decodable { let exp: TimeInterval }
+        guard let data = Data(base64Encoded: base64),
+              let claims = try? JSONDecoder().decode(Claims.self, from: data) else { return nil }
+        return Date(timeIntervalSince1970: claims.exp)
+    }
 
     /// Caches a new session and saves its tokens to the Keychain.
     func setSession(_ session: AuthSession) {
         cachedToken = session.accessToken
         cachedRefreshToken = session.refreshToken
-        let expiresAt = Date().addingTimeInterval(TimeInterval(session.expiresIn))
-        cachedExpiresAt = expiresAt
+        cachedExpiresAt = Self.expiry(of: session.accessToken)
+            ?? Date().addingTimeInterval(TimeInterval(session.expiresIn))
 
         KeychainService.saveAccessToken(session.accessToken)
         KeychainService.saveRefreshToken(session.refreshToken)
-        UserDefaults.standard.set(expiresAt, forKey: Self.expiryKey)
     }
 
     /// Coalesces concurrent refresh attempts onto a single in-flight Task.

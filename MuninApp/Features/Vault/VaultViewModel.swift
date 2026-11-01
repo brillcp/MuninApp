@@ -172,6 +172,7 @@ extension VaultViewModel {
                 }
             }
             items = decrypted
+            AutoFillIdentities.update(items)
             errorMessage = failures > 0 ? Localized("vault.undecryptable", failures) : nil
             hasLoaded = true
         } catch is CancellationError {
@@ -203,6 +204,7 @@ extension VaultViewModel {
             do {
                 let saved = try Self.item(from: try await service.createPassword(body), key: key, userID: userID)
                 if let index = items.firstIndex(where: { $0.id == placeholder.id }) { items[index] = saved }
+                AutoFillIdentities.update(items)
                 if selection == placeholder.id { selection = saved.id }
             } catch {
                 items.removeAll { $0.id == placeholder.id }
@@ -243,6 +245,7 @@ extension VaultViewModel {
             }
             importProgress = (saved, plan.newItems.count)
         }
+        AutoFillIdentities.update(items)
         return saved
     }
 
@@ -265,6 +268,7 @@ extension VaultViewModel {
             do {
                 let saved = try Self.item(from: try await service.updatePassword(id: item.id, body), key: key, userID: userID)
                 if let index = items.firstIndex(where: { $0.id == item.id }) { items[index] = saved }
+                AutoFillIdentities.update(items)
             } catch {
                 if let index = items.firstIndex(where: { $0.id == item.id }) { items[index] = original }
                 failureMessage = error.muninDescription
@@ -284,6 +288,7 @@ extension VaultViewModel {
         Task {
             do {
                 try await service.deletePassword(id: item.id)
+                AutoFillIdentities.update(items)
             } catch {
                 items.insert(item, at: min(index, items.count))
                 failureMessage = error.muninDescription

@@ -30,7 +30,7 @@ struct RecoveryKeyView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background(.quaternary, in: RoundedRectangle(cornerRadius: DesignKit.Spacing.Primitive.s12))
 
-                Button(LocalizedStringKey(didCopy ? "global.copied" : "vaultKey.recovery.copy"), systemImage: didCopy ? DesignKit.Icon.copied : DesignKit.Icon.copy) {
+                Button(didCopy ? "global.copied" : "vaultKey.recovery.copy", systemImage: didCopy ? DesignKit.Icon.copied : DesignKit.Icon.copy) {
                     #if os(iOS)
                     UIPasteboard.general.string = recoveryKey
                     #else

@@ -87,7 +87,7 @@ struct PasswordEditorView: View {
             .onAppear { isNameFocused = !isEditing }
             .sensoryFeedback(.impact(weight: .light), trigger: hapticTaps)
             .disabled(isSaving)
-            .navigationTitle(LocalizedStringKey(isEditing ? "passwordEditor.editTitle" : "passwordEditor.newTitle"))
+            .navigationTitle(isEditing ? "passwordEditor.editTitle" : "passwordEditor.newTitle")
             #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif

@@ -1,58 +1,91 @@
-//
-//  CredentialProviderViewController.swift
-//  MuninAutoFill
-//
-//  Created by Viktor Gidlöf on 2026-11-01.
-//
-
 import AuthenticationServices
+import SwiftUI
 
-class CredentialProviderViewController: ASCredentialProviderViewController {
+/// Munin's AutoFill: shown by the system when the user picks Munin for a
+/// login or a 2FA code field, or taps one of Munin's keyboard suggestions.
+///
+/// The interface is `AutoFillView` (SwiftUI), hosted as a child controller.
+/// It unlocks with Face ID / Touch ID, loads the vault from Munin, and hands
+/// the chosen password or code back here to complete the request.
+final class CredentialProviderViewController: ASCredentialProviderViewController {
+    /// No storyboard or nib: the view is a plain container for the SwiftUI view.
+    override func loadView() {
+        #if os(macOS)
+        view = NSView()
+        preferredContentSize = NSSize(width: 440, height: 560)
+        #else
+        view = UIView()
+        #endif
+    }
 
-    /*
-     Prepare your UI to list available credentials for the user to choose from. The items in
-     'serviceIdentifiers' describe the service the user is logging in to, so your extension can
-     prioritize the most relevant credentials in the list.
-    */
+    /// The user chose Munin for a login field: list matching passwords first.
     override func prepareCredentialList(for serviceIdentifiers: [ASCredentialServiceIdentifier]) {
+        show(AutoFillModel(mode: .passwords, serviceIdentifiers: serviceIdentifiers, handler: self))
     }
 
-    /*
-     Implement this method if your extension supports showing credentials in the QuickType bar.
-     When the user selects a credential from your app, this method will be called with the
-     ASPasswordCredentialIdentity your app has previously saved to the ASCredentialIdentityStore.
-     Provide the password by completing the extension request with the associated ASPasswordCredential.
-     If using the credential would require showing custom UI for authenticating the user, cancel
-     the request with error code ASExtensionError.userInteractionRequired.
+    /// The user chose Munin for a 2FA code field: list matching codes first.
+    override func prepareOneTimeCodeCredentialList(for serviceIdentifiers: [ASCredentialServiceIdentifier]) {
+        show(AutoFillModel(mode: .oneTimeCodes, serviceIdentifiers: serviceIdentifiers, handler: self))
+    }
 
-    override func provideCredentialWithoutUserInteraction(for credentialIdentity: ASPasswordCredentialIdentity) {
-        let databaseIsUnlocked = true
-        if (databaseIsUnlocked) {
-            let passwordCredential = ASPasswordCredential(user: "j_appleseed", password: "apple1234")
-            self.extensionContext.completeRequest(withSelectedCredential: passwordCredential, completionHandler: nil)
-        } else {
-            self.extensionContext.cancelRequest(withError: NSError(domain: ASExtensionErrorDomain, code:ASExtensionError.userInteractionRequired.rawValue))
+    /// A keyboard suggestion was tapped. Munin always needs Face ID / Touch ID
+    /// first, so the system is asked to show the interface instead.
+    override func provideCredentialWithoutUserInteraction(for credentialRequest: any ASCredentialRequest) {
+        extensionContext.cancelRequest(withError: Self.error(.userInteractionRequired))
+    }
+
+    /// The interface for a tapped keyboard suggestion: unlocks and fills that
+    /// item straight away.
+    override func prepareInterfaceToProvideCredential(for credentialRequest: any ASCredentialRequest) {
+        guard let identity = credentialRequest.credentialIdentity as? ASPasswordCredentialIdentity,
+              let id = identity.recordIdentifier.flatMap(UUID.init(uuidString:)) else {
+            extensionContext.cancelRequest(withError: Self.error(.credentialIdentityNotFound))
+            return
         }
+        show(AutoFillModel(mode: .passwords, serviceIdentifiers: [identity.serviceIdentifier], requestedItemID: id, handler: self))
     }
-    */
+}
 
-    /*
-     Implement this method if provideCredentialWithoutUserInteraction(for:) can fail with
-     ASExtensionError.userInteractionRequired. In this case, the system may present your extension's
-     UI and call this method. Show appropriate UI for authenticating the user then provide the password
-     by completing the extension request with the associated ASPasswordCredential.
-
-    override func prepareInterfaceToProvideCredential(for credentialIdentity: ASPasswordCredentialIdentity) {
-    }
-    */
-
-    @IBAction func cancel(_ sender: AnyObject?) {
-        self.extensionContext.cancelRequest(withError: NSError(domain: ASExtensionErrorDomain, code: ASExtensionError.userCanceled.rawValue))
+// MARK: - AutoFillHandler
+extension CredentialProviderViewController: AutoFillHandler {
+    func fill(user: String, password: String) {
+        extensionContext.completeRequest(withSelectedCredential: ASPasswordCredential(user: user, password: password), completionHandler: nil)
     }
 
-    @IBAction func passwordSelected(_ sender: AnyObject?) {
-        let passwordCredential = ASPasswordCredential(user: "j_appleseed", password: "apple1234")
-        self.extensionContext.completeRequest(withSelectedCredential: passwordCredential, completionHandler: nil)
+    func fill(code: String) {
+        extensionContext.completeOneTimeCodeRequest(using: ASOneTimeCodeCredential(code: code), completionHandler: nil)
     }
 
+    func cancel() {
+        extensionContext.cancelRequest(withError: Self.error(.userCanceled))
+    }
+}
+
+private extension CredentialProviderViewController {
+    /// Puts the SwiftUI interface for `model` in the view, filling it.
+    func show(_ model: AutoFillModel) {
+        let root = AutoFillView(model: model)
+        #if os(macOS)
+        let host = NSHostingController(rootView: root)
+        #else
+        let host = UIHostingController(rootView: root)
+        #endif
+        addChild(host)
+        host.view.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(host.view)
+        NSLayoutConstraint.activate([
+            host.view.topAnchor.constraint(equalTo: view.topAnchor),
+            host.view.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            host.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            host.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+        ])
+        #if os(iOS)
+        host.didMove(toParent: self)
+        #endif
+    }
+
+    /// An AutoFill error for the system.
+    static func error(_ code: ASExtensionError.Code) -> NSError {
+        NSError(domain: ASExtensionErrorDomain, code: code.rawValue)
+    }
 }

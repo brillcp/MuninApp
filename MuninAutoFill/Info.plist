@@ -2,10 +2,19 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>MuninKeychainGroup</key>
+	<string>$(AppIdentifierPrefix)dev.gidlof.Munin.shared</string>
 	<key>NSExtension</key>
 	<dict>
 		<key>NSExtensionAttributes</key>
 		<dict>
+			<key>ASCredentialProviderExtensionCapabilities</key>
+			<dict>
+				<key>ProvidesOneTimeCodes</key>
+				<true/>
+				<key>ProvidesPasswords</key>
+				<true/>
+			</dict>
 			<key>ASCredentialProviderExtensionShowsConfigurationUI</key>
 			<false/>
 		</dict>

@@ -205,6 +205,7 @@
 
 /** Settings **/
 "settings.about" = "About";
+"settings.autoFill" = "Set Up AutoFill";
 "settings.autoLock" = "Auto-Lock";
 "settings.biometrics.face" = "Unlock with Face ID";
 "settings.biometrics.touch" = "Unlock with Touch ID";
@@ -273,3 +274,15 @@
 "subscription.subscribe" = "Subscribe";
 "subscription.title" = "Munin";
 "subscription.updatePayment" = "Update Payment";
+
+/** AutoFill **/
+"autofill.allCodes" = "All Codes";
+"autofill.allPasswords" = "All Passwords";
+"autofill.decryptFailed" = "This password couldn't be decrypted.";
+"autofill.locked" = "Munin Is Locked";
+"autofill.search" = "Search";
+"autofill.signIn" = "Open Munin and sign in to use AutoFill.";
+"autofill.suggested" = "Suggested";
+"autofill.title" = "Munin";
+"autofill.turnOnBiometrics" = "Open Munin, turn on Face ID or Touch ID unlock in Settings, and unlock Munin once. Then AutoFill can use it.";
+"autofill.unavailable" = "AutoFill Isn't Available";
