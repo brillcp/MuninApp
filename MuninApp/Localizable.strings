@@ -50,6 +50,10 @@
 "codes.import.done" = "Imported %lld accounts. Delete the file now: it has your 2FA secrets in plain text.";
 "codes.import.error.empty" = "This file has no 2FA links. Choose a file with one otpauth:// link per line, like Munin's export.";
 "codes.import.title" = "Import";
+"codes.link.add" = "Add";
+"codes.link.failed" = "Couldn't Add Code";
+"codes.link.message" = "%@ will be encrypted and added to Munin.";
+"codes.link.title" = "Add 2FA Account?";
 "codes.empty.message" = "Scan a 2FA QR code or import from Google Authenticator.";
 "codes.empty.title" = "No accounts yet";
 "codes.row.copyHint" = "Copies the code";

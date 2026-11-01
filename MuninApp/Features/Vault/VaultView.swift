@@ -381,6 +381,7 @@ private struct VaultPasswordList: View {
         NavigationLink(value: item.id) {
             PasswordTitleCell(name: item.name, username: item.username, url: item.url)
         }
+        .listRowSeparator(.hidden)
     }
 }
 
@@ -405,8 +406,7 @@ private struct PasswordTitleCell: View {
                 }
             }
         }
-        .padding(.vertical, DesignKit.Spacing.Primitive.s6)
-        .padding(.leading, DesignKit.Spacing.Primitive.s2)
+        .padding(.vertical, DesignKit.Spacing.Primitive.s4)
     }
 }
 

@@ -19,6 +19,9 @@ struct ContentView: View {
     @Environment(VaultSession.self) private var session
     @Environment(VaultViewModel.self) private var vaultModel
     @Environment(SubscriptionManager.self) private var subscriptions
+    /// A 2FA setup link (`otpauth://`) that opened Munin, waiting for the
+    /// vault to unlock. Munin can be chosen under "Set Up Codes In".
+    @State private var pendingCodeLink: URL?
 
     var body: some View {
         ZStack {
@@ -26,7 +29,7 @@ struct ContentView: View {
                 if showsLockScreen {
                     LockView()
                 } else {
-                    SignedInContent()
+                    SignedInContent(pendingCodeLink: $pendingCodeLink)
                 }
             }
             #if os(iOS)
@@ -37,6 +40,7 @@ struct ContentView: View {
         }
         .animation(DesignKit.Motion.slowSmooth, value: showsLockScreen)
         .task(id: auth.userID, prepare)
+        .onOpenURL(perform: openURL)
         .autoLock(session)
         .onChange(of: session.state) { _, state in
             if state != .unlocked { clearOnLock() }
@@ -45,6 +49,13 @@ struct ContentView: View {
 }
 
 private extension ContentView {
+    /// Keeps a 2FA setup link until the vault is unlocked, where the 2FA
+    /// screen asks to add it.
+    func openURL(_ url: URL) {
+        guard let scheme = url.scheme?.lowercased(), scheme == "otpauth" || scheme == "otpauth-migration" else { return }
+        pendingCodeLink = url
+    }
+
     /// Works out the vault's state for the signed-in user.
     func prepare() async {
         await session.prepare(auth: auth)
@@ -77,11 +88,14 @@ private struct SignedInContent: View {
     @Environment(AuthManager.self) private var auth
     @Environment(VaultSession.self) private var session
 
+    /// A 2FA setup link waiting to be added, passed on to the main view.
+    @Binding var pendingCodeLink: URL?
+
     var body: some View {
         @Bindable var session = session
         switch session.state {
         case .unlocked:
-            MainView(session: session)
+            MainView(session: session, pendingCodeLink: $pendingCodeLink)
                 .sheet(item: $session.newRecoveryKey) { item in
                     RecoveryKeyView(recoveryKey: item.key)
                 }
