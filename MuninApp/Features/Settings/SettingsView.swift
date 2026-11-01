@@ -151,6 +151,7 @@ struct SettingsView: View {
             }
         }
         .formStyle(.grouped)
+        .focusEffectDisabled()
         .sensoryFeedback(.impact(weight: .light), trigger: hapticTaps)
         .sheet(isPresented: $isChangingPassword) {
             ChangeMasterPasswordView()
