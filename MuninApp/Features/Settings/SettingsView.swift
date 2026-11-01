@@ -139,8 +139,6 @@ struct SettingsView: View {
                         hapticTaps += 1
                         auth.signOut()
                     }
-                    .foregroundStyle(.red)
-                    .tint(.red)
                     Button("account.delete", systemImage: DesignKit.Icon.deleteAccount, role: .destructive, action: confirmDeletion)
                         .foregroundStyle(.red)
                         .tint(.red)
