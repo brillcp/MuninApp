@@ -14,6 +14,8 @@ import SwiftUI
     @State private var vaultModel: VaultViewModel
     /// The App Store subscription, shared by the main window and Settings.
     @State private var subscriptions = SubscriptionManager()
+    /// Whether Munin is turned on for AutoFill, shared by the main window and Settings.
+    @State private var autoFill = AutoFillSetup()
 
     /// Creates the shared models and, on the Mac, applies the AppKit colour
     /// overrides (table selection and accent).
@@ -45,6 +47,7 @@ import SwiftUI
                 .environment(auth)
                 .environment(session)
                 .environment(subscriptions)
+                .environment(autoFill)
                 .tint(.accent)
         }
 
@@ -80,6 +83,7 @@ import SwiftUI
             .environment(session)
             .environment(vaultModel)
             .environment(subscriptions)
+            .environment(autoFill)
             .tint(.accent)
     }
 }

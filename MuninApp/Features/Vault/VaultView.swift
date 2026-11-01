@@ -7,6 +7,8 @@ struct VaultView: View {
     @Environment(AuthManager.self) private var auth
     /// Read-only without a subscription: no creating, importing, editing or deleting.
     @Environment(SubscriptionManager.self) private var subscriptions
+    /// Shows the AutoFill banner while Munin isn't turned on for AutoFill.
+    @Environment(AutoFillSetup.self) private var autoFill
     /// Shows the New Password sheet.
     @State private var isCreating = false
     /// The item being edited, with its password and note decrypted for the editor.
@@ -41,6 +43,7 @@ struct VaultView: View {
         columns
             .sensoryFeedback(.impact(weight: .light), trigger: hapticTaps)
             .task { await viewModel.refresh(auth: auth) }
+            .onChange(of: autoFill.isEnabled, autoFillChanged)
             .sheet(isPresented: $isCreating) {
                 PasswordEditorView { fields in
                     try viewModel.create(fields, auth: auth)
@@ -171,6 +174,8 @@ private extension VaultView {
                 ReadOnlyBanner()
             } else if subscriptions.isInGracePeriod {
                 BillingIssueBanner()
+            } else if autoFill.showsBanner {
+                AutoFillBanner()
             }
         }
         #if os(macOS)
@@ -292,6 +297,12 @@ private extension VaultView {
         }
     }
 
+    /// Once AutoFill is turned on, fills in the keyboard suggestions, which
+    /// the system only keeps while it's on.
+    func autoFillChanged() {
+        if autoFill.isEnabled == true { AutoFillIdentities.update(viewModel.items) }
+    }
+
     /// Decrypts the item's password and note and opens the editor with them.
     func startEditing(_ item: PasswordItem) {
         editing = viewModel.editDraft(for: item, auth: auth)
@@ -379,34 +390,29 @@ private struct VaultPasswordList: View {
     /// A row that pushes or selects its item.
     private func row(_ item: PasswordItem) -> some View {
         NavigationLink(value: item.id) {
-            PasswordTitleCell(name: item.name, username: item.username, url: item.url)
+            PasswordTitleCell(item: item)
         }
         .listRowSeparator(.hidden)
     }
 }
 
 /// A password row: website icon, name, and the username underneath.
-private struct PasswordTitleCell: View {
-    /// The item's name.
-    let name: String
-    /// The item's username.
-    let username: String
-    /// The item's website, for the icon.
-    let url: String
+struct PasswordTitleCell: View {
+    /// The item.
+    let item: PasswordItem
 
     var body: some View {
         HStack(spacing: DesignKit.Spacing.Primitive.s12) {
-            WebsiteIcon(url: url)
+            WebsiteIcon(url: item.url)
             VStack(alignment: .leading, spacing: DesignKit.Spacing.Primitive.s4) {
-                Text(name)
-                if !username.isEmpty {
-                    Text(username)
+                Text(item.name)
+                if !item.username.isEmpty {
+                    Text(item.username)
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                 }
             }
         }
-        .padding(.vertical, DesignKit.Spacing.Primitive.s4)
     }
 }
 

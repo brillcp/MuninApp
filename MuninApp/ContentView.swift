@@ -19,6 +19,9 @@ struct ContentView: View {
     @Environment(VaultSession.self) private var session
     @Environment(VaultViewModel.self) private var vaultModel
     @Environment(SubscriptionManager.self) private var subscriptions
+    /// Rechecked whenever the app becomes active, e.g. back from Settings.
+    @Environment(AutoFillSetup.self) private var autoFill
+    @Environment(\.scenePhase) private var scenePhase
     /// A 2FA setup link (`otpauth://`) that opened Munin, waiting for the
     /// vault to unlock. Munin can be chosen under "Set Up Codes In".
     @State private var pendingCodeLink: URL?
@@ -41,6 +44,7 @@ struct ContentView: View {
         .animation(DesignKit.Motion.slowSmooth, value: showsLockScreen)
         .task(id: auth.userID, prepare)
         .onOpenURL(perform: openURL)
+        .onChange(of: scenePhase, initial: true, refreshAutoFill)
         .autoLock(session)
         .onChange(of: session.state) { _, state in
             if state != .unlocked { clearOnLock() }
@@ -54,6 +58,12 @@ private extension ContentView {
     func openURL(_ url: URL) {
         guard let scheme = url.scheme?.lowercased(), scheme == "otpauth" || scheme == "otpauth-migration" else { return }
         pendingCodeLink = url
+    }
+
+    /// Checks whether Munin is turned on for AutoFill when the app becomes active.
+    func refreshAutoFill() {
+        guard scenePhase == .active else { return }
+        Task { await autoFill.refresh() }
     }
 
     /// Works out the vault's state for the signed-in user.

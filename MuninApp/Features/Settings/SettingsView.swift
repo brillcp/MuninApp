@@ -1,4 +1,3 @@
-import AuthenticationServices
 import StoreKit
 import SwiftUI
 import UniformTypeIdentifiers
@@ -8,6 +7,8 @@ struct SettingsView: View {
     @Environment(AuthManager.self) private var auth
     @Environment(VaultSession.self) private var session
     @Environment(SubscriptionManager.self) private var subscriptions
+    /// Whether Munin is turned on for AutoFill.
+    @Environment(AutoFillSetup.self) private var autoFill
     @Environment(\.openURL) private var openURL
 
     /// Shows the Change Master Password sheet.
@@ -20,6 +21,8 @@ struct SettingsView: View {
     @State private var isShowingPaywall = false
     /// iOS: shows the App Store's Manage Subscriptions sheet.
     @State private var isManagingSubscription = false
+    /// Shows the AutoFill setup guide.
+    @State private var isShowingAutoFillGuide = false
     /// True while Restore Purchases runs.
     @State private var isRestoring = false
     /// Shows the Delete Account confirmation.
@@ -96,7 +99,13 @@ struct SettingsView: View {
                             Text(timeout.title).tag(timeout)
                         }
                     }
-                    Button("settings.autoFill", systemImage: DesignKit.Icon.autoFill, action: openAutoFillSettings)
+                    Button(action: showAutoFillGuide) {
+                        LabeledContent {
+                            Text(LocalizedStringKey(autoFill.isEnabled == true ? "settings.autoFill.on" : "settings.autoFill.off"))
+                        } label: {
+                            Label("settings.autoFill", systemImage: DesignKit.Icon.autoFill)
+                        }
+                    }
                 }
             }
 
@@ -154,6 +163,10 @@ struct SettingsView: View {
         .sheet(isPresented: $isShowingPaywall) {
             PaywallView()
         }
+        .sheet(isPresented: $isShowingAutoFillGuide) {
+            AutoFillSetupView()
+        }
+        .task(autoFill.refresh)
         .confirmationDialog("account.delete.title", isPresented: $isConfirmingDeletion, titleVisibility: .visible) {
             Button("account.delete", role: .destructive, action: deleteAccount)
             if subscriptions.status?.active == true {
@@ -254,10 +267,10 @@ private extension SettingsView {
     }
 
     /// Opens subscription management: the system sheet on iOS, the App Store page on Mac.
-    /// Opens the system's AutoFill & Passwords settings, where Munin is turned on.
-    func openAutoFillSettings() {
+    /// Opens the AutoFill setup guide.
+    func showAutoFillGuide() {
         hapticTaps += 1
-        Task { try? await ASSettingsHelper.openCredentialProviderAppSettings() }
+        isShowingAutoFillGuide = true
     }
 
     /// Opens subscription management: the system sheet on iOS, the App Store page on Mac.

@@ -209,7 +209,9 @@
 
 /** Settings **/
 "settings.about" = "About";
-"settings.autoFill" = "Set Up AutoFill";
+"settings.autoFill" = "AutoFill";
+"settings.autoFill.off" = "Off";
+"settings.autoFill.on" = "On";
 "settings.autoLock" = "Auto-Lock";
 "settings.biometrics.face" = "Unlock with Face ID";
 "settings.biometrics.touch" = "Unlock with Touch ID";
@@ -282,6 +284,18 @@
 /** AutoFill **/
 "autofill.allCodes" = "All Codes";
 "autofill.allPasswords" = "All Passwords";
+"autofill.banner" = "Fill passwords and 2FA codes with Munin.";
+"autofill.banner.setUp" = "Set Up";
+"autofill.setup.done" = "Munin is turned on for AutoFill.";
+"autofill.setup.message" = "Munin can fill passwords and 2FA codes in Safari and apps, after Face ID or Touch ID. Passwords stay encrypted until you pick one.";
+"autofill.setup.openSettings" = "Open Settings";
+"autofill.setup.step1.ios" = "Open Settings and go to General ▸ AutoFill & Passwords.";
+"autofill.setup.step1.mac" = "Open System Settings and go to General ▸ AutoFill & Passwords.";
+"autofill.setup.step2" = "Under AutoFill From, turn on Munin.";
+"autofill.setup.step3.ios" = "In Safari or an app, tap a login field and pick Munin above the keyboard.";
+"autofill.setup.step3.mac" = "In Safari, click a login field and choose Munin from the key menu.";
+"autofill.setup.step4" = "Optional: choose Munin under Set Up Codes In, so 2FA setup links open in Munin.";
+"autofill.setup.turnOn" = "Turn On AutoFill";
 "autofill.decryptFailed" = "This password couldn't be decrypted.";
 "autofill.locked" = "Munin Is Locked";
 "autofill.search" = "Search";

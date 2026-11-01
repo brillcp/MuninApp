@@ -28,6 +28,8 @@ struct MainView: View {
     @Environment(VaultViewModel.self) private var vaultModel
     /// Shows the paywall after unlocking while the vault is read-only.
     @Environment(SubscriptionManager.self) private var subscriptions
+    /// Presents the AutoFill setup guide from the Vault's banner.
+    @Environment(AutoFillSetup.self) private var autoFill
     /// Shared by the 2FA and Search tabs.
     @State private var twoFactorModel: TwoFactorViewModel
     /// Accounts from a 2FA setup link, waiting for confirmation.
@@ -47,6 +49,7 @@ struct MainView: View {
     var body: some View {
         @Bindable var subscriptions = subscriptions
         @Bindable var vaultModel = vaultModel
+        @Bindable var autoFill = autoFill
         TabView(selection: $selection) {
             TabSection("main.section.munin") {
                 Tab(value: Section.vault) {
@@ -77,6 +80,9 @@ struct MainView: View {
         .task { await subscriptions.start(auth: auth) }
         .sheet(isPresented: $subscriptions.isPaywallPresented) {
             PaywallView()
+        }
+        .sheet(isPresented: $autoFill.isGuidePresented) {
+            AutoFillSetupView()
         }
         .alert("vault.saveFailed.title", item: $vaultModel.failureMessage) { _ in
             Button("global.done") {}
