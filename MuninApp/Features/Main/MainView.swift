@@ -77,6 +77,7 @@ struct MainView: View {
             #endif
         }
         .tabViewStyle(.sidebarAdaptable)
+        .scrollIndicators(.never)
         .task { await subscriptions.start(auth: auth) }
         .sheet(isPresented: $subscriptions.isPaywallPresented) {
             PaywallView()
