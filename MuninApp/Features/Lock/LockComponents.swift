@@ -214,6 +214,7 @@ private struct LockBiometricsStep: View {
                 action: unlockWithBiometrics
             )
             LockButton(systemImage: DesignKit.Icon.useMasterPassword, style: .secondary, action: onUseMasterPassword)
+                .buttonSizing(.fitted)
         }
     }
 
@@ -269,6 +270,7 @@ private struct LockMasterPasswordStep: View {
                         style: .secondary,
                         action: onUseBiometrics
                     )
+                    .buttonSizing(.fitted)
                 }
             }
             LockButton("lock.forgotMasterPassword", style: .tertiary, action: onForgotPassword)
