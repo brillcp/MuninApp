@@ -83,9 +83,6 @@ struct TwoFactorView: View {
 
 private extension TwoFactorView {
     /// The toolbar's buttons.
-    ///
-    /// Mac: Add after the title, then Import, Refresh and Lock at the far right.
-    /// iOS: Import and Add (Lock comes from `barkToolbar`).
     @ToolbarContentBuilder
     var toolbarContent: some ToolbarContent {
         ToolbarItem(placement: .navigation) { LockToolbarButton() }
