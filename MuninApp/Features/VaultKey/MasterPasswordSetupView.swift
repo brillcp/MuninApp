@@ -51,6 +51,7 @@ struct MasterPasswordSetupView: View {
                 if session.isWorking {
                     ProgressView()
                         .controlSize(.small)
+                        .tint(.primary)
                 }
             }
         }

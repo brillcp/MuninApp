@@ -40,6 +40,7 @@ private extension AutoFillView {
             ProgressView()
                 .controlSize(.large)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .tint(.primary)
         case .ready:
             switch model.mode {
             case .passwords: passwordList

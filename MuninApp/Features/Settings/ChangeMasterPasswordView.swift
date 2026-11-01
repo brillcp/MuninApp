@@ -57,6 +57,7 @@ struct ChangeMasterPasswordView: View {
                     if session.isWorking {
                         ProgressView()
                             .controlSize(.small)
+                            .tint(.primary)
                     } else {
                         Button("global.save", action: save)
                             .disabled(!isValid)

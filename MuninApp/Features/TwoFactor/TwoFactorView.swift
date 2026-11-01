@@ -196,9 +196,11 @@ private struct TwoFactorList: View {
             ForEach(viewModel.items) { item in
                 TwoFactorRow(account: item.account, clock: clock)
                     .contextMenu {
+                        Button("codes.copyCode", systemImage: DesignKit.Icon.copy) { TwoFactorRow.copyCode(of: item.account) }
+                            .tint(.primary)
                         Button("global.delete", systemImage: DesignKit.Icon.delete, role: .destructive) { pendingDeletion = item }
                             .disabled(subscriptions.isReadOnly)
-                        Button("codes.copyCode", systemImage: DesignKit.Icon.copy) { TwoFactorRow.copyCode(of: item.account) }
+                            .tint(.red)
                     }
             }
             if viewModel.undecryptableCount > 0 {
@@ -261,6 +263,7 @@ private struct TwoFactorEmptyState: View {
                 }
             } else {
                 ProgressView()
+                    .tint(.primary)
             }
         }
     }

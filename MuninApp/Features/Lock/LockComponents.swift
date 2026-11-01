@@ -185,7 +185,7 @@ private struct LockSignInStep: View {
             .clipShape(.capsule)
             .opacity(auth.isSigningIn ? 0.6 : 1)
             .overlay {
-                if auth.isSigningIn { ProgressView() }
+                if auth.isSigningIn { ProgressView().tint(.primary) }
             }
 
             if let onCancel {
@@ -390,7 +390,9 @@ private extension LockButton {
                 .opacity(isLoading ? 0 : 1)
                 .overlay {
                     if isLoading {
-                        ProgressView().controlSize(.small)
+                        ProgressView()
+                            .controlSize(.small)
+                            .tint(.primary)
                     }
                 }
         }

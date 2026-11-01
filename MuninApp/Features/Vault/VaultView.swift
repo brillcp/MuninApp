@@ -335,14 +335,18 @@ private struct VaultPasswordList: View {
                         Pasteboard.copy(item.username)
                     }
                     .disabled(item.username.isEmpty)
+                    .tint(.primary)
                     Button("vault.copyPassword", systemImage: DesignKit.Icon.copy) {
                         Task { await viewModel.copyPassword(item, auth: auth) }
                     }
+                    .tint(.primary)
                     Button("global.edit", systemImage: DesignKit.Icon.edit) { onEdit(item) }
                         .disabled(subscriptions.isReadOnly)
+                        .tint(.primary)
                     Divider()
                     Button("global.delete", systemImage: DesignKit.Icon.delete, role: .destructive) { pendingDeletion = item }
                         .disabled(subscriptions.isReadOnly)
+                        .tint(.red)
                 }
             }
             .overlay {
@@ -443,6 +447,7 @@ private struct VaultEmptyState: View {
                 ContentUnavailableView("vault.empty.title", systemImage: DesignKit.Icon.vault)
             } else {
                 ProgressView()
+                    .tint(.primary)
             }
         } else if let searchText {
             ContentUnavailableView.search(text: searchText)
