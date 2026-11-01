@@ -103,6 +103,7 @@ struct PasswordEditorView: View {
                         hapticTaps += 1
                         save()
                     }
+                    .buttonStyle(.glassProminent)
                     .disabled(fields.name.trimmingCharacters(in: .whitespaces).isEmpty || isSaving)
                 }
             }
