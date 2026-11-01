@@ -9,11 +9,37 @@
 /* Begin PBXBuildFile section */
 		000000000000000150000001 /* Networking in Frameworks */ = {isa = PBXBuildFile; productRef = 000000000000000150000002 /* Networking */; };
 		D50F658C308502BF002F5A73 /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = D50F658B308502BF002F5A73 /* AppIcon.icon */; };
+		D542113E3097CF4900FD91D4 /* AuthenticationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D542113D3097CF4900FD91D4 /* AuthenticationServices.framework */; };
+		D54211493097CF4900FD91D4 /* MuninAutoFill.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = D542113B3097CF4900FD91D4 /* MuninAutoFill.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		D54211473097CF4900FD91D4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 000000000000000000000000 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D542113A3097CF4900FD91D4;
+			remoteInfo = MuninAutoFill;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		D542114E3097CF4900FD91D4 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			dstPath = "";
+			dstSubfolder = PlugIns;
+			files = (
+				D54211493097CF4900FD91D4 /* MuninAutoFill.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		000000000000000000000120 /* MuninApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MuninApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D50F658B308502BF002F5A73 /* AppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = AppIcon.icon; sourceTree = "<group>"; };
+		D542113B3097CF4900FD91D4 /* MuninAutoFill.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = MuninAutoFill.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		D542113D3097CF4900FD91D4 /* AuthenticationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AuthenticationServices.framework; path = System/Library/Frameworks/AuthenticationServices.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -23,6 +49,13 @@
 				Info.plist,
 			);
 			target = 000000000000000100000000 /* MuninApp */;
+		};
+		D542114D3097CF4900FD91D4 /* Exceptions for "MuninAutoFill" folder in "MuninAutoFill" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = D542113A3097CF4900FD91D4 /* MuninAutoFill */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
@@ -35,6 +68,14 @@
 			path = MuninApp;
 			sourceTree = "<group>";
 		};
+		D542113F3097CF4900FD91D4 /* MuninAutoFill */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				D542114D3097CF4900FD91D4 /* Exceptions for "MuninAutoFill" folder in "MuninAutoFill" target */,
+			);
+			path = MuninAutoFill;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -42,6 +83,12 @@
 			isa = PBXFrameworksBuildPhase;
 			files = (
 				000000000000000150000001 /* Networking in Frameworks */,
+			);
+		};
+		D54211383097CF4900FD91D4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			files = (
+				D542113E3097CF4900FD91D4 /* AuthenticationServices.framework in Frameworks */,
 			);
 		};
 /* End PBXFrameworksBuildPhase section */
@@ -52,6 +99,8 @@
 			children = (
 				D50F658B308502BF002F5A73 /* AppIcon.icon */,
 				000000000000000000000010 /* MuninApp */,
+				D542113F3097CF4900FD91D4 /* MuninAutoFill */,
+				D542113C3097CF4900FD91D4 /* Frameworks */,
 				000000000000000000000020 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -60,8 +109,17 @@
 			isa = PBXGroup;
 			children = (
 				000000000000000000000120 /* MuninApp.app */,
+				D542113B3097CF4900FD91D4 /* MuninAutoFill.appex */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		D542113C3097CF4900FD91D4 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				D542113D3097CF4900FD91D4 /* AuthenticationServices.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -74,8 +132,12 @@
 				000000000000000120000000 /* Sources */,
 				000000000000000130000000 /* Frameworks */,
 				000000000000000140000000 /* Resources */,
+				D542114E3097CF4900FD91D4 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
+			);
+			dependencies = (
+				D54211483097CF4900FD91D4 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				000000000000000000000010 /* MuninApp */,
@@ -88,6 +150,24 @@
 			productReference = 000000000000000000000120 /* MuninApp.app */;
 			productType = "com.apple.product-type.application";
 		};
+		D542113A3097CF4900FD91D4 /* MuninAutoFill */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D542114A3097CF4900FD91D4 /* Build configuration list for PBXNativeTarget "MuninAutoFill" */;
+			buildPhases = (
+				D54211373097CF4900FD91D4 /* Sources */,
+				D54211383097CF4900FD91D4 /* Frameworks */,
+				D54211393097CF4900FD91D4 /* Resources */,
+			);
+			buildRules = (
+			);
+			fileSystemSynchronizedGroups = (
+				D542113F3097CF4900FD91D4 /* MuninAutoFill */,
+			);
+			name = MuninAutoFill;
+			productName = MuninAutoFill;
+			productReference = D542113B3097CF4900FD91D4 /* MuninAutoFill.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -95,11 +175,14 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 2630;
+				LastSwiftUpdateCheck = 2710;
 				LastUpgradeCheck = 2700;
 				TargetAttributes = {
 					000000000000000100000000 = {
 						CreatedOnToolsVersion = 26.3;
+					};
+					D542113A3097CF4900FD91D4 = {
+						CreatedOnToolsVersion = 27.1;
 					};
 				};
 			};
@@ -121,6 +204,7 @@
 			projectRoot = "";
 			targets = (
 				000000000000000100000000 /* MuninApp */,
+				D542113A3097CF4900FD91D4 /* MuninAutoFill */,
 			);
 		};
 /* End PBXProject section */
@@ -132,6 +216,11 @@
 				D50F658C308502BF002F5A73 /* AppIcon.icon in Resources */,
 			);
 		};
+		D54211393097CF4900FD91D4 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			files = (
+			);
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -140,7 +229,20 @@
 			files = (
 			);
 		};
+		D54211373097CF4900FD91D4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			files = (
+			);
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		D54211483097CF4900FD91D4 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D542113A3097CF4900FD91D4 /* MuninAutoFill */;
+			targetProxy = D54211473097CF4900FD91D4 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		000000000000000011000000 /* Debug configuration for PBXProject "MuninApp" */ = {
@@ -286,8 +388,17 @@
 				CURRENT_PROJECT_VERSION = 200;
 				DEVELOPMENT_TEAM = V39999UVRP;
 				ENABLE_APP_SANDBOX = YES;
+				ENABLE_INCOMING_NETWORK_CONNECTIONS = NO;
 				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_RESOURCE_ACCESS_AUDIO_INPUT = NO;
+				ENABLE_RESOURCE_ACCESS_BLUETOOTH = NO;
+				ENABLE_RESOURCE_ACCESS_CALENDARS = NO;
+				ENABLE_RESOURCE_ACCESS_CAMERA = NO;
+				ENABLE_RESOURCE_ACCESS_CONTACTS = NO;
+				ENABLE_RESOURCE_ACCESS_LOCATION = NO;
+				ENABLE_RESOURCE_ACCESS_PRINTING = NO;
+				ENABLE_RESOURCE_ACCESS_USB = NO;
 				ENABLE_USER_SELECTED_FILES = readwrite;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = MuninApp/Info.plist;
@@ -295,7 +406,6 @@
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Scan the QR code a site shows when you set up two-factor authentication.";
 				INFOPLIST_KEY_NSFaceIDUsageDescription = "Unlock your authenticator codes with Face ID.";
-				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "Munin connects to your Munin server on the local network during development.";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -340,8 +450,17 @@
 				CURRENT_PROJECT_VERSION = 200;
 				DEVELOPMENT_TEAM = V39999UVRP;
 				ENABLE_APP_SANDBOX = YES;
+				ENABLE_INCOMING_NETWORK_CONNECTIONS = NO;
 				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_RESOURCE_ACCESS_AUDIO_INPUT = NO;
+				ENABLE_RESOURCE_ACCESS_BLUETOOTH = NO;
+				ENABLE_RESOURCE_ACCESS_CALENDARS = NO;
+				ENABLE_RESOURCE_ACCESS_CAMERA = NO;
+				ENABLE_RESOURCE_ACCESS_CONTACTS = NO;
+				ENABLE_RESOURCE_ACCESS_LOCATION = NO;
+				ENABLE_RESOURCE_ACCESS_PRINTING = NO;
+				ENABLE_RESOURCE_ACCESS_USB = NO;
 				ENABLE_USER_SELECTED_FILES = readwrite;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = MuninApp/Info.plist;
@@ -349,7 +468,6 @@
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Scan the QR code a site shows when you set up two-factor authentication.";
 				INFOPLIST_KEY_NSFaceIDUsageDescription = "Unlock your authenticator codes with Face ID.";
-				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "Munin connects to your Munin server on the local network during development.";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -383,6 +501,100 @@
 			};
 			name = Release;
 		};
+		D542114B3097CF4900FD91D4 /* Debug configuration for PBXNativeTarget "MuninAutoFill" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = MuninAutoFill/MuninAutoFill.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = V39999UVRP;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_INCOMING_NETWORK_CONNECTIONS = NO;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
+				ENABLE_RESOURCE_ACCESS_AUDIO_INPUT = NO;
+				ENABLE_RESOURCE_ACCESS_BLUETOOTH = NO;
+				ENABLE_RESOURCE_ACCESS_CALENDARS = NO;
+				ENABLE_RESOURCE_ACCESS_CAMERA = NO;
+				ENABLE_RESOURCE_ACCESS_CONTACTS = NO;
+				ENABLE_RESOURCE_ACCESS_LOCATION = NO;
+				ENABLE_RESOURCE_ACCESS_PRINTING = NO;
+				ENABLE_RESOURCE_ACCESS_USB = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = MuninAutoFill/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = MuninAutoFill;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.gidlof.Munin.MuninAutoFill;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "$(AVAILABLE_PLATFORMS)";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6,7";
+			};
+			name = Debug;
+		};
+		D542114C3097CF4900FD91D4 /* Release configuration for PBXNativeTarget "MuninAutoFill" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = MuninAutoFill/MuninAutoFill.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = V39999UVRP;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_INCOMING_NETWORK_CONNECTIONS = NO;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
+				ENABLE_RESOURCE_ACCESS_AUDIO_INPUT = NO;
+				ENABLE_RESOURCE_ACCESS_BLUETOOTH = NO;
+				ENABLE_RESOURCE_ACCESS_CALENDARS = NO;
+				ENABLE_RESOURCE_ACCESS_CAMERA = NO;
+				ENABLE_RESOURCE_ACCESS_CONTACTS = NO;
+				ENABLE_RESOURCE_ACCESS_LOCATION = NO;
+				ENABLE_RESOURCE_ACCESS_PRINTING = NO;
+				ENABLE_RESOURCE_ACCESS_USB = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = MuninAutoFill/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = MuninAutoFill;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.gidlof.Munin.MuninAutoFill;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "$(AVAILABLE_PLATFORMS)";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6,7";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -399,6 +611,14 @@
 			buildConfigurations = (
 				000000000000000111000000 /* Debug configuration for PBXNativeTarget "MuninApp" */,
 				000000000000000112000000 /* Release configuration for PBXNativeTarget "MuninApp" */,
+			);
+			defaultConfigurationName = Release;
+		};
+		D542114A3097CF4900FD91D4 /* Build configuration list for PBXNativeTarget "MuninAutoFill" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D542114B3097CF4900FD91D4 /* Debug configuration for PBXNativeTarget "MuninAutoFill" */,
+				D542114C3097CF4900FD91D4 /* Release configuration for PBXNativeTarget "MuninAutoFill" */,
 			);
 			defaultConfigurationName = Release;
 		};
