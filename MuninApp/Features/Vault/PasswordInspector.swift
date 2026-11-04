@@ -118,16 +118,18 @@ struct PasswordInspector: View {
         .frame(maxHeight: .infinity)
         .formStyle(.grouped)
         .scrollContentBackground(.hidden)
-        .background {
-            #if os(iOS)
-            tint?
-                .opacity(0.12)
-                .ignoresSafeArea()
-            #endif
-        }
         .animation(DesignKit.Motion.easeInOut, value: tint)
         .sensoryFeedback(.impact(weight: .light), trigger: hapticTaps)
         #if os(iOS)
+        .background {
+            if let tint {
+                tint
+                    .opacity(0.12)
+                    .ignoresSafeArea()
+            } else {
+                Color(.systemGroupedBackground).ignoresSafeArea()
+            }
+        }
         .task(id: item.url) {
             tint = await WebsiteIconStore.shared.dominantColor(for: item.url)
         }
