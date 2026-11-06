@@ -3,44 +3,40 @@ import SwiftUI
 import AppKit
 #endif
 
-/// The unlocked app: a sidebar on Mac and iPad, a tab bar on iPhone.
+/// The root view of the unlocked app, with a sidebar on macOS and iPad and a
+/// tab bar on iPhone.
 ///
-/// The Munin section holds Vault and 2FA. On iOS there are also a Settings tab
-/// (the Mac has a Settings window, ⌘, instead) and a Search tab. Search comes
-/// last with the `.search` role, so iOS 26 shows it as its own button at the
-/// trailing edge of the tab bar, and selecting it opens the search field.
-/// Search opens passwords in its own navigation stack. On the Mac the
-/// sidebar's bottom bar links to Settings.
+/// The main section holds the vault and 2FA tabs. On iOS, Settings and Search
+/// are tabs too; on macOS, Settings is a separate window linked from the
+/// sidebar's bottom bar. The Search tab uses the `.search` role, so the system
+/// places it at the trailing edge of the tab bar, and it opens passwords in
+/// its own navigation stack.
 struct MainView: View {
-    /// The tabs.
-    enum Section: Hashable {
-        case vault
-        case twoFactor
-        case search
-        case settings
-    }
-
     @Environment(AuthManager.self) private var auth
     @Environment(VaultSession.self) private var session
-    /// The selected tab.
-    @State private var selection: Section = .vault
-    /// From the app (also used by the Mac menu bar), shared by Vault and Search.
+    /// The vault model shared by the vault, Search, and the macOS menu bar.
     @Environment(VaultViewModel.self) private var vaultModel
-    /// Shows the paywall after unlocking while the vault is read-only.
+    /// The subscription state, used to show the paywall while the vault is read-only.
     @Environment(SubscriptionManager.self) private var subscriptions
-    /// Presents the AutoFill setup guide from the Vault's banner.
+    /// The AutoFill setup state, used to present the setup guide.
     @Environment(AutoFillSetup.self) private var autoFill
-    /// Shared by the 2FA and Search tabs.
+
+    @State private var selection: Section = .vault
+    /// The 2FA model shared by the 2FA and Search tabs.
     @State private var twoFactorModel: TwoFactorViewModel
-    /// Accounts from a 2FA setup link, waiting for confirmation.
+    /// Accounts from a 2FA setup link, awaiting confirmation.
     @State private var linkedAccounts: LinkedAccounts?
-    /// Why a 2FA setup link couldn't be added, shown in an alert.
+    /// The reason a 2FA setup link couldn't be added, shown in an alert.
     @State private var linkError: String?
 
-    /// A 2FA setup link that opened Munin; cleared once it's handled.
+    /// A 2FA setup link that opened the app, cleared once handled.
     @Binding var pendingCodeLink: URL?
 
-    /// Creates the 2FA view model for `session`.
+    /// Creates the main view.
+    ///
+    /// - Parameters:
+    ///   - session: The vault session used to create the 2FA model.
+    ///   - pendingCodeLink: A binding to a 2FA setup link waiting to be handled.
     init(session: VaultSession, pendingCodeLink: Binding<URL?>) {
         _twoFactorModel = State(initialValue: TwoFactorViewModel(session: session))
         _pendingCodeLink = pendingCodeLink
@@ -128,9 +124,19 @@ struct MainView: View {
     }
 }
 
+extension MainView {
+    /// The app's top-level tabs.
+    enum Section: Hashable {
+        case vault
+        case twoFactor
+        case search
+        case settings
+    }
+}
+
 private extension MainView {
-    /// Opens a 2FA setup link: switches to 2FA and asks to add its accounts.
-    /// Read-only without a subscription, so then it says why instead.
+    /// Handles a pending 2FA setup link by switching to the 2FA tab and asking
+    /// to add its accounts, or explaining why when the vault is read-only.
     func openPendingCodeLink() {
         guard let url = pendingCodeLink else { return }
         pendingCodeLink = nil
@@ -146,7 +152,7 @@ private extension MainView {
         }
     }
 
-    /// Adds the confirmed accounts, skipping ones already in Munin.
+    /// Adds the confirmed accounts, skipping any that already exist.
     func addLinkedAccounts(_ accounts: [OTPAccount]) {
         Task {
             if !twoFactorModel.hasLoaded { await twoFactorModel.refresh(auth: auth) }
@@ -162,20 +168,19 @@ private extension MainView {
 /// Accounts from a 2FA setup link, presented as a dialog item.
 private struct LinkedAccounts: Identifiable {
     let id = UUID()
-    /// The link's accounts.
     let accounts: [OTPAccount]
 }
 
-/// A tab's label. The Mac sidebar tints SF Symbols with the system accent,
-/// ignoring .tint, .listItemTint and .foregroundStyle, so there the symbol is
-/// rendered into a non-template image in fixed colours (the accent, or white
-/// on the selected row), which the sidebar can't recolour.
+/// A tab's label in the sidebar or tab bar.
+///
+/// The macOS sidebar tints SF Symbols with the system accent color and ignores
+/// `tint`, `listItemTint`, and `foregroundStyle`. To use the app's accent, the
+/// symbol is rendered into a non-template image in fixed colors, which the
+/// sidebar can't recolor.
 private struct SidebarTabLabel: View {
-    /// The tab's name.
     let title: LocalizedStringKey
-    /// The tab's SF Symbol.
     let systemImage: String
-    /// Whether the tab is selected, so the Mac icon turns white.
+    /// A Boolean value that indicates whether the tab is selected, which turns the macOS icon white.
     let isSelected: Bool
 
     var body: some View {
@@ -193,11 +198,13 @@ private struct SidebarTabLabel: View {
             #endif
         }
     }
+}
 
-    #if os(macOS)
-    /// The symbol rendered as a non-template image in the accent colour, or
-    /// white when selected. Nil if the symbol doesn't exist.
-    private var coloredSymbol: NSImage? {
+#if os(macOS)
+private extension SidebarTabLabel {
+    /// The symbol rendered as a non-template image in the accent color, or
+    /// white when selected; `nil` if the symbol doesn't exist.
+    var coloredSymbol: NSImage? {
         let color = isSelected ? NSColor.white : NSColor(resource: .accent)
         let configuration = NSImage.SymbolConfiguration(pointSize: 13, weight: .regular)
             .applying(NSImage.SymbolConfiguration(paletteColors: [color]))
@@ -206,5 +213,5 @@ private struct SidebarTabLabel: View {
         image?.isTemplate = false
         return image
     }
-    #endif
 }
+#endif

@@ -5,23 +5,27 @@ import UniformTypeIdentifiers
 import VisionKit
 #endif
 
-/// Add accounts from a QR code (camera, screenshot), an otpauth link, or by
-/// hand. A Google Authenticator export QR code adds all its accounts at once.
+/// A view for adding two-factor accounts from a QR code, an `otpauth://` URL,
+/// or manual entry.
+///
+/// A Google Authenticator export QR code adds all of its accounts at once.
 struct AddAccountView: View {
     @Environment(\.dismiss) private var dismiss
 
-    /// The last error, shown at the bottom of the form.
+    /// The most recent error, shown at the bottom of the form.
     @State private var errorMessage: String?
-    /// True while accounts are being encrypted and uploaded.
+    /// A Boolean value that indicates whether accounts are being encrypted and
+    /// uploaded.
     @State private var isSaving = false
-    /// iOS: shows the camera scanner.
+    /// A Boolean value that indicates whether the camera scanner is presented (iOS).
     @State private var isScanning = false
-    /// Mac: shows the image file picker.
+    /// A Boolean value that indicates whether the image file picker is presented
+    /// (macOS).
     @State private var isImportingFile = false
-    /// iOS: the screenshot picked from Photos.
+    /// The image selected from Photos (iOS).
     @State private var photoItem: PhotosPickerItem?
 
-    /// Encrypts and uploads; returns how many were new.
+    /// Encrypts and uploads accounts, returning the number of new accounts added.
     let onAdd: ([OTPAccount]) async throws -> Int
 
     var body: some View {
@@ -77,7 +81,8 @@ struct AddAccountView: View {
 }
 
 private extension AddAccountView {
-    /// Parses an otpauth link (pasted, or read from a QR code) and saves its accounts.
+    /// Parses an `otpauth://` or `otpauth-migration://` URL and saves its
+    /// accounts.
     func submit(text: String) {
         do {
             save(try OTPAuthParser.parse(text))
@@ -86,7 +91,7 @@ private extension AddAccountView {
         }
     }
 
-    /// Saves an account typed in by hand.
+    /// Saves a manually entered account.
     func submitManual(issuer: String, name: String, secret: String, digits: Int) {
         guard let secretData = Base32.decode(secret) else {
             errorMessage = OTPAuthParser.ParseError.invalidSecret.localizedDescription
@@ -100,7 +105,8 @@ private extension AddAccountView {
         )])
     }
 
-    /// Reads the QR codes in an image and saves the accounts from the first one that parses.
+    /// Reads the QR codes in an image and saves the accounts from the first
+    /// valid one.
     func submit(imageData: Data) {
         let messages = QRCodeReader.messages(in: imageData)
         guard !messages.isEmpty else {
@@ -117,7 +123,7 @@ private extension AddAccountView {
     }
 
     #if os(iOS)
-    /// Loads the picked screenshot and reads its QR code.
+    /// Loads the selected image and reads its QR code.
     func loadPhoto(_ item: PhotosPickerItem) async {
         defer { photoItem = nil }
         guard let data = try? await item.loadTransferable(type: Data.self) else {
@@ -127,7 +133,7 @@ private extension AddAccountView {
         submit(imageData: data)
     }
     #else
-    /// Reads the chosen image file and its QR code.
+    /// Reads the selected image file and its QR code.
     func importFile(_ result: Result<URL, any Error>) {
         guard case .success(let url) = result else { return }
         let accessing = url.startAccessingSecurityScopedResource()
@@ -142,8 +148,10 @@ private extension AddAccountView {
 
     // MARK: - Save
 
-    /// Encrypts and uploads the accounts, then closes the sheet. If they were
-    /// all added before, it stays open and says so.
+    /// Encrypts and uploads the accounts, then dismisses the sheet.
+    ///
+    /// If every account already exists, the sheet stays open and shows an
+    /// error.
     func save(_ accounts: [OTPAccount]) {
         errorMessage = nil
         isSaving = true
@@ -167,13 +175,14 @@ private extension AddAccountView {
 
 // MARK: - Sections
 
-/// Camera scan (iPhone) or an image of a QR code.
+/// A form section for adding accounts from a QR code, by camera scan or image.
 private struct QRCodeSection: View {
-    /// iOS: set to show the camera scanner.
+    /// A Boolean value that indicates whether the camera scanner is presented (iOS).
     @Binding var isScanning: Bool
-    /// Mac: set to show the image file picker.
+    /// A Boolean value that indicates whether the image file picker is presented
+    /// (macOS).
     @Binding var isImportingFile: Bool
-    /// iOS: the screenshot picked from Photos.
+    /// The image selected from Photos (iOS).
     @Binding var photoItem: PhotosPickerItem?
 
     var body: some View {
@@ -204,11 +213,10 @@ private struct QRCodeSection: View {
     }
 }
 
-/// A pasted otpauth:// or otpauth-migration:// link.
+/// A form section for adding accounts from an `otpauth://` or
+/// `otpauth-migration://` URL.
 private struct LinkSection: View {
-    /// The link field's text.
     @State private var link = ""
-    /// Called with the pasted link.
     let onSubmit: (String) -> Void
 
     var body: some View {
@@ -228,7 +236,8 @@ private struct LinkSection: View {
     }
 }
 
-/// Issuer, account and setup key typed in by hand.
+/// A form section for entering an account's issuer, name, and setup key
+/// manually.
 private struct ManualEntrySection: View {
     /// The service's name.
     @State private var issuer = ""
@@ -236,9 +245,10 @@ private struct ManualEntrySection: View {
     @State private var name = ""
     /// The Base32 setup key.
     @State private var secret = ""
-    /// Digits per code: 6 or 8.
+    /// The number of digits per code, either 6 or 8.
     @State private var digits = 6
-    /// Called with the typed issuer, account name, Base32 setup key and digit count.
+    /// The action to perform with the issuer, account name, Base32 setup key,
+    /// and digit count.
     let onSubmit: (_ issuer: String, _ name: String, _ secret: String, _ digits: Int) -> Void
 
     var body: some View {

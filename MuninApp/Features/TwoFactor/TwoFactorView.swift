@@ -1,27 +1,30 @@
 import SwiftUI
 import UniformTypeIdentifiers
 
-/// The 2FA screen: every account's current code, with add, import, refresh and delete.
+/// A view that lists two-factor accounts with their current codes.
+///
+/// Supports adding, importing, refreshing, and deleting accounts.
 struct TwoFactorView: View {
     @Environment(AuthManager.self) private var auth
-    /// Read-only without a subscription: no adding or deleting.
+    /// The subscription state. Without an active subscription, the vault is
+    /// read-only.
     @Environment(SubscriptionManager.self) private var subscriptions
-    /// Shows the Add Account sheet.
+    /// A Boolean value that indicates whether the Add Account sheet is presented.
     @State private var isAdding = false
     /// The account waiting for delete confirmation.
     @State private var pendingDeletion: VaultItem?
-    /// Bumped by toolbar buttons for a light haptic.
+    /// A counter incremented by toolbar buttons to trigger a light haptic.
     @State private var hapticTaps = 0
-    /// One clock for the code rows.
+    /// The clock shared by all code rows.
     @State private var clock = TwoFactorClock()
-    /// Shows the file picker for importing a 2FA export.
     @State private var isPickingImportFile = false
-    /// A read import file waiting for confirmation.
+    /// The parsed import awaiting confirmation.
     @State private var importPlan: TwoFactorImportPlan?
-    /// Shown after an import: how many were added, or why the file couldn't be read.
+    /// The result of an import: the number of accounts added, or why the file
+    /// couldn't be read.
     @State private var importMessage: String?
 
-    /// Loads, adds and deletes the accounts.
+    /// The view model that loads, adds, and deletes accounts.
     let viewModel: TwoFactorViewModel
 
     var body: some View {
@@ -82,7 +85,6 @@ struct TwoFactorView: View {
 }
 
 private extension TwoFactorView {
-    /// The toolbar's buttons.
     @ToolbarContentBuilder
     var toolbarContent: some ToolbarContent {
         ToolbarItem(placement: .navigation) { LockToolbarButton() }
@@ -103,19 +105,19 @@ private extension TwoFactorView {
         #endif
     }
 
-    /// Opens the file picker for a 2FA export (one `otpauth://` link per line).
+    /// A button that opens the file picker for a 2FA export with one
+    /// `otpauth://` URL per line.
     var importButton: some View {
         Button("codes.import.button", systemImage: DesignKit.Icon.importFile, action: pickImportFile)
             .disabled(!viewModel.hasLoaded || subscriptions.isReadOnly)
     }
 
-    /// Shows the file picker.
     func pickImportFile() {
         hapticTaps += 1
         isPickingImportFile = true
     }
 
-    /// Reads the picked file in memory and asks to confirm the new accounts.
+    /// Reads the selected file and asks the user to confirm the new accounts.
     func importFilePicked(_ result: Result<URL, any Error>) {
         guard case .success(let url) = result else { return }
         let isScoped = url.startAccessingSecurityScopedResource()
@@ -137,7 +139,7 @@ private extension TwoFactorView {
         )
     }
 
-    /// Encrypts and uploads the plan's accounts, then says how many were added.
+    /// Encrypts and uploads the plan's accounts, then reports how many were added.
     func runImport(_ plan: TwoFactorImportPlan) {
         Task {
             do {
@@ -149,7 +151,9 @@ private extension TwoFactorView {
         }
     }
 
-    /// Opens the Add Account sheet (⌘N). Disabled until the accounts have loaded.
+    /// A button that opens the Add Account sheet (⌘N).
+    ///
+    /// Disabled until accounts have loaded, and while the vault is read-only.
     var addButton: some View {
         Button("codes.add", systemImage: DesignKit.Icon.add) {
             hapticTaps += 1
@@ -161,31 +165,30 @@ private extension TwoFactorView {
     }
 }
 
-/// Accounts from an import file that aren't in Munin yet, waiting for confirmation.
+/// Accounts from an import file that aren't in the vault yet, awaiting
+/// confirmation.
 private struct TwoFactorImportPlan: Identifiable {
     let id = UUID()
-    /// The accounts to add.
     let accounts: [OTPAccount]
-    /// How many were already in Munin, or repeated in the file.
+    /// The number of accounts already in the vault or repeated in the file.
     let duplicateCount: Int
-    /// How many lines weren't a 2FA link.
+    /// The number of lines that aren't valid 2FA URLs.
     let failedLines: Int
 }
 
-/// The codes: Mac, a bordered table like the vault; iOS, a list (tap a row to copy).
+/// A list of two-factor codes.
 ///
-/// Its own view, so the 2FA screen's chrome doesn't re-evaluate with it. The
-/// Mac table has no selection, so rows aren't selectable; right-click a cell
-/// for its menu.
+/// A separate view, so the screen's toolbar and overlays don't re-evaluate
+/// when the codes change. Each row has a context menu to copy the code or
+/// delete the account.
 private struct TwoFactorList: View {
-    /// Read-only without a subscription: Delete is disabled.
+    /// The subscription state. Delete is disabled while the vault is read-only.
     @Environment(SubscriptionManager.self) private var subscriptions
 
-    /// The accounts to show.
     let viewModel: TwoFactorViewModel
-    /// The screen's clock, passed to every row.
+    /// The clock shared by every row.
     let clock: TwoFactorClock
-    /// Set by a row's Delete action, to ask for confirmation.
+    /// The account awaiting delete confirmation, set by a row's Delete action.
     @Binding var pendingDeletion: VaultItem?
 
     var body: some View {
@@ -211,35 +214,28 @@ private struct TwoFactorList: View {
         #endif
         .listStyle(.plain)
     }
+}
 
-    /// A Mac cell's context menu: Copy Code and Delete.
-    @ViewBuilder
-    private func codeMenu(for item: VaultItem) -> some View {
-        Button("codes.copyCode", systemImage: DesignKit.Icon.copy) { TwoFactorRow.copyCode(of: item.account) }
-        Divider()
-        Button("global.delete", systemImage: DesignKit.Icon.delete, role: .destructive) { pendingDeletion = item }
-            .disabled(subscriptions.isReadOnly)
-    }
-
-    /// Says how many entries couldn't be decrypted with this vault key.
-    private var undecryptableLabel: some View {
+private extension TwoFactorList {
+    /// A label with the number of entries that couldn't be decrypted with the
+    /// current vault key.
+    var undecryptableLabel: some View {
         Label(LocalizedKey("codes.undecryptable", viewModel.undecryptableCount), systemImage: DesignKit.Icon.undecryptable)
             .font(.footnote)
             .foregroundStyle(.secondary)
     }
 }
 
-/// Error, empty and loading states for the codes list.
+/// A view that shows the error, empty, and loading states of the codes list.
 private struct TwoFactorEmptyState: View {
-    /// A load error to show, if the list is empty because loading failed.
+    /// The load error, or `nil` if loading succeeded.
     let errorMessage: String?
-    /// Whether there are no accounts.
     let isEmpty: Bool
-    /// Whether the first load has finished; before that a spinner shows.
+    /// A Boolean value that indicates whether the first load has finished.
+    ///
+    /// A spinner shows until then.
     let hasLoaded: Bool
-    /// Called by Try Again.
     let onRetry: () -> Void
-    /// Called by the empty state's Add button.
     let onAdd: () -> Void
 
     var body: some View {

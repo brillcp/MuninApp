@@ -1,13 +1,13 @@
 import SwiftUI
 
-/// Choose a master password: on first setup, or after unlocking with the recovery key.
+/// A view for choosing a master password, during first setup or after unlocking with the recovery key.
 struct MasterPasswordSetupView: View {
     @Environment(AuthManager.self) private var auth
     @Environment(VaultSession.self) private var session
 
     /// The new master password.
     @State private var password = ""
-    /// The new master password, typed again.
+    /// The confirmation of the new master password.
     @State private var confirmation = ""
 
     var body: some View {
@@ -62,12 +62,12 @@ struct MasterPasswordSetupView: View {
 }
 
 private extension MasterPasswordSetupView {
-    /// Whether Save is enabled: long enough and typed the same twice.
+    /// A Boolean value that indicates whether the password is long enough and matches its confirmation.
     var isValid: Bool {
         password.count >= VaultSession.minimumPasswordLength && password == confirmation
     }
 
-    /// What's wrong with the password, shown under the fields.
+    /// A description of the password's problem, shown below the fields.
     var problem: LocalizedStringKey? {
         if !password.isEmpty, password.count < VaultSession.minimumPasswordLength {
             return LocalizedKey("masterPassword.tooShort", VaultSession.minimumPasswordLength)
@@ -78,7 +78,7 @@ private extension MasterPasswordSetupView {
         return nil
     }
 
-    /// Sets the master password, which also unlocks the vault.
+    /// Sets the master password and unlocks the vault.
     func save() {
         guard isValid else { return }
         Task { await session.setMasterPassword(password, auth: auth) }

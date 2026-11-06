@@ -10,7 +10,9 @@ typealias PlatformImage = NSImage
 #endif
 
 extension Image {
-    /// Creates a SwiftUI image from a `UIImage` or `NSImage`.
+    /// Creates an image from a platform image.
+    ///
+    /// - Parameter platformImage: A `UIImage` on iOS or an `NSImage` on macOS.
     init(platformImage: PlatformImage) {
         #if os(iOS)
         self.init(uiImage: platformImage)

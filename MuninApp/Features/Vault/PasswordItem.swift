@@ -1,31 +1,35 @@
 import Foundation
 
-/// A password item in memory. Name, URL and username are decrypted for the
-/// table and search; password and note stay encrypted until they're needed.
+/// A password item held in memory.
+///
+/// The name, URL, and username are decrypted for display and search. The
+/// password and note stay encrypted until needed.
 nonisolated struct PasswordItem: Identifiable, Hashable {
-    /// The item's id on Munin.
+    /// The item's server identifier.
     let id: UUID
-    /// The item's name, for example the service.
+    /// The item's name, typically the service it belongs to.
     var name: String
     /// The website, with or without a scheme.
     var url: String
-    /// The username or email for the site.
+    /// The username or email address for the website.
     var username: String
-    /// The password, still encrypted.
+    /// The encrypted password.
     var encryptedPassword: String
-    /// The note, still encrypted.
+    /// The encrypted note.
     var encryptedNote: String
-    /// When the item was last edited, or its password last copied.
+    /// The date the item was last edited or its password last copied.
     var lastUpdated: Date
 }
 
-/// Plain field values while the editor is open. Only lives as long as the sheet.
+/// The decrypted field values of a password item being edited.
+///
+/// Exists only while the editor is open.
 struct PasswordFields {
     /// The item's name.
     var name = ""
     /// The website.
     var url = ""
-    /// The username or email.
+    /// The username or email address.
     var username = ""
     /// The password.
     var password = ""
@@ -34,8 +38,11 @@ struct PasswordFields {
 }
 
 extension PasswordItem {
-    /// The website's domain in lower case, without "www.", for AutoFill: nil
-    /// if the URL has no host. "https://www.github.com/login" → "github.com".
+    /// The website's lowercase domain without a `www.` prefix, used for
+    /// AutoFill.
+    ///
+    /// For example, `https://www.github.com/login` returns `github.com`. Returns
+    /// `nil` if the URL has no host.
     var domain: String? {
         let trimmed = url.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return nil }

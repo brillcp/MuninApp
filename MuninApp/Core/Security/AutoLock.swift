@@ -3,17 +3,23 @@ import SwiftUI
 import AppKit
 #endif
 
-/// How long Munin stays unlocked after leaving it. Picked in Settings.
+/// The time the vault stays unlocked after the user leaves the app.
 enum AutoLockTimeout: Int, CaseIterable, Identifiable {
+    /// Locks as soon as the user leaves the app.
     case immediately = 0
+    /// Locks one minute after the user leaves the app.
     case oneMinute = 60
+    /// Locks five minutes after the user leaves the app.
     case fiveMinutes = 300
+    /// Locks fifteen minutes after the user leaves the app.
     case fifteenMinutes = 900
+    /// Never locks automatically.
     case never = -1
 
+    /// The stable identity of the timeout, its raw value.
     var id: Int { rawValue }
 
-    /// The option's name in the Settings picker.
+    /// The localized title shown in Settings.
     var title: LocalizedStringKey {
         switch self {
         case .immediately: "autoLock.immediately"
@@ -24,42 +30,41 @@ enum AutoLockTimeout: Int, CaseIterable, Identifiable {
         }
     }
 
-    /// The timeout in seconds, or nil for `.never`.
+    /// The timeout in seconds, or `nil` for ``never``.
     var seconds: TimeInterval? { self == .never ? nil : TimeInterval(rawValue) }
 }
 
 extension View {
-    /// Locks the vault automatically, following the session's auto-lock setting.
+    /// Locks the vault automatically according to the session's auto-lock timeout.
     ///
-    /// Only while Munin isn't the app in use: being idle in Munin never locks it.
+    /// The vault locks only while the app isn't in use; inactivity inside the
+    /// app never locks it.
     ///
-    /// - iOS: on leaving the app ("Immediately"), or on coming back after the
-    ///   timeout. The phone's own screen lock sends the app to the background,
-    ///   so inactivity is covered by that.
-    /// - macOS: when the Mac sleeps or its screen locks, on switching to another
-    ///   app ("Immediately"), or once the timeout has passed since switching
-    ///   to another app.
+    /// - On iOS, the vault locks when the app moves to the background if the
+    ///   timeout is ``AutoLockTimeout/immediately``, or when the app returns
+    ///   after the timeout has elapsed. The device's screen lock moves the app
+    ///   to the background, so it also covers inactivity.
+    /// - On macOS, the vault locks when the Mac sleeps or its screen locks,
+    ///   when another app becomes active if the timeout is
+    ///   ``AutoLockTimeout/immediately``, or once the timeout elapses after
+    ///   another app becomes active.
     ///
-    /// "Never" turns all of it off.
+    /// ``AutoLockTimeout/never`` turns automatic locking off.
+    ///
+    /// - Parameter session: The session to lock.
     func autoLock(_ session: VaultSession) -> some View {
         modifier(AutoLockModifier(session: session))
     }
 }
 
-/// The implementation behind `View.autoLock(_:)`.
+/// The view modifier that implements ``SwiftUI/View/autoLock(_:)``.
 private struct AutoLockModifier: ViewModifier {
-    /// The session to lock.
-    let session: VaultSession
-
     @Environment(\.scenePhase) private var scenePhase
-    /// When Munin went to the background (iOS) or stopped being the active
-    /// app (Mac), to measure the time away.
+    /// The date the app moved to the background on iOS, or stopped being the
+    /// active app on macOS. Used to measure how long the user was away.
     @State private var backgroundedAt: Date?
 
-    /// The chosen timeout in seconds, or nil for "Never".
-    private var timeout: TimeInterval? { session.autoLockTimeout.seconds }
-    /// Whether the vault is currently unlocked.
-    private var isUnlocked: Bool { session.state == .unlocked }
+    let session: VaultSession
 
     func body(content: Content) -> some View {
         content
@@ -106,18 +111,26 @@ private struct AutoLockModifier: ViewModifier {
             }
             #endif
     }
+}
+
+private extension AutoLockModifier {
+    /// The selected timeout in seconds, or `nil` if auto-lock is off.
+    var timeout: TimeInterval? { session.autoLockTimeout.seconds }
+    var isUnlocked: Bool { session.state == .unlocked }
 
     #if os(macOS)
-    /// The inputs of the Mac background timer. The timer restarts whenever one
-    /// changes, and stops when Munin becomes the active app again.
-    private struct BackgroundCheck: Equatable {
+    /// The inputs of the macOS background timer.
+    ///
+    /// The timer restarts whenever an input changes. Clearing `backgroundedAt`
+    /// when the app becomes active again cancels it.
+    struct BackgroundCheck: Equatable {
         let isUnlocked: Bool
         let timeout: TimeInterval?
         let backgroundedAt: Date?
     }
 
-    /// Locks on sleep or screen lock, unless auto-lock is set to "Never".
-    private func lockUnlessNever() {
+    /// Locks the vault on sleep or screen lock, unless auto-lock is off.
+    func lockUnlessNever() {
         if timeout != nil { session.lock() }
     }
     #endif

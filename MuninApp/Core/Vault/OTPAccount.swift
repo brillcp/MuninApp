@@ -1,6 +1,8 @@
 import Foundation
 
-/// One authenticator entry. This is what gets encrypted; Munin never sees it.
+/// An authenticator account.
+///
+/// Encrypted on the device before it's stored; the server never sees it in plain text.
 nonisolated struct OTPAccount: Codable, Sendable, Hashable {
     /// The HMAC hash function used to compute codes.
     enum Algorithm: String, Codable, Sendable {
@@ -9,28 +11,28 @@ nonisolated struct OTPAccount: Codable, Sendable, Hashable {
         case sha512 = "SHA512"
     }
 
-    /// The service, for example "GitHub". May be empty.
+    /// The service that issued the account, such as “GitHub”; may be empty.
     var issuer: String
-    /// The account at the service, usually a username or email.
+    /// The account name at the service, usually a username or email.
     var name: String
     /// The shared secret, decoded from Base32.
     var secret: Data
-    /// Digits per code.
+    /// The number of digits in each code.
     var digits: Int = 6
-    /// Seconds each code is valid for.
+    /// The number of seconds each code is valid.
     var period: Int = 30
     /// The HMAC hash function.
     var algorithm: Algorithm = .sha1
 
-    /// Title shown in the list: the issuer, or the account name if there's none.
+    /// The display title: the issuer, or the account name if there's no issuer.
     var title: String { issuer.isEmpty ? name : issuer }
-    /// Second line in the list: the account name, when the title is the issuer.
+    /// The display subtitle: the account name when the title is the issuer.
     var subtitle: String? { issuer.isEmpty ? nil : name }
 }
 
-/// A decrypted entry and its id on the server.
+/// A decrypted account and its server identifier.
 nonisolated struct VaultItem: Identifiable, Hashable {
-    /// The entry's id on Munin.
+    /// The entry's identifier on the server.
     let id: UUID
     /// The decrypted account.
     let account: OTPAccount

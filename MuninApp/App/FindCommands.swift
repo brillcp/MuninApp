@@ -1,31 +1,32 @@
 import Observation
 import SwiftUI
 
-/// A screen's request to focus its search field.
+/// An object that lets a command ask a screen to focus its search field.
 ///
-/// This is a model rather than a closure: closures in focused values (even
-/// wrapped in a struct) can't be compared, so they invalidate on every update.
-/// The screen with the search field watches `count` and focuses its field
-/// whenever it changes.
+/// A model is used instead of a closure because closures in focused values
+/// can't be compared and so invalidate on every update. The screen that owns
+/// the search field observes ``count`` and focuses the field when it changes.
 @Observable
 final class SearchFocusRequest {
-    /// Incremented on every request. Observers react to the change, not the value.
+    /// A counter incremented on every request; observers react to the change, not the value.
     private(set) var count = 0
+}
 
-    /// Asks the screen that owns this request to focus its search field.
+extension SearchFocusRequest {
+    /// Asks the owning screen to focus its search field.
     func request() { count += 1 }
 }
 
 extension FocusedValues {
-    /// Published by the screen that has a search field; ⌘F uses it to focus that field.
+    /// The search focus request of the focused screen, used by Find (⌘F).
     @Entry var searchFocusRequest: SearchFocusRequest?
 }
 
-/// Adds Edit ▸ Find (⌘F), which moves focus to the current screen's search field.
+/// Commands that add Edit ▸ Find (⌘F) to focus the current screen's search field.
 ///
 /// The command is disabled when the focused screen has no search field.
 struct FindCommands: Commands {
-    /// The focused screen's request, if it has a search field.
+    /// The focused screen's search focus request, if it has a search field.
     @FocusedValue(\.searchFocusRequest) private var searchFocusRequest
 
     var body: some Commands {

@@ -1,9 +1,9 @@
 import SwiftUI
 
-/// Locks Munin (same as ⌘L), with a light haptic. In the Vault and 2FA toolbars.
+/// A toolbar button that locks the vault, like ⌘L, with a light haptic.
 struct LockToolbarButton: View {
     @Environment(VaultSession.self) private var session
-    /// Bumped on every tap, to trigger the haptic.
+    /// A counter incremented on every tap to trigger the haptic.
     @State private var taps = 0
 
     var body: some View {

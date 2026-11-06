@@ -1,12 +1,15 @@
 import SwiftUI
 import StoreKit
 
-/// Shown at the bottom of the Vault and 2FA screens during the billing grace
-/// period: the App Store couldn't renew the subscription, but everything still
-/// works for now. Manage Subscription leads to updating the payment method.
+/// A banner shown during the billing grace period.
+///
+/// The App Store couldn't renew the subscription, but the app remains fully
+/// functional during the grace period. The Manage Subscription button lets
+/// the user update their payment method.
 struct BillingIssueBanner: View {
     @Environment(\.openURL) private var openURL
-    /// iOS: shows the App Store's Manage Subscriptions sheet.
+    /// A Boolean value that indicates whether the Manage Subscriptions sheet is
+    /// presented (iOS).
     @State private var isManagingSubscription = false
 
     var body: some View {
@@ -28,7 +31,8 @@ struct BillingIssueBanner: View {
 }
 
 private extension BillingIssueBanner {
-    /// Opens subscription management: the system sheet on iOS, the App Store page on Mac.
+    /// Opens subscription management: the system sheet on iOS, or the App Store
+    /// page on macOS.
     func manageSubscription() {
         #if os(iOS)
         isManagingSubscription = true

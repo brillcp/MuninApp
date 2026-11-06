@@ -1,14 +1,15 @@
 import AuthenticationServices
 import SwiftUI
 
-/// Munin's AutoFill: shown by the system when the user picks Munin for a
-/// login or a 2FA code field, or taps one of Munin's keyboard suggestions.
+/// The AutoFill credential provider.
 ///
-/// The interface is `AutoFillView` (SwiftUI), hosted as a child controller.
-/// It unlocks with Face ID / Touch ID, loads the vault from Munin, and hands
-/// the chosen password or code back here to complete the request.
+/// The system presents it when the user chooses the app for a login or
+/// one-time code field, or taps one of the app's keyboard suggestions. The
+/// interface is ``AutoFillView``, hosted as a child view controller. It
+/// unlocks with Face ID or Touch ID, loads the vault, and returns the chosen
+/// password or code to complete the request.
 final class CredentialProviderViewController: ASCredentialProviderViewController {
-    /// No storyboard or nib: the view is a plain container for the SwiftUI view.
+    /// Creates a plain container view for the SwiftUI interface.
     override func loadView() {
         #if os(macOS)
         view = NSView()
@@ -18,24 +19,24 @@ final class CredentialProviderViewController: ASCredentialProviderViewController
         #endif
     }
 
-    /// The user chose Munin for a login field: list matching passwords first.
+    /// Shows the password list, with matches for the service first.
     override func prepareCredentialList(for serviceIdentifiers: [ASCredentialServiceIdentifier]) {
         show(AutoFillModel(mode: .passwords, serviceIdentifiers: serviceIdentifiers, handler: self))
     }
 
-    /// The user chose Munin for a 2FA code field: list matching codes first.
+    /// Shows the one-time code list, with matches for the service first.
     override func prepareOneTimeCodeCredentialList(for serviceIdentifiers: [ASCredentialServiceIdentifier]) {
         show(AutoFillModel(mode: .oneTimeCodes, serviceIdentifiers: serviceIdentifiers, handler: self))
     }
 
-    /// A keyboard suggestion was tapped. Munin always needs Face ID / Touch ID
-    /// first, so the system is asked to show the interface instead.
+    /// Requests user interaction, because the vault must be unlocked with
+    /// Face ID or Touch ID before a credential can be provided.
     override func provideCredentialWithoutUserInteraction(for credentialRequest: any ASCredentialRequest) {
         extensionContext.cancelRequest(withError: Self.error(.userInteractionRequired))
     }
 
-    /// The interface for a tapped keyboard suggestion: unlocks and fills that
-    /// item straight away.
+    /// Shows the interface for a selected keyboard suggestion, which unlocks
+    /// the vault and fills that item immediately.
     override func prepareInterfaceToProvideCredential(for credentialRequest: any ASCredentialRequest) {
         guard let identity = credentialRequest.credentialIdentity as? ASPasswordCredentialIdentity,
               let id = identity.recordIdentifier.flatMap(UUID.init(uuidString:)) else {
@@ -48,21 +49,32 @@ final class CredentialProviderViewController: ASCredentialProviderViewController
 
 // MARK: - AutoFillHandler
 extension CredentialProviderViewController: AutoFillHandler {
+    /// Completes the request with a password credential.
+    ///
+    /// - Parameters:
+    ///   - user: The username to fill.
+    ///   - password: The password to fill.
     func fill(user: String, password: String) {
         extensionContext.completeRequest(withSelectedCredential: ASPasswordCredential(user: user, password: password), completionHandler: nil)
     }
 
+    /// Completes the request with a one-time code.
+    ///
+    /// - Parameter code: The one-time code to fill.
     func fill(code: String) {
         extensionContext.completeOneTimeCodeRequest(using: ASOneTimeCodeCredential(code: code), completionHandler: nil)
     }
 
+    /// Cancels the request because the user dismissed the interface.
     func cancel() {
         extensionContext.cancelRequest(withError: Self.error(.userCanceled))
     }
 }
 
 private extension CredentialProviderViewController {
-    /// Puts the SwiftUI interface for `model` in the view, filling it.
+    /// Embeds the SwiftUI interface for the model, filling the view.
+    ///
+    /// - Parameter model: The model that drives the interface.
     func show(_ model: AutoFillModel) {
         let root = AutoFillView(model: model)
         #if os(macOS)
@@ -84,7 +96,10 @@ private extension CredentialProviderViewController {
         #endif
     }
 
-    /// An AutoFill error for the system.
+    /// Creates an AutoFill extension error.
+    ///
+    /// - Parameter code: The error code.
+    /// - Returns: An error in the AutoFill extension error domain.
     static func error(_ code: ASExtensionError.Code) -> NSError {
         NSError(domain: ASExtensionErrorDomain, code: code.rawValue)
     }

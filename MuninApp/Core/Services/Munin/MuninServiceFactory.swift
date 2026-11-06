@@ -1,13 +1,18 @@
 import Foundation
 import Networking
 
-/// Builds the network service used to talk to Munin.
+/// A factory that creates network services for the app's API.
 enum MuninServiceFactory {
-    /// Header Munin checks on deletes, edits and master password changes.
+    /// The header that carries the master password proof for edits, deletions, and master password changes.
     static let proofHeader = "X-Munin-Proof"
 
-    /// A service for Munin's API that authenticates with `tokenProvider` and,
-    /// when given, sends `proof` in the proof header on every request.
+    /// Creates a service for the app's API.
+    ///
+    /// - Parameters:
+    ///   - tokenProvider: The provider that authenticates each request.
+    ///   - proof: The master password proof to send in ``proofHeader`` on every request, if any.
+    ///   - interceptors: Interceptors applied to each request.
+    /// - Returns: A configured network service.
     static func makeService(
         tokenProvider: AuthTokenProvider,
         proof: String? = nil,

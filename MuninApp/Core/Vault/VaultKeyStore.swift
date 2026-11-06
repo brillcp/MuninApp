@@ -2,19 +2,20 @@ import CryptoKit
 import Foundation
 import LocalAuthentication
 
-/// Where the vault key lives on a device.
+/// Storage for the vault key on a device.
 ///
-/// - Unlocked: in memory only (`UnlockedVault`).
-/// - Face ID / Touch ID: a copy of the key and proof in this device's Keychain,
-///   readable only after biometrics (`.biometryCurrentSet`), never synced.
-/// - Legacy: before master passwords the key synced through iCloud Keychain.
-///   It's read once to set up the master password, then deleted.
+/// - Term Unlocked: The key lives in memory only, in ``UnlockedVault``.
+/// - Term Biometric: A copy of the key and proof lives in the device's
+///   Keychain, readable only after Face ID or Touch ID
+///   (`.biometryCurrentSet`), and never syncs.
+/// - Term Legacy: A key synced through iCloud Keychain, from before master
+///   passwords. It's read once to set up the master password, then deleted.
 nonisolated enum VaultKeyStore {
-    /// The outcome of unlocking with Face ID / Touch ID.
+    /// The outcome of unlocking with Face ID or Touch ID.
     enum BiometricResult: Sendable {
         /// The key and proof were read.
         case unlocked(UnlockedVault)
-        /// No copy on this device yet, or biometrics changed since it was saved.
+        /// The device has no copy, or its biometrics changed since the copy was saved.
         case notAvailable
         /// The user dismissed the prompt.
         case canceled
@@ -22,14 +23,14 @@ nonisolated enum VaultKeyStore {
         case failed
     }
 
-    /// Keychain account of the legacy synced key.
+    /// The Keychain account of the legacy synced key.
     private static func legacyAccount(userID: String) -> String { "vault.key.\(userID.lowercased())" }
-    /// Keychain account of the biometric copy.
+    /// The Keychain account of the biometric copy.
     private static func biometricAccount(userID: String) -> String { "vault.unlock.\(userID.lowercased())" }
 
     // MARK: - Legacy (iCloud Keychain)
 
-    /// The legacy synced vault key, if this device has one.
+    /// Returns the legacy synced vault key, if the device has one.
     static func loadLegacy(userID: String) -> SymmetricKey? {
         guard let data = KeychainService.loadSynced(account: legacyAccount(userID: userID)), data.count == 32 else {
             return nil
@@ -37,20 +38,22 @@ nonisolated enum VaultKeyStore {
         return SymmetricKey(data: data)
     }
 
-    /// Deletes the legacy synced key, on every device, once a master password is set.
+    /// Deletes the legacy synced key from all devices.
+    ///
+    /// Call this only after the vault key is stored on the server, wrapped by a master password.
     static func deleteLegacy(userID: String) {
         KeychainService.deleteSynced(account: legacyAccount(userID: userID))
     }
 
     // MARK: - Biometrics
 
-    /// The biometric copy's format: the key and the proof, both base64.
+    /// The stored format of the biometric copy: the key and proof, base64-encoded.
     private struct StoredVault: Codable {
         let key: String
         let proof: String
     }
 
-    /// Saves the key and proof behind Face ID / Touch ID on this device.
+    /// Saves the key and proof on the device, protected by Face ID or Touch ID.
     @discardableResult
     static func saveForBiometrics(_ vault: UnlockedVault) -> Bool {
         let stored = StoredVault(key: vault.key.withUnsafeBytes { Data($0) }.base64EncodedString(), proof: vault.proof)
@@ -58,7 +61,9 @@ nonisolated enum VaultKeyStore {
         return KeychainService.saveBiometric(data, account: biometricAccount(userID: vault.userID))
     }
 
-    /// Shows the Face ID / Touch ID prompt. Blocks, so call off the main actor.
+    /// Reads the biometric copy, showing the Face ID or Touch ID prompt.
+    ///
+    /// This method blocks, so call it off the main actor.
     static func loadWithBiometrics(userID: String, reason: String) -> BiometricResult {
         switch KeychainService.loadBiometric(account: biometricAccount(userID: userID), reason: reason) {
         case .success(let data):
@@ -74,19 +79,20 @@ nonisolated enum VaultKeyStore {
         }
     }
 
-    /// Whether this device has a biometric copy of the user's key. Doesn't prompt.
+    /// Returns a Boolean value that indicates whether the device has a biometric
+    /// copy of the user's key, without prompting.
     static func hasBiometric(userID: String) -> Bool {
         KeychainService.hasBiometric(account: biometricAccount(userID: userID))
     }
 
-    /// Deletes this device's biometric copy.
+    /// Deletes the device's biometric copy.
     static func deleteBiometric(userID: String) {
         KeychainService.deleteBiometric(account: biometricAccount(userID: userID))
     }
 
     // MARK: - Recovery key
 
-    /// Human-copyable form of the key, in groups of 4 characters.
+    /// Returns the key as a recovery string in groups of four characters.
     static func recoveryString(for key: SymmetricKey) -> String {
         let base64 = key.withUnsafeBytes { Data($0) }.base64EncodedString()
         return stride(from: 0, to: base64.count, by: 4).map { offset in
@@ -96,7 +102,7 @@ nonisolated enum VaultKeyStore {
         }.joined(separator: " ")
     }
 
-    /// Parses a recovery key typed or pasted by the user, with or without spaces.
+    /// Parses a recovery key that the user typed or pasted, with or without spaces.
     static func key(fromRecoveryString string: String) -> SymmetricKey? {
         let compact = string.filter { !$0.isWhitespace }
         guard let data = Data(base64Encoded: compact), data.count == 32 else { return nil }

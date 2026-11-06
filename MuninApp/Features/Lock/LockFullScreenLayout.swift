@@ -1,9 +1,9 @@
 #if os(iOS)
 import SwiftUI
 
-/// The lock screen on iPhone, and on iPad in a narrow window (Split View,
-/// Slide Over): the artwork fills the screen, the unlock actions sit on a
-/// glass card at the bottom, with buttons the card's full width.
+/// A lock screen layout with full-screen artwork and the unlock actions on a glass card at the bottom.
+///
+/// Used on iPhone, and on iPad in a compact-width window.
 struct LockFullScreenLayout: View {
     var body: some View {
         Color.clear

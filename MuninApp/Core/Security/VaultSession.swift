@@ -3,96 +3,57 @@ import Foundation
 import LocalAuthentication
 import Observation
 
-/// The signed-in user's vault: whether it's set up, locked or unlocked, and the
-/// unlocked vault key (in memory only).
+/// An object that manages the signed-in user's vault: its setup, lock state,
+/// and the unlocked vault key.
 ///
-/// The vault unlocks with Face ID / Touch ID (this device's Keychain copy of
-/// the key) or with the master password (which unwraps the key Munin stores).
-/// A forgotten master password is reset with the recovery key.
+/// The vault key is held in memory only while unlocked. The vault unlocks with
+/// Face ID or Touch ID, using this device's Keychain copy of the key, or with
+/// the master password, which unwraps the key stored on the server. A
+/// forgotten master password is reset with the recovery key.
 @Observable
 final class VaultSession {
-    /// Where the vault is in its lifecycle.
-    enum State: Equatable {
-        /// Asking Munin whether a vault key exists.
-        case checking
-        /// Choose a master password: first setup, or a reset after the recovery key.
-        case needsMasterPassword
-        /// Munin has data but no master password is set up, and this device
-        /// has no key (data from before master passwords). Paste the recovery key.
-        case missingKey
-        /// A vault key exists and needs unlocking.
-        case locked
-        /// The vault key is in memory.
-        case unlocked
-        /// Munin couldn't be reached or answered with an error.
-        case failed(String)
-    }
+    /// The user defaults key for ``isBiometricUnlockEnabled``.
+    private static let biometricsDefaultsKey = "munin.biometrics.enabled"
+    /// The user defaults key for ``autoLockTimeout``.
+    private static let autoLockDefaultsKey = "munin.autoLock.timeout"
 
     /// The shortest master password accepted.
     static let minimumPasswordLength = 8
 
-    /// The current state.
+    /// An override for biometric availability, used by previews and simulators.
+    private let biometricsOverride: Bool?
+    private var userID: String?
+    /// The wrapped vault key fetched from the server.
+    private var record: VaultKeyRecord?
+    /// A vault key awaiting a master password: new, legacy, or recovered.
+    private var pendingKey: SymmetricKey?
+    /// A Boolean value that indicates whether ``pendingKey`` is newly
+    /// generated, so its recovery key is shown once saved.
+    private var isNewVault = false
+    /// The recovery key proof that authorizes replacing the vault key during a reset.
+    private var resetProof: String?
+    /// The in-flight request for the wrapped vault key, started by
+    /// ``prepare(auth:)``. A master password unlock awaits it if needed.
+    private var recordFetch: Task<VaultKeyRecord?, any Error>?
+
+    /// The current lifecycle state.
     private(set) var state: State = .checking
-    /// The unlocked vault key and proof, while unlocked.
+    /// The vault key and password proof, available while unlocked.
     private(set) var vault: UnlockedVault?
-    /// True while a slow operation (key derivation, a request) is running.
+    /// A Boolean value that indicates whether a long-running operation, such
+    /// as key derivation or a network request, is in progress.
     private(set) var isWorking = false
-    /// The last error, shown on the lock screen or in Settings.
+    /// The most recent error message, shown on the lock screen or in Settings.
     private(set) var errorMessage: String?
 
-    /// Why the vault couldn't be opened, while in the `.failed` state.
-    ///
-    /// Drives the lock screen's "Couldn't open your vault" alert. Setting it
-    /// (the alert dismissing) does nothing: the alert's buttons retry or sign
-    /// out, which leaves the failed state.
-    var failureMessage: String? {
-        get {
-            if case .failed(let message) = state { message } else { nil }
-        }
-        set { }
-    }
-
-    /// Set once after a brand-new vault is created, to show the recovery key.
+    /// The recovery key for a newly created vault, set once so it can be shown to the user.
     var newRecoveryKey: NewRecoveryKey?
 
-    /// A newly created recovery key, presented as a sheet item.
-    struct NewRecoveryKey: Identifiable {
-        /// The recovery key, formatted for the user to write down.
-        let key: String
-        var id: String { key }
-    }
-
-    /// Choosing a new master password after unlocking with the recovery key.
-    var isResettingMasterPassword: Bool { resetProof != nil }
-
-    /// Whether this device has Face ID or Touch ID set up.
-    var canUseBiometrics: Bool {
-        biometricsOverride ?? LAContext().canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: nil)
-    }
-
-    /// Whether this device unlocks with Face ID rather than Touch ID, for the
-    /// lock screen's and Settings' labels and icons. iPhone and iPad Pro have
-    /// Face ID; Macs, iPad Air and iPad mini have Touch ID.
-    var usesFaceID: Bool {
-        let context = LAContext()
-        _ = context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: nil)
-        return context.biometryType == .faceID
-    }
-
-    /// Previews only: the canvas and most simulators have no Face ID / Touch ID.
-    private let biometricsOverride: Bool?
-
-    /// Creates a session in the checking state.
+    /// A Boolean value that indicates whether the user allows biometric unlock.
     ///
-    /// - Parameter biometricsAvailable: For previews: overrides whether Face ID
-    ///   / Touch ID is available. Nil asks the device.
-    init(biometricsAvailable: Bool? = nil) {
-        biometricsOverride = biometricsAvailable
-    }
-
-    /// The Settings switch. A preference only (UserDefaults); the key itself is in the Keychain.
-    ///
-    /// Off removes this device's copy of the key; on saves it (while unlocked).
+    /// The preference is stored in user defaults; the key itself lives in the
+    /// Keychain. Turning it off deletes this device's copy of the key, and
+    /// turning it on while unlocked saves one.
     var isBiometricUnlockEnabled = UserDefaults.standard.object(forKey: VaultSession.biometricsDefaultsKey) as? Bool ?? true {
         didSet {
             guard isBiometricUnlockEnabled != oldValue else { return }
@@ -105,54 +66,102 @@ final class VaultSession {
             }
         }
     }
-    /// UserDefaults key for `isBiometricUnlockEnabled`.
-    private static let biometricsDefaultsKey = "munin.biometrics.enabled"
 
-    /// The Settings picker. A preference only (UserDefaults). See `View.autoLock(_:)`.
+    /// How long the app can stay inactive before the vault locks.
+    ///
+    /// Stored in user defaults. See ``SwiftUI/View/autoLock(_:)``.
     var autoLockTimeout: AutoLockTimeout = (UserDefaults.standard.object(forKey: VaultSession.autoLockDefaultsKey) as? Int)
         .flatMap(AutoLockTimeout.init(rawValue:)) ?? .fiveMinutes {
         didSet { UserDefaults.standard.set(autoLockTimeout.rawValue, forKey: Self.autoLockDefaultsKey) }
     }
-    /// UserDefaults key for `autoLockTimeout`.
-    private static let autoLockDefaultsKey = "munin.autoLock.timeout"
 
-    /// The lock screen shows "Unlock with biometrics" only when this is true.
+    /// Creates a session in the checking state.
+    ///
+    /// - Parameter biometricsAvailable: Overrides whether Face ID or Touch ID
+    ///   is available, for previews. Pass `nil` to ask the device.
+    init(biometricsAvailable: Bool? = nil) {
+        biometricsOverride = biometricsAvailable
+    }
+}
+
+extension VaultSession {
+    /// The stages of the vault's lifecycle.
+    enum State: Equatable {
+        /// The session is asking the server whether a vault key exists.
+        case checking
+        /// The user needs to choose a master password, either during first
+        /// setup or after unlocking with the recovery key.
+        case needsMasterPassword
+        /// The account has data but no stored vault key, and this device has
+        /// no local copy of the key. The user needs to enter the recovery key.
+        case missingKey
+        /// A vault key exists and the vault is locked.
+        case locked
+        /// The vault key is in memory.
+        case unlocked
+        /// The server couldn't be reached or returned an error.
+        case failed(String)
+    }
+
+    /// A newly created recovery key, presented as a sheet item.
+    struct NewRecoveryKey: Identifiable {
+        /// The recovery key, formatted for the user to write down.
+        let key: String
+        var id: String { key }
+    }
+
+    /// The reason the vault couldn't be opened, in the ``State/failed(_:)`` state.
+    ///
+    /// Drives the lock screen's failure alert. The setter is a no-op so the
+    /// property can back an alert binding; the alert's actions retry or sign
+    /// out, which leave the failed state.
+    var failureMessage: String? {
+        get {
+            if case .failed(let message) = state { message } else { nil }
+        }
+        set { }
+    }
+
+    /// A Boolean value that indicates whether the user is choosing a new
+    /// master password after unlocking with the recovery key.
+    var isResettingMasterPassword: Bool { resetProof != nil }
+
+    /// A Boolean value that indicates whether Face ID or Touch ID is set up on this device.
+    var canUseBiometrics: Bool {
+        biometricsOverride ?? LAContext().canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: nil)
+    }
+
+    /// A Boolean value that indicates whether this device uses Face ID rather
+    /// than Touch ID, used to choose labels and icons.
+    var usesFaceID: Bool {
+        let context = LAContext()
+        _ = context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: nil)
+        return context.biometryType == .faceID
+    }
+
+    /// A Boolean value that indicates whether the lock screen offers biometric unlock.
     var offersBiometricUnlock: Bool { canUseBiometrics && isBiometricUnlockEnabled }
-
-    /// The signed-in user's ID.
-    private var userID: String?
-    /// The wrapped vault key from Munin.
-    private var record: VaultKeyRecord?
-    /// The vault key waiting for a master password (new, legacy or recovered).
-    private var pendingKey: SymmetricKey?
-    /// True when `pendingKey` is a brand-new key, so its recovery key is shown once saved.
-    private var isNewVault = false
-    /// Recovery key proof, for PUT /v1/vault-key when resetting.
-    private var resetProof: String?
-    /// The request for the wrapped vault key, started by `prepare`. A master
-    /// password unlock waits for it if the lock screen showed before it finished.
-    private var recordFetch: Task<VaultKeyRecord?, any Error>?
 
     // MARK: - Startup
 
-    /// Works out the vault's state for the signed-in user.
+    /// Determines the vault's state for the signed-in user.
     ///
-    /// Locked when Munin has a vault key. Otherwise a master password is needed,
-    /// either for this device's legacy key or for a brand-new key when the
-    /// account has no data yet. With data but no key anywhere, the recovery
-    /// key is asked for. Signing out deletes this device's biometric copy of
-    /// the previous user's key.
+    /// The vault is locked when the server has a vault key. Otherwise the user
+    /// needs a master password, either for this device's legacy key or for a
+    /// new key when the account has no data. If the account has data but no
+    /// key exists anywhere, the user is asked for the recovery key. When no
+    /// user is signed in, the previous user's biometric key copy is deleted.
     ///
-    /// When this device has a Face ID / Touch ID copy of the key, the lock
-    /// screen shows straight away and Munin is asked in the background, since
-    /// that copy doesn't need Munin. If Munin then rejects the session, the
-    /// user is signed out (which locks); if Munin has no vault key, the vault
-    /// leaves the unlocked or locked state for the setup it needs.
+    /// When this device has a biometric copy of the key, the lock screen
+    /// appears immediately and the server is queried in the background. If the
+    /// server rejects the session, the user is signed out; if it has no vault
+    /// key, the session moves to the setup state it needs.
+    ///
+    /// - Parameter auth: The authentication manager for the signed-in user.
     func prepare(auth: AuthManager) async {
         let previousUserID = userID
         clear()
         guard auth.isSignedIn, let userID = auth.userID else {
-            // Signed out: remove this device's biometric copy of the key.
             if let previousUserID { VaultKeyStore.deleteBiometric(userID: previousUserID) }
             return
         }
@@ -168,7 +177,7 @@ final class VaultSession {
                 if state == .checking { state = .locked }
                 return
             }
-            // No vault key on Munin: anything unlocked from this device's copy is out of date.
+            // Without a server key, a vault unlocked from the local copy is stale.
             vault = nil
             if let legacyKey = VaultKeyStore.loadLegacy(userID: userID) {
                 pendingKey = legacyKey
@@ -187,13 +196,15 @@ final class VaultSession {
         } catch let error where error.isMuninAuthRejection {
             auth.signOut()
         } catch {
-            // Already unlocked with Face ID / Touch ID: carry on, the lists show their own errors.
+            // An already unlocked vault stays open; its lists report their own errors.
             if state != .unlocked { state = .failed(error.muninDescription) }
         }
     }
 
-    /// Restores a vault from before master passwords, where the recovery key
-    /// is the vault key itself. Returns false if the recovery key is invalid.
+    /// Restores a legacy vault, whose recovery key is the vault key itself.
+    ///
+    /// - Parameter recoveryString: The recovery key the user entered.
+    /// - Returns: `false` if the recovery key is invalid.
     func restoreLegacyKey(_ recoveryString: String) -> Bool {
         guard let key = VaultKeyStore.key(fromRecoveryString: recoveryString) else { return false }
         pendingKey = key
@@ -203,11 +214,16 @@ final class VaultSession {
 
     // MARK: - Master password setup / reset
 
-    /// Wraps the pending vault key with `password` and saves it to Munin, then unlocks.
+    /// Wraps the pending vault key with a master password, saves it to the
+    /// server, and unlocks.
     ///
-    /// Creates the vault key on first setup, or replaces it when resetting
-    /// with the recovery key. If another device set up a master password in
-    /// the meantime, it goes to the lock screen instead.
+    /// Creates the vault key on first setup, or replaces it when resetting with
+    /// the recovery key. If another device has already set up a master
+    /// password, the session moves to the locked state instead.
+    ///
+    /// - Parameters:
+    ///   - password: The new master password.
+    ///   - auth: The authentication manager for the signed-in user.
     func setMasterPassword(_ password: String, auth: AuthManager) async {
         guard let userID, let key = pendingKey, !isWorking else { return }
         isWorking = true
@@ -219,7 +235,7 @@ final class VaultSession {
             if resetProof != nil {
                 try await service.replaceVaultKey(body)
             } else if !(try await service.createVaultKey(body)) {
-                // Set up on another device in the meantime: unlock with that password.
+                // Another device created the key first; unlock with its password.
                 errorMessage = Localized("masterPassword.exists")
                 record = try await service.vaultKey()
                 pendingKey = nil
@@ -241,10 +257,16 @@ final class VaultSession {
         }
     }
 
-    /// Settings ▸ Change Master Password: rewraps the vault key with `new`.
+    /// Rewraps the vault key with a new master password.
     ///
-    /// Checks `current` locally first, then sends its proof so Munin accepts
-    /// the change. Returns true when saved.
+    /// Verifies the current password locally, then sends its proof so the
+    /// server accepts the change.
+    ///
+    /// - Parameters:
+    ///   - current: The current master password.
+    ///   - new: The new master password.
+    ///   - auth: The authentication manager for the signed-in user.
+    /// - Returns: `true` if the change was saved.
     func changeMasterPassword(current: String, new: String, auth: AuthManager) async -> Bool {
         guard state == .unlocked, let vault, let record, !isWorking else { return false }
         isWorking = true
@@ -274,12 +296,12 @@ final class VaultSession {
         }
     }
 
-    /// Clears the last error.
+    /// Clears the most recent error message.
     func clearError() {
         errorMessage = nil
     }
 
-    /// Back to the lock screen without resetting the master password.
+    /// Cancels a master password reset and returns to the locked state.
     func cancelReset() {
         pendingKey = nil
         resetProof = nil
@@ -289,7 +311,7 @@ final class VaultSession {
 
     // MARK: - Unlock
 
-    /// Unlocks with this device's Keychain copy of the key, behind Face ID / Touch ID.
+    /// Unlocks with this device's Keychain copy of the key, protected by Face ID or Touch ID.
     func unlockWithBiometrics() async {
         guard state == .locked, let userID, !isWorking else { return }
         isWorking = true
@@ -311,9 +333,12 @@ final class VaultSession {
     }
 
     /// Unlocks by deriving a key from the master password and unwrapping the
-    /// vault key with it. A wrong password fails to unwrap.
+    /// vault key with it.
     ///
-    /// If the lock screen showed before Munin sent the wrapped key, waits for it.
+    /// Waits for the wrapped key if its request is still in flight. A wrong
+    /// password fails to unwrap and sets ``errorMessage``.
+    ///
+    /// - Parameter masterPassword: The master password the user entered.
     func unlock(masterPassword: String) async {
         guard state == .locked, let userID, !isWorking else { return }
         isWorking = true
@@ -336,7 +361,9 @@ final class VaultSession {
         }
     }
 
-    /// Checks the recovery key, then asks for a new master password.
+    /// Verifies the recovery key, then moves to the state for choosing a new master password.
+    ///
+    /// - Parameter recoveryString: The recovery key the user entered.
     func unlock(recoveryKey recoveryString: String) {
         guard state == .locked, let userID, let record else { return }
         guard let key = VaultKeyStore.key(fromRecoveryString: recoveryString) else {
@@ -357,8 +384,8 @@ final class VaultSession {
 
     // MARK: - Lock
 
-    /// Locks the vault: drops the key from memory, clears the icon cache and
-    /// any copied password. The vault screens go away with it.
+    /// Locks the vault, removing the key from memory and clearing the icon
+    /// cache and any copied password.
     func lock() {
         guard state == .unlocked else { return }
         vault = nil
@@ -367,12 +394,11 @@ final class VaultSession {
         errorMessage = nil
         state = .locked
     }
+}
 
-    // MARK: - Private
-
-    /// Keeps the unlocked vault and, unless told not to, saves this device's
-    /// biometric copy of the key.
-    private func finishUnlock(_ vault: UnlockedVault, saveForBiometrics: Bool = true) {
+private extension VaultSession {
+    /// Stores the unlocked vault and optionally saves a biometric copy of its key.
+    func finishUnlock(_ vault: UnlockedVault, saveForBiometrics: Bool = true) {
         if saveForBiometrics, offersBiometricUnlock {
             VaultKeyStore.saveForBiometrics(vault)
         }
@@ -381,8 +407,8 @@ final class VaultSession {
         state = .unlocked
     }
 
-    /// Resets everything to the checking state, before preparing for a user.
-    private func clear() {
+    /// Resets the session to the checking state.
+    func clear() {
         Task { await WebsiteIconStore.shared.clear() }
         state = .checking
         vault = nil
@@ -396,10 +422,11 @@ final class VaultSession {
         newRecoveryKey = nil
     }
 
-    /// Wraps `key` with a new master password (fresh salt) and with the recovery key.
+    /// Wraps a vault key with a new master password, using a fresh salt, and
+    /// with the recovery key.
     ///
     /// - Returns: The request body and the new password proof.
-    private static func makeVaultKeyBody(key: SymmetricKey, password: String, userID: String, currentProof: String?) async throws -> (VaultKeyRequestBody, String) {
+    static func makeVaultKeyBody(key: SymmetricKey, password: String, userID: String, currentProof: String?) async throws -> (VaultKeyRequestBody, String) {
         let parameters = KDFParameters.new()
         let passwordKeys = try await derive(password: password, parameters: parameters)
         let recoveryKeys = MasterKey.derive(recoveryKey: key)
@@ -414,9 +441,10 @@ final class VaultSession {
         return (body, passwordKeys.proof)
     }
 
-    /// Derives the wrapping key and proof from a master password, off the main
-    /// actor: PBKDF2 is slow on purpose.
-    private static func derive(password: String, parameters: KDFParameters) async throws -> DerivedKeys {
+    /// Derives the wrapping key and proof from a master password.
+    ///
+    /// Runs off the main actor because PBKDF2 is deliberately slow.
+    static func derive(password: String, parameters: KDFParameters) async throws -> DerivedKeys {
         try await Task.detached(priority: .userInitiated) {
             try MasterKey.derive(password: password, parameters: parameters)
         }.value

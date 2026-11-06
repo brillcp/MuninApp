@@ -1,9 +1,10 @@
 import SwiftUI
 
-/// Munin's design tokens.
+/// The app's design tokens.
 enum DesignKit {
     /// Spacing tokens, for paddings and stack spacing.
     enum Spacing {
+        /// Raw spacing values in points, named by size.
         enum Primitive {
             static let s0: CGFloat = 0
             static let s2: CGFloat = 2
@@ -39,8 +40,9 @@ enum DesignKit {
         static let slowSmooth: Animation = .smooth(duration: 0.45)
     }
 
-    /// SF Symbol names, by what they stand for. Use with `systemImage:` and
-    /// `Image(systemName:)`.
+    /// SF Symbol names, grouped by meaning.
+    ///
+    /// Use with `systemImage:` parameters and `Image(systemName:)`.
     enum Icon {
         // MARK: Sections
         /// The Vault: passwords.
@@ -69,7 +71,7 @@ enum DesignKit {
         static let delete = "trash"
         /// Close a panel.
         static let close = "xmark"
-        /// Reload from Munin.
+        /// Reload from the server.
         static let refresh = "arrow.clockwise"
         /// Generate a new password in the generator.
         static let regenerate = "arrow.counterclockwise"
@@ -115,7 +117,7 @@ enum DesignKit {
         static let noAccounts = "lock.shield"
 
         // MARK: Lock and security
-        /// Lock Munin.
+        /// Lock the vault.
         static let lock = "lock"
         /// Locked: read-only mode and auto-lock.
         static let locked = "lock.fill"
@@ -157,7 +159,7 @@ enum DesignKit {
         static let warning = "exclamationmark.triangle"
         /// The App Store couldn't renew the subscription.
         static let billingIssue = "exclamationmark.triangle.fill"
-        /// Munin couldn't be reached.
+        /// The server couldn't be reached.
         static let offline = "wifi.exclamationmark"
         /// Items that couldn't be decrypted.
         static let undecryptable = "exclamationmark.lock"
@@ -167,6 +169,7 @@ enum DesignKit {
     enum Asset {
         /// The app icon, shown on the lock screen and the paywall.
         static let appIcon = "icon-512"
+        /// The app icon's dark variant.
         static let appIconDark = "icon-dark-512"
         /// The raven artwork behind the lock screen.
         static let lockArtwork = "corpus"

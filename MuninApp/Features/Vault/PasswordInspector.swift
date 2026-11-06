@@ -1,38 +1,35 @@
 import SwiftUI
 
-/// Every field of the selected password item (the vault's detail).
+/// A view that shows every field of a password item.
 ///
-/// The password stays encrypted until it's shown or copied; the note is
-/// decrypted while the item is selected. Tapping a row copies its value. On
-/// iOS the background and tint use the website icon's dominant colour.
+/// The password stays encrypted until it's revealed or copied; the note is
+/// decrypted while the item is displayed. Tapping a row copies its value. On
+/// iOS, the background and tint use the website icon's dominant color.
 struct PasswordInspector: View {
-    /// A field that can be copied.
-    fileprivate enum Field { case url, username, password, note }
-
     @Environment(\.openURL) private var openURL
-    /// Read-only without a subscription: Delete is disabled.
+    /// The subscription state; Delete is disabled while the vault is read-only.
     @Environment(SubscriptionManager.self) private var subscriptions
 
-    /// The decrypted password while it's shown.
+    /// The decrypted password while it's revealed.
     @State private var revealedPassword: String?
-    /// The decrypted note while the item is shown.
+    /// The decrypted note while the item is displayed.
     @State private var note: String?
-    /// Bumped by buttons for a light haptic.
+    /// A counter that triggers a light haptic when incremented.
     @State private var hapticTaps = 0
-    /// The website icon's dominant colour; tints the background.
+    /// The website icon's dominant color, used to tint the background.
     @State private var tint: Color?
-    /// The field just copied, for the short "Copied" label.
+    /// The most recently copied field, which briefly shows a “Copied” label.
     @State private var copiedField: Field?
-    /// Opacity for tinted row backgrounds.
+    /// The opacity of tinted row backgrounds.
     private var rowOpacity: CGFloat = 0.05
 
-    /// The item to show.
+    /// The item to display.
     let item: PasswordItem
-    /// Decrypts a ciphertext for the given field ("password" or "note").
+    /// Decrypts a ciphertext for the given field, `password` or `note`.
     let decrypt: (_ ciphertext: String, _ field: String) throws -> String
     /// Decrypts and copies the password.
     let onCopyPassword: () -> Void
-    /// Asks for confirmation; the button sits at the bottom of the list.
+    /// Requests deletion of the item, typically after confirmation.
     let onDelete: () -> Void
 
     var body: some View {
@@ -148,21 +145,23 @@ struct PasswordInspector: View {
 }
 
 private extension PasswordInspector {
-    /// The item's website; "kattmat.com" opens as https.
+    /// A field that can be copied.
+    enum Field { case url, username, password, note }
+
+    /// The item's website URL, using HTTPS when no scheme is given.
     var websiteURL: URL? {
         let trimmed = item.url.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return nil }
         return URL(string: trimmed.contains("://") ? trimmed : "https://\(trimmed)")
     }
 
-    /// An icon button that copies a field.
     func copyButton(_ field: Field, perform: @escaping () -> Void) -> some View {
         Button("global.copy", systemImage: DesignKit.Icon.copy) {
             copy(field, perform: perform)
         }
     }
 
-    /// Runs the copy and shows "Copied" on that row for a moment.
+    /// Performs a copy and briefly shows “Copied” on the field's row.
     func copy(_ field: Field, perform: () -> Void) {
         perform()
         hapticTaps += 1
@@ -176,17 +175,17 @@ private extension PasswordInspector {
     }
 }
 
-/// A field: its label small above the value, with icon buttons on the
-/// trailing side. Tapping the row copies (set by the caller); the value
-/// briefly reads "Copied".
+/// A row that shows a field's label above its value, with icon buttons on the
+/// trailing edge.
+///
+/// The caller sets the tap action. While copied, the value briefly reads
+/// “Copied”.
 private struct DetailRow<Value: View, Actions: View>: View {
-    /// The field's name.
     let label: LocalizedStringKey
-    /// Shows "Copied" in place of the value.
+    /// A Boolean value that indicates whether to show “Copied” in place of the value.
     let isCopied: Bool
-    /// The field's value.
     @ViewBuilder let value: Value
-    /// Icon buttons on the trailing side.
+    /// Icon buttons on the trailing edge.
     @ViewBuilder let actions: Actions
 
     var body: some View {

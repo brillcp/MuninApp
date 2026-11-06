@@ -1,29 +1,30 @@
 #if os(iOS)
 import SwiftUI
 
-/// iOS search tab: passwords and 2FA codes in one list, in two sections.
+/// A view that searches passwords and two-factor accounts in a single list on iOS.
 ///
-/// Tapping a password opens it in Search's own navigation stack, where it can
-/// also be edited and deleted; the Vault tab stays as it was.
+/// Selecting a password opens it in this view's own navigation stack, where it
+/// can be edited or deleted without affecting the Vault tab.
 ///
-/// Nothing is remembered between searches. Both lists load on appear in case
-/// their tabs haven't been opened yet. The `.searchable` modifier sits on the
-/// NavigationStack (not inside it), as in Apple's search tab examples, so the
-/// tab bar can turn the Search tab into its own search field.
+/// Results aren't kept between searches. Both data sources load on appear in
+/// case their tabs haven't been opened yet. The `searchable` modifier is
+/// applied to the `NavigationStack` rather than its content, so the tab bar can
+/// turn the Search tab into a search field.
 struct SearchView: View {
     @Environment(AuthManager.self) private var auth
-    /// The search field's text.
     @State private var query = ""
-    /// Matching passwords. Filtered once per change of query or data, not on every body evaluation.
+    /// The passwords matching the query.
+    ///
+    /// Filtered when the query or data changes, rather than on every body evaluation.
     @State private var passwords: [PasswordItem] = []
-    /// Matching 2FA accounts, filtered the same way.
+    /// The two-factor accounts matching the query.
     @State private var codes: [VaultItem] = []
-    /// One clock for the code rows.
+    /// The clock shared by all code rows.
     @State private var clock = TwoFactorClock()
 
     /// The passwords to search.
     let vaultModel: VaultViewModel
-    /// The 2FA accounts to search.
+    /// The two-factor accounts to search.
     let twoFactorModel: TwoFactorViewModel
 
     var body: some View {
@@ -75,13 +76,14 @@ struct SearchView: View {
 }
 
 private extension SearchView {
-    /// The query without surrounding spaces.
     var trimmedQuery: String {
         query.trimmingCharacters(in: .whitespaces)
     }
 
-    /// Filters passwords (name, username, URL) and 2FA accounts (title,
-    /// subtitle) by the query. An empty query shows nothing.
+    /// Filters passwords and two-factor accounts by the query.
+    ///
+    /// Passwords match on name, username, or URL; accounts match on title or
+    /// subtitle. An empty query clears the results.
     func updateResults() {
         guard !trimmedQuery.isEmpty else {
             passwords = []

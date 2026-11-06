@@ -1,10 +1,12 @@
 import Foundation
 import Networking
 
-/// The one place that decides what a backend or auth error means.
+/// Classification of server and authentication errors.
 extension Error {
-    /// The session can't be reused: the token is missing, or the auth
-    /// server rejected a refresh outright. The user needs to sign in again.
+    /// A Boolean value that indicates whether the session can't be reused
+    /// because the token is missing or a refresh was rejected.
+    ///
+    /// The user needs to sign in again.
     var invalidatesAuthSession: Bool {
         if self is TokenProvidableError { return true }
         guard let status = httpStatus else { return false }
@@ -14,12 +16,12 @@ extension Error {
         }
     }
 
-    /// Munin refused the token (expired or invalid), so the user has to sign in again.
+    /// A Boolean value that indicates whether the server rejected the access token as expired or invalid.
     var isMuninAuthRejection: Bool {
         self is TokenProvidableError || httpStatus == .unauthorized
     }
 
-    /// The HTTP status of a server response error, or nil for any other error.
+    /// The HTTP status of a server response error, or `nil` for any other error.
     var httpStatus: HTTP.StatusCode? {
         guard let networkError = self as? Network.Service.NetworkError,
               case .badServerResponse(let statusCode, _) = networkError

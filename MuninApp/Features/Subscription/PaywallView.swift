@@ -1,13 +1,12 @@
 import StoreKit
 import SwiftUI
 
-/// The subscription screen: Apple's subscription store for Munin's monthly
-/// plan, with its free trial, price and Restore Purchases.
+/// A view that offers the monthly subscription using the system subscription store.
 ///
-/// Shown after setup, and on unlock while the vault is read-only. Closing it
-/// keeps the vault read-only. Purchases carry the user's ID as their app
-/// account token and are sent to Munin to check with Apple. Closes itself
-/// once Munin confirms the subscription.
+/// The paywall appears after setup and on unlock while the vault is read-only.
+/// Dismissing it leaves the vault read-only. Purchases are tagged with the
+/// user's identifier as their app account token and sent to the server for
+/// verification. The view dismisses itself once the server confirms the subscription.
 struct PaywallView: View {
     @Environment(AuthManager.self) private var auth
     @Environment(SubscriptionManager.self) private var subscriptions
@@ -31,28 +30,31 @@ struct PaywallView: View {
 }
 
 private extension PaywallView {
-    /// Tags the purchase with the Munin user ID, so Munin can match it to this account.
+    /// Returns purchase options that tag the purchase with the user's identifier, so the server can match it to the account.
     func purchaseOptions(_ product: Product) async -> Set<Product.PurchaseOption> {
         guard let token = subscriptions.appAccountToken(auth: auth) else { return [] }
         return [.appAccountToken(token)]
     }
 
-    /// Sends a completed purchase to Munin, and closes the paywall once Munin
-    /// confirms it. If Munin can't, the error shows in the header.
+    /// Sends a completed purchase to the server and dismisses the paywall once it's confirmed.
+    ///
+    /// If confirmation fails, the header shows the error.
     func purchaseCompleted(_ product: Product, _ result: Result<Product.PurchaseResult, any Error>) async {
         await subscriptions.handlePurchase(result, auth: auth)
         if subscriptions.status?.active == true { dismiss() }
     }
 }
 
-/// The paywall's marketing header: app name, what the subscription gives,
-/// a payment problem with Manage Subscription, and why the last purchase or
-/// restore couldn't be linked.
+/// A view that shows the paywall's header.
+///
+/// The header describes the subscription and, when relevant, shows a billing
+/// issue with a button to manage the subscription, or the error from the last
+/// purchase or restore.
 private struct PaywallHeader: View {
     @Environment(SubscriptionManager.self) private var subscriptions
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.openURL) private var openURL
-    /// iOS: shows the App Store's Manage Subscriptions sheet.
+    /// A Boolean value that indicates whether the system's Manage Subscriptions sheet is presented on iOS.
     @State private var isManagingSubscription = false
 
     var body: some View {
@@ -84,9 +86,11 @@ private struct PaywallHeader: View {
         .manageSubscriptionsSheet(isPresented: $isManagingSubscription)
         #endif
     }
+}
 
-    /// Opens subscription management, to update the payment method.
-    private func manageSubscription() {
+private extension PaywallHeader {
+    /// Opens subscription management so the user can update their payment method.
+    func manageSubscription() {
         #if os(iOS)
         isManagingSubscription = true
         #else

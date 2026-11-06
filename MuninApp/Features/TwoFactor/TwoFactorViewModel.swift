@@ -2,26 +2,29 @@ import CryptoKit
 import Foundation
 import Observation
 
-/// Loads the user's encrypted entries from Munin, decrypts them with the
-/// unlocked vault key, and adds/removes entries. Codes are calculated in the
-/// views from the decrypted accounts.
+/// An observable model that loads, decrypts, and manages the user's two-factor accounts.
+///
+/// Entries are fetched from the server and decrypted with the unlocked vault
+/// key. Views compute codes from the decrypted accounts.
 @Observable
 final class TwoFactorViewModel {
-    /// Read at use time, so a changed master password (new proof) and a lock are picked up.
+    /// The session that provides the vault key.
+    ///
+    /// Read on each use, so a lock or a changed master password takes effect immediately.
     private let session: VaultSession
 
     /// The decrypted accounts.
     private(set) var items: [VaultItem] = []
-    /// The last load or delete error.
+    /// A description of the last load or delete error.
     private(set) var errorMessage: String?
-    /// True while loading.
+    /// A Boolean value that indicates whether a load is in progress.
     private(set) var isLoading = false
-    /// True once the first load has finished, successfully or not.
+    /// A Boolean value that indicates whether the first load has finished, successfully or not.
     private(set) var hasLoaded = false
-    /// Entries that didn't decrypt with this device's key.
+    /// The number of entries that couldn't be decrypted with the vault key.
     private(set) var undecryptableCount = 0
 
-    /// Creates a view model that reads the vault key from `session`.
+    /// Creates a view model that reads the vault key from the given session.
     init(session: VaultSession) {
         self.session = session
     }
@@ -29,8 +32,9 @@ final class TwoFactorViewModel {
 
 // MARK: - Public functions
 extension TwoFactorViewModel {
-    /// Loads the entries from Munin and decrypts them. Signs out if Munin
-    /// rejects the token.
+    /// Loads entries from the server and decrypts them.
+    ///
+    /// Signs the user out if the server rejects their token.
     func refresh(auth: AuthManager) async {
         guard auth.isSignedIn else {
             reset()
@@ -58,7 +62,10 @@ extension TwoFactorViewModel {
         }
     }
 
-    /// Encrypts and uploads accounts, skipping exact duplicates. Returns how many were added.
+    /// Encrypts and uploads accounts, skipping exact duplicates.
+    ///
+    /// - Returns: The number of accounts added.
+    /// - Throws: An error if the vault is locked, or if encryption or an upload fails.
     @discardableResult
     func add(_ accounts: [OTPAccount], auth: AuthManager) async throws -> Int {
         let vault = try unlockedVault()
@@ -75,13 +82,13 @@ extension TwoFactorViewModel {
         return added
     }
 
-    /// The accounts from an import that aren't in Munin yet, without repeats.
+    /// Returns the accounts that aren't stored yet, with repeats removed.
     func newAccounts(in accounts: [OTPAccount]) -> [OTPAccount] {
         var seen = Set(items.map(\.account))
         return accounts.filter { seen.insert($0).inserted }
     }
 
-    /// Deletes an entry on Munin (with the master password proof) and removes it from the list.
+    /// Deletes an entry on the server, using the master password proof, and removes it from the list.
     func delete(_ item: VaultItem, auth: AuthManager) async {
         do {
             let vault = try unlockedVault()
@@ -95,13 +102,15 @@ extension TwoFactorViewModel {
 
 // MARK: - Private functions
 private extension TwoFactorViewModel {
-    /// The unlocked vault, or `VaultError.keyMissing` while locked.
+    /// Returns the unlocked vault.
+    ///
+    /// - Throws: ``VaultError/keyMissing`` while the vault is locked.
     func unlockedVault() throws -> UnlockedVault {
         guard let vault = session.vault else { throw VaultError.keyMissing }
         return vault
     }
 
-    /// Decrypts the entries into `items`, counting the ones that fail.
+    /// Decrypts entries into ``items`` and counts those that fail.
     func decrypt(_ entries: [EncryptedEntry], key: SymmetricKey, userID: String) {
         var decrypted: [VaultItem] = []
         var failures = 0
@@ -116,7 +125,6 @@ private extension TwoFactorViewModel {
         undecryptableCount = failures
     }
 
-    /// Forgets everything loaded.
     func reset() {
         items = []
         errorMessage = nil
@@ -125,13 +133,14 @@ private extension TwoFactorViewModel {
     }
 }
 
-/// Errors from vault operations that need a signed-in user and an unlocked key.
+/// An error from a vault operation that requires a signed-in user and an unlocked key.
 enum VaultError: LocalizedError {
     /// No user is signed in.
     case notSignedIn
-    /// The vault is locked, so there's no key.
+    /// The vault is locked, so its key isn't available.
     case keyMissing
 
+    /// A localized message describing the error.
     var errorDescription: String? {
         switch self {
         case .notSignedIn: return Localized("errors.notSignedIn")

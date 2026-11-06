@@ -3,19 +3,25 @@ import SwiftUI
 
 // MARK: - Localization
 
-/// Looks up `key` in Localizable.strings and substitutes any `args` into its
-/// format placeholders. Falls back to `key` itself if it's missing.
+/// Returns a localized string, with arguments substituted into its format placeholders.
+///
+/// - Parameters:
+///   - key: The key in the app's string tables.
+///   - args: Values for the string's format placeholders.
+/// - Returns: The localized, formatted string, or `key` if no translation exists.
 nonisolated func Localized(_ key: String, _ args: CVarArg...) -> String {
     formattedLocalizedString(key, args)
 }
 
-/// Like `Localized(_:_:)`, but returns a `LocalizedStringKey` for SwiftUI views.
+/// Returns a localized, formatted string as a `LocalizedStringKey` for SwiftUI views.
+///
+/// See ``Localized(_:_:)``.
 nonisolated func LocalizedKey(_ key: String, _ args: CVarArg...) -> LocalizedStringKey {
     LocalizedStringKey(formattedLocalizedString(key, args))
 }
 
-/// Formats with the current locale so numbers use the user's digits and
-/// entries in Localizable.stringsdict pick the right plural form.
+/// Formats a localized string with the current locale, so numbers use the
+/// user's digits and plural rules select the correct form.
 nonisolated private func formattedLocalizedString(_ key: String, _ args: [CVarArg]) -> String {
     let format = Bundle.main.localizedString(forKey: key, value: nil, table: nil)
     return String(format: format, locale: .current, arguments: args)

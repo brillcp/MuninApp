@@ -5,12 +5,11 @@ import UIKit
 import AppKit
 #endif
 
-/// Shows the recovery key so the user can store it somewhere safe.
+/// A view that shows the recovery key so the user can store it safely.
 ///
 /// The recovery key resets a forgotten master password.
 struct RecoveryKeyView: View {
     @Environment(\.dismiss) private var dismiss
-    /// Set after copying, to show "Copied" on the button.
     @State private var didCopy = false
 
     /// The recovery key, formatted in groups of four characters.

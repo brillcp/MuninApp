@@ -1,10 +1,9 @@
 import AuthenticationServices
 import SwiftUI
 
-// Pieces shared by the Mac and iOS lock screens (LockView+macOS / LockView+iOS).
+// Components shared by the lock screen layouts.
 
-/// The app's logo and name, shown at the top left of the Mac lock screen.
-/// The image comes from the "Logo" image set.
+/// A view that shows the app's icon, name, and tagline on the lock screen.
 struct LockLogo: View {
     @Environment(\.colorScheme) private var colorScheme
 
@@ -24,12 +23,13 @@ struct LockLogo: View {
     }
 }
 
-/// What the lock screen's card shows. Each step is its own view; `LockPanel`
-/// is the only place that switches between them.
+/// The steps the lock screen's card can show.
+///
+/// Each step has its own view. ``LockPanel`` switches between them.
 enum LockStep: Hashable {
-    /// Signed out: Sign in with Apple.
+    /// Sign in with Apple, shown while signed out.
     case signIn
-    /// Unlock with Face ID / Touch ID.
+    /// Unlock with Face ID or Touch ID.
     case biometrics
     /// Unlock with the master password.
     case masterPassword
@@ -47,20 +47,22 @@ enum LockStep: Hashable {
     }
 }
 
-/// The lock screen's card: title, account and the current step.
+/// A view that shows the lock screen's card: the title, the current step, and
+/// any error.
 ///
-/// Changing step animates with a bounce. If the vault couldn't be opened
-/// (Munin unreachable, for example), an alert offers Try Again and Sign Out. While something is working, a
-/// spinner takes the place of the step's buttons. Right after Sign in with
-/// Apple, Face ID / Touch ID starts on its own once the vault is ready.
+/// Step changes animate. When the vault can't be opened, for example because
+/// the server is unreachable, an alert offers to try again or sign out. The
+/// card is disabled while work is in progress. After Sign in with Apple,
+/// biometric unlock starts automatically once the vault is ready.
 struct LockPanel: View {
     @Environment(AuthManager.self) private var auth
     @Environment(VaultSession.self) private var session
-    /// Downloads the password list while unlocking.
+    /// The view model that receives the password list during unlock.
     @Environment(VaultViewModel.self) private var vaultModel
-    /// Set when the user picks another way to unlock; nil means the default.
+    /// The step the user chose, or `nil` to show the default step.
     @State private var chosenStep: LockStep?
-    /// After Sign in with Apple: start Face ID / Touch ID once the vault is ready.
+    /// A Boolean value that indicates whether to start biometric unlock once the
+    /// vault is ready, set after Sign in with Apple.
     @State private var unlocksAfterSignIn = false
 
     var body: some View {
@@ -108,15 +110,16 @@ struct LockPanel: View {
 }
 
 private extension LockPanel {
-    /// The step to show: sign-in while signed out, else the user's choice,
-    /// else biometrics when offered, else the master password.
+    /// The step to show.
+    ///
+    /// Sign-in while signed out; otherwise the user's choice, then biometrics
+    /// when available, then the master password.
     var step: LockStep {
         guard auth.isSignedIn else { return .signIn }
         if let chosenStep { return chosenStep }
         return session.offersBiometricUnlock ? .biometrics : .masterPassword
     }
 
-    /// The current step's view.
     @ViewBuilder
     var stepView: some View {
         switch step {
@@ -135,18 +138,18 @@ private extension LockPanel {
         }
     }
 
-    /// True while signing in, unlocking, or checking the vault after sign-in.
+    /// A Boolean value that indicates whether sign-in, unlock, or the vault check
+    /// after sign-in is in progress.
     var isWorking: Bool {
         auth.isSigningIn || session.isWorking || (auth.isSignedIn && session.state == .checking)
     }
 
-    /// The sign-in error on the sign-in step, otherwise the session's error.
+    /// The sign-in error on the sign-in step; otherwise, the session's error.
     var errorMessage: String? {
         step == .signIn ? auth.signInError : session.errorMessage
     }
 
-    /// Starts Face ID / Touch ID once, after a sign-in, when the vault has
-    /// reached the locked state.
+    /// Starts biometric unlock after sign-in, once the vault is locked and ready.
     func startUnlockIfReady() {
         guard unlocksAfterSignIn, session.state == .locked else { return }
         unlocksAfterSignIn = false
@@ -155,7 +158,9 @@ private extension LockPanel {
         }
     }
 
-    /// Moves to `step` and clears the error. `nil` goes back to the default step.
+    /// Shows the given step and clears any error.
+    ///
+    /// - Parameter step: The step to show, or `nil` for the default step.
     func go(to step: LockStep?) {
         session.clearError()
         chosenStep = step
@@ -164,12 +169,14 @@ private extension LockPanel {
 
 // MARK: - Steps
 
-/// Signed out: Sign in with Apple.
+/// A step that offers Sign in with Apple.
 private struct LockSignInStep: View {
     @Environment(AuthManager.self) private var auth
     @Environment(\.colorScheme) private var colorScheme
 
-    /// Set when switching account, to go back to unlocking.
+    /// The action that returns to unlocking, or `nil` to hide Cancel.
+    ///
+    /// Set when switching accounts.
     var onCancel: (() -> Void)?
 
     var body: some View {
@@ -195,14 +202,14 @@ private struct LockSignInStep: View {
     }
 }
 
-/// Face ID / Touch ID, with the master password as the alternative.
+/// A step that unlocks with Face ID or Touch ID, with the master password as
+/// an alternative.
 private struct LockBiometricsStep: View {
     @Environment(AuthManager.self) private var auth
     @Environment(VaultSession.self) private var session
-    /// Downloads the password list while unlocking.
+    /// The view model that receives the password list during unlock.
     @Environment(VaultViewModel.self) private var vaultModel
 
-    /// Called by the master password button.
     let onUseMasterPassword: () -> Void
 
     var body: some View {
@@ -217,35 +224,37 @@ private struct LockBiometricsStep: View {
                 .buttonSizing(.fitted)
         }
     }
+}
 
-    /// True while unlocking, or while the vault's state is still being checked.
-    private var isUnlocking: Bool {
+private extension LockBiometricsStep {
+    /// A Boolean value that indicates whether an unlock or vault check is in progress.
+    var isUnlocking: Bool {
         session.isWorking || session.state == .checking
     }
 
-    /// Unlocks with Face ID / Touch ID while the password list downloads.
-    private func unlockWithBiometrics() {
+    /// Unlocks with Face ID or Touch ID and downloads the password list.
+    func unlockWithBiometrics() {
         Task { await session.unlockWithBiometrics(prefetchingInto: vaultModel, auth: auth) }
     }
 }
 
-/// Master password field. Offers biometrics (if available) and the recovery key.
+/// A step that unlocks with the master password, with options to use
+/// biometrics or the recovery key.
 private struct LockMasterPasswordStep: View {
     @Environment(AuthManager.self) private var auth
     @Environment(VaultSession.self) private var session
-    /// Downloads the password list while unlocking.
+    /// The view model that receives the password list during unlock.
     @Environment(VaultViewModel.self) private var vaultModel
-    /// The typed master password, cleared as soon as it's submitted.
+    /// The entered master password, cleared on submit.
     @State private var password = ""
-    /// Whether the password field has keyboard focus.
     @FocusState private var isFieldFocused: Bool
 
-    /// Focuses the field on appear: true when the user chose this step
-    /// rather than landing on it by default.
+    /// A Boolean value that indicates whether to focus the field on appear.
+    ///
+    /// True when the user chose this step instead of landing on it by default.
     let focusesField: Bool
-    /// Called by the biometrics button; nil hides it.
+    /// The action that switches to biometric unlock, or `nil` to hide the button.
     let onUseBiometrics: (() -> Void)?
-    /// Called by "Forgot master password?".
     let onForgotPassword: () -> Void
 
     var body: some View {
@@ -276,9 +285,11 @@ private struct LockMasterPasswordStep: View {
             LockButton("lock.forgotMasterPassword", style: .tertiary, action: onForgotPassword)
         }
     }
+}
 
-    /// Clears the field and unlocks with what was typed.
-    private func unlock() {
+private extension LockMasterPasswordStep {
+    /// Clears the field and unlocks with the entered password.
+    func unlock() {
         guard !password.isEmpty else { return }
         let entered = password
         password = ""
@@ -286,18 +297,17 @@ private struct LockMasterPasswordStep: View {
     }
 }
 
-/// Recovery key, then a new master password (VaultSession moves on to setup).
+/// A step that accepts the recovery key so the user can set a new master
+/// password.
 ///
-/// Only reachable through "Forgot master password?", so the field is always
-/// focused on appear.
+/// On success, ``VaultSession`` moves to master password setup. The step is
+/// only reachable from the forgot-password action, so the field is focused on
+/// appear.
 private struct LockRecoveryKeyStep: View {
     @Environment(VaultSession.self) private var session
-    /// The typed or pasted recovery key.
     @State private var recoveryKey = ""
-    /// Whether the recovery key field has keyboard focus.
     @FocusState private var isFieldFocused: Bool
 
-    /// Called by Cancel.
     let onCancel: () -> Void
 
     var body: some View {
@@ -322,41 +332,38 @@ private struct LockRecoveryKeyStep: View {
     }
 }
 
-// MARK: - Shared pieces
+// MARK: - Shared Components
 
-/// Lock screen button, with a light haptic on tap.
+/// A lock screen button that plays a light haptic on tap.
 ///
-/// `.primary` for the main action (prominent glass), `.secondary` for
-/// alternatives like switching method, `.tertiary` for plain text links such
-/// as forgot password or cancel.
+/// Use ``Style/primary`` for the main action, ``Style/secondary`` for
+/// alternatives such as switching unlock method, ``Style/clear`` for icon
+/// buttons on glass, and ``Style/tertiary`` for text links such as Cancel.
 struct LockButton: View {
-    /// The button's look.
-    enum Style {
-        /// Prominent glass, for the main action.
-        case primary
-        /// Plain glass, for alternatives.
-        case secondary
-        /// Clear glass
-        case clear
-        /// No glass, just plain text.
-        case tertiary
-    }
-
-    /// Bumped on every tap, to trigger the haptic.
+    /// A counter incremented on each tap to trigger the haptic.
     @State private var taps = 0
 
-    /// The button's text; nil for an icon-only button.
+    /// The title, or `nil` for an icon-only button.
     var title: LocalizedStringKey? = nil
-    /// The button's SF Symbol; nil for a text-only button.
+    /// The SF Symbol name, or `nil` for a text-only button.
     let systemImage: String?
-    /// The button's look.
+    /// The visual style.
     let style: Style
-    /// Shows a spinner in place of the label, keeping the button's size.
+    /// A Boolean value that indicates whether a spinner replaces the label.
+    ///
+    /// The button keeps its size while loading.
     let isLoading: Bool
-    /// Runs on tap.
+    /// The action to perform on tap.
     let action: () -> Void
 
     /// Creates a button with a title, an icon, or both.
+    ///
+    /// - Parameters:
+    ///   - title: The title, or `nil` for an icon-only button.
+    ///   - systemImage: The SF Symbol name, or `nil` for a text-only button.
+    ///   - style: The visual style.
+    ///   - isLoading: A Boolean value that indicates whether to show a spinner.
+    ///   - action: The action to perform on tap.
     init(
         _ title: LocalizedStringKey? = nil,
         systemImage: String? = nil,
@@ -378,9 +385,24 @@ struct LockButton: View {
     }
 }
 
+extension LockButton {
+    /// The visual styles of a lock screen button.
+    enum Style {
+        /// Prominent glass, for the main action.
+        case primary
+        /// Plain glass, for alternatives.
+        case secondary
+        /// Clear glass, for icon buttons.
+        case clear
+        /// Plain text without glass.
+        case tertiary
+    }
+}
+
 private extension LockButton {
-    /// The unstyled button: title and/or icon. Its width comes from
-    /// `.buttonSizing`, set by the lock screen layout.
+    /// The unstyled button.
+    ///
+    /// Its width comes from the `buttonSizing` set by the lock screen layout.
     var button: some View {
         Button {
             taps += 1
@@ -399,7 +421,6 @@ private extension LockButton {
         .animation(DesignKit.Motion.linear, value: isLoading)
     }
 
-    /// The title and/or icon.
     @ViewBuilder
     var label: some View {
         if let title, let systemImage {
@@ -417,8 +438,9 @@ private extension LockButton {
         }
     }
 
-    /// Applies the style. The glass styles are different types, so branch
-    /// rather than pick one inline.
+    /// Applies the button's style.
+    ///
+    /// Each glass style is a distinct type, so each is applied in its own branch.
     @ViewBuilder
     func styled(_ button: some View) -> some View {
         switch style {
@@ -441,9 +463,9 @@ private extension LockButton {
     }
 }
 
-/// "Signed in as" and the signed-in email, on one line.
+/// A view that shows the signed-in account's email on one line.
 struct LockAccountRow: View {
-    /// The signed-in email; nil shows nothing.
+    /// The signed-in email, or `nil` to show nothing.
     let email: String?
 
     var body: some View {
@@ -456,14 +478,7 @@ struct LockAccountRow: View {
     }
 }
 
-private extension LockAccountRow {
-    /// The email's first two letters, capitalised.
-    var initials: String {
-        String((email ?? "").prefix(2)).capitalized
-    }
-}
-
-/// The app's version, at the bottom of the lock screen.
+/// A view that shows the app's version on the lock screen.
 struct LockVersionLabel: View {
     var body: some View {
         Text(LocalizedKey("lock.version", Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? ""))

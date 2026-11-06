@@ -1,20 +1,26 @@
 #if os(macOS)
 import AppKit
 
-/// Applies a custom colour as the table row selection highlight.
+/// Applies a custom color to the table row selection highlight.
 ///
-/// SwiftUI's `Table` ignores `.tint()` for selection on macOS and always uses
-/// the system accent colour. This swizzles `NSTableRowView.drawSelection(in:)`
-/// once at app launch, so every table row in the app draws the custom colour.
+/// On macOS, SwiftUI's `Table` ignores `tint(_:)` for selection and always
+/// uses the system accent color. This type swizzles
+/// `NSTableRowView.drawSelection(in:)` once, so every table row in the app
+/// draws the custom color.
 @MainActor
 enum TableSelectionStyle {
-    /// Whether the method has already been swapped. Swapping twice would undo it.
+    /// A Boolean value that indicates whether the method has been swizzled.
+    ///
+    /// Swizzling again would restore the original implementation.
     private static var applied = false
-    /// The colour selected rows are filled with (at 40% opacity).
+    /// The color that fills selected rows, at 40% opacity.
     private(set) static var selectionColor = NSColor(resource: .wood)
 
-    /// Makes every table row draw its selection with `color`. Call once at
-    /// launch; later calls only update the colour.
+    /// Sets the color every table row uses to draw its selection.
+    ///
+    /// Call this method at launch. Later calls only update the color.
+    ///
+    /// - Parameter color: The selection color.
     static func apply(color: NSColor) {
         selectionColor = color
         guard !applied else { return }
@@ -28,10 +34,11 @@ enum TableSelectionStyle {
 }
 
 private extension NSTableRowView {
-    /// Replacement for `drawSelection(in:)`, installed by `TableSelectionStyle`.
+    /// The replacement for `drawSelection(in:)`, installed by
+    /// ``TableSelectionStyle``.
     ///
-    /// Fills the row with the selection colour while the table is focused,
-    /// and with a neutral grey while it isn't.
+    /// Fills the row with the selection color while the table is focused, and
+    /// with a neutral gray otherwise.
     @objc func muninDrawSelection(in dirtyRect: NSRect) {
         guard isSelected else { return }
 

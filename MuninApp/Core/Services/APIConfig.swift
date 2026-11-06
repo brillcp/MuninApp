@@ -1,17 +1,21 @@
 import Foundation
 
-/// Server addresses and public keys the app talks to.
+/// The server addresses and public keys the app uses.
 enum APIConfig {
-    /// Munin's API, on Cloud Run.
+    /// The base URL of the Munin API.
     static let apiBaseURL = URL(string: "https://munin-baemyjv7oq-ew.a.run.app/v1")!
-    /// Munin's auth project.
+    /// The URL of the authentication project.
     static let authProjectURL = "https://sdmkixehvwtqxmcudrxv.supabase.co"
-    /// Base URL for auth: the Apple identity token exchange and token refresh.
+    /// The base URL for authentication, used to exchange Apple identity tokens
+    /// and refresh sessions.
     static let authBaseURL = URL(string: "\(authProjectURL)/auth/v1")!
-    /// The auth project's publishable key. Public by design: it identifies the project
-    /// and grants nothing by itself.
+    /// The authentication project's publishable key.
+    ///
+    /// This key is public by design: it identifies the project and grants no
+    /// access by itself.
     static let anonKey = "sb_publishable_8ooB5sdO_KYMjg5vBndxcA__jILZOW9"
 
-    /// False while `anonKey` still holds the placeholder.
+    /// A Boolean value that indicates whether ``anonKey`` holds a real key
+    /// rather than a placeholder.
     static var isAnonKeyConfigured: Bool { !anonKey.hasPrefix("PASTE_") }
 }

@@ -1,9 +1,12 @@
 import CoreImage
 import Foundation
 
-/// Reads QR codes from an image (a screenshot or photo of a QR code).
+/// A namespace for reading QR codes from an image, such as a screenshot or photo.
 enum QRCodeReader {
-    /// The text of every QR code found in the image. Empty if there are none.
+    /// Returns the text of every QR code found in the image.
+    ///
+    /// - Parameter imageData: The encoded image data.
+    /// - Returns: The decoded messages, or an empty array if the image contains no QR codes.
     static func messages(in imageData: Data) -> [String] {
         guard let image = CIImage(data: imageData),
               let detector = CIDetector(

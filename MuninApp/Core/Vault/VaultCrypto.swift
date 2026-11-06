@@ -1,22 +1,26 @@
 import CryptoKit
 import Foundation
 
-/// End-to-end encryption for vault entries: AES-256-GCM with a key that only
-/// exists on the user's devices. Munin stores the output and can't read it.
+/// End-to-end encryption for vault entries.
+///
+/// Entries are sealed with AES-256-GCM using a key that exists only on the
+/// user's devices. The server stores the ciphertext and can't read it.
 enum VaultCrypto {
-    /// Errors from sealing or opening.
+    /// Errors that occur while sealing or opening.
     enum CryptoError: Error {
         /// The ciphertext isn't valid base64, or sealing produced no output.
         case invalidCiphertext
     }
 
-    /// Binds each ciphertext to its owner, so an entry moved to another
-    /// user's rows on the server fails to decrypt instead of being accepted.
+    /// Returns associated data that binds a ciphertext to its owner, so an
+    /// entry moved to another user's rows fails to decrypt.
     private static func associatedData(userID: String) -> Data {
         Data("munin.vault.v1:\(userID.lowercased())".utf8)
     }
 
-    /// Encrypts a 2FA account (as JSON) for storage on Munin. Returns the sealed box, base64.
+    /// Encrypts a 2FA account as JSON for storage on the server.
+    ///
+    /// - Returns: The sealed box, base64-encoded.
     static func seal(_ account: OTPAccount, key: SymmetricKey, userID: String) throws -> String {
         let plaintext = try JSONEncoder().encode(account)
         let box = try AES.GCM.seal(plaintext, using: key, authenticating: associatedData(userID: userID))
@@ -26,21 +30,29 @@ enum VaultCrypto {
 
     // MARK: - Password fields
 
-    /// Each password field is sealed on its own and bound to its owner and
-    /// its column, so ciphertext can't be moved between users or fields.
+    /// Returns associated data that binds a password field's ciphertext to its
+    /// owner and column, so ciphertext can't move between users or fields.
     private static func passwordAssociatedData(field: String, userID: String) -> Data {
         Data("munin.password.v1:\(userID.lowercased()):\(field)".utf8)
     }
 
-    /// Encrypts one password field (`name`, `url`, `username`, `password` or
-    /// `note`). Returns the sealed box, base64.
+    /// Encrypts a password field.
+    ///
+    /// - Parameters:
+    ///   - value: The plaintext value.
+    ///   - field: The field name: `name`, `url`, `username`, `password`, or `note`.
+    ///   - key: The vault key.
+    ///   - userID: The owner's user ID.
+    /// - Returns: The sealed box, base64-encoded.
     static func seal(_ value: String, field: String, key: SymmetricKey, userID: String) throws -> String {
         let box = try AES.GCM.seal(Data(value.utf8), using: key, authenticating: passwordAssociatedData(field: field, userID: userID))
         guard let combined = box.combined else { throw CryptoError.invalidCiphertext }
         return combined.base64EncodedString()
     }
 
-    /// Decrypts one password field. Throws if the key, user or field doesn't match.
+    /// Decrypts a password field.
+    ///
+    /// - Throws: An error if the key, user, or field doesn't match.
     static func open(_ ciphertext: String, field: String, key: SymmetricKey, userID: String) throws -> String {
         guard let data = Data(base64Encoded: ciphertext) else { throw CryptoError.invalidCiphertext }
         let box = try AES.GCM.SealedBox(combined: data)
@@ -50,7 +62,9 @@ enum VaultCrypto {
 
     // MARK: - Code entries
 
-    /// Decrypts a 2FA account. Throws if the key or user doesn't match.
+    /// Decrypts a 2FA account.
+    ///
+    /// - Throws: An error if the key or user doesn't match.
     static func open(_ ciphertext: String, key: SymmetricKey, userID: String) throws -> OTPAccount {
         guard let data = Data(base64Encoded: ciphertext) else { throw CryptoError.invalidCiphertext }
         let box = try AES.GCM.SealedBox(combined: data)

@@ -1,42 +1,39 @@
 import SwiftUI
 import UniformTypeIdentifiers
 
-/// The Vault screen: the password list, the selected password's detail,
-/// and creating, editing, deleting and importing passwords.
+/// A view that shows the password list and the selected password's detail,
+/// and handles creating, editing, deleting, and importing passwords.
 struct VaultView: View {
     @Environment(AuthManager.self) private var auth
-    /// Read-only without a subscription: no creating, importing, editing or deleting.
+    /// The subscription status; without a subscription, the vault is read-only.
     @Environment(SubscriptionManager.self) private var subscriptions
-    /// Shows the AutoFill banner while Munin isn't turned on for AutoFill.
+    /// The AutoFill status, which shows a banner while AutoFill is off.
     @Environment(AutoFillSetup.self) private var autoFill
-    /// Shows the New Password sheet.
     @State private var isCreating = false
     /// The item being edited, with its password and note decrypted for the editor.
     @State private var editing: VaultViewModel.EditDraft?
-    /// The item waiting for delete confirmation.
     @State private var pendingDeletion: PasswordItem?
-    /// Shows the CSV file picker.
     @State private var isPickingImportFile = false
-    /// Mac: whether the search field has keyboard focus.
+    /// A Boolean value that indicates whether the search field has focus on macOS.
     @FocusState private var isSearchFocused: Bool
-    /// Mac: lets ⌘F focus this screen's search field.
+    /// The trigger that lets ⌘F focus the search field on macOS.
     @State private var searchFocusRequest = SearchFocusRequest()
     /// A parsed CSV waiting for import confirmation.
     @State private var importPlan: VaultViewModel.ImportPlan?
-    /// Shown after an import: how many were added, or why the file couldn't be read.
+    /// The import result: the number of items added, or why the file couldn't be read.
     @State private var importMessage: String?
-    /// Bumped by toolbar buttons for a light haptic.
+    /// A counter that toolbar buttons increment to play a light haptic.
     @State private var hapticTaps = 0
-    /// Mac: whether the detail panel is slid in. Follows the selection, one
-    /// update later (see `columns`).
+    /// A Boolean value that indicates whether the detail panel is visible on
+    /// macOS. It follows the selection one update later; see `columns`.
     @State private var isDetailVisible = false
-    /// Mac: the item shown in the panel. Kept after deselecting, so the panel
-    /// animates out with its content instead of going blank first.
+    /// The item shown in the detail panel on macOS. It persists after
+    /// deselection so the panel animates out with its content.
     @State private var panelItem: PasswordItem?
 
     /// The passwords and their selection.
     @Bindable var viewModel: VaultViewModel
-    /// The 2FA accounts, for 2FA secrets in an imported CSV.
+    /// The 2FA accounts, which receive 2FA secrets from an imported CSV.
     let twoFactorModel: TwoFactorViewModel
 
     var body: some View {
@@ -95,20 +92,21 @@ struct VaultView: View {
 private extension VaultView {
     /// The list and the detail.
     ///
-    /// Mac: the list, with the detail floating over its trailing edge as a
-    /// glass panel with Close and Edit (⌘E) buttons. The panel is always in the
-    /// hierarchy, just hidden: inserting it with a transition also animated the
-    /// Form's first layout, so its content grew in from a zero frame. Selecting
-    /// a password fills the panel without animation, and one update later the
-    /// panel slides and fades in with a bounce. Switching between passwords
-    /// doesn't animate. While it closes, the last item stays in the panel
-    /// (`panelItem`) so it animates out with it instead of going blank.
+    /// On macOS, the detail floats over the list's trailing edge as a glass
+    /// panel with Close and Edit (⌘E) buttons. The panel stays in the view
+    /// hierarchy and is hidden rather than removed, because inserting it with a
+    /// transition also animates the form's first layout. Selecting a password
+    /// fills the panel without animation; one update later, the panel slides
+    /// and fades in. Switching between passwords doesn't animate. While the
+    /// panel closes, `panelItem` keeps the last item so its content animates
+    /// out with it.
     ///
-    /// A NavigationSplitView nested in the sidebar tab gave the detail the
-    /// outer sidebar's width as an extra leading inset, and an HSplitView or
-    /// an inspector couldn't animate the panel in well.
+    /// A nested `NavigationSplitView` adds the outer sidebar's width as a
+    /// leading inset, and `HSplitView` and inspectors don't animate the panel
+    /// smoothly, so the panel is an overlay instead.
     ///
-    /// iOS: a NavigationSplitView, so tapping a row pushes the detail on iPhone.
+    /// On iOS, a `NavigationSplitView` pushes the detail when a row is tapped
+    /// on iPhone.
     @ViewBuilder
     var columns: some View {
         #if os(macOS)
@@ -134,11 +132,12 @@ private extension VaultView {
         #endif
     }
 
-    /// The list's navigation chrome: title, toolbar, and on the Mac the search
-    /// field and CSV drop from Finder. The search field is focused when the
-    /// vault opens (after unlocking), and ⌘F focuses it again.
+    /// The list's navigation chrome: the title, the toolbar, and on macOS, the
+    /// search field and CSV drop target.
     ///
-    /// The list itself is `VaultPasswordList`, its own invalidation boundary.
+    /// The search field gains focus when the vault unlocks, and ⌘F focuses it
+    /// again. The list itself is ``VaultPasswordList``, a separate view that
+    /// limits invalidation.
     var listColumn: some View {
         VaultPasswordList(
             viewModel: viewModel,
@@ -174,8 +173,9 @@ private extension VaultView {
 
     /// The toolbar's buttons.
     ///
-    /// Mac: Create after the title, then Import and Lock at the far right.
-    /// Edit and Delete are in the detail panel. iOS: Sort, Import and Create.
+    /// On macOS, Create follows the title, and Import and Lock sit at the
+    /// trailing edge; Edit and Delete live in the detail panel. On iOS, the
+    /// toolbar shows Sort, Import, and Create.
     @ToolbarContentBuilder
     var toolbarContent: some ToolbarContent {
         ToolbarItem(placement: .navigation) { LockToolbarButton() }
@@ -195,7 +195,7 @@ private extension VaultView {
         #endif
     }
 
-    /// Sorts the list: by title or date edited, then ascending or descending.
+    /// A menu that sorts the list by title or date edited, ascending or descending.
     var sortMenu: some View {
         Menu("vault.sort", systemImage: DesignKit.Icon.sort) {
             Picker("vault.sort", selection: $viewModel.sortColumn) {
@@ -216,7 +216,7 @@ private extension VaultView {
         .sensoryFeedback(.selection, trigger: viewModel.sortOrder)
     }
 
-    /// Opens the New Password sheet (⌘N). Prominent glass in the accent colour.
+    /// A button that opens the New Password sheet (⌘N).
     var createButton: some View {
         Button("vault.createItem", systemImage: DesignKit.Icon.createPassword) {
             hapticTaps += 1
@@ -227,7 +227,9 @@ private extension VaultView {
         .keyboardShortcut("n")
     }
 
-    /// Opens the CSV file picker. Disabled until loaded and while an import runs.
+    /// A button that opens the CSV file picker.
+    ///
+    /// The button is disabled until the vault loads and while an import runs.
     var importButton: some View {
         Button("import.button", systemImage: DesignKit.Icon.importFile) {
             hapticTaps += 1
@@ -236,9 +238,10 @@ private extension VaultView {
         .disabled(!viewModel.hasLoaded || viewModel.importProgress != nil || subscriptions.isReadOnly)
     }
 
-    /// Reads the CSV (picked or dropped from Finder) in memory and asks to
-    /// confirm. Its 2FA accounts are checked against the 2FA list, which is
-    /// loaded first if the 2FA screen hasn't been opened yet.
+    /// Reads a CSV file in memory and asks the user to confirm the import.
+    ///
+    /// The file's 2FA accounts are checked against the existing 2FA list,
+    /// which loads first if needed.
     func prepareImport(from url: URL) {
         let isScoped = url.startAccessingSecurityScopedResource()
         defer { if isScoped { url.stopAccessingSecurityScopedResource() } }
@@ -258,8 +261,8 @@ private extension VaultView {
         }
     }
 
-    /// Imports the plan's passwords, then its 2FA accounts, and says how many
-    /// of each were added.
+    /// Imports the plan's passwords, then its 2FA accounts, and reports how
+    /// many of each were added.
     func runImport(_ plan: VaultViewModel.ImportPlan) {
         Task {
             let saved = await viewModel.runImport(plan, auth: auth)
@@ -276,8 +279,8 @@ private extension VaultView {
         }
     }
 
-    /// Once AutoFill is turned on, fills in the keyboard suggestions, which
-    /// the system only keeps while it's on.
+    /// Registers the AutoFill credential identities once AutoFill is on,
+    /// because the system keeps them only while it's enabled.
     func autoFillChanged() {
         if autoFill.isEnabled == true { AutoFillIdentities.update(viewModel.items) }
     }
@@ -288,22 +291,20 @@ private extension VaultView {
     }
 }
 
-
-/// The password table (Mac) or list (iOS), with its context menu and empty
-/// states.
+/// A view that shows the passwords with a context menu and empty states.
 ///
-/// Mac: a sortable table; Escape deselects the password, which closes its
-/// detail. iOS: a list whose rows push the detail column (a Table doesn't
-/// navigate when the split view is collapsed on iPhone).
+/// On macOS, it's a sortable table, and Escape deselects the password to close
+/// its detail. On iOS, it's a list whose rows push the detail column, because
+/// a `Table` doesn't navigate when the split view is collapsed.
 private struct VaultPasswordList: View {
     @Environment(AuthManager.self) private var auth
     @Environment(SubscriptionManager.self) private var subscriptions
 
     /// The passwords, selection and sort order.
     @Bindable var viewModel: VaultViewModel
-    /// Set by the context menu's Delete, to ask for confirmation.
+    /// The item to delete, set by the context menu to request confirmation.
     @Binding var pendingDeletion: PasswordItem?
-    /// Called by the context menu's Edit.
+    /// The action that the context menu's Edit item performs.
     let onEdit: (PasswordItem) -> Void
 
     var body: some View {
@@ -338,14 +339,16 @@ private struct VaultPasswordList: View {
                 )
             }
     }
+}
 
-    /// The table or list itself. Rows slide in and out when items are added,
-    /// deleted, imported, or filtered by the search.
+private extension VaultPasswordList {
+    /// The table or list.
     ///
-    /// Sorted by title, the rows are split into letter sections (also while
-    /// searching), with an A–Z index on iPhone. Sorted by date edited, flat.
+    /// Rows animate when items are added, deleted, imported, or filtered.
+    /// When sorted by title, rows are grouped into letter sections, with an
+    /// A–Z index on iPhone. When sorted by date edited, the list is flat.
     @ViewBuilder
-    private var rows: some View {
+    var rows: some View {
         List(selection: $viewModel.selection) {
             if viewModel.sections.isEmpty {
                 ForEach(viewModel.visibleItems, content: row)
@@ -371,16 +374,16 @@ private struct VaultPasswordList: View {
     }
 
     /// A row that pushes or selects its item.
-    private func row(_ item: PasswordItem) -> some View {
+    func row(_ item: PasswordItem) -> some View {
         NavigationLink(value: item.id) {
             PasswordTitleCell(item: item)
         }
     }
 }
 
-/// A password row: website icon, name, and the username underneath.
+/// A row that shows a password's website icon, name, and username.
 struct PasswordTitleCell: View {
-    /// The item.
+    /// The item to display.
     let item: PasswordItem
 
     var body: some View {
@@ -406,17 +409,17 @@ struct PasswordTitleCell: View {
     }
 }
 
-/// Error, empty, loading and no-search-results states for the vault table.
+/// A view that shows the vault's error, empty, loading, and no-results states.
 private struct VaultEmptyState: View {
-    /// A load error to show, if the list is empty because loading failed.
+    /// The error to show when loading failed.
     let errorMessage: String?
-    /// Whether there are no passwords.
+    /// A Boolean value that indicates whether the vault has no passwords.
     let isEmpty: Bool
-    /// Whether the first load has finished; before that a spinner shows.
+    /// A Boolean value that indicates whether the first load has finished.
     let hasLoaded: Bool
-    /// Set when a search matches nothing.
+    /// The search text that matched nothing, if any.
     let searchText: String?
-    /// Called by Try Again.
+    /// The action that the Try Again button performs.
     let onRetry: () -> Void
 
     var body: some View {

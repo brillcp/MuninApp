@@ -1,7 +1,9 @@
 import SwiftUI
 
-/// How to turn on Munin's AutoFill: why, the steps for this platform, a
-/// button for the system's own prompt, and one that opens Settings.
+/// A guide to enabling the app as an AutoFill provider.
+///
+/// Explains the benefit, lists the steps for the current platform, and offers
+/// buttons for the system prompt and for opening Settings.
 struct AutoFillSetupView: View {
     @Environment(AutoFillSetup.self) private var autoFill
     @Environment(\.dismiss) private var dismiss
@@ -52,7 +54,7 @@ struct AutoFillSetupView: View {
 }
 
 private extension AutoFillSetupView {
-    /// The steps in Settings for this platform.
+    /// The Settings steps for the current platform.
     var steps: [LocalizedStringKey] {
         #if os(macOS)
         ["autofill.setup.step1.mac", "autofill.setup.step2", "autofill.setup.step3.mac", "autofill.setup.step4"]
@@ -61,22 +63,21 @@ private extension AutoFillSetupView {
         #endif
     }
 
-    /// Shows the system's prompt to turn Munin on.
+    /// Shows the system prompt to enable the app as an AutoFill provider.
     func turnOn() {
         Task { await autoFill.turnOn() }
     }
 
-    /// Opens AutoFill & Passwords in Settings.
+    /// Opens the AutoFill & Passwords page in Settings.
     func openSettings() {
         Task { await autoFill.openSettings() }
     }
 }
 
-/// One numbered step of the guide.
+/// A numbered step in the setup guide.
 private struct AutoFillStepRow: View {
-    /// The step's number, from 1.
+    /// The step's one-based number.
     let number: Int
-    /// What to do.
     let text: LocalizedStringKey
 
     var body: some View {

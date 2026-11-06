@@ -1,29 +1,31 @@
 import SwiftUI
 
-/// A password's detail: the inspector, with editing and deleting handled here.
+/// A view that shows a password item's details and handles editing and
+/// deleting it.
 ///
-/// Used by the Vault (the Mac panel, and the detail column on iPhone and iPad)
-/// and by Search. On iOS it adds Edit (⌘E) to the toolbar; the Mac panel has
-/// its own Edit button in its header. Delete, at the bottom of the inspector,
-/// asks first. When `dismissesWhenDeleted` is set (Search), it goes back once
-/// the item is gone.
+/// On iOS, Edit (⌘E) appears in the toolbar. On macOS, the panel has its own
+/// Edit button in its header. Delete asks for confirmation first. When
+/// `dismissesWhenDeleted` is true, the view dismisses itself once the item is
+/// gone.
 struct PasswordDetail: View {
     @Environment(AuthManager.self) private var auth
-    /// Read-only without a subscription: no editing or deleting.
+    /// The subscription state. Editing and deleting are disabled while the
+    /// vault is read-only.
     @Environment(SubscriptionManager.self) private var subscriptions
     @Environment(\.dismiss) private var dismiss
     /// The item being edited, with its password and note decrypted.
     @State private var editing: VaultViewModel.EditDraft?
-    /// The item waiting for delete confirmation.
+    /// The item awaiting delete confirmation.
     @State private var pendingDeletion: PasswordItem?
-    /// Bumped by Edit for a light haptic.
+    /// A counter incremented by Edit to trigger a light haptic.
     @State private var hapticTaps = 0
 
-    /// The item to show; nil shows nothing.
+    /// The item to show, or `nil` to show nothing.
     let item: PasswordItem?
-    /// Decrypts, copies, edits and deletes the item.
+    /// The view model that decrypts, copies, edits, and deletes the item.
     let viewModel: VaultViewModel
-    /// Goes back when the item disappears, for a detail pushed from Search.
+    /// A Boolean value that indicates whether the view dismisses itself when the
+    /// item is deleted.
     var dismissesWhenDeleted = false
 
     var body: some View {
@@ -87,25 +89,25 @@ private extension PasswordDetail {
         try viewModel.decrypt(ciphertext, field: field, auth: auth)
     }
 
-    /// Copies the password and bumps the item's last updated time.
+    /// Copies the password and updates the item's modification date.
     func copyPassword() {
         guard let item else { return }
         Task { await viewModel.copyPassword(item, auth: auth) }
     }
 
-    /// Asks before deleting.
     func confirmDeletion() {
         pendingDeletion = item
     }
 
-    /// Decrypts the password and note and opens the editor with them.
+    /// Decrypts the password and note, and opens the editor.
     func startEditing() {
         hapticTaps += 1
         guard let item else { return }
         editing = viewModel.editDraft(for: item, auth: auth)
     }
 
-    /// Goes back once the item is gone, if this detail was pushed from Search.
+    /// Dismisses the view once the item is gone, if `dismissesWhenDeleted` is
+    /// true.
     func itemRemoved() {
         if dismissesWhenDeleted, item == nil { dismiss() }
     }

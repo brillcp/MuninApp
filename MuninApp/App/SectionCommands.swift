@@ -1,15 +1,16 @@
 import SwiftUI
 
 extension FocusedValues {
-    /// The main window's selected sidebar section; ⌘1 and ⌘2 switch it.
+    /// A binding to the main window's selected sidebar section.
     @Entry var mainSection: Binding<MainView.Section>?
 }
 
-/// View ▸ Vault (⌘1) and View ▸ 2FA (⌘2) switch the main window's section.
+/// Menu commands that switch the main window's section.
 ///
-/// Disabled while the main window isn't focused or the vault is locked.
+/// Adds View ▸ Vault (⌘1) and View ▸ 2FA (⌘2). The commands are disabled
+/// while the main window isn't focused or the vault is locked.
 struct SectionCommands: Commands {
-    /// The focused main window's section, if it's showing.
+    /// The focused main window's section, or `nil` if no main window is focused.
     @FocusedValue(\.mainSection) private var section
 
     var body: some Commands {

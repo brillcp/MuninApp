@@ -1,23 +1,24 @@
 import Foundation
 
-/// Random passwords from the system's cryptographically secure generator.
+/// A generator of random passwords that uses the system's cryptographically
+/// secure random number generator.
 struct PasswordGenerator {
-    /// Characters per password.
+    /// The number of characters in each password.
     var length = 20
-    /// Include A–Z.
+    /// A Boolean value that indicates whether to include uppercase letters.
     var useCapitals = true
-    /// Include 0–9.
+    /// A Boolean value that indicates whether to include digits.
     var useDigits = true
-    /// Include symbols.
+    /// A Boolean value that indicates whether to include symbols.
     var useSymbols = true
 
-    /// Always included.
+    /// Lowercase letters, always included.
     static let lowercase = Array("abcdefghijklmnopqrstuvwxyz")
-    /// Included when `useCapitals` is on.
+    /// Uppercase letters, included when `useCapitals` is true.
     static let capitals = Array("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
-    /// Included when `useDigits` is on.
+    /// Digits, included when `useDigits` is true.
     static let digits = Array("0123456789")
-    /// Included when `useSymbols` is on.
+    /// Symbols, included when `useSymbols` is true.
     static let symbols = Array("@!$%&*")
 
     /// The enabled character sets.
@@ -29,7 +30,10 @@ struct PasswordGenerator {
         return sets
     }
 
-    /// A new random password, with at least one character from every enabled set.
+    /// Generates a random password.
+    ///
+    /// - Returns: A password with at least one character from every enabled
+    ///   character set.
     func generate() -> String {
         var rng = SystemRandomNumberGenerator()
         let sets = sets
@@ -42,13 +46,13 @@ struct PasswordGenerator {
         return String(characters.prefix(max(length, sets.count)))
     }
 
-    /// `length` as a Double, for a Slider.
+    /// The length as a `Double`, for binding to a slider.
     var sliderLength: Double {
         get { Double(length) }
         set { length = Int(newValue) }
     }
 
-    /// Bits of entropy for the current settings.
+    /// The password's entropy in bits for the current settings.
     var entropy: Double {
         Double(length) * log2(Double(sets.reduce(0) { $0 + $1.count }))
     }

@@ -1,7 +1,7 @@
 import SwiftUI
 
-/// Shown at the bottom of the Vault and 2FA screens while the vault is
-/// read-only: says why, with a button that opens the paywall.
+/// A banner that explains why the vault is read-only, with a button that opens
+/// the paywall.
 struct ReadOnlyBanner: View {
     @Environment(SubscriptionManager.self) private var subscriptions
 
@@ -20,7 +20,6 @@ struct ReadOnlyBanner: View {
 }
 
 private extension ReadOnlyBanner {
-    /// Opens the paywall.
     func showPaywall() {
         subscriptions.isPaywallPresented = true
     }

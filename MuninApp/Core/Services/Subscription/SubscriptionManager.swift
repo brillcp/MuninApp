@@ -2,57 +2,61 @@ import Foundation
 import Observation
 import StoreKit
 
-/// The user's Munin subscription: what Munin says about it, the App Store
-/// product, and linking purchases to the account.
+/// An observable object that manages the user's subscription and links App Store purchases to their account.
 ///
-/// Munin is the source of truth. Every purchase, renewal and restore is sent
-/// to Munin as a transaction ID, which Munin looks up with Apple before
-/// unlocking changes. Purchases carry the user's ID as their app account
-/// token, so Munin can tell they were made for this account.
+/// The server is the source of truth for subscription status. Every purchase,
+/// renewal, and restore is sent to the server as a transaction identifier,
+/// which the server verifies with Apple. Purchases use the user's identifier
+/// as their app account token, so the server can match them to the account.
 @Observable
 final class SubscriptionManager {
-    /// The monthly subscription's product ID in App Store Connect.
+    /// The product identifier of the monthly subscription in App Store Connect.
     static let productID = "munin.monthly.sub"
 
-    /// Listens to `Transaction.updates` while the vault is unlocked.
+    /// The task that listens to `Transaction.updates` while the vault is unlocked.
     private var updatesTask: Task<Void, Never>?
 
-    /// Munin's view of the subscription; nil until loaded, or while locked.
+    /// The subscription status reported by the server, or `nil` until loaded or while locked.
     private(set) var status: SubscriptionStatus?
-    /// The last error from linking or restoring a purchase.
+    /// A description of the last error from linking or restoring a purchase.
     private(set) var errorMessage: String?
-    /// Shows the paywall.
+    /// A Boolean value that indicates whether the paywall is presented.
     var isPaywallPresented = false
 
-    /// Creates a manager with nothing loaded.
+    /// Creates a subscription manager with no status loaded.
     init() {}
 }
 
 // MARK: - Public functions
 extension SubscriptionManager {
-    /// True when changes need a subscription and the user doesn't have one.
-    /// Reading, copying and unlocking still work.
+    /// A Boolean value that indicates whether changes are blocked because a required subscription is inactive.
+    ///
+    /// Reading, copying, and unlocking remain available.
     var isReadOnly: Bool {
         guard let status else { return false }
         return status.required && !status.active
     }
 
-    /// True in the billing grace period: still active, but the App Store
-    /// couldn't renew and is retrying the payment.
+    /// A Boolean value that indicates whether the subscription is in a billing grace period.
+    ///
+    /// During the grace period the subscription remains active while the App
+    /// Store retries a failed renewal payment.
     var isInGracePeriod: Bool {
         guard let status else { return false }
         return status.active && status.billingIssue == true
     }
 
-    /// The App Store account token for purchases: the Munin user ID.
+    /// Returns the app account token for purchases, derived from the user's identifier.
     func appAccountToken(auth: AuthManager) -> UUID? {
         auth.userID.flatMap(UUID.init(uuidString:))
     }
 
-    /// Starts after unlocking: listens for transactions and loads the status.
-    /// If Munin has no active subscription, any current App Store entitlement
-    /// is sent to Munin first (a renewal it hasn't heard about, or a purchase
-    /// on another device). Shows the paywall if the vault is still read-only.
+    /// Starts listening for transactions and loads the subscription status.
+    ///
+    /// Call this after the vault unlocks. If the server reports no active
+    /// subscription, current App Store entitlements are linked first, which
+    /// covers renewals the server missed and purchases made on other devices.
+    /// The paywall is presented if the vault remains read-only.
     func start(auth: AuthManager) async {
         listenForTransactions(auth: auth)
         await refreshStatus(auth: auth)
@@ -60,7 +64,7 @@ extension SubscriptionManager {
         if isReadOnly { isPaywallPresented = true }
     }
 
-    /// Stops listening and forgets the status. Called on lock and sign-out.
+    /// Stops listening for transactions and clears the status, for example on lock or sign-out.
     func stop() {
         updatesTask?.cancel()
         updatesTask = nil
@@ -69,7 +73,7 @@ extension SubscriptionManager {
         isPaywallPresented = false
     }
 
-    /// Asks Munin for the current status.
+    /// Fetches the current subscription status from the server.
     func refreshStatus(auth: AuthManager) async {
         do {
             status = try await MuninService(tokenProvider: auth.tokenProvider).subscription()
@@ -78,7 +82,7 @@ extension SubscriptionManager {
         }
     }
 
-    /// Links a purchase made in the paywall, then finishes it.
+    /// Links a purchase made in the paywall to the account, then finishes the transaction.
     func handlePurchase(_ result: Result<Product.PurchaseResult, any Error>, auth: AuthManager) async {
         switch result {
         case .success(.success(.verified(let transaction))):
@@ -92,7 +96,7 @@ extension SubscriptionManager {
         }
     }
 
-    /// Restore Purchases: syncs with the App Store and links what it finds.
+    /// Syncs with the App Store and links any current entitlements to the account.
     func restore(auth: AuthManager) async {
         do {
             try await AppStore.sync()
@@ -107,7 +111,7 @@ extension SubscriptionManager {
 
 // MARK: - Private functions
 private extension SubscriptionManager {
-    /// Handles renewals, purchases from other devices and Ask to Buy approvals.
+    /// Listens for transaction updates, such as renewals, purchases on other devices, and Ask to Buy approvals.
     func listenForTransactions(auth: AuthManager) {
         updatesTask?.cancel()
         updatesTask = Task { [weak self] in
@@ -118,7 +122,6 @@ private extension SubscriptionManager {
         }
     }
 
-    /// Sends every current entitlement for the subscription to Munin.
     func linkCurrentEntitlements(auth: AuthManager) async {
         for await entitlement in Transaction.currentEntitlements {
             guard case .verified(let transaction) = entitlement,
@@ -127,8 +130,7 @@ private extension SubscriptionManager {
         }
     }
 
-    /// Sends a transaction to Munin, which checks it with Apple, then
-    /// finishes it so StoreKit stops delivering it.
+    /// Sends a transaction to the server for verification, then finishes it so StoreKit stops delivering it.
     func link(_ transaction: Transaction, auth: AuthManager) async {
         do {
             status = try await MuninService(tokenProvider: auth.tokenProvider)

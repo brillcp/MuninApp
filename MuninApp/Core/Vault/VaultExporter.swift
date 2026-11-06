@@ -1,13 +1,16 @@
 import Foundation
 
-/// Builds plain-text exports of the vault, for moving to another app.
+/// A namespace for building plain-text exports of the vault.
 ///
-/// Everything is loaded from Munin and decrypted in memory, so the export
-/// matches what's stored. Nothing is written to disk here; the caller hands
-/// the data to the system's save panel.
+/// Data is loaded from the server and decrypted in memory, so the export
+/// matches what's stored. Nothing is written to disk; the caller passes the
+/// data to the system save panel.
 enum VaultExporter {
-    /// The passwords as CSV with `name,url,username,password,note` columns,
-    /// the format Munin's own import reads, as do most password managers.
+    /// Returns the passwords as CSV with `name,url,username,password,note` columns.
+    ///
+    /// The app's own import reads this format, as do most password managers.
+    ///
+    /// - Throws: An error if loading or decryption fails.
     static func passwordsCSV(vault: UnlockedVault, auth: AuthManager) async throws -> Data {
         let (key, userID) = (vault.key, vault.userID)
         let items = try await MuninService(tokenProvider: auth.tokenProvider).passwords()
@@ -24,8 +27,11 @@ enum VaultExporter {
         return Data((lines.joined(separator: "\r\n") + "\r\n").utf8)
     }
 
-    /// The 2FA accounts, one `otpauth://totp/…` link per line, which most
-    /// authenticator apps can import.
+    /// Returns the two-factor accounts as `otpauth://totp/…` links, one per line.
+    ///
+    /// Most authenticator apps can import this format.
+    ///
+    /// - Throws: An error if loading or decryption fails.
     static func twoFactorLinks(vault: UnlockedVault, auth: AuthManager) async throws -> Data {
         let entries = try await MuninService(tokenProvider: auth.tokenProvider).entries()
         let links = try entries.map { entry in
@@ -36,13 +42,13 @@ enum VaultExporter {
 }
 
 private extension VaultExporter {
-    /// One CSV field, quoted if it has commas, quotes or line breaks (RFC 4180).
+    /// Returns a CSV field, quoted per RFC 4180 if it contains commas, quotes, or line breaks.
     static func csvField(_ value: String) -> String {
         guard value.contains(where: { ",\"\n\r".contains($0) }) else { return value }
         return "\"" + value.replacingOccurrences(of: "\"", with: "\"\"") + "\""
     }
 
-    /// The account as an `otpauth://totp/Issuer:name?secret=…` link.
+    /// Returns the account as an `otpauth://totp/Issuer:name?secret=…` link.
     static func otpauthLink(for account: OTPAccount) -> String {
         var components = URLComponents()
         components.scheme = "otpauth"

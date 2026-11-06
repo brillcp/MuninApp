@@ -1,21 +1,31 @@
 import CryptoKit
 import Foundation
 
-/// RFC 6238 time-based codes, calculated on device.
+/// RFC 6238 time-based one-time password generation.
 extension OTPAccount {
-    /// The code valid at `date`.
+    /// Returns the code valid at the given date.
+    ///
+    /// - Parameter date: The date to generate the code for.
+    /// - Returns: The zero-padded code.
     func code(at date: Date) -> String {
         let counter = UInt64(max(0, date.timeIntervalSince1970)) / UInt64(max(period, 1))
         return hotp(counter: counter)
     }
 
-    /// Seconds until the code shown at `date` changes.
+    /// Returns the number of seconds until the code changes.
+    ///
+    /// - Parameter date: The current date.
+    /// - Returns: The seconds remaining in the code's period.
     func secondsRemaining(at date: Date) -> Int {
         let period = max(self.period, 1)
         return period - Int(UInt64(max(0, date.timeIntervalSince1970)) % UInt64(period))
     }
 
-    /// RFC 4226 HOTP: the code for one counter value, zero-padded to `digits`.
+    /// Returns the RFC 4226 HOTP code for a counter value, zero-padded to
+    /// `digits`.
+    ///
+    /// - Parameter counter: The moving factor, for TOTP the number of periods since the Unix epoch.
+    /// - Returns: The zero-padded code.
     func hotp(counter: UInt64) -> String {
         let key = SymmetricKey(data: secret)
         let message = withUnsafeBytes(of: counter.bigEndian) { Data($0) }

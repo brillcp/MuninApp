@@ -1,31 +1,34 @@
 import SwiftUI
 
-/// Sheet for creating a password item, or editing one when `isEditing` is true.
+/// A sheet for creating or editing a password item.
 ///
-/// Each field is encrypted before it's sent. The sections match the detail
-/// view (`PasswordInspector`). A new item starts with the name field focused;
-/// editing doesn't move focus.
+/// Fields are encrypted before they're sent. The sections match
+/// ``PasswordInspector``. When creating an item, the name field starts with
+/// focus.
 struct PasswordEditorView: View {
     @Environment(\.dismiss) private var dismiss
     /// The fields being edited, in plain text while the sheet is open.
     @State private var fields: PasswordFields
-    /// True while saving.
     @State private var isSaving = false
-    /// Shows the password generator popover.
+    /// A Boolean value that indicates whether the password generator popover is shown.
     @State private var isGenerating = false
-    /// The last save error.
+    /// The most recent save error.
     @State private var errorMessage: String?
-    /// Bumped by buttons for a light haptic.
+    /// A counter that triggers a light haptic when incremented.
     @State private var hapticTaps = 0
-    /// Whether the name field has keyboard focus.
     @FocusState private var isNameFocused: Bool
 
-    /// Editing an existing item rather than creating one.
+    /// A Boolean value that indicates whether an existing item is being edited.
     let isEditing: Bool
-    /// Encrypts and saves the fields. A thrown error is shown in the sheet.
+    /// Encrypts and saves the fields; a thrown error is shown in the sheet.
     let onSave: (PasswordFields) async throws -> Void
 
-    /// Creates the editor, prefilled with `fields` when editing.
+    /// Creates a password editor.
+    ///
+    /// - Parameters:
+    ///   - fields: The initial field values.
+    ///   - isEditing: Whether an existing item is being edited.
+    ///   - onSave: Encrypts and saves the fields.
     init(fields: PasswordFields = PasswordFields(), isEditing: Bool = false, onSave: @escaping (PasswordFields) async throws -> Void) {
         self.isEditing = isEditing
         self.onSave = onSave
@@ -115,7 +118,7 @@ struct PasswordEditorView: View {
 }
 
 private extension PasswordEditorView {
-    /// Saves the fields and closes the sheet, or shows the error.
+    /// Saves the fields and dismisses the sheet, or shows the error.
     func save() {
         isSaving = true
         errorMessage = nil

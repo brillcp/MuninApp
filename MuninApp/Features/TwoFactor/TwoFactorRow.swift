@@ -5,15 +5,20 @@ import UIKit
 import AppKit
 #endif
 
-/// One 2FA account in the iOS list: name, current code and countdown. Tap to copy the code.
+/// A row that shows a two-factor account's name, current code, and countdown.
+///
+/// Tapping the row copies the code.
 struct TwoFactorRow: View {
-    /// Briefly true after copying, to show "Copied" instead of the code.
+    /// A Boolean value that indicates whether the code was just copied.
+    ///
+    /// While true, the row shows Copied instead of the code.
     @State private var didCopy = false
 
     /// The account whose code is shown.
     let account: OTPAccount
-    /// Passed in (not from the environment): the Mac table's cells don't get
-    /// the environment. Reading `clock.now` here still makes each row update itself.
+    /// The clock that drives the code and countdown.
+    ///
+    /// Reading `clock.now` in the row lets each row update independently.
     let clock: TwoFactorClock
 
     var body: some View {
@@ -47,7 +52,14 @@ extension TwoFactorRow {
         #endif
     }
 
-    /// Splits a code in two halves for reading: "123456" → "123 456", "12345678" → "1234 5678".
+    /// Splits a code into two halves for readability.
+    ///
+    /// For example, `"123456"` becomes `"123 456"`, and `"12345678"` becomes
+    /// `"1234 5678"`.
+    ///
+    /// - Parameter code: The code to format.
+    /// - Returns: The code with a space between its halves, or the code
+    ///   unchanged if it has four or fewer digits.
     static func formatted(_ code: String) -> String {
         guard code.count > 4 else { return code }
         let middle = code.index(code.startIndex, offsetBy: code.count / 2)
@@ -56,10 +68,10 @@ extension TwoFactorRow {
 }
 
 private extension TwoFactorRow {
-    /// The current time, read from the clock so the row redraws every second.
+    /// The current time, read from the clock so the row updates every second.
     var now: Date { clock.now }
 
-    /// Copies the current code and shows "Copied" for a moment.
+    /// Copies the current code and briefly shows Copied.
     func copy() {
         Self.copyCode(of: account)
         didCopy = true
@@ -70,11 +82,13 @@ private extension TwoFactorRow {
     }
 }
 
-/// Issuer and account name. Never changes while the row is on screen.
+/// A view that shows a two-factor account's issuer and name.
+///
+/// Equatable, so it doesn't redraw when the clock ticks.
 struct AccountLabel: View, Equatable {
     /// The issuer, or the account name when there's no issuer.
     let title: String
-    /// The account name, when the title is the issuer.
+    /// The account name, when the title is the issuer; otherwise, `nil`.
     let subtitle: String?
 
     var body: some View {
@@ -91,48 +105,12 @@ struct AccountLabel: View, Equatable {
     }
 }
 
-/// The code and countdown for the Mac table's Code column. Click to copy.
-struct TwoFactorCell: View {
-    /// Briefly true after copying, to show "Copied" instead of the code.
-    @State private var didCopy = false
-
-    /// The account whose code is shown.
-    let account: OTPAccount
-    /// The screen's clock, passed in because table cells don't get the environment.
-    let clock: TwoFactorClock
-
-    var body: some View {
-        HStack(spacing: DesignKit.Spacing.Primitive.s12) {
-            CodeText(code: account.code(at: now), didCopy: didCopy)
-                .equatable()
-            CountdownGauge(remaining: account.secondsRemaining(at: now), period: account.period)
-                .equatable()
-        }
-        .contentShape(.rect)
-        .onTapGesture {
-            TwoFactorRow.copyCode(of: account)
-            didCopy = true
-            Task {
-                try? await Task.sleep(for: .seconds(1.2))
-                didCopy = false
-            }
-        }
-        .animation(DesignKit.Motion.linear, value: didCopy)
-        .accessibilityElement(children: .combine)
-        .accessibilityHint("codes.row.copyHint")
-    }
-}
-
-private extension TwoFactorCell {
-    /// The current time, read from the clock so the cell redraws every second.
-    var now: Date { clock.now }
-}
-
-/// The code. Only redraws when the code rotates or is copied.
+/// A view that shows a two-factor code.
+///
+/// Equatable, so it redraws only when the code changes or is copied.
 private struct CodeText: View, Equatable {
-    /// The current code.
     let code: String
-    /// Shows "Copied" instead of the code.
+    /// A Boolean value that indicates whether to show Copied instead of the code.
     let didCopy: Bool
 
     var body: some View {
@@ -144,13 +122,14 @@ private struct CodeText: View, Equatable {
     }
 }
 
-/// The countdown. The only part of a row that redraws every second.
+/// A gauge that counts down to the next code.
 ///
-/// Turns red for the last five seconds.
+/// The only part of a row that redraws every second. It turns red for the
+/// last five seconds.
 private struct CountdownGauge: View, Equatable {
-    /// Seconds until the code changes.
+    /// The number of seconds until the code changes.
     let remaining: Int
-    /// The code's full period in seconds.
+    /// The code's period, in seconds.
     let period: Int
 
     var body: some View {

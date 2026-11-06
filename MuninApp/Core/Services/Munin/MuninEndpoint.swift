@@ -1,24 +1,24 @@
 import Foundation
 import Networking
 
-/// Endpoints on Munin's `/v1` base URL.
+/// Endpoints relative to the API's `/v1` base URL.
 enum MuninEndpoint: EndpointType {
-    /// `/entries`: the 2FA accounts.
+    /// `/entries`: the two-factor accounts.
     case entries
-    /// `/entries/{id}`: one 2FA account.
+    /// `/entries/{id}`: a single two-factor account.
     case entry(UUID)
     /// `/passwords`: the password items.
     case passwords
-    /// `/passwords/{id}`: one password item.
+    /// `/passwords/{id}`: a single password item.
     case password(UUID)
-    /// `/passwords/{id}/touch`: bumps an item's last updated time.
+    /// `/passwords/{id}/touch`: updates an item's last-updated date.
     case passwordTouch(UUID)
     /// `/vault-key`: the wrapped vault key.
     case vaultKey
 
     /// `/subscription`: the user's App Store subscription.
     case subscription
-    /// `/account`: the user's account and everything in it.
+    /// `/account`: the user's account and all of its data.
     case account
 
     var path: String {

@@ -1,8 +1,9 @@
 import SwiftUI
 
-/// Adds a Lock command (⌘L) after the app's settings item.
+/// Commands that add a Lock item (⌘L) after the app's settings item.
 ///
-/// Available from the Mac menu bar and from a hardware keyboard on iPad.
+/// The command is available from the macOS menu bar and from a hardware
+/// keyboard on iPad.
 struct LockCommands: Commands {
     /// The session to lock.
     let session: VaultSession

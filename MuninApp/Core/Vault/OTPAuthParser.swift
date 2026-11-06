@@ -1,22 +1,25 @@
 import Foundation
 
-/// Turns what a QR code or a pasted link contains into accounts:
-/// - `otpauth://totp/Issuer:name?secret=…` (a site's 2FA setup QR code)
-/// - `otpauth-migration://offline?data=…` (Google Authenticator export, many accounts)
+/// A parser that converts two-factor setup links into accounts.
+///
+/// Supported formats:
+/// - `otpauth://totp/Issuer:name?secret=…`, the standard setup link encoded in a site's QR code.
+/// - `otpauth-migration://offline?data=…`, a Google Authenticator export containing one or more accounts.
 enum OTPAuthParser {
-    /// Why a QR code or link couldn't be read.
+    /// An error that indicates why a setup link couldn't be parsed.
     enum ParseError: LocalizedError, Equatable {
-        /// Not an `otpauth` or `otpauth-migration` URL.
+        /// The text isn't an `otpauth` or `otpauth-migration` URL.
         case unsupported
-        /// A counter-based (HOTP) account; only time-based codes are supported.
+        /// The account uses counter-based (HOTP) codes, which aren't supported.
         case hotpNotSupported
-        /// The URL has no `secret`.
+        /// The URL has no `secret` parameter.
         case missingSecret
         /// The secret isn't valid Base32.
         case invalidSecret
-        /// The Google Authenticator export couldn't be decoded, or held no accounts.
+        /// The Google Authenticator export couldn't be decoded or contains no accounts.
         case invalidMigrationData
 
+        /// A localized message describing the error.
         var errorDescription: String? {
             switch self {
             case .unsupported:          return Localized("errors.parser.unsupported")
@@ -28,7 +31,11 @@ enum OTPAuthParser {
         }
     }
 
-    /// Parses an `otpauth://` or `otpauth-migration://` URL into one or more accounts.
+    /// Parses an `otpauth` or `otpauth-migration` URL into one or more accounts.
+    ///
+    /// - Parameter text: The URL string. Surrounding whitespace is ignored.
+    /// - Returns: The accounts the URL describes.
+    /// - Throws: A ``ParseError`` if the URL is unsupported or invalid.
     static func parse(_ text: String) throws -> [OTPAccount] {
         let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard let components = URLComponents(string: trimmed), let scheme = components.scheme?.lowercased() else {
@@ -41,9 +48,11 @@ enum OTPAuthParser {
         }
     }
 
-    /// Parses a file with one `otpauth://` or `otpauth-migration://` link per
-    /// line, such as Munin's 2FA export. Blank lines are ignored; lines that
-    /// aren't a supported link are counted in `failedLines`.
+    /// Parses text containing one setup link per line, such as the app's two-factor export.
+    ///
+    /// Blank lines are ignored.
+    ///
+    /// - Returns: The parsed accounts, and the number of lines that aren't a supported link.
     static func parseLines(_ text: String) -> (accounts: [OTPAccount], failedLines: Int) {
         var accounts: [OTPAccount] = []
         var failedLines = 0
@@ -61,8 +70,10 @@ enum OTPAuthParser {
 
     // MARK: - otpauth://
 
-    /// Parses a single `otpauth://totp/…` URL. The issuer comes from the
-    /// `issuer` parameter, or else from the label's "Issuer:" prefix.
+    /// Parses a single `otpauth://totp/…` URL.
+    ///
+    /// The issuer comes from the `issuer` parameter if present, and otherwise
+    /// from the label's `Issuer:` prefix.
     private static func parseOTPAuth(_ components: URLComponents) throws -> OTPAccount {
         switch components.host?.lowercased() {
         case "totp": break
@@ -77,7 +88,7 @@ enum OTPAuthParser {
         guard let secretString = query["secret"], !secretString.isEmpty else { throw ParseError.missingSecret }
         guard let secret = Base32.decode(secretString) else { throw ParseError.invalidSecret }
 
-        // Label: "Issuer:name" or "name" (already percent-decoded).
+        // The label is "Issuer:name" or "name", already percent-decoded.
         let label = String(components.path.drop(while: { $0 == "/" }))
         var labelIssuer: String?
         var name = label
@@ -98,8 +109,10 @@ enum OTPAuthParser {
 
     // MARK: - otpauth-migration:// (protobuf)
 
-    /// Parses a Google Authenticator export (`otpauth-migration://offline?data=…`),
-    /// whose `data` is a base64 protobuf `MigrationPayload`. HOTP accounts are skipped.
+    /// Parses a Google Authenticator export.
+    ///
+    /// The `data` parameter holds a base64-encoded protobuf `MigrationPayload`.
+    /// HOTP accounts are skipped.
     private static func parseMigration(_ components: URLComponents) throws -> [OTPAccount] {
         guard var base64 = components.queryItems?.first(where: { $0.name == "data" })?.value else {
             throw ParseError.invalidMigrationData
@@ -124,7 +137,7 @@ enum OTPAuthParser {
                 default: break
                 }
             }
-            // type 1 = HOTP; skip those.
+            // Type 1 is HOTP, which isn't supported.
             if type != 1, !account.secret.isEmpty { accounts.append(account) }
         }
         guard !accounts.isEmpty else { throw ParseError.invalidMigrationData }
@@ -132,21 +145,22 @@ enum OTPAuthParser {
     }
 }
 
-/// Just enough protobuf to read Google Authenticator's MigrationPayload.
+/// A minimal protobuf decoder for reading Google Authenticator's `MigrationPayload`.
 private enum Protobuf {
-    /// A field's value: a varint, length-delimited bytes, or a fixed-size value that's skipped.
+    /// A field's value: a varint, length-delimited bytes, or a skipped fixed-size value.
     enum Value { case varint(UInt64), bytes(Data), other }
-    /// One decoded field: its number and value.
+    /// A decoded field's number and value.
     struct Field { let number: Int; let value: Value }
 
-    /// Decodes the top-level fields of a protobuf message. Nested messages
-    /// stay as `.bytes`; call again to decode them.
+    /// Decodes the top-level fields of a protobuf message.
+    ///
+    /// Nested messages are returned as ``Value/bytes(_:)``; pass them to this method again to decode them.
     static func fields(_ data: Data) throws -> [Field] {
         let bytes = [UInt8](data)
         var index = 0
         var fields: [Field] = []
 
-        /// Reads one varint at `index` and advances past it.
+        /// Reads a varint at `index` and advances past it.
         func varint() throws -> UInt64 {
             var result: UInt64 = 0
             var shift: UInt64 = 0

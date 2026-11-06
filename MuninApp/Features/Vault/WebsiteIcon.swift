@@ -1,13 +1,13 @@
 import SwiftUI
 
-/// The item's website icon (apple-touch-icon or favicon), or a globe until one loads.
+/// A view that shows a website's icon, or a globe placeholder until the icon loads.
 ///
-/// Icons come from `WebsiteIconStore`, which keeps them in memory only.
+/// Icons come from ``WebsiteIconStore``, which caches them in memory only.
 struct WebsiteIcon: View {
-    /// The loaded icon.
+    /// The loaded icon, or `nil` while loading or if none is available.
     @State private var image: Image?
 
-    /// The item's website.
+    /// The website's URL string.
     let url: String
     /// The icon's width and height in points.
     var size: CGFloat = DesignKit.Spacing.Primitive.s44

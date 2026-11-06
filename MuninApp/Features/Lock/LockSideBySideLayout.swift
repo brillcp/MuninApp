@@ -1,7 +1,7 @@
 import SwiftUI
 
-/// The lock screen on the Mac and in a full-width iPad window: logo, unlock
-/// actions and version on the left, artwork on the right.
+/// The lock screen layout for macOS and regular-width iPad windows, with the
+/// logo, unlock actions, and version on the left and artwork on the right.
 struct LockSideBySideLayout: View {
     var body: some View {
         HStack(spacing: DesignKit.Spacing.Primitive.s48) {
@@ -21,7 +21,7 @@ struct LockSideBySideLayout: View {
     }
 }
 
-/// The artwork on the right of the lock screen.
+/// The artwork on the trailing side of the lock screen.
 private struct LockArtwork: View {
     var body: some View {
         Image(DesignKit.Asset.lockArtwork)

@@ -1,7 +1,9 @@
 import SwiftUI
 
-/// Current password, then the new one twice. The vault key itself doesn't
-/// change; it's wrapped again with the new password.
+/// A view that changes the master password.
+///
+/// The user enters the current password, then the new one twice. The vault
+/// key doesn't change; it's rewrapped with the new password.
 struct ChangeMasterPasswordView: View {
     @Environment(AuthManager.self) private var auth
     @Environment(VaultSession.self) private var session
@@ -74,12 +76,14 @@ struct ChangeMasterPasswordView: View {
 }
 
 private extension ChangeMasterPasswordView {
-    /// Whether Save is enabled: a current password, and a long enough new one typed twice.
+    /// A Boolean value that indicates whether Save is enabled.
+    ///
+    /// Requires the current password and a matching new password of sufficient length.
     var isValid: Bool {
         !current.isEmpty && password.count >= VaultSession.minimumPasswordLength && password == confirmation
     }
 
-    /// What's wrong with the new password, shown under its fields.
+    /// The validation message shown below the new password fields, if any.
     var problem: LocalizedStringKey? {
         if !password.isEmpty, password.count < VaultSession.minimumPasswordLength {
             return LocalizedKey("masterPassword.tooShort", VaultSession.minimumPasswordLength)

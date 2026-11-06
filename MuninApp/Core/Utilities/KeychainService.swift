@@ -2,68 +2,67 @@ import Foundation
 import LocalAuthentication
 import Security
 
-/// Reads and writes the app's Keychain items.
+/// A namespace for reading and writing the app's keychain items.
 ///
-/// Everything lives in the data protection keychain under one service, in a
-/// keychain group shared with the AutoFill extension, so both see the same
-/// session and the same Face ID / Touch ID copy of the vault key. Session
-/// tokens and the user are this-device-only; the legacy vault key is synced
-/// through iCloud Keychain (outside the shared group); the biometric copy of
-/// the vault key needs Face ID / Touch ID to read.
+/// All items live in the data protection keychain under a single service. Most
+/// are stored in an access group shared with the AutoFill extension, so both
+/// see the same session and the same biometric copy of the vault key.
 ///
-/// Items saved before the shared group existed are moved into it the first
-/// time they're read.
+/// - Session tokens and user details are stored on this device only.
+/// - Synced items, such as the legacy vault key, sync through iCloud Keychain
+///   and live outside the shared group.
+/// - Biometric items require Face ID or Touch ID to read.
+///
+/// Items found outside the shared group are moved into it when first read.
 nonisolated enum KeychainService {
-    /// The Keychain service all items are stored under: the app's bundle
-    /// identifier, also from the extension.
+    /// The keychain service for all items.
+    ///
+    /// This is the app's bundle identifier, used by the extension as well.
     private static let service = "dev.gidlof.Munin"
-    /// The keychain group shared by the app and the AutoFill extension
-    /// (`MuninKeychainGroup` in Info.plist, with the team prefix filled in).
+    /// The keychain access group shared by the app and the AutoFill extension.
+    ///
+    /// Read from the `MuninKeychainGroup` Info.plist key, which includes the team prefix.
     private static let sharedGroup = Bundle.main.object(forInfoDictionaryKey: "MuninKeychainGroup") as? String
-    /// Account for the access token.
     private static let accessTokenAccount = "auth.token"
-    /// Account for the refresh token.
     private static let refreshTokenAccount = "auth.refresh_token"
-    /// Account for the signed-in user's ID.
     private static let userIDAccount = "auth.user_id"
-    /// Account for the signed-in user's email.
     private static let emailAccount = "auth.email"
 
     // MARK: - Session
 
     /// Saves the access token.
     static func saveAccessToken(_ token: String) { save(token, account: accessTokenAccount) }
-    /// The saved access token.
+    /// Returns the saved access token.
     static func loadAccessToken() -> String? { load(account: accessTokenAccount) }
     /// Deletes the access token.
     static func deleteAccessToken() { delete(account: accessTokenAccount) }
 
     /// Saves the refresh token.
     static func saveRefreshToken(_ token: String) { save(token, account: refreshTokenAccount) }
-    /// The saved refresh token.
+    /// Returns the saved refresh token.
     static func loadRefreshToken() -> String? { load(account: refreshTokenAccount) }
     /// Deletes the refresh token.
     static func deleteRefreshToken() { delete(account: refreshTokenAccount) }
 
     // MARK: - Signed-in user
 
-    /// Saves the signed-in user's ID.
+    /// Saves the signed-in user's identifier.
     static func saveUserID(_ id: String) { save(id, account: userIDAccount) }
-    /// The saved user ID.
+    /// Returns the saved user identifier.
     static func loadUserID() -> String? { load(account: userIDAccount) }
-    /// Deletes the saved user ID.
+    /// Deletes the saved user identifier.
     static func deleteUserID() { delete(account: userIDAccount) }
 
-    /// Saves the signed-in user's email.
+    /// Saves the signed-in user's email address.
     static func saveEmail(_ email: String) { save(email, account: emailAccount) }
-    /// The saved email.
+    /// Returns the saved email address.
     static func loadEmail() -> String? { load(account: emailAccount) }
-    /// Deletes the saved email.
+    /// Deletes the saved email address.
     static func deleteEmail() { delete(account: emailAccount) }
 
-    // MARK: - iCloud Keychain (synced to the user's other Apple devices)
+    // MARK: - iCloud Keychain
 
-    /// Reads a synced item.
+    /// Returns the data of an item synced through iCloud Keychain.
     static func loadSynced(account: String) -> Data? {
         var query = baseQuery(account: account, inSharedGroup: false)
         query[kSecAttrSynchronizable as String] = true
@@ -76,6 +75,8 @@ nonisolated enum KeychainService {
     }
 
     /// Saves an item that syncs to the user's other devices through iCloud Keychain.
+    ///
+    /// Replaces any existing item for the account.
     static func saveSynced(_ data: Data, account: String) {
         var query = baseQuery(account: account, inSharedGroup: false)
         query[kSecAttrSynchronizable as String] = true
@@ -86,29 +87,33 @@ nonisolated enum KeychainService {
         SecItemAdd(query as CFDictionary, nil)
     }
 
-    /// Deletes a synced item, on every device.
+    /// Deletes a synced item from all of the user's devices.
     static func deleteSynced(account: String) {
         var query = baseQuery(account: account, inSharedGroup: false)
         query[kSecAttrSynchronizable as String] = true
         SecItemDelete(query as CFDictionary)
     }
 
-    // MARK: - Biometrics (this device only)
+    // MARK: - Biometrics
 
-    /// The outcome of reading a biometric item.
+    /// The result of reading a biometric item.
     enum BiometricRead {
-        /// The user authenticated; the item's data.
+        /// The user authenticated, and the item's data was read.
         case success(Data)
         /// No item was found.
         case notFound
         /// The user dismissed the prompt.
         case canceled
-        /// Authentication failed, or another Keychain error.
+        /// Authentication failed, or the keychain returned another error.
         case failed
     }
 
-    /// Saves an item that can only be read after Face ID / Touch ID, and stops
-    /// working if the enrolled fingers or faces change. Never synced.
+    /// Saves an item that requires Face ID or Touch ID to read.
+    ///
+    /// The item stays on this device and becomes unreadable if the enrolled
+    /// biometrics change.
+    ///
+    /// - Returns: `true` if the item was saved.
     static func saveBiometric(_ data: Data, account: String) -> Bool {
         deleteBiometric(account: account)
         guard let access = SecAccessControlCreateWithFlags(
@@ -123,7 +128,13 @@ nonisolated enum KeychainService {
         return SecItemAdd(query as CFDictionary, nil) == errSecSuccess
     }
 
-    /// Shows the biometric prompt with `reason`. Blocks until the user responds.
+    /// Reads a biometric item, prompting the user to authenticate.
+    ///
+    /// This call blocks until the user responds, so don't call it on the main thread.
+    ///
+    /// - Parameters:
+    ///   - account: The item's account name.
+    ///   - reason: The explanation shown in the authentication prompt.
     static func loadBiometric(account: String, reason: String) -> BiometricRead {
         let context = LAContext()
         context.localizedReason = reason
@@ -140,7 +151,7 @@ nonisolated enum KeychainService {
         case errSecSuccess:
             guard let data = result as? Data else { return .failed }
             if !hasBiometric(account: account, inSharedGroup: true) {
-                // Saved before the shared group: move it there for the AutoFill extension.
+                // Move the item into the shared group so the AutoFill extension can read it.
                 _ = saveBiometric(data, account: account)
             }
             return .success(data)
@@ -153,9 +164,12 @@ nonisolated enum KeychainService {
         }
     }
 
-    /// Whether a biometric item exists. Doesn't prompt.
-    /// - Parameter inSharedGroup: Only look in the shared group; otherwise
-    ///   also finds an item saved before it existed.
+    /// Returns a Boolean value that indicates whether a biometric item exists, without prompting.
+    ///
+    /// - Parameters:
+    ///   - account: The item's account name.
+    ///   - inSharedGroup: Whether to search only the shared access group, rather
+    ///     than every group the app can reach.
     static func hasBiometric(account: String, inSharedGroup: Bool = false) -> Bool {
         let context = LAContext()
         context.interactionNotAllowed = true
@@ -166,16 +180,16 @@ nonisolated enum KeychainService {
         return status == errSecSuccess || status == errSecInteractionNotAllowed
     }
 
-    /// Deletes a biometric item. Doesn't prompt.
+    /// Deletes a biometric item without prompting.
     static func deleteBiometric(account: String) {
         deleteEverywhere(account: account)
     }
 
     // MARK: - Private
 
-    /// Reads a this-device item as a UTF-8 string.
-    /// Reads an item from the shared group. One saved before the group
-    /// existed is moved into it.
+    /// Returns an item's value as a UTF-8 string.
+    ///
+    /// An item found outside the shared group is moved into it.
     private static func load(account: String) -> String? {
         if let data = read(baseQuery(account: account)) {
             return String(data: data, encoding: .utf8)
@@ -187,7 +201,7 @@ nonisolated enum KeychainService {
         return value
     }
 
-    /// The data of the first item matching `query`, without prompting.
+    /// Returns the data of the first item matching the query, without prompting.
     private static func read(_ query: [String: Any]) -> Data? {
         var query = query
         query[kSecReturnData as String] = true
@@ -197,8 +211,7 @@ nonisolated enum KeychainService {
         return result as? Data
     }
 
-    /// Saves a string as a this-device item, replacing any existing one.
-    /// Saves to the shared group, replacing the item wherever it was.
+    /// Saves a string to the shared group on this device only, replacing any existing item.
     private static func save(_ value: String, account: String) {
         deleteEverywhere(account: account)
         var query = baseQuery(account: account)
@@ -207,27 +220,25 @@ nonisolated enum KeychainService {
         SecItemAdd(query as CFDictionary, nil)
     }
 
-    /// Deletes the non-synced item for `account`.
-    /// Deletes the item in every group this app can reach, including one
-    /// saved before the shared group.
     private static func delete(account: String) {
         deleteEverywhere(account: account)
     }
 
-    /// Deletes the item in every group this app can reach.
+    /// Deletes the item from every access group the app can reach.
     private static func deleteEverywhere(account: String) {
         SecItemDelete(baseQuery(account: account, inSharedGroup: false) as CFDictionary)
     }
 
-    /// The query attributes every item shares: class, service and account.
-    /// The query for one item. In the shared group by default; without it,
-    /// a search covers every group the app can reach.
+    /// Returns the base query for an item: its class, service, and account.
+    ///
+    /// - Parameter inSharedGroup: Whether to scope the query to the shared
+    ///   access group. When `false`, a search covers every group the app can reach.
     private static func baseQuery(account: String, inSharedGroup: Bool = true) -> [String: Any] {
         var query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: service,
             kSecAttrAccount as String: account,
-            // macOS: use the iOS-style keychain, so there's no login-keychain prompt.
+            // On macOS, use the data protection keychain to avoid login keychain prompts.
             kSecUseDataProtectionKeychain as String: true,
         ]
         if inSharedGroup, let sharedGroup {

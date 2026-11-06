@@ -2,23 +2,22 @@ import SwiftUI
 
 /// The app's entry point.
 ///
-/// On the Mac: the main window, a Settings window and a menu bar window.
-/// On iOS: a single window group. All of them share one `AuthManager`, one
-/// `VaultSession`, one `VaultViewModel` and one `SubscriptionManager`.
+/// On macOS, the app provides a main window, a Settings window, and a menu bar
+/// extra. On iOS, it provides a single window group. All scenes share one
+/// ``AuthManager``, ``VaultSession``, ``VaultViewModel``, and
+/// ``SubscriptionManager``.
 @main struct MyApp: App {
-    /// Sign-in state.
     @State private var auth = AuthManager()
-    /// The vault key and lock state.
     @State private var session: VaultSession
     /// The password list, shared by the main window and the Mac menu bar.
     @State private var vaultModel: VaultViewModel
     /// The App Store subscription, shared by the main window and Settings.
     @State private var subscriptions = SubscriptionManager()
-    /// Whether Munin is turned on for AutoFill, shared by the main window and Settings.
+    /// The AutoFill extension's status, shared by the main window and Settings.
     @State private var autoFill = AutoFillSetup()
 
-    /// Creates the shared models and, on the Mac, applies the AppKit colour
-    /// overrides (table selection and accent).
+    /// Creates the shared models and, on macOS, applies the AppKit color
+    /// overrides for table selection and accent.
     init() {
         let session = VaultSession()
         _session = State(initialValue: session)
@@ -70,13 +69,13 @@ import SwiftUI
         #endif
     }
 
-    /// The Mac main window's identifier, used by the menu bar's Open button.
+    /// The identifier of the main window on macOS, used by the menu bar's Open button.
     static let mainWindowID = "main"
 
     /// The root view with the shared models in its environment.
     ///
-    /// The app's tint is set once here; views only override it where they
-    /// need something else (for example the countdown gauge).
+    /// The app's tint is set once here; views override it only where they
+    /// need a different color, such as the countdown gauge.
     private var root: some View {
         ContentView()
             .environment(auth)

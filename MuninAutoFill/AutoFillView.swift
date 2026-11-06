@@ -1,14 +1,15 @@
 import LocalAuthentication
 import SwiftUI
 
-/// AutoFill's interface: unlock with Face ID / Touch ID, then pick a password
-/// or a 2FA code. Suggestions for the site asking come first; the rest can be
-/// searched.
+/// The AutoFill extension's interface for choosing a password or 2FA code.
+///
+/// The user unlocks with Face ID or Touch ID, then picks an item. Suggestions
+/// for the requesting site come first; the rest are searchable.
 struct AutoFillView: View {
-    /// Munin's accent colour. The extension has no asset catalog of its own.
+    /// The app's accent color, defined in code because the extension has no asset catalog.
     private static let accent = Color(red: 0x38 / 255, green: 0x86 / 255, blue: 0x59 / 255)
 
-    /// The request's state, data and actions.
+    /// The model that holds the request's state, data, and actions.
     @Bindable var model: AutoFillModel
 
     var body: some View {
@@ -30,7 +31,7 @@ struct AutoFillView: View {
 }
 
 private extension AutoFillView {
-    /// The unlock prompt, a spinner, the list, or why AutoFill can't be used.
+    /// The content for the current state: the unlock prompt, a progress indicator, the list, or an error.
     @ViewBuilder
     var content: some View {
         switch model.state {
@@ -55,7 +56,7 @@ private extension AutoFillView {
         }
     }
 
-    /// Shown after Face ID / Touch ID was cancelled, to try again.
+    /// A prompt to retry unlocking after biometric authentication is canceled.
     var unlockPrompt: some View {
         ContentUnavailableView {
             Label("autofill.locked", systemImage: DesignKit.Icon.locked)
@@ -67,7 +68,7 @@ private extension AutoFillView {
         }
     }
 
-    /// Passwords: suggestions for the site, then all of them.
+    /// The password list, with suggestions for the site first.
     var passwordList: some View {
         List {
             if model.searchText.isEmpty, !model.suggestedPasswords.isEmpty {
@@ -91,7 +92,7 @@ private extension AutoFillView {
         }
     }
 
-    /// 2FA codes: suggestions for the site, then all of them.
+    /// The 2FA code list, with suggestions for the site first.
     var codeList: some View {
         TimelineView(.periodic(from: .now, by: 1)) { context in
             List {
@@ -117,24 +118,23 @@ private extension AutoFillView {
         }
     }
 
-    /// Whether this device has Face ID rather than Touch ID.
+    /// A Boolean value that indicates whether this device uses Face ID rather than Touch ID.
     static var usesFaceID: Bool {
         let context = LAContext()
         _ = context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: nil)
         return context.biometryType == .faceID
     }
 
-    /// Tries Face ID / Touch ID again.
+    /// Retries biometric unlock.
     func unlock() {
         Task { await model.unlock() }
     }
 }
 
-/// A password to fill: website icon, name and username.
+/// A row that shows a password item's website icon, name, and username.
 private struct AutoFillPasswordRow: View {
-    /// The password item.
     let item: PasswordItem
-    /// Fills it.
+    /// The action that fills the password.
     let onChoose: () -> Void
 
     var body: some View {
@@ -157,13 +157,12 @@ private struct AutoFillPasswordRow: View {
     }
 }
 
-/// A 2FA account to fill: issuer, account name and the current code.
+/// A row that shows a 2FA account's issuer, name, and current code.
 private struct AutoFillCodeRow: View {
-    /// The account.
     let account: OTPAccount
-    /// The time the code is for, updated every second.
+    /// The date used to compute the code, updated every second.
     let date: Date
-    /// Fills its code.
+    /// The action that fills the code.
     let onChoose: () -> Void
 
     var body: some View {

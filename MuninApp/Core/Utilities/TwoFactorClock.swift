@@ -1,17 +1,21 @@
 import Foundation
 import Observation
 
-/// One clock for a screen of codes, ticking on whole seconds.
+/// An observable clock that ticks on whole seconds, shared by a screen of codes.
 ///
-/// Rows get the clock itself and read `now` in their own body, so each row
-/// updates itself. Passing the time as a `Date` didn't work in the Mac table:
-/// it only redraws rows whose data changed, so the countdown froze.
+/// Pass the clock itself to each row and read ``now`` in the row's body, so
+/// every row updates independently. The macOS table redraws only rows whose
+/// data changed, so passing the time as a `Date` value would freeze the countdown.
 @Observable
 final class TwoFactorClock {
-    /// The current time, updated on every whole second while `run()` is active.
+    /// The current time, updated on every whole second while ``run()`` is active.
     private(set) var now = Date.now
+}
 
-    /// Ticks until the calling task is cancelled (use from `.task`).
+extension TwoFactorClock {
+    /// Updates ``now`` every second until the calling task is cancelled.
+    ///
+    /// Call this from a `task` modifier.
     func run() async {
         now = .now
         while !Task.isCancelled {

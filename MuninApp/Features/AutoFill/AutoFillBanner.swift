@@ -1,7 +1,9 @@
 import SwiftUI
 
-/// Shown at the bottom of the Vault while Munin isn't turned on for AutoFill:
-/// Set Up opens the guide, the close button hides the banner for good.
+/// A banner that prompts the user to turn on AutoFill.
+///
+/// The vault shows the banner while AutoFill is off. Set Up opens the setup
+/// guide, and the close button dismisses the banner permanently.
 struct AutoFillBanner: View {
     @Environment(AutoFillSetup.self) private var autoFill
 
@@ -23,12 +25,11 @@ struct AutoFillBanner: View {
 }
 
 private extension AutoFillBanner {
-    /// Opens the setup guide.
     func showGuide() {
         autoFill.isGuidePresented = true
     }
 
-    /// Hides the banner; the guide stays in Settings.
+    /// Dismisses the banner permanently. The guide remains available in Settings.
     func dismissBanner() {
         autoFill.isBannerDismissed = true
     }
