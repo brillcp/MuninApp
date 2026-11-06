@@ -76,7 +76,7 @@ address. Icons are kept in memory only.
 
 ## Reporting a vulnerability
 
-Please report security issues privately to <!-- security email -->, not in
+Please report security issues privately to viktor@gidlof.dev, not in
 public issues.
 
 ## Building
