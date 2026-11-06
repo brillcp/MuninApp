@@ -20,12 +20,3 @@ struct LockSideBySideLayout: View {
         .background(.background)
     }
 }
-
-/// The artwork on the trailing side of the lock screen.
-private struct LockArtwork: View {
-    var body: some View {
-        Image(DesignKit.Asset.lockArtwork)
-            .resizable()
-            .scaledToFit()
-    }
-}
