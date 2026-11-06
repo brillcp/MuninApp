@@ -1,14 +1,19 @@
 import Foundation
 import Networking
 
-/// Typed access to Munin's API. Every call refreshes the JWT first if needed.
+/// A typed client for the Munin API.
+///
+/// Every call refreshes the access token first if needed.
 final class MuninService {
-    /// The configured network service.
     private let service: Network.Service
-    /// Supplies and refreshes the bearer token.
     private let tokenProvider: AuthTokenProvider
 
-    /// Pass `proof` for deletes and password edits; Munin rejects them without it.
+    /// Creates a service.
+    ///
+    /// - Parameters:
+    ///   - tokenProvider: The provider that supplies the bearer token.
+    ///   - proof: The vault proof that the server requires for deletions and
+    ///     password edits.
     init(tokenProvider: AuthTokenProvider, proof: String? = nil) {
         self.tokenProvider = tokenProvider
         service = MuninServiceFactory.makeService(tokenProvider: tokenProvider, proof: proof)
@@ -16,26 +21,26 @@ final class MuninService {
 }
 
 extension MuninService {
-    /// The user's encrypted 2FA accounts.
+    /// Fetches the user's encrypted 2FA accounts.
     func entries() async throws -> [EncryptedEntry] {
         try await tokenProvider.ensureFresh()
         let response: EntriesResponse = try await service.request(MuninRequest.entries)
         return response.entries
     }
 
-    /// Stores one encrypted 2FA account.
+    /// Stores an encrypted 2FA account.
     func createEntry(ciphertext: String) async throws -> EncryptedEntry {
         try await tokenProvider.ensureFresh()
         return try await service.request(MuninRequest.createEntry(CreateEntryBody(ciphertext: ciphertext)))
     }
 
-    /// Deletes one 2FA account. Needs a proof.
+    /// Deletes a 2FA account. Requires a proof.
     func deleteEntry(id: UUID) async throws {
         try await tokenProvider.ensureFresh()
         _ = try await service.response(MuninRequest.deleteEntry(id))
     }
 
-    /// The user's encrypted password items.
+    /// Fetches the user's encrypted password items.
     func passwords() async throws -> [EncryptedPassword] {
         try await tokenProvider.ensureFresh()
         let response: PasswordsResponse = try await service.request(MuninRequest.passwords)
@@ -48,25 +53,28 @@ extension MuninService {
         return try await service.request(MuninRequest.createPassword(body))
     }
 
-    /// Replaces a password item's fields. Needs a proof.
+    /// Replaces a password item's fields. Requires a proof.
     func updatePassword(id: UUID, _ body: PasswordFieldsBody) async throws -> EncryptedPassword {
         try await tokenProvider.ensureFresh()
         return try await service.request(MuninRequest.updatePassword(id, body))
     }
 
-    /// Deletes a password item. Needs a proof.
+    /// Deletes a password item. Requires a proof.
     func deletePassword(id: UUID) async throws {
         try await tokenProvider.ensureFresh()
         _ = try await service.response(MuninRequest.deletePassword(id))
     }
 
-    /// Bumps a password item's last updated time (its password was copied).
+    /// Updates a password item's modification date, such as after its password
+    /// is copied.
     func touchPassword(id: UUID) async throws -> EncryptedPassword {
         try await tokenProvider.ensureFresh()
         return try await service.request(MuninRequest.touchPassword(id))
     }
 
-    /// The wrapped vault key, or nil if the user hasn't set up a master password yet.
+    /// Fetches the wrapped vault key.
+    ///
+    /// - Returns: The key record, or `nil` if the user hasn't set up a master password.
     func vaultKey() async throws -> VaultKeyRecord? {
         try await tokenProvider.ensureFresh()
         do {
@@ -76,8 +84,10 @@ extension MuninService {
         }
     }
 
-    /// Saves the first vault key. Returns false if a master password was
-    /// already set up (from another device).
+    /// Saves the user's first vault key.
+    ///
+    /// - Returns: `false` if a master password already exists, such as one set
+    ///   up on another device.
     func createVaultKey(_ body: VaultKeyRequestBody) async throws -> Bool {
         try await tokenProvider.ensureFresh()
         do {
@@ -89,43 +99,52 @@ extension MuninService {
     }
 
     /// Replaces the vault key after a master password change or reset.
-    /// `body.currentProof` must be set.
+    ///
+    /// - Parameter body: The new key, with `currentProof` set.
     func replaceVaultKey(_ body: VaultKeyRequestBody) async throws {
         try await tokenProvider.ensureFresh()
         _ = try await service.response(MuninRequest.replaceVaultKey(body))
     }
 
-    /// Whether a subscription is required, and whether the user has one.
+    /// Fetches whether a subscription is required and whether the user has one.
     func subscription() async throws -> SubscriptionStatus {
         try await tokenProvider.ensureFresh()
         return try await service.request(MuninRequest.subscription)
     }
 
-    /// Links an App Store purchase to the user. Munin checks it with Apple and
-    /// returns the resulting status.
+    /// Links an App Store purchase to the user.
+    ///
+    /// The server verifies the transaction with Apple.
+    ///
+    /// - Returns: The resulting subscription status.
     func linkSubscription(transactionID: String) async throws -> SubscriptionStatus {
         try await tokenProvider.ensureFresh()
         return try await service.request(MuninRequest.linkSubscription(LinkSubscriptionBody(transactionId: transactionID)))
     }
 
-    /// Deletes the account: the vault key, passwords, 2FA accounts, the
-    /// subscription link and the user. Needs a proof once a master password is set up.
-    func deleteAccount() async throws {
+    /// Deletes the account, including the vault key, passwords, 2FA accounts,
+    /// and subscription link.
+    ///
+    /// Requires a proof once a master password is set up.
+    ///
+    /// - Parameter appleAuthorizationCode: An authorization code the server
+    ///   uses to revoke the user's Sign in with Apple tokens, if available.
+    func deleteAccount(appleAuthorizationCode: String?) async throws {
         try await tokenProvider.ensureFresh()
-        _ = try await service.response(MuninRequest.deleteAccount)
+        _ = try await service.response(MuninRequest.deleteAccount(DeleteAccountBody(appleAuthorizationCode: appleAuthorizationCode)))
     }
 }
 
 // MARK: - Errors
 
-/// Munin's error body: `{"error": "code"}`.
+/// The API's error body, `{"error": "code"}`.
 private nonisolated struct MuninErrorBody: Decodable {
-    /// The error code, e.g. `subscription_account_mismatch`.
+    /// The error code, such as `subscription_account_mismatch`.
     let error: String
 }
 
 extension Error {
-    /// A short, user-facing explanation of a Munin request failure.
+    /// A short, user-facing description of an API request failure.
     var muninDescription: String {
         if let networkError = self as? Network.Service.NetworkError {
             switch networkError {

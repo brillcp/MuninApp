@@ -1,9 +1,9 @@
 import Foundation
 import Networking
 
-/// Endpoints on the auth base URL (`/auth/v1`).
+/// Endpoints relative to the authentication base URL (`/auth/v1`).
 enum AuthEndpoint: EndpointType {
-    /// `/token`, for both the identity token and the refresh token grants.
+    /// The token endpoint, used for both identity token and refresh token grants.
     case token
 
     var path: String {
@@ -13,11 +13,11 @@ enum AuthEndpoint: EndpointType {
     }
 }
 
-/// Sign in with Apple: trades Apple's identity token for a session.
+/// A request that exchanges a Sign in with Apple identity token for a session.
 struct AppleIDTokenRequest: Requestable {
-    /// Apple's identity token (a JWT).
+    /// The identity token from Apple, as a JWT.
     let idToken: String
-    /// The raw nonce; Apple received its SHA-256.
+    /// The raw nonce whose SHA-256 hash was sent to Apple.
     let nonce: String
 
     var httpMethod: HTTP.Method { .post }
@@ -29,7 +29,7 @@ struct AppleIDTokenRequest: Requestable {
     var endpoint: EndpointType { AuthEndpoint.token }
 }
 
-/// Refresh-token exchange: trades a stored refresh token for a fresh session.
+/// A request that exchanges a refresh token for a new session.
 struct RefreshTokenRequest: Requestable {
     /// The refresh token from the current session.
     let refreshToken: String
@@ -45,7 +45,7 @@ struct RefreshTokenRequest: Requestable {
 
 // MARK: - Bodies
 
-/// Body of `AppleIDTokenRequest`.
+/// The request body of ``AppleIDTokenRequest``.
 nonisolated private struct IDTokenBody: Encodable, Sendable {
     let provider: String
     let idToken: String
@@ -57,7 +57,7 @@ nonisolated private struct IDTokenBody: Encodable, Sendable {
     }
 }
 
-/// Body of `RefreshTokenRequest`.
+/// The request body of ``RefreshTokenRequest``.
 nonisolated private struct RefreshBody: Encodable, Sendable {
     let refreshToken: String
 
@@ -68,20 +68,22 @@ nonisolated private struct RefreshBody: Encodable, Sendable {
 
 // MARK: - Response
 
-/// Response from `/auth/v1/token` for both grant types.
+/// A session returned by the token endpoint for either grant type.
 nonisolated struct AuthSession: Sendable, Decodable {
-    /// The JWT sent to Munin as the bearer token.
+    /// The JWT sent to the server as the bearer token.
     let accessToken: String
-    /// Exchanged for a new session when the access token expires.
+    /// The token exchanged for a new session when the access token expires.
     let refreshToken: String
     /// The access token's lifetime in seconds.
     let expiresIn: Int
     /// The signed-in user.
     let user: User?
 
-    /// The user in a session response.
+    /// The user described in a session response.
     struct User: Sendable, Decodable {
+        /// The user's unique identifier.
         let id: String
+        /// The user's email address, if shared.
         let email: String?
     }
 

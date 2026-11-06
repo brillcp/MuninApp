@@ -2,29 +2,32 @@ import AuthenticationServices
 import Foundation
 import Observation
 
-/// Sign in with Apple, exchanged for a session. Views observe `isSignedIn`.
+/// An object that manages Sign in with Apple and the resulting session.
 ///
-/// The user's ID and email are kept in the Keychain; the session tokens are
-/// held by `AuthTokenProvider`.
+/// The user's ID and email are stored in the Keychain; the session tokens are
+/// managed by ``AuthTokenProvider``. Views observe ``isSignedIn``.
 @Observable
 final class AuthManager {
-    /// Whether a session exists.
-    private(set) var isSignedIn: Bool
-    /// The signed-in user's email, as given by Sign in with Apple.
-    private(set) var email: String?
-    /// User ID; Munin scopes the user's data to it.
-    private(set) var userID: String?
-    /// True while the Apple identity token is being exchanged with the auth server.
-    private(set) var isSigningIn = false
-    /// The last sign-in error, shown on the sign-in step.
-    private(set) var signInError: String?
-
-    /// Supplies and refreshes the JWT for requests to Munin.
-    let tokenProvider: AuthTokenProvider
-    /// The raw nonce of the sign-in in progress, sent to the auth server with the identity token.
+    /// The raw nonce of the sign-in in progress, sent with the identity token.
     private var currentNonce: String?
 
-    /// Restores the signed-in state, email and user ID from the previous launch.
+    /// A Boolean value that indicates whether a session exists.
+    private(set) var isSignedIn: Bool
+    /// The signed-in user's email, as provided by Sign in with Apple.
+    private(set) var email: String?
+    /// The signed-in user's ID, which scopes their data on the server.
+    private(set) var userID: String?
+    /// A Boolean value that indicates whether the Apple identity token is being exchanged for a session.
+    private(set) var isSigningIn = false
+    /// The most recent sign-in error.
+    private(set) var signInError: String?
+
+    /// The provider that supplies and refreshes access tokens for server requests.
+    let tokenProvider: AuthTokenProvider
+
+    /// Creates an authentication manager, restoring the stored session and user.
+    ///
+    /// - Parameter tokenProvider: The provider that stores and refreshes session tokens.
     init(tokenProvider: AuthTokenProvider = .shared) {
         self.tokenProvider = tokenProvider
         isSignedIn = tokenProvider.hasSession
@@ -32,23 +35,15 @@ final class AuthManager {
         email = KeychainService.loadEmail()
         userID = KeychainService.loadUserID()
     }
+}
 
-    /// Earlier builds kept the email and user ID in UserDefaults. Move them to
-    /// the Keychain once, so existing sessions keep working.
-    private static func moveUserFromUserDefaults() {
-        let defaults = UserDefaults.standard
-        if let id = defaults.string(forKey: "munin.user.id") {
-            if KeychainService.loadUserID() == nil { KeychainService.saveUserID(id) }
-            defaults.removeObject(forKey: "munin.user.id")
-        }
-        if let email = defaults.string(forKey: "munin.user.email") {
-            if KeychainService.loadEmail() == nil { KeychainService.saveEmail(email) }
-            defaults.removeObject(forKey: "munin.user.email")
-        }
-    }
-
-    /// Configures the Apple request. Apple gets the SHA-256 of a fresh nonce;
-    /// The auth server later gets the raw nonce to match against the identity token.
+extension AuthManager {
+    /// Configures a Sign in with Apple request.
+    ///
+    /// Apple receives the SHA-256 hash of a fresh nonce; the server later
+    /// receives the raw nonce to verify the identity token.
+    ///
+    /// - Parameter request: The request to configure.
     func prepare(_ request: ASAuthorizationAppleIDRequest) {
         let nonce = Nonce.random()
         currentNonce = nonce
@@ -57,8 +52,12 @@ final class AuthManager {
         signInError = nil
     }
 
-    /// Finishes Sign in with Apple: exchanges the identity token for a
-    /// session and stores the user. Cancelling is not an error.
+    /// Completes Sign in with Apple by exchanging the identity token for a
+    /// session and storing the user.
+    ///
+    /// Canceling isn't treated as an error.
+    ///
+    /// - Parameter result: The result of the authorization request.
     func complete(_ result: Result<ASAuthorization, any Error>) async {
         switch result {
         case .failure(let error):
@@ -91,7 +90,7 @@ final class AuthManager {
         }
     }
 
-    /// Deletes the session tokens, the stored user and the AutoFill keyboard suggestions.
+    /// Signs out, deleting the session tokens, the stored user, and the AutoFill suggestions.
     func signOut() {
         AutoFillIdentities.removeAll()
         tokenProvider.reset()
@@ -99,15 +98,42 @@ final class AuthManager {
         isSignedIn = false
     }
 
-    /// Deletes the account and everything in it on Munin, then signs out.
-    /// `proof` comes from the unlocked vault.
-    func deleteAccount(proof: String?) async throws {
-        try await MuninService(tokenProvider: tokenProvider, proof: proof).deleteAccount()
+    /// Deletes the account and all its data, then signs out.
+    ///
+    /// The user confirms with Sign in with Apple first. Deleting the account
+    /// also revokes the Apple tokens.
+    ///
+    /// - Parameter proof: The master password proof from the unlocked vault.
+    /// - Returns: `false` if the user dismissed the Apple sheet and nothing was deleted.
+    func deleteAccount(proof: String?) async throws -> Bool {
+        let code: String
+        do {
+            code = try await AppleReauthorization().authorizationCode()
+        } catch let error as ASAuthorizationError where error.code == .canceled {
+            return false
+        }
+        try await MuninService(tokenProvider: tokenProvider, proof: proof).deleteAccount(appleAuthorizationCode: code)
         signOut()
+        return true
+    }
+}
+
+private extension AuthManager {
+    /// Migrates a stored email and user ID from user defaults to the Keychain.
+    static func moveUserFromUserDefaults() {
+        let defaults = UserDefaults.standard
+        if let id = defaults.string(forKey: "munin.user.id") {
+            if KeychainService.loadUserID() == nil { KeychainService.saveUserID(id) }
+            defaults.removeObject(forKey: "munin.user.id")
+        }
+        if let email = defaults.string(forKey: "munin.user.email") {
+            if KeychainService.loadEmail() == nil { KeychainService.saveEmail(email) }
+            defaults.removeObject(forKey: "munin.user.email")
+        }
     }
 
-    /// Stores the user's ID and email in memory and in the Keychain (nil deletes them).
-    private func setUser(id: String?, email: String?) {
+    /// Stores the user's ID and email in memory and in the Keychain; `nil` deletes them.
+    func setUser(id: String?, email: String?) {
         userID = id
         self.email = email
         if let id { KeychainService.saveUserID(id) } else { KeychainService.deleteUserID() }

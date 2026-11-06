@@ -1,37 +1,43 @@
 import Foundation
 import Networking
 
-/// Every request the app makes to Munin.
+/// The requests the app sends to the Munin server.
 enum MuninRequest: Requestable {
-    /// The signed-in user's encrypted entries.
+    /// Fetches the signed-in user's encrypted 2FA entries.
     case entries
-    /// Store one encrypted entry.
+    /// Creates an encrypted 2FA entry.
     case createEntry(CreateEntryBody)
-    /// Delete one of the user's entries.
+    /// Deletes a 2FA entry.
     case deleteEntry(UUID)
-    /// The signed-in user's encrypted password items.
+    /// Fetches the signed-in user's encrypted password items.
     case passwords
-    /// Store a new password item; every field encrypted.
+    /// Creates a password item with every field encrypted.
     case createPassword(PasswordFieldsBody)
-    /// Replace an item's fields (an edit); bumps its last updated time.
+    /// Replaces a password item's fields and updates its modification date.
     case updatePassword(UUID, PasswordFieldsBody)
-    /// Bump an item's last updated time (the password was copied).
+    /// Updates a password item's modification date, for example after its
+    /// password is copied.
     case touchPassword(UUID)
-    /// Delete one of the user's password items.
+    /// Deletes a password item.
     case deletePassword(UUID)
-    /// The user's wrapped vault key and KDF settings.
+    /// Fetches the user's wrapped vault key and key derivation settings.
     case vaultKey
-    /// First master password setup.
+    /// Stores the wrapped vault key when the user first sets a master password.
     case createVaultKey(VaultKeyRequestBody)
-    /// New master password; needs `currentProof`.
+    /// Replaces the wrapped vault key after a master password change.
+    ///
+    /// Requires `currentProof`.
     case replaceVaultKey(VaultKeyRequestBody)
-    /// Whether a subscription is required, and whether the user has one.
+    /// Fetches whether a subscription is required and whether the user has one.
     case subscription
-    /// Links an App Store purchase to the user; Munin checks it with Apple.
+    /// Links an App Store purchase to the user. The server verifies it with Apple.
     case linkSubscription(LinkSubscriptionBody)
-    /// Deletes the account and everything in it; needs a proof once a master password is set up.
-    case deleteAccount
+    /// Deletes the account and all its data, and revokes Sign in with Apple.
+    ///
+    /// Requires a proof once a master password is set.
+    case deleteAccount(DeleteAccountBody)
 
+    /// The HTTP method for the request.
     var httpMethod: HTTP.Method {
         switch self {
         case .entries, .passwords, .vaultKey, .subscription: return .get
@@ -41,16 +47,20 @@ enum MuninRequest: Requestable {
         }
     }
 
+    /// How the request's parameters and body are encoded.
     var encoding: Request.Encoding {
         switch self {
-        case .entries, .deleteEntry, .passwords, .touchPassword, .deletePassword, .vaultKey, .subscription, .deleteAccount: return .query
-        case .createEntry, .createPassword, .updatePassword, .createVaultKey, .replaceVaultKey, .linkSubscription: return .json
+        case .entries, .deleteEntry, .passwords, .touchPassword, .deletePassword, .vaultKey, .subscription: return .query
+        case .createEntry, .createPassword, .updatePassword, .createVaultKey, .replaceVaultKey, .linkSubscription, .deleteAccount: return .json
         }
     }
 
+    /// The authorization scheme. Every request carries the user's bearer token.
     var authorization: Request.Authorization { .bearer }
+    /// The query parameters. No request uses any.
     var parameters: HTTP.Parameters { [:] }
 
+    /// The JSON body, or `nil` for requests without one.
     var body: (any Encodable & Sendable)? {
         switch self {
         case .createEntry(let body):    return body
@@ -58,10 +68,12 @@ enum MuninRequest: Requestable {
         case .updatePassword(_, let body): return body
         case .createVaultKey(let body), .replaceVaultKey(let body): return body
         case .linkSubscription(let body): return body
-        case .entries, .deleteEntry, .passwords, .touchPassword, .deletePassword, .vaultKey, .subscription, .deleteAccount: return nil
+        case .deleteAccount(let body): return body
+        case .entries, .deleteEntry, .passwords, .touchPassword, .deletePassword, .vaultKey, .subscription: return nil
         }
     }
 
+    /// The server path for the request.
     var endpoint: EndpointType {
         switch self {
         case .entries, .createEntry:     return MuninEndpoint.entries
@@ -77,95 +89,134 @@ enum MuninRequest: Requestable {
     }
 }
 
-// MARK: - Bodies & response models
+// MARK: - Entries
 
-/// `POST /v1/entries`: one encrypted 2FA account.
+/// The body of `POST /v1/entries`.
 nonisolated struct CreateEntryBody: Encodable, Sendable {
     /// The account, encrypted with the vault key.
     let ciphertext: String
 }
 
-/// Response from `GET /v1/entries`.
+/// The response from `GET /v1/entries`.
 nonisolated struct EntriesResponse: Sendable, Decodable {
+    /// The user's encrypted 2FA entries.
     let entries: [EncryptedEntry]
 }
 
-/// An entry as Munin stores it: an id, and ciphertext Munin can't read.
+/// A 2FA entry as the server stores it: an identifier and ciphertext the
+/// server can't read.
 nonisolated struct EncryptedEntry: Sendable, Decodable {
+    /// The entry's server identifier.
     let id: UUID
+    /// The account, encrypted with the vault key.
     let ciphertext: String
 }
 
 // MARK: - Passwords
 
-/// `POST /v1/passwords` and `PUT /v1/passwords/{id}`. Every field is ciphertext.
+/// The body of `POST /v1/passwords` and `PUT /v1/passwords/{id}`.
+///
+/// Every field is ciphertext.
 nonisolated struct PasswordFieldsBody: Encodable, Sendable {
+    /// The encrypted name.
     let name: String
+    /// The encrypted website.
     let url: String
+    /// The encrypted username.
     let username: String
+    /// The encrypted password.
     let password: String
+    /// The encrypted note.
     let note: String
 }
 
-/// Response from `GET /v1/passwords`.
+/// The response from `GET /v1/passwords`.
 nonisolated struct PasswordsResponse: Sendable, Decodable {
+    /// The user's encrypted password items.
     let passwords: [EncryptedPassword]
 }
 
-/// A password item as Munin stores it. Every field except `id` and
-/// `updatedAt` is ciphertext.
+/// A password item as the server stores it.
+///
+/// Every field except `id` and `updatedAt` is ciphertext.
 nonisolated struct EncryptedPassword: Sendable, Decodable {
+    /// The item's server identifier.
     let id: UUID
+    /// The encrypted name.
     let name: String
+    /// The encrypted website.
     let url: String
+    /// The encrypted username.
     let username: String
+    /// The encrypted password.
     let password: String
+    /// The encrypted note.
     let note: String
+    /// The date the item was last modified.
     let updatedAt: Date
 }
 
 // MARK: - Vault key
 
-/// Response from `GET /v1/vault-key`. The wrapped keys are AES-GCM ciphertext;
-/// `kdf` is `KDFParameters` as JSON.
+/// The response from `GET /v1/vault-key`.
+///
+/// The wrapped keys are AES-GCM ciphertext, and `kdf` is JSON-encoded
+/// ``KDFParameters``.
 nonisolated struct VaultKeyRecord: Sendable, Decodable {
+    /// The vault key wrapped with the key derived from the master password.
     let passwordWrappedKey: String
+    /// The vault key wrapped with the key derived from the recovery key.
     let recoveryWrappedKey: String
+    /// JSON-encoded ``KDFParameters``.
     let kdf: String
 }
 
-/// `POST` and `PUT /v1/vault-key`.
+/// The body of `POST` and `PUT /v1/vault-key`.
 nonisolated struct VaultKeyRequestBody: Encodable, Sendable {
-    /// The vault key wrapped with the master password's key.
+    /// The vault key wrapped with the key derived from the master password.
     let passwordWrappedKey: String
-    /// The vault key wrapped with the recovery key's key.
+    /// The vault key wrapped with the key derived from the recovery key.
     let recoveryWrappedKey: String
-    /// `KDFParameters` as JSON.
+    /// JSON-encoded ``KDFParameters``.
     let kdf: String
-    /// Proof of the new master password; Munin stores a hash of it.
+    /// A proof of the new master password. The server stores its hash.
     let passwordProof: String
-    /// Proof of the recovery key; Munin stores a hash of it.
+    /// A proof of the recovery key. The server stores its hash.
     let recoveryProof: String
-    /// PUT only: proof from the current master password or the recovery key.
+    /// A proof from the current master password or the recovery key.
+    ///
+    /// Required for `PUT` only.
     let currentProof: String?
 }
 
 // MARK: - Subscription
 
-/// `GET` and `POST /v1/subscription` response.
+/// The response from `GET` and `POST /v1/subscription`.
 nonisolated struct SubscriptionStatus: Sendable, Decodable, Equatable {
-    /// Whether changes need an active subscription.
+    /// A Boolean value that indicates whether changes require an active subscription.
     let required: Bool
-    /// Whether the user has an active subscription or free trial.
+    /// A Boolean value that indicates whether the user has an active subscription
+    /// or free trial.
     let active: Bool
-    /// When the current period ends, if there's a subscription.
+    /// The end date of the current subscription period, if any.
     let expiresAt: Date?
-    /// Whether Apple couldn't charge the renewal and is retrying. Nil from
-    /// Munin versions before this field.
+    /// A Boolean value that indicates whether Apple couldn't charge the renewal and
+    /// is retrying, or `nil` if the server doesn't report it.
     let billingIssue: Bool?
 }
 
-/// `POST /v1/subscription`: a StoreKit transaction ID for Munin to look up with Apple.
+/// The body of `POST /v1/subscription`: a StoreKit transaction identifier the
+/// server verifies with Apple.
 nonisolated struct LinkSubscriptionBody: Encodable, Sendable {
+    /// The StoreKit transaction identifier.
     let transactionId: String
+}
+
+/// The body of `DELETE /v1/account`.
+///
+/// Carries the authorization code from reauthenticating with Sign in with
+/// Apple, which the server uses to revoke the user's Apple tokens.
+nonisolated struct DeleteAccountBody: Encodable, Sendable {
+    /// The authorization code from Sign in with Apple, or `nil` if none is available.
+    let appleAuthorizationCode: String?
 }

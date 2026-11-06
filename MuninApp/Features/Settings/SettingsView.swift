@@ -2,44 +2,40 @@ import StoreKit
 import SwiftUI
 import UniformTypeIdentifiers
 
-/// Account, subscription, security and about. A Settings window on Mac (⌘,), a tab on iOS.
+/// A view that shows account, subscription, security, data, and app information.
+///
+/// On macOS, this is the content of the Settings window. On iOS, it's a tab.
 struct SettingsView: View {
     @Environment(AuthManager.self) private var auth
     @Environment(VaultSession.self) private var session
     @Environment(SubscriptionManager.self) private var subscriptions
-    /// Whether Munin is turned on for AutoFill.
     @Environment(AutoFillSetup.self) private var autoFill
     @Environment(\.openURL) private var openURL
 
-    /// Shows the Change Master Password sheet.
+    /// A Boolean value that indicates whether the Change Master Password sheet is presented.
     @State private var isChangingPassword = false
-    /// The recovery key to show in a sheet.
+    /// The recovery key presented in a sheet.
     @State private var recoveryKey: RecoveryKeyItem?
-    /// Bumped by buttons for a light haptic.
+    /// A counter that triggers a light haptic when incremented.
     @State private var hapticTaps = 0
-    /// Shows the paywall.
     @State private var isShowingPaywall = false
-    /// iOS: shows the App Store's Manage Subscriptions sheet.
+    /// A Boolean value that indicates whether the system's Manage Subscriptions sheet is presented on iOS.
     @State private var isManagingSubscription = false
-    /// Shows the AutoFill setup guide.
     @State private var isShowingAutoFillGuide = false
-    /// True while Restore Purchases runs.
     @State private var isRestoring = false
-    /// Shows the Delete Account confirmation.
     @State private var isConfirmingDeletion = false
-    /// True while the account is being deleted.
     @State private var isDeletingAccount = false
-    /// Why deleting the account failed, shown in an alert.
+    /// A description of why deleting the account failed, shown in an alert.
     @State private var deletionError: String?
-    /// The export waiting for confirmation.
+    /// The export awaiting confirmation.
     @State private var pendingExport: ExportKind?
-    /// True while an export is loaded and decrypted.
+    /// A Boolean value that indicates whether an export is being loaded and decrypted.
     @State private var isPreparingExport = false
-    /// The decrypted export, held only until the save panel closes.
+    /// The decrypted export, held in memory only until the save panel closes.
     @State private var exportDocument: ExportDocument?
-    /// Shows the save panel for `exportDocument`.
+    /// A Boolean value that indicates whether the save panel for ``exportDocument`` is presented.
     @State private var isSavingExport = false
-    /// Why an export failed, shown in an alert.
+    /// A description of why an export failed, shown in an alert.
     @State private var exportError: String?
 
     var body: some View {
@@ -218,19 +214,17 @@ private extension SettingsView {
         }
     }
 
-    /// Asks before exporting the passwords.
     func confirmPasswordExport() {
         hapticTaps += 1
         pendingExport = .passwords
     }
 
-    /// Asks before exporting the 2FA accounts.
     func confirmTwoFactorExport() {
         hapticTaps += 1
         pendingExport = .twoFactor
     }
 
-    /// Loads and decrypts the export, then opens the save panel.
+    /// Loads and decrypts the export, then presents the save panel.
     func export(_ kind: ExportKind) {
         guard let vault = session.vault else { return }
         Task {
@@ -252,27 +246,26 @@ private extension SettingsView {
         }
     }
 
-    /// Shows why saving failed.
+    /// Reports an error if saving the export failed.
     func exportSaved(_ result: Result<URL, any Error>) {
         if case .failure(let error) = result {
             exportError = error.localizedDescription
         }
     }
 
-    /// Drops the decrypted export from memory when the save panel closes,
-    /// whether it was saved or cancelled.
+    /// Releases the decrypted export when the save panel closes, whether it was saved or cancelled.
     func savePanelChanged() {
         if !isSavingExport { exportDocument = nil }
     }
 
-    /// Opens subscription management: the system sheet on iOS, the App Store page on Mac.
-    /// Opens the AutoFill setup guide.
     func showAutoFillGuide() {
         hapticTaps += 1
         isShowingAutoFillGuide = true
     }
 
-    /// Opens subscription management: the system sheet on iOS, the App Store page on Mac.
+    /// Opens subscription management.
+    ///
+    /// On iOS, this presents the system sheet. On macOS, it opens the App Store page.
     func manageSubscription() {
         #if os(iOS)
         isManagingSubscription = true
@@ -281,19 +274,21 @@ private extension SettingsView {
         #endif
     }
 
-    /// Asks before deleting the account.
     func confirmDeletion() {
         hapticTaps += 1
         isConfirmingDeletion = true
     }
 
-    /// Deletes the account on Munin with the unlocked vault's proof, then signs out.
+    /// Deletes the account on the server, then signs out.
+    ///
+    /// The user confirms with Sign in with Apple, and the request includes the
+    /// unlocked vault's proof. Dismissing the Apple sheet cancels the deletion.
     func deleteAccount() {
         Task {
             isDeletingAccount = true
             defer { isDeletingAccount = false }
             do {
-                try await auth.deleteAccount(proof: session.vault?.proof)
+                _ = try await auth.deleteAccount(proof: session.vault?.proof)
             } catch {
                 deletionError = error.muninDescription
             }
@@ -301,19 +296,10 @@ private extension SettingsView {
     }
 }
 
-/// The signed-in account: a centred accent circle with initials, and the email.
+/// A view that shows the signed-in user's initials in an accent-colored circle, above their email address.
 private struct AccountHeader: View {
-    /// The signed-in email.
+    /// The signed-in user's email address.
     let email: String?
-
-    /// Sign in with Apple only gives Munin the email, so the initials come from
-    /// its first part: "jane.doe@…" → "JD", "jane@…" → "J".
-    private var initials: String {
-        guard let local = email?.split(separator: "@").first else { return "?" }
-        let parts = local.split(whereSeparator: { ".-_+".contains($0) })
-        let letters = parts.prefix(2).compactMap(\.first)
-        return letters.isEmpty ? "?" : String(letters).uppercased()
-    }
 
     var body: some View {
         VStack(spacing: DesignKit.Spacing.Primitive.s12) {
@@ -332,17 +318,29 @@ private struct AccountHeader: View {
     }
 }
 
-/// What Settings can export.
+private extension AccountHeader {
+    /// The user's initials, derived from the local part of their email address.
+    ///
+    /// For example, `jane.doe@…` becomes "JD" and `jane@…` becomes "J".
+    var initials: String {
+        guard let local = email?.split(separator: "@").first else { return "?" }
+        let parts = local.split(whereSeparator: { ".-_+".contains($0) })
+        let letters = parts.prefix(2).compactMap(\.first)
+        return letters.isEmpty ? "?" : String(letters).uppercased()
+    }
+}
+
+/// The kinds of data that settings can export.
 private enum ExportKind: Identifiable {
-    /// The passwords, as CSV.
+    /// Passwords, as a CSV file.
     case passwords
-    /// The 2FA accounts, as `otpauth` links.
+    /// Two-factor accounts, as `otpauth` links.
     case twoFactor
 
     var id: Self { self }
 }
 
-/// A recovery key, presented as a sheet item.
+/// A recovery key, wrapped for presentation as a sheet item.
 private struct RecoveryKeyItem: Identifiable {
     /// The recovery key, formatted for the user to write down.
     let key: String
