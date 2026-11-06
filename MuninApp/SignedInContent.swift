@@ -19,7 +19,7 @@ struct SignedInContent: View {
                 .sheet(item: $session.newRecoveryKey) { item in
                     RecoveryKeyView(recoveryKey: item.key)
                 }
-        case .locked, .checking:
+        case .locked, .checking, .failed:
             EmptyView()
         case .needsMasterPassword:
             MasterPasswordSetupView()
@@ -29,8 +29,6 @@ struct SignedInContent: View {
             } onRetry: {
                 await session.prepare(auth: auth)
             }
-        case .failed:
-            EmptyView()
         }
     }
 }
