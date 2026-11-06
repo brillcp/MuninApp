@@ -1,0 +1,3 @@
+/* Permission prompts and other Info.plist texts. */
+"NSCameraUsageDescription" = "Zeskanuj kod QR, który witryna pokazuje podczas konfigurowania uwierzytelniania dwuskładnikowego.";
+"NSFaceIDUsageDescription" = "Odblokowuj Munin za pomocą Face ID.";

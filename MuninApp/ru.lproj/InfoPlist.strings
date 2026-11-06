@@ -1,0 +1,3 @@
+/* Permission prompts and other Info.plist texts. */
+"NSCameraUsageDescription" = "Сканируйте QR-код, который показывает сайт при настройке двухфакторной аутентификации.";
+"NSFaceIDUsageDescription" = "Разблокируйте Munin с Face ID.";

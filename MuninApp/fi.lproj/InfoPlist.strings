@@ -1,0 +1,3 @@
+/* Permission prompts and other Info.plist texts. */
+"NSCameraUsageDescription" = "Skannaa QR-koodi, jonka sivusto näyttää kaksivaiheisen todennuksen käyttöönoton yhteydessä.";
+"NSFaceIDUsageDescription" = "Avaa Munin Face ID:llä.";

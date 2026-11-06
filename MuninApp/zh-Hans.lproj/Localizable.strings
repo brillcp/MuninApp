@@ -1,0 +1,299 @@
+/* Localizable.strings */
+
+/** Account **/
+"account.delete" = "删除账户";
+"account.delete.failed" = "无法删除账户";
+"account.delete.locked" = "请解锁 Munin 以删除账户。";
+"account.delete.message" = "你的 Munin 账户、密码和 2FA 账户将被永久删除，且无法撤销。你需要使用 Apple 账户确认，这也会将 Munin 从“通过 Apple 登录”中移除。\n\n你的 App Store 订阅不会被取消。请先在“管理订阅”中取消。";
+"account.delete.title" = "要删除你的 Munin 账户吗？";
+"account.showRecoveryKey" = "显示恢复密钥";
+"account.signOut" = "退出登录";
+
+/** Add Account **/
+"addAccount.chooseImage" = "选取图像…";
+"addAccount.chooseScreenshot" = "选取截屏…";
+"addAccount.encrypting" = "正在加密…";
+"addAccount.error.alreadyAddedMany" = "这些账户已在你的保险库中。";
+"addAccount.error.alreadyAddedOne" = "此账户已在你的保险库中。";
+"addAccount.error.loadImage" = "无法载入图像。";
+"addAccount.error.noQRCode" = "图像中未找到二维码。";
+"addAccount.error.readImage" = "无法读取图像。";
+"addAccount.link.add" = "从链接添加";
+"addAccount.link.header" = "链接";
+"addAccount.link.placeholder" = "otpauth://…";
+"addAccount.manual.account" = "账户，例如 you@example.com";
+"addAccount.manual.add" = "添加账户";
+"addAccount.manual.digits" = "位数";
+"addAccount.manual.footer" = "网站会在“无法扫描二维码？”下方显示设置密钥。";
+"addAccount.manual.header" = "手动输入";
+"addAccount.manual.issuer" = "发行方，例如 GitHub";
+"addAccount.manual.setupKey" = "设置密钥";
+"addAccount.qr.footer" = "网站的 2FA 二维码，或 Google Authenticator 中“转移账户”→“导出账户”的二维码，可一次导入全部。";
+"addAccount.qr.header" = "二维码";
+"addAccount.scanQRCode" = "扫描二维码";
+"addAccount.title" = "添加账户";
+
+/** Codes **/
+"codes.add" = "添加";
+"codes.copyCode" = "拷贝代码";
+"codes.delete.button" = "删除 %@";
+"codes.delete.message" = "请确保已为 %@ 关闭 2FA，或你有其他登录方式。此操作无法撤销。";
+"codes.delete.title" = "要删除账户吗？";
+"codes.empty.add" = "添加账户";
+"codes.import.button" = "导入 2FA 账户";
+"codes.import.confirm.button" = "导入 %lld 个账户";
+"codes.import.confirm.message" = "将加密并添加 %lld 个新账户。%lld 个已在 Munin 中，将被跳过。";
+"codes.import.confirm.messageWithFailures" = "将加密并添加 %lld 个新账户。%lld 个已在 Munin 中，将被跳过。有 %lld 行无法读取。";
+"codes.import.confirm.title" = "要导入 2FA 账户吗？";
+"codes.import.done" = "已导入 %lld 个账户。请立即删除该文件，其中包含明文形式的 2FA 密钥。";
+"codes.import.error.empty" = "此文件中没有 2FA 链接。请选择每行包含一个 otpauth:// 链接的文件，例如 Munin 的导出文件。";
+"codes.import.title" = "导入";
+"codes.link.add" = "添加";
+"codes.link.failed" = "无法添加代码";
+"codes.link.message" = "%@ 将被加密并添加到 Munin。";
+"codes.link.title" = "要添加 2FA 账户吗？";
+"codes.empty.message" = "扫描 2FA 二维码，或从 Google Authenticator 导入。";
+"codes.empty.title" = "尚无账户";
+"codes.row.copyHint" = "拷贝代码";
+"codes.title" = "2FA";
+
+/** Errors **/
+"errors.keyMissing" = "此设备还没有你的保险库密钥。";
+"errors.loadVault.title" = "无法载入保险库";
+"errors.munin.appStoreUnavailable" = "无法通过 App Store 检查你的订阅。请稍后再试。";
+"errors.munin.badRequest" = "无法生成请求。";
+"errors.munin.http" = "Munin 返回了 HTTP %lld。";
+"errors.munin.notFound" = "%@ 上没有 Munin API。";
+"errors.munin.proof" = "Munin 无法验证你的主密码。请锁定 Munin，用主密码解锁后再试。";
+"errors.munin.subscriptionLinkedElsewhere" = "此订阅已被另一个 Munin 账户使用。";
+"errors.munin.subscriptionOtherAccount" = "此订阅是为另一个 Munin 账户购买的。";
+"errors.munin.subscriptionRequired" = "未订阅时 Munin 为只读。订阅后即可添加或更改项目。";
+"errors.munin.tooManyAttempts" = "尝试次数过多。请在一小时后再试。";
+"errors.munin.transactionNotFound" = "App Store 无法识别此购买。";
+"errors.munin.unexpectedResponse" = "服务器返回了意外响应。%@ 是 Munin 吗？";
+"errors.munin.unreachable" = "无法连接 Munin。%@";
+"errors.munin.vaultFull" = "你的保险库已满（50 个账户）。";
+"errors.notSignedIn" = "请重新登录以添加账户。";
+"errors.openVault.title" = "无法打开保险库";
+"errors.parser.hotpNotSupported" = "不支持基于计数器的代码（HOTP）。";
+"errors.parser.invalidMigrationData" = "无法读取 Google Authenticator 导出数据。";
+"errors.parser.invalidSecret" = "密钥不是有效的 Base32。";
+"errors.parser.missingSecret" = "链接缺少密钥。";
+"errors.parser.unsupported" = "这不是验证链接或二维码。";
+
+/** Global **/
+"global.cancel" = "取消";
+"global.close" = "关闭";
+"global.copied" = "已拷贝";
+"global.copy" = "拷贝";
+"global.delete" = "删除";
+"global.done" = "完成";
+"global.edit" = "编辑";
+"global.refresh" = "刷新";
+"global.save" = "存储";
+"global.tryAgain" = "重试";
+
+/** Lock **/
+"lock.command" = "锁定";
+"lock.biometrics.failed" = "生物识别未成功。请使用主密码。";
+"lock.biometrics.notSetUp" = "请先用主密码解锁一次，以便在此设备上使用生物识别。";
+"lock.forgotMasterPassword" = "忘记主密码？";
+"lock.masterPassword.placeholder" = "主密码";
+"lock.reason" = "解锁我的保险库";
+"lock.recovery.continue" = "继续";
+"lock.recovery.message" = "输入恢复密钥以设置新的主密码。";
+"lock.step.masterPassword" = "使用主密码";
+"lock.step.recoveryKey" = "输入恢复密钥";
+"lock.step.signIn" = "登录";
+"lock.signedInAs" = "已登录为 %@";
+"lock.switchAccount" = "%@ · 切换";
+"lock.title" = "解锁我的保险库";
+"lock.unlock" = "解锁";
+"lock.version" = "版本 %@";
+"lock.wrongMasterPassword" = "主密码不正确。";
+
+/** Main **/
+"main.section.munin" = "Munin";
+"main.tab.codes" = "2FA";
+"main.tab.vault" = "保险库";
+"main.window.title" = "Munin";
+
+/** Menu Bar **/
+"menuBar.copyUsername" = "拷贝用户名";
+"menuBar.open" = "打开 Munin";
+"menuBar.quit" = "退出 Munin";
+
+/** Password **/
+"password.field.lastUpdated" = "上次更新";
+"password.field.name" = "名称";
+"password.field.note" = "备注";
+"password.field.password" = "密码";
+"password.field.url" = "URL";
+"password.field.username" = "用户名";
+
+/** Password Editor **/
+"passwordEditor.editTitle" = "编辑密码";
+"passwordEditor.generate" = "生成";
+"passwordEditor.newTitle" = "新密码";
+
+/** Password Generator **/
+"passwordGenerator.fillPassword" = "填充密码";
+"passwordGenerator.length" = "长度";
+"passwordGenerator.regenerate" = "重新生成";
+"passwordGenerator.strength.good" = "良好的密码";
+"passwordGenerator.strength.strong" = "高强度密码";
+"passwordGenerator.strength.weak" = "弱密码";
+"passwordGenerator.useCapitals" = "使用大写字母（A–Z）";
+"passwordGenerator.useDigits" = "使用数字（0–9）";
+"passwordGenerator.useSymbols" = "使用符号（@!$%&*）";
+
+/** Password Inspector **/
+"passwordInspector.openWebsite" = "打开网站";
+"passwordInspector.hide" = "隐藏";
+"passwordInspector.show" = "显示";
+
+/** Scanner **/
+"scanner.title" = "扫描二维码";
+
+/** Sign In **/
+"signIn.error.missingAnonKey" = "请将 APIConfig.anonKey 设为你的公开密钥。";
+"signIn.error.noIdentityToken" = "Apple 未返回身份令牌。请重试。";
+"signIn.error.failed" = "登录失败。%@";
+
+/** Vault **/
+"vault.copyUsername" = "拷贝用户名";
+"vault.copyPassword" = "拷贝密码";
+"vault.createItem" = "创建项目";
+"vault.delete.button" = "删除 %@";
+"vault.saveFailed.title" = "无法存储更改";
+"vault.delete.message" = "%@ 将从你的所有设备中删除。此操作无法撤销。";
+"vault.delete.title" = "要删除密码吗？";
+"vault.empty.title" = "无项目";
+"vault.search.prompt" = "搜索所有项目";
+"vault.sort" = "排序";
+"vault.sort.ascending" = "升序";
+"vault.sort.dateEdited" = "编辑日期";
+"vault.sort.descending" = "降序";
+"vault.sort.direction" = "顺序";
+"vault.sort.title" = "标题";
+"vault.title" = "保险库";
+
+/** Vault Key **/
+"vaultKey.missing.checkAgain" = "再次检查";
+"vaultKey.missing.invalid" = "这不是有效的恢复密钥。";
+"vaultKey.missing.message" = "你的保险库使用你另一台设备上的密钥加密。请在两台设备上都打开 iCloud 钥匙串后再次检查，或粘贴你的恢复密钥。";
+"vaultKey.missing.placeholder" = "恢复密钥";
+"vaultKey.missing.restore" = "恢复";
+"vaultKey.missing.title" = "此设备上没有保险库密钥";
+"vaultKey.recovery.backup" = "请将副本保存在安全的地方。如果忘记主密码，恢复密钥是回到保险库的唯一途径。";
+"vaultKey.recovery.copy" = "拷贝恢复密钥";
+"vaultKey.recovery.explanation" = "你的账户已使用此密钥进行端到端加密。Munin 无法读取，也无法替你恢复。";
+"vaultKey.recovery.title" = "恢复密钥";
+
+/** Master password **/
+"masterPassword.confirm" = "确认主密码";
+"masterPassword.create.message" = "用于在你的所有设备上解锁 Munin。Munin 永远看不到它，也无法重设。如果忘记，恢复密钥是唯一的途径。";
+"masterPassword.create.title" = "创建主密码";
+"masterPassword.exists" = "刚刚在另一台设备上设置了主密码。请用它解锁。";
+"masterPassword.field" = "主密码";
+"masterPassword.mismatch" = "密码不一致。";
+"masterPassword.reset.title" = "设置新的主密码";
+"masterPassword.tooShort" = "请至少使用 %lld 个字符。";
+
+/** Settings **/
+"settings.about" = "关于";
+"settings.autoFill" = "自动填充";
+"settings.autoFill.off" = "关闭";
+"settings.autoFill.on" = "打开";
+"settings.autoLock" = "自动锁定";
+"settings.biometrics.face" = "使用面容 ID 解锁";
+"settings.biometrics.touch" = "使用触控 ID 解锁";
+"settings.changeMasterPassword" = "更改主密码";
+"settings.currentMasterPassword" = "当前主密码";
+"settings.data" = "数据";
+"settings.export.confirm" = "导出";
+"settings.export.failed" = "导出失败";
+"settings.export.footer" = "导出文件未加密。在其他地方导入后请删除该文件。";
+"settings.export.locked" = "请解锁 Munin 以导出。";
+"settings.export.message" = "该文件未加密。任何拿到它的人都可以读取其全部内容。";
+"settings.export.passwords" = "导出密码";
+"settings.export.passwords.filename" = "Munin 密码";
+"settings.export.title" = "要导出未加密的文件吗？";
+"settings.export.twoFactor" = "导出 2FA 账户";
+"settings.export.twoFactor.filename" = "Munin 2FA 账户";
+"settings.locked" = "请解锁 Munin 以更改安全设置。";
+"settings.privacyPolicy" = "隐私政策";
+"settings.security" = "安全";
+"settings.subscription" = "订阅";
+"settings.subscription.active" = "有效";
+"settings.subscription.inactive" = "未订阅";
+"settings.subscription.manage" = "管理订阅";
+"settings.subscription.restore" = "恢复购买";
+"settings.subscription.status" = "状态";
+"settings.termsOfUse" = "使用条款";
+"settings.title" = "设置";
+"settings.version" = "版本";
+
+/** Search **/
+"search.empty.message" = "按名称、用户名或网站查找密码和 2FA 代码。";
+"search.empty.title" = "搜索";
+"search.find" = "查找";
+"search.prompt" = "密码和 2FA";
+"search.section.codes" = "2FA";
+"search.section.passwords" = "密码";
+"search.title" = "搜索";
+
+/** Import **/
+"import.button" = "导入密码";
+"import.confirm.button" = "导入 %lld 个密码";
+"import.confirm.buttonAll" = "导入";
+"import.confirm.message" = "将加密并添加 %lld 个新密码。%lld 个已在你的保险库中，将被跳过。";
+"import.confirm.messageWithCodes" = "将加密并添加 %lld 个新密码和 %lld 个 2FA 账户。%lld 个密码已在你的保险库中，将被跳过。";
+"import.confirm.title" = "要导入密码吗？";
+"import.done.message" = "已导入 %lld 个密码。请立即删除 CSV 文件，其中包含明文形式的所有密码。";
+"import.done.messageWithCodes" = "已导入 %lld 个密码和 %lld 个 2FA 账户。请立即删除 CSV 文件，其中包含明文形式的密码和 2FA 密钥。";
+"import.error.columns" = "此 CSV 缺少 Munin 需要的列：密码，以及名称或网站。";
+"import.error.unreadable" = "无法读取文件。请将其导出为 UTF-8 CSV。";
+"import.progress" = "正在导入第 %lld 个，共 %lld 个";
+"import.title" = "导入";
+
+/** Auto-lock **/
+"autoLock.fifteenMinutes" = "15 分钟后";
+"autoLock.fiveMinutes" = "5 分钟后";
+"autoLock.immediately" = "立即";
+"autoLock.never" = "永不";
+"autoLock.oneMinute" = "1 分钟后";
+
+/** Subscription **/
+"subscription.billingIssue" = "App Store 无法续订你的订阅。请更新付款方式以继续添加和编辑。";
+"subscription.error.unverified" = "App Store 无法验证此购买。";
+"subscription.gracePeriod" = "无法续订你的订阅。";
+"subscription.message" = "在你的所有 Apple 设备上使用端到端加密的密码和 2FA 代码。";
+"subscription.readOnly" = "只读。订阅后即可添加或更改项目。";
+"subscription.subscribe" = "订阅";
+"subscription.title" = "Munin";
+"subscription.updatePayment" = "更新付款信息";
+
+/** AutoFill **/
+"autofill.allCodes" = "所有代码";
+"autofill.allPasswords" = "所有密码";
+"autofill.banner" = "使用 Munin 填充密码和 2FA 代码。";
+"autofill.banner.setUp" = "设置";
+"autofill.setup.done" = "Munin 已开启自动填充。";
+"autofill.setup.message" = "通过面容 ID 或触控 ID 验证后，Munin 可在 Safari 浏览器和 App 中填充密码和 2FA 代码。密码在你选择之前保持加密。";
+"autofill.setup.openSettings" = "打开设置";
+"autofill.setup.step1.ios" = "打开“设置”，前往“通用”▸“自动填充与密码”。";
+"autofill.setup.step1.mac" = "打开“系统设置”，前往“通用”▸“自动填充与密码”。";
+"autofill.setup.step2" = "在“自动填充来源”中打开 Munin。";
+"autofill.setup.step3.ios" = "在 Safari 浏览器或 App 中轻点登录栏，然后在键盘上方选择 Munin。";
+"autofill.setup.step3.mac" = "在 Safari 浏览器中点按登录栏，然后从钥匙菜单中选择 Munin。";
+"autofill.setup.step4" = "可选：在“设置验证码的位置”中选择 Munin，让 2FA 设置链接在 Munin 中打开。";
+"autofill.setup.turnOn" = "打开自动填充";
+"autofill.decryptFailed" = "无法解密此密码。";
+"autofill.locked" = "Munin 已锁定";
+"autofill.search" = "搜索";
+"autofill.signIn" = "请打开 Munin 并登录以使用自动填充。";
+"autofill.suggested" = "建议";
+"autofill.title" = "Munin";
+"autofill.turnOnBiometrics" = "请打开 Munin，在设置中打开面容 ID 或触控 ID 解锁，并解锁 Munin 一次。之后自动填充即可使用。";
+"autofill.unavailable" = "自动填充不可用";

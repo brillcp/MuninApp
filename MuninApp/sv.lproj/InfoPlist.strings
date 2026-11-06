@@ -1,0 +1,3 @@
+/* Permission prompts and other Info.plist texts. */
+"NSCameraUsageDescription" = "Skanna QR-koden som en webbplats visar när du ställer in tvåfaktorsautentisering.";
+"NSFaceIDUsageDescription" = "Lås upp Munin med Face ID.";

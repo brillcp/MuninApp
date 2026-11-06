@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>codes.row.secondsLeft</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>few</key>
+			<string>Zbývají %lld sekundy</string>
+			<key>many</key>
+			<string>Zbývá %lld sekundy</string>
+			<key>one</key>
+			<string>Zbývá %lld sekunda</string>
+			<key>other</key>
+			<string>Zbývá %lld sekund</string>
+		</dict>
+	</dict>
+	<key>codes.subtitle</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>few</key>
+			<string>%lld účty</string>
+			<key>many</key>
+			<string>%lld účtu</string>
+			<key>one</key>
+			<string>%lld účet</string>
+			<key>other</key>
+			<string>%lld účtů</string>
+		</dict>
+	</dict>
+	<key>codes.undecryptable</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>few</key>
+			<string>%lld záznamy nelze dešifrovat klíčem tohoto zařízení.</string>
+			<key>many</key>
+			<string>%lld záznamu nelze dešifrovat klíčem tohoto zařízení.</string>
+			<key>one</key>
+			<string>%lld záznam nelze dešifrovat klíčem tohoto zařízení.</string>
+			<key>other</key>
+			<string>%lld záznamů nelze dešifrovat klíčem tohoto zařízení.</string>
+		</dict>
+	</dict>
+	<key>vault.subtitle</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>few</key>
+			<string>%lld položky</string>
+			<key>many</key>
+			<string>%lld položky</string>
+			<key>one</key>
+			<string>%lld položka</string>
+			<key>other</key>
+			<string>%lld položek</string>
+		</dict>
+	</dict>
+	<key>vault.undecryptable</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>few</key>
+			<string>%lld položky nelze dešifrovat klíčem tohoto zařízení.</string>
+			<key>many</key>
+			<string>%lld položky nelze dešifrovat klíčem tohoto zařízení.</string>
+			<key>one</key>
+			<string>%lld položku nelze dešifrovat klíčem tohoto zařízení.</string>
+			<key>other</key>
+			<string>%lld položek nelze dešifrovat klíčem tohoto zařízení.</string>
+		</dict>
+	</dict>
+</dict>
+</plist>

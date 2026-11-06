@@ -1,0 +1,3 @@
+/* Permission prompts and other Info.plist texts. */
+"NSCameraUsageDescription" = "Σαρώστε τον κωδικό QR που εμφανίζει ένας ιστότοπος όταν ρυθμίζετε τον έλεγχο ταυτότητας δύο παραγόντων.";
+"NSFaceIDUsageDescription" = "Ξεκλειδώστε το Munin με Face ID.";

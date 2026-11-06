@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>codes.row.secondsLeft</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>Απομένει %lld δευτερόλεπτο</string>
+			<key>other</key>
+			<string>Απομένουν %lld δευτερόλεπτα</string>
+		</dict>
+	</dict>
+	<key>codes.subtitle</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>%lld λογαριασμός</string>
+			<key>other</key>
+			<string>%lld λογαριασμοί</string>
+		</dict>
+	</dict>
+	<key>codes.undecryptable</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>%lld καταχώριση δεν ήταν δυνατό να αποκρυπτογραφηθεί με το κλειδί αυτής της συσκευής.</string>
+			<key>other</key>
+			<string>%lld καταχωρίσεις δεν ήταν δυνατό να αποκρυπτογραφηθούν με το κλειδί αυτής της συσκευής.</string>
+		</dict>
+	</dict>
+	<key>vault.subtitle</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>%lld στοιχείο</string>
+			<key>other</key>
+			<string>%lld στοιχεία</string>
+		</dict>
+	</dict>
+	<key>vault.undecryptable</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>%lld στοιχείο δεν ήταν δυνατό να αποκρυπτογραφηθεί με το κλειδί αυτής της συσκευής.</string>
+			<key>other</key>
+			<string>%lld στοιχεία δεν ήταν δυνατό να αποκρυπτογραφηθούν με το κλειδί αυτής της συσκευής.</string>
+		</dict>
+	</dict>
+</dict>
+</plist>

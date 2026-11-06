@@ -1,0 +1,299 @@
+/* Localizable.strings */
+
+/** Account **/
+"account.delete" = "Smazat účet";
+"account.delete.failed" = "Účet nelze smazat";
+"account.delete.locked" = "Chcete-li smazat účet, odemkněte Munin.";
+"account.delete.message" = "Váš účet Munin, hesla a účty 2FA budou trvale smazány. Tuto akci nelze vrátit. Potvrdíte ji svým Apple účtem, čímž se Munin odebere i z „Přihlášení přes Apple“.\n\nPředplatné v App Storu se nezruší. Nejprve ho zrušte v části Spravovat předplatné.";
+"account.delete.title" = "Smazat účet Munin?";
+"account.showRecoveryKey" = "Zobrazit klíč pro obnovení";
+"account.signOut" = "Odhlásit se";
+
+/** Add Account **/
+"addAccount.chooseImage" = "Vybrat obrázek…";
+"addAccount.chooseScreenshot" = "Vybrat snímek obrazovky…";
+"addAccount.encrypting" = "Šifrování…";
+"addAccount.error.alreadyAddedMany" = "Tyto účty už máte v trezoru.";
+"addAccount.error.alreadyAddedOne" = "Tento účet už máte v trezoru.";
+"addAccount.error.loadImage" = "Obrázek nelze načíst.";
+"addAccount.error.noQRCode" = "V obrázku nebyl nalezen žádný QR kód.";
+"addAccount.error.readImage" = "Obrázek nelze přečíst.";
+"addAccount.link.add" = "Přidat z odkazu";
+"addAccount.link.header" = "Odkaz";
+"addAccount.link.placeholder" = "otpauth://…";
+"addAccount.manual.account" = "Účet, např. vy@priklad.cz";
+"addAccount.manual.add" = "Přidat účet";
+"addAccount.manual.digits" = "Číslice";
+"addAccount.manual.footer" = "Weby zobrazují klíč pro nastavení pod „Nemůžete naskenovat QR kód?“.";
+"addAccount.manual.header" = "Zadat ručně";
+"addAccount.manual.issuer" = "Vydavatel, např. GitHub";
+"addAccount.manual.setupKey" = "Klíč pro nastavení";
+"addAccount.qr.footer" = "QR kód 2FA z webu, nebo QR kód Google Authenticatoru z Převést účty → Exportovat účty pro import všeho najednou.";
+"addAccount.qr.header" = "QR kód";
+"addAccount.scanQRCode" = "Naskenovat QR kód";
+"addAccount.title" = "Přidat účet";
+
+/** Codes **/
+"codes.add" = "Přidat";
+"codes.copyCode" = "Kopírovat kód";
+"codes.delete.button" = "Smazat %@";
+"codes.delete.message" = "Ujistěte se, že je 2FA pro %@ vypnuté, nebo že se můžete přihlásit jinak. Tuto akci nelze vrátit.";
+"codes.delete.title" = "Smazat účet?";
+"codes.empty.add" = "Přidat účet";
+"codes.import.button" = "Importovat účty 2FA";
+"codes.import.confirm.button" = "Importovat (%lld)";
+"codes.import.confirm.message" = "Nové účty k zašifrování a přidání: %lld. Již v Muninu (budou přeskočeny): %lld.";
+"codes.import.confirm.messageWithFailures" = "Nové účty k zašifrování a přidání: %lld. Již v Muninu (budou přeskočeny): %lld. Nečitelné řádky: %lld.";
+"codes.import.confirm.title" = "Importovat účty 2FA?";
+"codes.import.done" = "Importované účty: %lld. Soubor teď smažte – obsahuje vaše tajné klíče 2FA jako prostý text.";
+"codes.import.error.empty" = "Tento soubor neobsahuje odkazy 2FA. Vyberte soubor s jedním odkazem otpauth:// na řádek, například export z Muninu.";
+"codes.import.title" = "Import";
+"codes.link.add" = "Přidat";
+"codes.link.failed" = "Kód nelze přidat";
+"codes.link.message" = "%@ bude zašifrován a přidán do Muninu.";
+"codes.link.title" = "Přidat účet 2FA?";
+"codes.empty.message" = "Naskenujte QR kód 2FA nebo importujte z Google Authenticatoru.";
+"codes.empty.title" = "Zatím žádné účty";
+"codes.row.copyHint" = "Zkopíruje kód";
+"codes.title" = "2FA";
+
+/** Errors **/
+"errors.keyMissing" = "Toto zařízení ještě nemá klíč k vašemu trezoru.";
+"errors.loadVault.title" = "Trezor nelze načíst";
+"errors.munin.appStoreUnavailable" = "Předplatné nelze ověřit v App Storu. Zkuste to později.";
+"errors.munin.badRequest" = "Požadavek nelze sestavit.";
+"errors.munin.http" = "Munin odpověděl kódem HTTP %lld.";
+"errors.munin.notFound" = "Na adrese %@ není žádné API Muninu.";
+"errors.munin.proof" = "Munin nemohl ověřit vaše hlavní heslo. Zamkněte Munin, odemkněte ho hlavním heslem a zkuste to znovu.";
+"errors.munin.subscriptionLinkedElsewhere" = "Toto předplatné už používá jiný účet Munin.";
+"errors.munin.subscriptionOtherAccount" = "Toto předplatné bylo zakoupeno pro jiný účet Munin.";
+"errors.munin.subscriptionRequired" = "Bez předplatného je Munin jen pro čtení. Předplaťte si ho, abyste mohli přidávat nebo měnit položky.";
+"errors.munin.tooManyAttempts" = "Příliš mnoho pokusů. Zkuste to znovu za hodinu.";
+"errors.munin.transactionNotFound" = "App Store tento nákup nerozpoznal.";
+"errors.munin.unexpectedResponse" = "Neočekávaná odpověď serveru. Je %@ Munin?";
+"errors.munin.unreachable" = "K Muninu se nelze připojit. %@";
+"errors.munin.vaultFull" = "Váš trezor je plný (50 účtů).";
+"errors.notSignedIn" = "Chcete-li přidávat účty, přihlaste se znovu.";
+"errors.openVault.title" = "Trezor nelze otevřít";
+"errors.parser.hotpNotSupported" = "Kódy založené na čítači (HOTP) nejsou podporovány.";
+"errors.parser.invalidMigrationData" = "Export z Google Authenticatoru nelze přečíst.";
+"errors.parser.invalidSecret" = "Tajný klíč není platný Base32.";
+"errors.parser.missingSecret" = "V odkazu chybí tajný klíč.";
+"errors.parser.unsupported" = "Toto není ověřovací odkaz ani QR kód.";
+
+/** Global **/
+"global.cancel" = "Zrušit";
+"global.close" = "Zavřít";
+"global.copied" = "Zkopírováno";
+"global.copy" = "Kopírovat";
+"global.delete" = "Smazat";
+"global.done" = "Hotovo";
+"global.edit" = "Upravit";
+"global.refresh" = "Obnovit";
+"global.save" = "Uložit";
+"global.tryAgain" = "Zkusit znovu";
+
+/** Lock **/
+"lock.command" = "Zamknout";
+"lock.biometrics.failed" = "Biometrie nefungovala. Použijte hlavní heslo.";
+"lock.biometrics.notSetUp" = "Odemkněte jednou hlavním heslem, abyste na tomto zařízení mohli používat biometrii.";
+"lock.forgotMasterPassword" = "Zapomněli jste hlavní heslo?";
+"lock.masterPassword.placeholder" = "Hlavní heslo";
+"lock.reason" = "Odemknout můj trezor";
+"lock.recovery.continue" = "Pokračovat";
+"lock.recovery.message" = "Zadejte klíč pro obnovení a zvolte nové hlavní heslo.";
+"lock.step.masterPassword" = "Použít hlavní heslo";
+"lock.step.recoveryKey" = "Zadat klíč pro obnovení";
+"lock.step.signIn" = "Přihlásit se";
+"lock.signedInAs" = "Přihlášeno jako %@";
+"lock.switchAccount" = "%@ · Přepnout";
+"lock.title" = "Odemknout můj trezor";
+"lock.unlock" = "Odemknout";
+"lock.version" = "Verze %@";
+"lock.wrongMasterPassword" = "Hlavní heslo není správné.";
+
+/** Main **/
+"main.section.munin" = "Munin";
+"main.tab.codes" = "2FA";
+"main.tab.vault" = "Trezor";
+"main.window.title" = "Munin";
+
+/** Menu Bar **/
+"menuBar.copyUsername" = "Kopírovat uživatelské jméno";
+"menuBar.open" = "Otevřít Munin";
+"menuBar.quit" = "Ukončit Munin";
+
+/** Password **/
+"password.field.lastUpdated" = "Naposledy aktualizováno";
+"password.field.name" = "Název";
+"password.field.note" = "Poznámka";
+"password.field.password" = "Heslo";
+"password.field.url" = "URL";
+"password.field.username" = "Uživatelské jméno";
+
+/** Password Editor **/
+"passwordEditor.editTitle" = "Upravit heslo";
+"passwordEditor.generate" = "Vygenerovat";
+"passwordEditor.newTitle" = "Nové heslo";
+
+/** Password Generator **/
+"passwordGenerator.fillPassword" = "Vyplnit heslo";
+"passwordGenerator.length" = "Délka";
+"passwordGenerator.regenerate" = "Vygenerovat znovu";
+"passwordGenerator.strength.good" = "Dobré heslo";
+"passwordGenerator.strength.strong" = "Silné heslo";
+"passwordGenerator.strength.weak" = "Slabé heslo";
+"passwordGenerator.useCapitals" = "Velká písmena (A–Z)";
+"passwordGenerator.useDigits" = "Číslice (0–9)";
+"passwordGenerator.useSymbols" = "Symboly (@!$%&*)";
+
+/** Password Inspector **/
+"passwordInspector.openWebsite" = "Otevřít web";
+"passwordInspector.hide" = "Skrýt";
+"passwordInspector.show" = "Zobrazit";
+
+/** Scanner **/
+"scanner.title" = "Naskenovat QR kód";
+
+/** Sign In **/
+"signIn.error.missingAnonKey" = "Nastavte APIConfig.anonKey na svůj veřejný klíč.";
+"signIn.error.noIdentityToken" = "Apple nevrátil token identity. Zkuste to znovu.";
+"signIn.error.failed" = "Přihlášení se nezdařilo. %@";
+
+/** Vault **/
+"vault.copyUsername" = "Kopírovat uživatelské jméno";
+"vault.copyPassword" = "Kopírovat heslo";
+"vault.createItem" = "Vytvořit položku";
+"vault.delete.button" = "Smazat %@";
+"vault.saveFailed.title" = "Změnu nelze uložit";
+"vault.delete.message" = "%@ bude smazáno ze všech vašich zařízení. Tuto akci nelze vrátit.";
+"vault.delete.title" = "Smazat heslo?";
+"vault.empty.title" = "Žádné položky";
+"vault.search.prompt" = "Hledat ve všech položkách";
+"vault.sort" = "Řadit";
+"vault.sort.ascending" = "Vzestupně";
+"vault.sort.dateEdited" = "Datum úpravy";
+"vault.sort.descending" = "Sestupně";
+"vault.sort.direction" = "Pořadí";
+"vault.sort.title" = "Název";
+"vault.title" = "Trezor";
+
+/** Vault Key **/
+"vaultKey.missing.checkAgain" = "Zkontrolovat znovu";
+"vaultKey.missing.invalid" = "Toto není platný klíč pro obnovení.";
+"vaultKey.missing.message" = "Váš trezor je zašifrován klíčem z jiného vašeho zařízení. Zapněte na obou zařízeních Klíčenku na iCloudu a zkontrolujte to znovu, nebo vložte klíč pro obnovení.";
+"vaultKey.missing.placeholder" = "Klíč pro obnovení";
+"vaultKey.missing.restore" = "Obnovit";
+"vaultKey.missing.title" = "Klíč trezoru není na tomto zařízení";
+"vaultKey.recovery.backup" = "Uložte si kopii na bezpečné místo. Pokud zapomenete hlavní heslo, je klíč pro obnovení jedinou cestou zpět do trezoru.";
+"vaultKey.recovery.copy" = "Kopírovat klíč pro obnovení";
+"vaultKey.recovery.explanation" = "Vaše účty jsou tímto klíčem koncově šifrované. Munin je nemůže číst ani je za vás obnovit.";
+"vaultKey.recovery.title" = "Klíč pro obnovení";
+
+/** Master password **/
+"masterPassword.confirm" = "Potvrďte hlavní heslo";
+"masterPassword.create.message" = "Odemyká Munin na všech vašich zařízeních. Munin ho nikdy nevidí a nemůže ho resetovat – pokud ho zapomenete, jedinou cestou zpět je klíč pro obnovení.";
+"masterPassword.create.title" = "Vytvořte hlavní heslo";
+"masterPassword.exists" = "Na jiném zařízení bylo právě nastaveno hlavní heslo. Odemkněte jím.";
+"masterPassword.field" = "Hlavní heslo";
+"masterPassword.mismatch" = "Hesla se neshodují.";
+"masterPassword.reset.title" = "Zvolte nové hlavní heslo";
+"masterPassword.tooShort" = "Minimální délka: %lld znaků.";
+
+/** Settings **/
+"settings.about" = "O aplikaci";
+"settings.autoFill" = "Automatické vyplňování";
+"settings.autoFill.off" = "Vypnuto";
+"settings.autoFill.on" = "Zapnuto";
+"settings.autoLock" = "Automatické zamykání";
+"settings.biometrics.face" = "Odemykat pomocí Face ID";
+"settings.biometrics.touch" = "Odemykat pomocí Touch ID";
+"settings.changeMasterPassword" = "Změnit hlavní heslo";
+"settings.currentMasterPassword" = "Současné hlavní heslo";
+"settings.data" = "Data";
+"settings.export.confirm" = "Exportovat";
+"settings.export.failed" = "Export se nezdařil";
+"settings.export.footer" = "Exporty nejsou šifrované. Po importu jinam soubor smažte.";
+"settings.export.locked" = "Chcete-li exportovat, odemkněte Munin.";
+"settings.export.message" = "Soubor není šifrovaný. Kdokoli ho získá, může si přečíst celý jeho obsah.";
+"settings.export.passwords" = "Exportovat hesla";
+"settings.export.passwords.filename" = "Hesla Munin";
+"settings.export.title" = "Exportovat nešifrovaný soubor?";
+"settings.export.twoFactor" = "Exportovat účty 2FA";
+"settings.export.twoFactor.filename" = "Účty 2FA Munin";
+"settings.locked" = "Chcete-li změnit nastavení zabezpečení, odemkněte Munin.";
+"settings.privacyPolicy" = "Zásady ochrany soukromí";
+"settings.security" = "Zabezpečení";
+"settings.subscription" = "Předplatné";
+"settings.subscription.active" = "Aktivní";
+"settings.subscription.inactive" = "Bez předplatného";
+"settings.subscription.manage" = "Spravovat předplatné";
+"settings.subscription.restore" = "Obnovit nákupy";
+"settings.subscription.status" = "Stav";
+"settings.termsOfUse" = "Podmínky použití";
+"settings.title" = "Nastavení";
+"settings.version" = "Verze";
+
+/** Search **/
+"search.empty.message" = "Hledejte hesla a kódy 2FA podle názvu, uživatelského jména nebo webu.";
+"search.empty.title" = "Hledat";
+"search.find" = "Najít";
+"search.prompt" = "Hesla a 2FA";
+"search.section.codes" = "2FA";
+"search.section.passwords" = "Hesla";
+"search.title" = "Hledat";
+
+/** Import **/
+"import.button" = "Importovat hesla";
+"import.confirm.button" = "Importovat (%lld)";
+"import.confirm.buttonAll" = "Importovat";
+"import.confirm.message" = "Nová hesla k zašifrování a přidání: %lld. Již v trezoru (budou přeskočena): %lld.";
+"import.confirm.messageWithCodes" = "Nová hesla: %lld a účty 2FA: %lld budou zašifrovány a přidány. Hesla již v trezoru (budou přeskočena): %lld.";
+"import.confirm.title" = "Importovat hesla?";
+"import.done.message" = "Importovaná hesla: %lld. Soubor CSV teď smažte – obsahuje všechna vaše hesla jako prostý text.";
+"import.done.messageWithCodes" = "Importovaná hesla: %lld, účty 2FA: %lld. Soubor CSV teď smažte – obsahuje vaše hesla a tajné klíče 2FA jako prostý text.";
+"import.error.columns" = "V tomto CSV chybí sloupce, které Munin potřebuje: heslo a název nebo web.";
+"import.error.unreadable" = "Soubor nelze přečíst. Exportujte ho jako CSV v kódování UTF-8.";
+"import.progress" = "Import %lld z %lld";
+"import.title" = "Import";
+
+/** Auto-lock **/
+"autoLock.fifteenMinutes" = "Po 15 minutách";
+"autoLock.fiveMinutes" = "Po 5 minutách";
+"autoLock.immediately" = "Okamžitě";
+"autoLock.never" = "Nikdy";
+"autoLock.oneMinute" = "Po 1 minutě";
+
+/** Subscription **/
+"subscription.billingIssue" = "App Store nemohl obnovit vaše předplatné. Aktualizujte platební metodu, abyste mohli dál přidávat a upravovat.";
+"subscription.error.unverified" = "App Store nemohl ověřit tento nákup.";
+"subscription.gracePeriod" = "Předplatné nebylo možné obnovit.";
+"subscription.message" = "Koncově šifrovaná hesla a kódy 2FA na všech vašich zařízeních Apple.";
+"subscription.readOnly" = "Jen pro čtení. Předplaťte si Munin, abyste mohli přidávat nebo měnit položky.";
+"subscription.subscribe" = "Předplatit";
+"subscription.title" = "Munin";
+"subscription.updatePayment" = "Aktualizovat platbu";
+
+/** AutoFill **/
+"autofill.allCodes" = "Všechny kódy";
+"autofill.allPasswords" = "Všechna hesla";
+"autofill.banner" = "Vyplňujte hesla a kódy 2FA pomocí Muninu.";
+"autofill.banner.setUp" = "Nastavit";
+"autofill.setup.done" = "Munin je zapnutý pro automatické vyplňování.";
+"autofill.setup.message" = "Munin může vyplňovat hesla a kódy 2FA v Safari a aplikacích po ověření Face ID nebo Touch ID. Hesla zůstávají šifrovaná, dokud některé nevyberete.";
+"autofill.setup.openSettings" = "Otevřít Nastavení";
+"autofill.setup.step1.ios" = "Otevřete Nastavení a přejděte do Obecné ▸ Automatické vyplňování a hesla.";
+"autofill.setup.step1.mac" = "Otevřete Nastavení systému a přejděte do Obecné ▸ Automatické vyplňování a hesla.";
+"autofill.setup.step2" = "V části „Automaticky vyplňovat z“ zapněte Munin.";
+"autofill.setup.step3.ios" = "V Safari nebo aplikaci klepněte do přihlašovacího pole a nad klávesnicí zvolte Munin.";
+"autofill.setup.step3.mac" = "V Safari klikněte do přihlašovacího pole a v nabídce klíče zvolte Munin.";
+"autofill.setup.step4" = "Volitelné: v části „Nastavovat kódy v“ zvolte Munin, aby se odkazy pro nastavení 2FA otevíraly v Muninu.";
+"autofill.setup.turnOn" = "Zapnout automatické vyplňování";
+"autofill.decryptFailed" = "Toto heslo nelze dešifrovat.";
+"autofill.locked" = "Munin je zamčený";
+"autofill.search" = "Hledat";
+"autofill.signIn" = "Chcete-li používat automatické vyplňování, otevřete Munin a přihlaste se.";
+"autofill.suggested" = "Návrhy";
+"autofill.title" = "Munin";
+"autofill.turnOnBiometrics" = "Otevřete Munin, v Nastavení zapněte odemykání pomocí Face ID nebo Touch ID a jednou Munin odemkněte. Pak ho bude moci používat automatické vyplňování.";
+"autofill.unavailable" = "Automatické vyplňování není k dispozici";

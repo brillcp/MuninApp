@@ -4,7 +4,7 @@
 "account.delete" = "Delete Account";
 "account.delete.failed" = "Couldn't Delete Account";
 "account.delete.locked" = "Unlock Munin to delete your account.";
-"account.delete.message" = "This permanently deletes your Munin account, passwords and 2FA accounts. It can't be undone.\n\nYour App Store subscription isn't cancelled. Cancel it under Manage Subscription first.";
+"account.delete.message" = "This permanently deletes your Munin account, passwords and 2FA accounts. It can't be undone. You'll confirm with your Apple Account, which also removes Munin from Sign in with Apple.\n\nYour App Store subscription isn't cancelled. Cancel it under Manage Subscription first.";
 "account.delete.title" = "Delete Your Munin Account?";
 "account.showRecoveryKey" = "Show Recovery Key";
 "account.signOut" = "Sign Out";
@@ -35,8 +35,6 @@
 
 /** Codes **/
 "codes.add" = "Add";
-"codes.column.account" = "Account";
-"codes.column.code" = "Code";
 "codes.copyCode" = "Copy Code";
 "codes.delete.button" = "Delete %@";
 "codes.delete.message" = "Make sure 2FA is turned off for %@, or you have another way to sign in. This can't be undone.";
@@ -107,12 +105,10 @@
 "lock.step.masterPassword" = "Use master password";
 "lock.step.recoveryKey" = "Enter recovery key";
 "lock.step.signIn" = "Sign in";
-"lock.switchAccount" = "Switch";
+"lock.signedInAs" = "Signed in as %@";
+"lock.switchAccount" = "%@ · Switch";
 "lock.title" = "Unlock my vault";
 "lock.unlock" = "Unlock";
-"lock.unlockWithBiometrics" = "Unlock with biometrics";
-"lock.useBiometrics" = "Use Biometrics";
-"lock.useMasterPassword" = "Use Master Password";
 "lock.version" = "Version %@";
 "lock.wrongMasterPassword" = "That master password isn't right.";
 
@@ -163,11 +159,8 @@
 "signIn.error.missingAnonKey" = "Set APIConfig.anonKey to your publishable key.";
 "signIn.error.noIdentityToken" = "Apple didn't return an identity token. Try again.";
 "signIn.error.failed" = "Sign-in failed. %@";
-"signIn.subtitle" = "Secure and safe vault for passwords and codes.";
-"signIn.title" = "Munin";
 
 /** Vault **/
-"vault.column.title" = "Title";
 "vault.copyUsername" = "Copy Username";
 "vault.copyPassword" = "Copy Password";
 "vault.createItem" = "Create Item";

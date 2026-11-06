@@ -1,0 +1,299 @@
+/* Localizable.strings */
+
+/** Account **/
+"account.delete" = "מחיקת חשבון";
+"account.delete.failed" = "לא ניתן למחוק את החשבון";
+"account.delete.locked" = "יש לבטל את נעילת Munin כדי למחוק את החשבון.";
+"account.delete.message" = "חשבון Munin, הסיסמאות וחשבונות ה‑2FA שלך יימחקו לצמיתות. לא ניתן לבטל פעולה זו. האישור ייעשה עם חשבון Apple שלך, ופעולה זו גם מסירה את Munin מ״התחברות עם Apple״.\n\nהמינוי שלך ב‑App Store לא יבוטל. יש לבטל אותו קודם ב״ניהול מינוי״.";
+"account.delete.title" = "למחוק את חשבון Munin?";
+"account.showRecoveryKey" = "הצגת מפתח השחזור";
+"account.signOut" = "התנתקות";
+
+/** Add Account **/
+"addAccount.chooseImage" = "בחירת תמונה…";
+"addAccount.chooseScreenshot" = "בחירת צילום מסך…";
+"addAccount.encrypting" = "מצפין…";
+"addAccount.error.alreadyAddedMany" = "החשבונות האלה כבר נמצאים בכספת שלך.";
+"addAccount.error.alreadyAddedOne" = "החשבון הזה כבר נמצא בכספת שלך.";
+"addAccount.error.loadImage" = "לא ניתן לטעון את התמונה.";
+"addAccount.error.noQRCode" = "לא נמצא קוד QR בתמונה.";
+"addAccount.error.readImage" = "לא ניתן לקרוא את התמונה.";
+"addAccount.link.add" = "הוספה מקישור";
+"addAccount.link.header" = "קישור";
+"addAccount.link.placeholder" = "otpauth://…";
+"addAccount.manual.account" = "חשבון, למשל you@example.com";
+"addAccount.manual.add" = "הוספת חשבון";
+"addAccount.manual.digits" = "ספרות";
+"addAccount.manual.footer" = "אתרים מציגים את מפתח ההגדרה תחת ״לא ניתן לסרוק את קוד ה‑QR?״.";
+"addAccount.manual.header" = "הזנה ידנית";
+"addAccount.manual.issuer" = "מנפיק, למשל GitHub";
+"addAccount.manual.setupKey" = "מפתח הגדרה";
+"addAccount.qr.footer" = "קוד QR של 2FA מאתר, או קוד QR של Google Authenticator מ״העברת חשבונות״ ← ״ייצוא חשבונות״ לייבוא הכול בבת אחת.";
+"addAccount.qr.header" = "קוד QR";
+"addAccount.scanQRCode" = "סריקת קוד QR";
+"addAccount.title" = "הוספת חשבון";
+
+/** Codes **/
+"codes.add" = "הוספה";
+"codes.copyCode" = "העתקת קוד";
+"codes.delete.button" = "מחיקת %@";
+"codes.delete.message" = "יש לוודא ש‑2FA כבוי עבור %@, או שיש לך דרך אחרת להתחבר. לא ניתן לבטל פעולה זו.";
+"codes.delete.title" = "למחוק את החשבון?";
+"codes.empty.add" = "הוספת חשבון";
+"codes.import.button" = "ייבוא חשבונות 2FA";
+"codes.import.confirm.button" = "ייבוא (%lld)";
+"codes.import.confirm.message" = "חשבונות חדשים שיוצפנו ויתווספו: %lld. כבר קיימים ב‑Munin וידולגו: %lld.";
+"codes.import.confirm.messageWithFailures" = "חשבונות חדשים שיוצפנו ויתווספו: %lld. כבר קיימים ב‑Munin וידולגו: %lld. שורות שלא ניתן היה לקרוא: %lld.";
+"codes.import.confirm.title" = "לייבא חשבונות 2FA?";
+"codes.import.done" = "חשבונות שיובאו: %lld. יש למחוק את הקובץ עכשיו – הוא מכיל את סודות ה‑2FA שלך כטקסט רגיל.";
+"codes.import.error.empty" = "בקובץ זה אין קישורי 2FA. יש לבחור קובץ עם קישור otpauth:// אחד בכל שורה, כמו קובץ הייצוא של Munin.";
+"codes.import.title" = "ייבוא";
+"codes.link.add" = "הוספה";
+"codes.link.failed" = "לא ניתן להוסיף את הקוד";
+"codes.link.message" = "%@ יוצפן ויתווסף ל‑Munin.";
+"codes.link.title" = "להוסיף חשבון 2FA?";
+"codes.empty.message" = "יש לסרוק קוד QR של 2FA או לייבא מ‑Google Authenticator.";
+"codes.empty.title" = "אין עדיין חשבונות";
+"codes.row.copyHint" = "מעתיק את הקוד";
+"codes.title" = "2FA";
+
+/** Errors **/
+"errors.keyMissing" = "במכשיר זה עדיין אין את מפתח הכספת שלך.";
+"errors.loadVault.title" = "לא ניתן לטעון את הכספת";
+"errors.munin.appStoreUnavailable" = "לא ניתן לבדוק את המינוי מול ה‑App Store. יש לנסות שוב מאוחר יותר.";
+"errors.munin.badRequest" = "לא ניתן ליצור את הבקשה.";
+"errors.munin.http" = "Munin השיב עם HTTP %lld.";
+"errors.munin.notFound" = "אין API של Munin בכתובת %@.";
+"errors.munin.proof" = "Munin לא הצליח לאמת את הסיסמה הראשית. יש לנעול את Munin, לבטל את הנעילה עם הסיסמה הראשית ולנסות שוב.";
+"errors.munin.subscriptionLinkedElsewhere" = "המינוי הזה כבר בשימוש בחשבון Munin אחר.";
+"errors.munin.subscriptionOtherAccount" = "המינוי הזה נרכש עבור חשבון Munin אחר.";
+"errors.munin.subscriptionRequired" = "ללא מינוי, Munin זמין לקריאה בלבד. יש להירשם כדי להוסיף או לשנות פריטים.";
+"errors.munin.tooManyAttempts" = "יותר מדי ניסיונות. יש לנסות שוב בעוד שעה.";
+"errors.munin.transactionNotFound" = "ה‑App Store לא מזהה את הרכישה הזו.";
+"errors.munin.unexpectedResponse" = "תגובה לא צפויה מהשרת. האם %@ הוא Munin?";
+"errors.munin.unreachable" = "לא ניתן להתחבר ל‑Munin. %@";
+"errors.munin.vaultFull" = "הכספת שלך מלאה (50 חשבונות).";
+"errors.notSignedIn" = "יש להתחבר שוב כדי להוסיף חשבונות.";
+"errors.openVault.title" = "לא ניתן לפתוח את הכספת";
+"errors.parser.hotpNotSupported" = "קודים מבוססי מונה (HOTP) אינם נתמכים.";
+"errors.parser.invalidMigrationData" = "לא ניתן לקרוא את קובץ הייצוא של Google Authenticator.";
+"errors.parser.invalidSecret" = "הסוד אינו Base32 תקין.";
+"errors.parser.missingSecret" = "בקישור חסר סוד.";
+"errors.parser.unsupported" = "זה אינו קישור אימות או קוד QR.";
+
+/** Global **/
+"global.cancel" = "ביטול";
+"global.close" = "סגירה";
+"global.copied" = "הועתק";
+"global.copy" = "העתקה";
+"global.delete" = "מחיקה";
+"global.done" = "סיום";
+"global.edit" = "עריכה";
+"global.refresh" = "רענון";
+"global.save" = "שמירה";
+"global.tryAgain" = "ניסיון חוזר";
+
+/** Lock **/
+"lock.command" = "נעילה";
+"lock.biometrics.failed" = "הזיהוי הביומטרי לא הצליח. יש להשתמש בסיסמה הראשית.";
+"lock.biometrics.notSetUp" = "יש לבטל את הנעילה פעם אחת עם הסיסמה הראשית כדי להשתמש בזיהוי ביומטרי במכשיר זה.";
+"lock.forgotMasterPassword" = "שכחת את הסיסמה הראשית?";
+"lock.masterPassword.placeholder" = "סיסמה ראשית";
+"lock.reason" = "ביטול נעילת הכספת שלי";
+"lock.recovery.continue" = "המשך";
+"lock.recovery.message" = "יש להזין את מפתח השחזור כדי לבחור סיסמה ראשית חדשה.";
+"lock.step.masterPassword" = "שימוש בסיסמה הראשית";
+"lock.step.recoveryKey" = "הזנת מפתח שחזור";
+"lock.step.signIn" = "התחברות";
+"lock.signedInAs" = "מחובר/ת בתור %@";
+"lock.switchAccount" = "%@ · החלפה";
+"lock.title" = "ביטול נעילת הכספת שלי";
+"lock.unlock" = "ביטול נעילה";
+"lock.version" = "גרסה %@";
+"lock.wrongMasterPassword" = "הסיסמה הראשית שגויה.";
+
+/** Main **/
+"main.section.munin" = "Munin";
+"main.tab.codes" = "2FA";
+"main.tab.vault" = "כספת";
+"main.window.title" = "Munin";
+
+/** Menu Bar **/
+"menuBar.copyUsername" = "העתקת שם משתמש";
+"menuBar.open" = "פתיחת Munin";
+"menuBar.quit" = "יציאה מ‑Munin";
+
+/** Password **/
+"password.field.lastUpdated" = "עודכן לאחרונה";
+"password.field.name" = "שם";
+"password.field.note" = "הערה";
+"password.field.password" = "סיסמה";
+"password.field.url" = "URL";
+"password.field.username" = "שם משתמש";
+
+/** Password Editor **/
+"passwordEditor.editTitle" = "עריכת סיסמה";
+"passwordEditor.generate" = "יצירה";
+"passwordEditor.newTitle" = "סיסמה חדשה";
+
+/** Password Generator **/
+"passwordGenerator.fillPassword" = "מילוי סיסמה";
+"passwordGenerator.length" = "אורך";
+"passwordGenerator.regenerate" = "יצירה מחדש";
+"passwordGenerator.strength.good" = "סיסמה טובה";
+"passwordGenerator.strength.strong" = "סיסמה חזקה";
+"passwordGenerator.strength.weak" = "סיסמה חלשה";
+"passwordGenerator.useCapitals" = "אותיות גדולות (A–Z)";
+"passwordGenerator.useDigits" = "ספרות (0–9)";
+"passwordGenerator.useSymbols" = "סמלים (@!$%&*)";
+
+/** Password Inspector **/
+"passwordInspector.openWebsite" = "פתיחת האתר";
+"passwordInspector.hide" = "הסתרה";
+"passwordInspector.show" = "הצגה";
+
+/** Scanner **/
+"scanner.title" = "סריקת קוד QR";
+
+/** Sign In **/
+"signIn.error.missingAnonKey" = "יש להגדיר את APIConfig.anonKey למפתח הציבורי שלך.";
+"signIn.error.noIdentityToken" = "Apple לא החזירה אסימון זהות. יש לנסות שוב.";
+"signIn.error.failed" = "ההתחברות נכשלה. %@";
+
+/** Vault **/
+"vault.copyUsername" = "העתקת שם משתמש";
+"vault.copyPassword" = "העתקת סיסמה";
+"vault.createItem" = "יצירת פריט";
+"vault.delete.button" = "מחיקת %@";
+"vault.saveFailed.title" = "לא ניתן לשמור את השינוי";
+"vault.delete.message" = "%@ יימחק מכל המכשירים שלך. לא ניתן לבטל פעולה זו.";
+"vault.delete.title" = "למחוק את הסיסמה?";
+"vault.empty.title" = "אין פריטים";
+"vault.search.prompt" = "חיפוש בכל הפריטים";
+"vault.sort" = "מיון";
+"vault.sort.ascending" = "בסדר עולה";
+"vault.sort.dateEdited" = "תאריך עריכה";
+"vault.sort.descending" = "בסדר יורד";
+"vault.sort.direction" = "סדר";
+"vault.sort.title" = "כותרת";
+"vault.title" = "כספת";
+
+/** Vault Key **/
+"vaultKey.missing.checkAgain" = "בדיקה חוזרת";
+"vaultKey.missing.invalid" = "זה אינו מפתח שחזור תקין.";
+"vaultKey.missing.message" = "הכספת שלך מוצפנת במפתח מהמכשיר האחר שלך. יש להפעיל את מחזיק המפתחות של iCloud בשני המכשירים ולבדוק שוב, או להדביק את מפתח השחזור.";
+"vaultKey.missing.placeholder" = "מפתח שחזור";
+"vaultKey.missing.restore" = "שחזור";
+"vaultKey.missing.title" = "מפתח הכספת לא נמצא במכשיר זה";
+"vaultKey.recovery.backup" = "יש לשמור עותק במקום בטוח. אם שכחת את הסיסמה הראשית, מפתח השחזור הוא הדרך היחידה לחזור לכספת.";
+"vaultKey.recovery.copy" = "העתקת מפתח השחזור";
+"vaultKey.recovery.explanation" = "החשבונות שלך מוצפנים מקצה לקצה עם מפתח זה. Munin לא יכול לקרוא אותם או לשחזר אותם עבורך.";
+"vaultKey.recovery.title" = "מפתח שחזור";
+
+/** Master password **/
+"masterPassword.confirm" = "אישור הסיסמה הראשית";
+"masterPassword.create.message" = "היא מבטלת את נעילת Munin בכל המכשירים שלך. Munin אף פעם לא רואה אותה ולא יכול לאפס אותה – אם שכחת אותה, מפתח השחזור הוא הדרך היחידה לחזור.";
+"masterPassword.create.title" = "יצירת סיסמה ראשית";
+"masterPassword.exists" = "הוגדרה זה עתה סיסמה ראשית במכשיר אחר. יש לבטל את הנעילה איתה.";
+"masterPassword.field" = "סיסמה ראשית";
+"masterPassword.mismatch" = "הסיסמאות אינן תואמות.";
+"masterPassword.reset.title" = "בחירת סיסמה ראשית חדשה";
+"masterPassword.tooShort" = "יש להשתמש ב‑%lld תווים לפחות.";
+
+/** Settings **/
+"settings.about" = "אודות";
+"settings.autoFill" = "מילוי אוטומטי";
+"settings.autoFill.off" = "כבוי";
+"settings.autoFill.on" = "פועל";
+"settings.autoLock" = "נעילה אוטומטית";
+"settings.biometrics.face" = "ביטול נעילה עם Face ID";
+"settings.biometrics.touch" = "ביטול נעילה עם Touch ID";
+"settings.changeMasterPassword" = "שינוי הסיסמה הראשית";
+"settings.currentMasterPassword" = "הסיסמה הראשית הנוכחית";
+"settings.data" = "נתונים";
+"settings.export.confirm" = "ייצוא";
+"settings.export.failed" = "הייצוא נכשל";
+"settings.export.footer" = "קובצי ייצוא אינם מוצפנים. יש למחוק את הקובץ לאחר הייבוא שלו במקום אחר.";
+"settings.export.locked" = "יש לבטל את נעילת Munin כדי לייצא.";
+"settings.export.message" = "הקובץ אינו מוצפן. כל מי שיקבל אותו יוכל לקרוא את כל תוכנו.";
+"settings.export.passwords" = "ייצוא סיסמאות";
+"settings.export.passwords.filename" = "סיסמאות Munin";
+"settings.export.title" = "לייצא קובץ לא מוצפן?";
+"settings.export.twoFactor" = "ייצוא חשבונות 2FA";
+"settings.export.twoFactor.filename" = "חשבונות 2FA של Munin";
+"settings.locked" = "יש לבטל את נעילת Munin כדי לשנות את הגדרות האבטחה.";
+"settings.privacyPolicy" = "מדיניות פרטיות";
+"settings.security" = "אבטחה";
+"settings.subscription" = "מינוי";
+"settings.subscription.active" = "פעיל";
+"settings.subscription.inactive" = "אין מינוי";
+"settings.subscription.manage" = "ניהול מינוי";
+"settings.subscription.restore" = "שחזור רכישות";
+"settings.subscription.status" = "מצב";
+"settings.termsOfUse" = "תנאי שימוש";
+"settings.title" = "הגדרות";
+"settings.version" = "גרסה";
+
+/** Search **/
+"search.empty.message" = "ניתן למצוא סיסמאות וקודי 2FA לפי שם, שם משתמש או אתר.";
+"search.empty.title" = "חיפוש";
+"search.find" = "חיפוש";
+"search.prompt" = "סיסמאות ו‑2FA";
+"search.section.codes" = "2FA";
+"search.section.passwords" = "סיסמאות";
+"search.title" = "חיפוש";
+
+/** Import **/
+"import.button" = "ייבוא סיסמאות";
+"import.confirm.button" = "ייבוא (%lld)";
+"import.confirm.buttonAll" = "ייבוא";
+"import.confirm.message" = "סיסמאות חדשות שיוצפנו ויתווספו: %lld. כבר קיימות בכספת וידולגו: %lld.";
+"import.confirm.messageWithCodes" = "יוצפנו ויתווספו סיסמאות חדשות: %lld וחשבונות 2FA: %lld. סיסמאות שכבר קיימות בכספת וידולגו: %lld.";
+"import.confirm.title" = "לייבא סיסמאות?";
+"import.done.message" = "סיסמאות שיובאו: %lld. יש למחוק את קובץ ה‑CSV עכשיו – הוא מכיל את כל הסיסמאות שלך כטקסט רגיל.";
+"import.done.messageWithCodes" = "סיסמאות שיובאו: %lld, חשבונות 2FA: %lld. יש למחוק את קובץ ה‑CSV עכשיו – הוא מכיל את הסיסמאות וסודות ה‑2FA שלך כטקסט רגיל.";
+"import.error.columns" = "בקובץ ה‑CSV הזה חסרות העמודות ש‑Munin צריך: סיסמה, ושם או אתר.";
+"import.error.unreadable" = "לא ניתן לקרוא את הקובץ. יש לייצא אותו כ‑CSV בקידוד UTF-8.";
+"import.progress" = "מייבא %lld מתוך %lld";
+"import.title" = "ייבוא";
+
+/** Auto-lock **/
+"autoLock.fifteenMinutes" = "אחרי 15 דקות";
+"autoLock.fiveMinutes" = "אחרי 5 דקות";
+"autoLock.immediately" = "מיד";
+"autoLock.never" = "אף פעם";
+"autoLock.oneMinute" = "אחרי דקה אחת";
+
+/** Subscription **/
+"subscription.billingIssue" = "ה‑App Store לא הצליח לחדש את המינוי שלך. יש לעדכן את אמצעי התשלום כדי להמשיך להוסיף ולערוך.";
+"subscription.error.unverified" = "ה‑App Store לא הצליח לאמת את הרכישה הזו.";
+"subscription.gracePeriod" = "לא ניתן היה לחדש את המינוי שלך.";
+"subscription.message" = "סיסמאות וקודי 2FA מוצפנים מקצה לקצה בכל מכשירי Apple שלך.";
+"subscription.readOnly" = "קריאה בלבד. יש להירשם כדי להוסיף או לשנות פריטים.";
+"subscription.subscribe" = "הרשמה";
+"subscription.title" = "Munin";
+"subscription.updatePayment" = "עדכון תשלום";
+
+/** AutoFill **/
+"autofill.allCodes" = "כל הקודים";
+"autofill.allPasswords" = "כל הסיסמאות";
+"autofill.banner" = "מילוי סיסמאות וקודי 2FA עם Munin.";
+"autofill.banner.setUp" = "הגדרה";
+"autofill.setup.done" = "Munin מופעל למילוי אוטומטי.";
+"autofill.setup.message" = "Munin יכול למלא סיסמאות וקודי 2FA ב‑Safari וביישומים, לאחר Face ID או Touch ID. הסיסמאות נשארות מוצפנות עד שבוחרים אחת.";
+"autofill.setup.openSettings" = "פתיחת ״הגדרות״";
+"autofill.setup.step1.ios" = "יש לפתוח את ״הגדרות״ ולעבור אל ״כללי״ ▸ ״מילוי אוטומטי וסיסמאות״.";
+"autofill.setup.step1.mac" = "יש לפתוח את ״הגדרות המערכת״ ולעבור אל ״כללי״ ▸ ״מילוי אוטומטי וסיסמאות״.";
+"autofill.setup.step2" = "תחת ״מילוי אוטומטי מ...״, יש להפעיל את Munin.";
+"autofill.setup.step3.ios" = "ב‑Safari או ביישום, יש להקיש על שדה התחברות ולבחור ב‑Munin מעל המקלדת.";
+"autofill.setup.step3.mac" = "ב‑Safari, יש ללחוץ על שדה התחברות ולבחור ב‑Munin מתפריט המפתח.";
+"autofill.setup.step4" = "אופציונלי: יש לבחור ב‑Munin תחת ״הגדרת קודים ב...״ כדי שקישורי הגדרת 2FA ייפתחו ב‑Munin.";
+"autofill.setup.turnOn" = "הפעלת מילוי אוטומטי";
+"autofill.decryptFailed" = "לא ניתן לפענח את הסיסמה הזו.";
+"autofill.locked" = "Munin נעול";
+"autofill.search" = "חיפוש";
+"autofill.signIn" = "יש לפתוח את Munin ולהתחבר כדי להשתמש במילוי אוטומטי.";
+"autofill.suggested" = "הצעות";
+"autofill.title" = "Munin";
+"autofill.turnOnBiometrics" = "יש לפתוח את Munin, להפעיל ביטול נעילה עם Face ID או Touch ID ב״הגדרות״ ולבטל את נעילת Munin פעם אחת. לאחר מכן המילוי האוטומטי יוכל להשתמש בו.";
+"autofill.unavailable" = "מילוי אוטומטי אינו זמין";

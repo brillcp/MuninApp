@@ -1,0 +1,299 @@
+/* Localizable.strings */
+
+/** Account **/
+"account.delete" = "Radera konto";
+"account.delete.failed" = "Kunde inte radera kontot";
+"account.delete.locked" = "Lås upp Munin för att radera ditt konto.";
+"account.delete.message" = "Detta raderar ditt Munin-konto, dina lösenord och 2FA-konton permanent. Det går inte att ångra. Du bekräftar med ditt Apple-konto, vilket också tar bort Munin från Logga in med Apple.\n\nDin App Store-prenumeration avslutas inte. Avsluta den under Hantera prenumeration först.";
+"account.delete.title" = "Radera ditt Munin-konto?";
+"account.showRecoveryKey" = "Visa återställningsnyckel";
+"account.signOut" = "Logga ut";
+
+/** Add Account **/
+"addAccount.chooseImage" = "Välj bild…";
+"addAccount.chooseScreenshot" = "Välj skärmavbild…";
+"addAccount.encrypting" = "Krypterar…";
+"addAccount.error.alreadyAddedMany" = "De kontona finns redan i ditt valv.";
+"addAccount.error.alreadyAddedOne" = "Det kontot finns redan i ditt valv.";
+"addAccount.error.loadImage" = "Kunde inte läsa in bilden.";
+"addAccount.error.noQRCode" = "Ingen QR-kod hittades i bilden.";
+"addAccount.error.readImage" = "Kunde inte läsa bilden.";
+"addAccount.link.add" = "Lägg till från länk";
+"addAccount.link.header" = "Länk";
+"addAccount.link.placeholder" = "otpauth://…";
+"addAccount.manual.account" = "Konto, t.ex. du@exempel.se";
+"addAccount.manual.add" = "Lägg till konto";
+"addAccount.manual.digits" = "Siffror";
+"addAccount.manual.footer" = "Webbplatser visar inställningsnyckeln under ”Kan du inte skanna QR-koden?”.";
+"addAccount.manual.header" = "Ange manuellt";
+"addAccount.manual.issuer" = "Utfärdare, t.ex. GitHub";
+"addAccount.manual.setupKey" = "Inställningsnyckel";
+"addAccount.qr.footer" = "En webbplats QR-kod för 2FA, eller Google Authenticators QR-kod under Överför konton → Exportera konton för att importera allt på en gång.";
+"addAccount.qr.header" = "QR-kod";
+"addAccount.scanQRCode" = "Skanna QR-kod";
+"addAccount.title" = "Lägg till konto";
+
+/** Codes **/
+"codes.add" = "Lägg till";
+"codes.copyCode" = "Kopiera kod";
+"codes.delete.button" = "Radera %@";
+"codes.delete.message" = "Se till att 2FA är avstängt för %@, eller att du har ett annat sätt att logga in. Det går inte att ångra.";
+"codes.delete.title" = "Radera konto?";
+"codes.empty.add" = "Lägg till konto";
+"codes.import.button" = "Importera 2FA-konton";
+"codes.import.confirm.button" = "Importera %lld konton";
+"codes.import.confirm.message" = "%lld nya konton krypteras och läggs till. %lld finns redan i Munin och hoppas över.";
+"codes.import.confirm.messageWithFailures" = "%lld nya konton krypteras och läggs till. %lld finns redan i Munin och hoppas över. %lld rader kunde inte läsas.";
+"codes.import.confirm.title" = "Importera 2FA-konton?";
+"codes.import.done" = "%lld konton importerades. Radera filen nu: den innehåller dina 2FA-hemligheter i klartext.";
+"codes.import.error.empty" = "Filen har inga 2FA-länkar. Välj en fil med en otpauth://-länk per rad, som Munins export.";
+"codes.import.title" = "Importera";
+"codes.link.add" = "Lägg till";
+"codes.link.failed" = "Kunde inte lägga till koden";
+"codes.link.message" = "%@ krypteras och läggs till i Munin.";
+"codes.link.title" = "Lägg till 2FA-konto?";
+"codes.empty.message" = "Skanna en QR-kod för 2FA eller importera från Google Authenticator.";
+"codes.empty.title" = "Inga konton än";
+"codes.row.copyHint" = "Kopierar koden";
+"codes.title" = "2FA";
+
+/** Errors **/
+"errors.keyMissing" = "Den här enheten har inte din valvnyckel än.";
+"errors.loadVault.title" = "Kunde inte läsa in ditt valv";
+"errors.munin.appStoreUnavailable" = "Kunde inte kontrollera din prenumeration hos App Store. Försök igen senare.";
+"errors.munin.badRequest" = "Kunde inte skapa förfrågan.";
+"errors.munin.http" = "Munin svarade med HTTP %lld.";
+"errors.munin.notFound" = "Inget Munin-API på %@.";
+"errors.munin.proof" = "Munin kunde inte verifiera ditt huvudlösenord. Lås Munin, lås upp med ditt huvudlösenord och försök igen.";
+"errors.munin.subscriptionLinkedElsewhere" = "Den här prenumerationen används redan av ett annat Munin-konto.";
+"errors.munin.subscriptionOtherAccount" = "Den här prenumerationen köptes för ett annat Munin-konto.";
+"errors.munin.subscriptionRequired" = "Munin är skrivskyddat utan prenumeration. Prenumerera för att lägga till eller ändra objekt.";
+"errors.munin.tooManyAttempts" = "För många försök. Försök igen om en timme.";
+"errors.munin.transactionNotFound" = "App Store känner inte till det här köpet.";
+"errors.munin.unexpectedResponse" = "Oväntat svar från servern. Är %@ Munin?";
+"errors.munin.unreachable" = "Kan inte nå Munin. %@";
+"errors.munin.vaultFull" = "Ditt valv är fullt (50 konton).";
+"errors.notSignedIn" = "Logga in igen för att lägga till konton.";
+"errors.openVault.title" = "Kunde inte öppna ditt valv";
+"errors.parser.hotpNotSupported" = "Räknarbaserade koder (HOTP) stöds inte.";
+"errors.parser.invalidMigrationData" = "Kunde inte läsa exporten från Google Authenticator.";
+"errors.parser.invalidSecret" = "Hemligheten är inte giltig Base32.";
+"errors.parser.missingSecret" = "Länken saknar hemlighet.";
+"errors.parser.unsupported" = "Det är ingen autentiseringslänk eller QR-kod.";
+
+/** Global **/
+"global.cancel" = "Avbryt";
+"global.close" = "Stäng";
+"global.copied" = "Kopierat";
+"global.copy" = "Kopiera";
+"global.delete" = "Radera";
+"global.done" = "Klar";
+"global.edit" = "Redigera";
+"global.refresh" = "Uppdatera";
+"global.save" = "Spara";
+"global.tryAgain" = "Försök igen";
+
+/** Lock **/
+"lock.command" = "Lås";
+"lock.biometrics.failed" = "Biometri fungerade inte. Använd ditt huvudlösenord.";
+"lock.biometrics.notSetUp" = "Lås upp med ditt huvudlösenord en gång för att använda biometri på den här enheten.";
+"lock.forgotMasterPassword" = "Glömt huvudlösenordet?";
+"lock.masterPassword.placeholder" = "Huvudlösenord";
+"lock.reason" = "Lås upp mitt valv";
+"lock.recovery.continue" = "Fortsätt";
+"lock.recovery.message" = "Ange din återställningsnyckel för att välja ett nytt huvudlösenord.";
+"lock.step.masterPassword" = "Använd huvudlösenord";
+"lock.step.recoveryKey" = "Ange återställningsnyckel";
+"lock.step.signIn" = "Logga in";
+"lock.signedInAs" = "Inloggad som %@";
+"lock.switchAccount" = "%@ · Byt";
+"lock.title" = "Lås upp mitt valv";
+"lock.unlock" = "Lås upp";
+"lock.version" = "Version %@";
+"lock.wrongMasterPassword" = "Huvudlösenordet är fel.";
+
+/** Main **/
+"main.section.munin" = "Munin";
+"main.tab.codes" = "2FA";
+"main.tab.vault" = "Valv";
+"main.window.title" = "Munin";
+
+/** Menu Bar **/
+"menuBar.copyUsername" = "Kopiera användarnamn";
+"menuBar.open" = "Öppna Munin";
+"menuBar.quit" = "Avsluta Munin";
+
+/** Password **/
+"password.field.lastUpdated" = "Senast uppdaterad";
+"password.field.name" = "Namn";
+"password.field.note" = "Anteckning";
+"password.field.password" = "Lösenord";
+"password.field.url" = "URL";
+"password.field.username" = "Användarnamn";
+
+/** Password Editor **/
+"passwordEditor.editTitle" = "Redigera lösenord";
+"passwordEditor.generate" = "Generera";
+"passwordEditor.newTitle" = "Nytt lösenord";
+
+/** Password Generator **/
+"passwordGenerator.fillPassword" = "Fyll i lösenord";
+"passwordGenerator.length" = "Längd";
+"passwordGenerator.regenerate" = "Generera nytt";
+"passwordGenerator.strength.good" = "Bra lösenord";
+"passwordGenerator.strength.strong" = "Starkt lösenord";
+"passwordGenerator.strength.weak" = "Svagt lösenord";
+"passwordGenerator.useCapitals" = "Använd versaler (A–Z)";
+"passwordGenerator.useDigits" = "Använd siffror (0–9)";
+"passwordGenerator.useSymbols" = "Använd symboler (@!$%&*)";
+
+/** Password Inspector **/
+"passwordInspector.openWebsite" = "Öppna webbplats";
+"passwordInspector.hide" = "Dölj";
+"passwordInspector.show" = "Visa";
+
+/** Scanner **/
+"scanner.title" = "Skanna QR-kod";
+
+/** Sign In **/
+"signIn.error.missingAnonKey" = "Ange din publika nyckel i APIConfig.anonKey.";
+"signIn.error.noIdentityToken" = "Apple returnerade ingen identitetstoken. Försök igen.";
+"signIn.error.failed" = "Inloggningen misslyckades. %@";
+
+/** Vault **/
+"vault.copyUsername" = "Kopiera användarnamn";
+"vault.copyPassword" = "Kopiera lösenord";
+"vault.createItem" = "Skapa objekt";
+"vault.delete.button" = "Radera %@";
+"vault.saveFailed.title" = "Kunde inte spara ändringen";
+"vault.delete.message" = "%@ tas bort från alla dina enheter. Det går inte att ångra.";
+"vault.delete.title" = "Radera lösenord?";
+"vault.empty.title" = "Inga objekt";
+"vault.search.prompt" = "Sök bland alla objekt";
+"vault.sort" = "Sortera";
+"vault.sort.ascending" = "Stigande";
+"vault.sort.dateEdited" = "Senast ändrad";
+"vault.sort.descending" = "Fallande";
+"vault.sort.direction" = "Ordning";
+"vault.sort.title" = "Titel";
+"vault.title" = "Valv";
+
+/** Vault Key **/
+"vaultKey.missing.checkAgain" = "Kontrollera igen";
+"vaultKey.missing.invalid" = "Det är ingen giltig återställningsnyckel.";
+"vaultKey.missing.message" = "Ditt valv är krypterat med en nyckel från din andra enhet. Slå på iCloud-nyckelring på båda enheterna och kontrollera igen, eller klistra in din återställningsnyckel.";
+"vaultKey.missing.placeholder" = "Återställningsnyckel";
+"vaultKey.missing.restore" = "Återställ";
+"vaultKey.missing.title" = "Valvnyckeln finns inte på den här enheten";
+"vaultKey.recovery.backup" = "Spara en kopia på ett säkert ställe. Om du glömmer ditt huvudlösenord är återställningsnyckeln det enda sättet att komma in i ditt valv igen.";
+"vaultKey.recovery.copy" = "Kopiera återställningsnyckel";
+"vaultKey.recovery.explanation" = "Dina konton är end-to-end-krypterade med den här nyckeln. Munin kan inte läsa dem och kan inte återställa dem åt dig.";
+"vaultKey.recovery.title" = "Återställningsnyckel";
+
+/** Master password **/
+"masterPassword.confirm" = "Bekräfta huvudlösenordet";
+"masterPassword.create.message" = "Det låser upp Munin på alla dina enheter. Munin ser det aldrig och kan inte återställa det; om du glömmer det är återställningsnyckeln det enda sättet att komma in igen.";
+"masterPassword.create.title" = "Skapa ett huvudlösenord";
+"masterPassword.exists" = "Ett huvudlösenord har precis skapats på en annan enhet. Lås upp med det.";
+"masterPassword.field" = "Huvudlösenord";
+"masterPassword.mismatch" = "Lösenorden matchar inte.";
+"masterPassword.reset.title" = "Välj ett nytt huvudlösenord";
+"masterPassword.tooShort" = "Använd minst %lld tecken.";
+
+/** Settings **/
+"settings.about" = "Om";
+"settings.autoFill" = "Autofyll";
+"settings.autoFill.off" = "Av";
+"settings.autoFill.on" = "På";
+"settings.autoLock" = "Lås automatiskt";
+"settings.biometrics.face" = "Lås upp med Face ID";
+"settings.biometrics.touch" = "Lås upp med Touch ID";
+"settings.changeMasterPassword" = "Byt huvudlösenord";
+"settings.currentMasterPassword" = "Nuvarande huvudlösenord";
+"settings.data" = "Data";
+"settings.export.confirm" = "Exportera";
+"settings.export.failed" = "Kunde inte exportera";
+"settings.export.footer" = "Exporter är inte krypterade. Radera filen när du har importerat den någon annanstans.";
+"settings.export.locked" = "Lås upp Munin för att exportera.";
+"settings.export.message" = "Filen är inte krypterad. Alla som får tag i den kan läsa allt i den.";
+"settings.export.passwords" = "Exportera lösenord";
+"settings.export.passwords.filename" = "Munin-lösenord";
+"settings.export.title" = "Exportera okrypterad fil?";
+"settings.export.twoFactor" = "Exportera 2FA-konton";
+"settings.export.twoFactor.filename" = "Munin 2FA-konton";
+"settings.locked" = "Lås upp Munin för att ändra säkerhetsinställningarna.";
+"settings.privacyPolicy" = "Integritetspolicy";
+"settings.security" = "Säkerhet";
+"settings.subscription" = "Prenumeration";
+"settings.subscription.active" = "Aktiv";
+"settings.subscription.inactive" = "Ingen prenumeration";
+"settings.subscription.manage" = "Hantera prenumeration";
+"settings.subscription.restore" = "Återställ köp";
+"settings.subscription.status" = "Status";
+"settings.termsOfUse" = "Användarvillkor";
+"settings.title" = "Inställningar";
+"settings.version" = "Version";
+
+/** Search **/
+"search.empty.message" = "Hitta lösenord och 2FA-koder efter namn, användarnamn eller webbplats.";
+"search.empty.title" = "Sök";
+"search.find" = "Hitta";
+"search.prompt" = "Lösenord och 2FA";
+"search.section.codes" = "2FA";
+"search.section.passwords" = "Lösenord";
+"search.title" = "Sök";
+
+/** Import **/
+"import.button" = "Importera lösenord";
+"import.confirm.button" = "Importera %lld lösenord";
+"import.confirm.buttonAll" = "Importera";
+"import.confirm.message" = "%lld nya lösenord krypteras och läggs till. %lld finns redan i ditt valv och hoppas över.";
+"import.confirm.messageWithCodes" = "%lld nya lösenord och %lld 2FA-konton krypteras och läggs till. %lld lösenord finns redan i ditt valv och hoppas över.";
+"import.confirm.title" = "Importera lösenord?";
+"import.done.message" = "%lld lösenord importerades. Radera CSV-filen nu: den innehåller alla dina lösenord i klartext.";
+"import.done.messageWithCodes" = "%lld lösenord och %lld 2FA-konton importerades. Radera CSV-filen nu: den innehåller dina lösenord och 2FA-hemligheter i klartext.";
+"import.error.columns" = "CSV-filen saknar kolumnerna Munin behöver: ett lösenord och ett namn eller en webbplats.";
+"import.error.unreadable" = "Kunde inte läsa filen. Exportera den som UTF-8-CSV.";
+"import.progress" = "Importerar %lld av %lld";
+"import.title" = "Importera";
+
+/** Auto-lock **/
+"autoLock.fifteenMinutes" = "Efter 15 minuter";
+"autoLock.fiveMinutes" = "Efter 5 minuter";
+"autoLock.immediately" = "Direkt";
+"autoLock.never" = "Aldrig";
+"autoLock.oneMinute" = "Efter 1 minut";
+
+/** Subscription **/
+"subscription.billingIssue" = "App Store kunde inte förnya din prenumeration. Uppdatera betalningsmetoden för att fortsätta lägga till och redigera.";
+"subscription.error.unverified" = "App Store kunde inte verifiera köpet.";
+"subscription.gracePeriod" = "Din prenumeration kunde inte förnyas.";
+"subscription.message" = "End-to-end-krypterade lösenord och 2FA-koder på alla dina Apple-enheter.";
+"subscription.readOnly" = "Skrivskyddat. Prenumerera för att lägga till eller ändra objekt.";
+"subscription.subscribe" = "Prenumerera";
+"subscription.title" = "Munin";
+"subscription.updatePayment" = "Uppdatera betalning";
+
+/** AutoFill **/
+"autofill.allCodes" = "Alla koder";
+"autofill.allPasswords" = "Alla lösenord";
+"autofill.banner" = "Fyll i lösenord och 2FA-koder med Munin.";
+"autofill.banner.setUp" = "Ställ in";
+"autofill.setup.done" = "Munin är påslaget för autofyll.";
+"autofill.setup.message" = "Munin kan fylla i lösenord och 2FA-koder i Safari och appar, efter Face ID eller Touch ID. Lösenord förblir krypterade tills du väljer ett.";
+"autofill.setup.openSettings" = "Öppna Inställningar";
+"autofill.setup.step1.ios" = "Öppna Inställningar och gå till Allmänt ▸ Autofyll och lösenord.";
+"autofill.setup.step1.mac" = "Öppna Systeminställningar och gå till Allmänt ▸ Autofyll och lösenord.";
+"autofill.setup.step2" = "Slå på Munin under Autofyll från.";
+"autofill.setup.step3.ios" = "Tryck på ett inloggningsfält i Safari eller en app och välj Munin ovanför tangentbordet.";
+"autofill.setup.step3.mac" = "Klicka på ett inloggningsfält i Safari och välj Munin i nyckelmenyn.";
+"autofill.setup.step4" = "Valfritt: välj Munin under Ställ in koder i, så att länkar för 2FA öppnas i Munin.";
+"autofill.setup.turnOn" = "Slå på autofyll";
+"autofill.decryptFailed" = "Lösenordet kunde inte dekrypteras.";
+"autofill.locked" = "Munin är låst";
+"autofill.search" = "Sök";
+"autofill.signIn" = "Öppna Munin och logga in för att använda autofyll.";
+"autofill.suggested" = "Förslag";
+"autofill.title" = "Munin";
+"autofill.turnOnBiometrics" = "Öppna Munin, slå på upplåsning med Face ID eller Touch ID i Inställningar och lås upp Munin en gång. Sedan kan autofyll använda det.";
+"autofill.unavailable" = "Autofyll är inte tillgängligt";

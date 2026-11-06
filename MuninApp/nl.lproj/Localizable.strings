@@ -1,0 +1,299 @@
+/* Localizable.strings */
+
+/** Account **/
+"account.delete" = "Verwijder account";
+"account.delete.failed" = "Kan account niet verwijderen";
+"account.delete.locked" = "Ontgrendel Munin om je account te verwijderen.";
+"account.delete.message" = "Je Munin-account, wachtwoorden en 2FA-accounts worden definitief verwijderd. Dit kan niet ongedaan worden gemaakt. Je bevestigt met je Apple Account, waardoor Munin ook uit ‘Log in met Apple’ wordt verwijderd.\n\nJe App Store-abonnement wordt niet opgezegd. Zeg het eerst op via Beheer abonnement.";
+"account.delete.title" = "Je Munin-account verwijderen?";
+"account.showRecoveryKey" = "Toon herstelsleutel";
+"account.signOut" = "Log uit";
+
+/** Add Account **/
+"addAccount.chooseImage" = "Kies afbeelding…";
+"addAccount.chooseScreenshot" = "Kies schermafbeelding…";
+"addAccount.encrypting" = "Versleutelen…";
+"addAccount.error.alreadyAddedMany" = "Die accounts staan al in je kluis.";
+"addAccount.error.alreadyAddedOne" = "Dat account staat al in je kluis.";
+"addAccount.error.loadImage" = "Kan de afbeelding niet laden.";
+"addAccount.error.noQRCode" = "Geen QR-code gevonden in de afbeelding.";
+"addAccount.error.readImage" = "Kan de afbeelding niet lezen.";
+"addAccount.link.add" = "Voeg toe via link";
+"addAccount.link.header" = "Link";
+"addAccount.link.placeholder" = "otpauth://…";
+"addAccount.manual.account" = "Account, bijv. jij@voorbeeld.nl";
+"addAccount.manual.add" = "Voeg account toe";
+"addAccount.manual.digits" = "Cijfers";
+"addAccount.manual.footer" = "Websites tonen de configuratiesleutel onder ‘Kun je de QR-code niet scannen?’.";
+"addAccount.manual.header" = "Handmatig invoeren";
+"addAccount.manual.issuer" = "Uitgever, bijv. GitHub";
+"addAccount.manual.setupKey" = "Configuratiesleutel";
+"addAccount.qr.footer" = "De 2FA-QR-code van een website, of de QR-code van Google Authenticator via Accounts overzetten → Accounts exporteren om alles in één keer te importeren.";
+"addAccount.qr.header" = "QR-code";
+"addAccount.scanQRCode" = "Scan QR-code";
+"addAccount.title" = "Voeg account toe";
+
+/** Codes **/
+"codes.add" = "Voeg toe";
+"codes.copyCode" = "Kopieer code";
+"codes.delete.button" = "Verwijder %@";
+"codes.delete.message" = "Zorg dat 2FA voor %@ is uitgeschakeld, of dat je op een andere manier kunt inloggen. Dit kan niet ongedaan worden gemaakt.";
+"codes.delete.title" = "Account verwijderen?";
+"codes.empty.add" = "Voeg account toe";
+"codes.import.button" = "Importeer 2FA-accounts";
+"codes.import.confirm.button" = "Importeer %lld accounts";
+"codes.import.confirm.message" = "%lld nieuwe accounts worden versleuteld en toegevoegd. %lld staan al in Munin en worden overgeslagen.";
+"codes.import.confirm.messageWithFailures" = "%lld nieuwe accounts worden versleuteld en toegevoegd. %lld staan al in Munin en worden overgeslagen. %lld regels konden niet worden gelezen.";
+"codes.import.confirm.title" = "2FA-accounts importeren?";
+"codes.import.done" = "%lld accounts geïmporteerd. Verwijder het bestand nu: het bevat je 2FA-geheimen als platte tekst.";
+"codes.import.error.empty" = "Dit bestand bevat geen 2FA-links. Kies een bestand met één otpauth://-link per regel, zoals de export van Munin.";
+"codes.import.title" = "Importeer";
+"codes.link.add" = "Voeg toe";
+"codes.link.failed" = "Kan code niet toevoegen";
+"codes.link.message" = "%@ wordt versleuteld en aan Munin toegevoegd.";
+"codes.link.title" = "2FA-account toevoegen?";
+"codes.empty.message" = "Scan een 2FA-QR-code of importeer uit Google Authenticator.";
+"codes.empty.title" = "Nog geen accounts";
+"codes.row.copyHint" = "Kopieert de code";
+"codes.title" = "2FA";
+
+/** Errors **/
+"errors.keyMissing" = "Dit apparaat heeft de sleutel van je kluis nog niet.";
+"errors.loadVault.title" = "Kan je kluis niet laden";
+"errors.munin.appStoreUnavailable" = "Kan je abonnement niet controleren bij de App Store. Probeer het later opnieuw.";
+"errors.munin.badRequest" = "Kan het verzoek niet opbouwen.";
+"errors.munin.http" = "Munin antwoordde met HTTP %lld.";
+"errors.munin.notFound" = "Er is geen Munin-API op %@.";
+"errors.munin.proof" = "Munin kon je hoofdwachtwoord niet verifiëren. Vergrendel Munin, ontgrendel met je hoofdwachtwoord en probeer het opnieuw.";
+"errors.munin.subscriptionLinkedElsewhere" = "Dit abonnement wordt al gebruikt door een ander Munin-account.";
+"errors.munin.subscriptionOtherAccount" = "Dit abonnement is gekocht voor een ander Munin-account.";
+"errors.munin.subscriptionRequired" = "Zonder abonnement is Munin alleen-lezen. Neem een abonnement om items toe te voegen of te wijzigen.";
+"errors.munin.tooManyAttempts" = "Te veel pogingen. Probeer het over een uur opnieuw.";
+"errors.munin.transactionNotFound" = "De App Store herkent deze aankoop niet.";
+"errors.munin.unexpectedResponse" = "Onverwacht antwoord van de server. Is %@ Munin?";
+"errors.munin.unreachable" = "Kan Munin niet bereiken. %@";
+"errors.munin.vaultFull" = "Je kluis is vol (50 accounts).";
+"errors.notSignedIn" = "Log opnieuw in om accounts toe te voegen.";
+"errors.openVault.title" = "Kan je kluis niet openen";
+"errors.parser.hotpNotSupported" = "Codes op basis van een teller (HOTP) worden niet ondersteund.";
+"errors.parser.invalidMigrationData" = "Kan de export van Google Authenticator niet lezen.";
+"errors.parser.invalidSecret" = "Het geheim is geen geldige Base32.";
+"errors.parser.missingSecret" = "De link bevat geen geheim.";
+"errors.parser.unsupported" = "Dat is geen authenticatielink of -QR-code.";
+
+/** Global **/
+"global.cancel" = "Annuleer";
+"global.close" = "Sluit";
+"global.copied" = "Gekopieerd";
+"global.copy" = "Kopieer";
+"global.delete" = "Verwijder";
+"global.done" = "Gereed";
+"global.edit" = "Wijzig";
+"global.refresh" = "Vernieuw";
+"global.save" = "Bewaar";
+"global.tryAgain" = "Probeer opnieuw";
+
+/** Lock **/
+"lock.command" = "Vergrendel";
+"lock.biometrics.failed" = "Biometrie werkte niet. Gebruik je hoofdwachtwoord.";
+"lock.biometrics.notSetUp" = "Ontgrendel één keer met je hoofdwachtwoord om biometrie op dit apparaat te gebruiken.";
+"lock.forgotMasterPassword" = "Hoofdwachtwoord vergeten?";
+"lock.masterPassword.placeholder" = "Hoofdwachtwoord";
+"lock.reason" = "Ontgrendel mijn kluis";
+"lock.recovery.continue" = "Ga door";
+"lock.recovery.message" = "Voer je herstelsleutel in om een nieuw hoofdwachtwoord te kiezen.";
+"lock.step.masterPassword" = "Gebruik hoofdwachtwoord";
+"lock.step.recoveryKey" = "Voer herstelsleutel in";
+"lock.step.signIn" = "Log in";
+"lock.signedInAs" = "Ingelogd als %@";
+"lock.switchAccount" = "%@ · Wissel";
+"lock.title" = "Ontgrendel mijn kluis";
+"lock.unlock" = "Ontgrendel";
+"lock.version" = "Versie %@";
+"lock.wrongMasterPassword" = "Het hoofdwachtwoord is onjuist.";
+
+/** Main **/
+"main.section.munin" = "Munin";
+"main.tab.codes" = "2FA";
+"main.tab.vault" = "Kluis";
+"main.window.title" = "Munin";
+
+/** Menu Bar **/
+"menuBar.copyUsername" = "Kopieer gebruikersnaam";
+"menuBar.open" = "Open Munin";
+"menuBar.quit" = "Stop Munin";
+
+/** Password **/
+"password.field.lastUpdated" = "Laatst bijgewerkt";
+"password.field.name" = "Naam";
+"password.field.note" = "Notitie";
+"password.field.password" = "Wachtwoord";
+"password.field.url" = "URL";
+"password.field.username" = "Gebruikersnaam";
+
+/** Password Editor **/
+"passwordEditor.editTitle" = "Wijzig wachtwoord";
+"passwordEditor.generate" = "Genereer";
+"passwordEditor.newTitle" = "Nieuw wachtwoord";
+
+/** Password Generator **/
+"passwordGenerator.fillPassword" = "Vul wachtwoord in";
+"passwordGenerator.length" = "Lengte";
+"passwordGenerator.regenerate" = "Genereer opnieuw";
+"passwordGenerator.strength.good" = "Goed wachtwoord";
+"passwordGenerator.strength.strong" = "Sterk wachtwoord";
+"passwordGenerator.strength.weak" = "Zwak wachtwoord";
+"passwordGenerator.useCapitals" = "Gebruik hoofdletters (A–Z)";
+"passwordGenerator.useDigits" = "Gebruik cijfers (0–9)";
+"passwordGenerator.useSymbols" = "Gebruik symbolen (@!$%&*)";
+
+/** Password Inspector **/
+"passwordInspector.openWebsite" = "Open website";
+"passwordInspector.hide" = "Verberg";
+"passwordInspector.show" = "Toon";
+
+/** Scanner **/
+"scanner.title" = "Scan QR-code";
+
+/** Sign In **/
+"signIn.error.missingAnonKey" = "Stel APIConfig.anonKey in op je publiceerbare sleutel.";
+"signIn.error.noIdentityToken" = "Apple gaf geen identiteitstoken terug. Probeer het opnieuw.";
+"signIn.error.failed" = "Inloggen mislukt. %@";
+
+/** Vault **/
+"vault.copyUsername" = "Kopieer gebruikersnaam";
+"vault.copyPassword" = "Kopieer wachtwoord";
+"vault.createItem" = "Maak item aan";
+"vault.delete.button" = "Verwijder %@";
+"vault.saveFailed.title" = "Kan de wijziging niet bewaren";
+"vault.delete.message" = "%@ wordt van al je apparaten verwijderd. Dit kan niet ongedaan worden gemaakt.";
+"vault.delete.title" = "Wachtwoord verwijderen?";
+"vault.empty.title" = "Geen items";
+"vault.search.prompt" = "Zoek in alle items";
+"vault.sort" = "Sorteer";
+"vault.sort.ascending" = "Oplopend";
+"vault.sort.dateEdited" = "Wijzigingsdatum";
+"vault.sort.descending" = "Aflopend";
+"vault.sort.direction" = "Volgorde";
+"vault.sort.title" = "Titel";
+"vault.title" = "Kluis";
+
+/** Vault Key **/
+"vaultKey.missing.checkAgain" = "Controleer opnieuw";
+"vaultKey.missing.invalid" = "Dat is geen geldige herstelsleutel.";
+"vaultKey.missing.message" = "Je kluis is versleuteld met een sleutel van je andere apparaat. Zet iCloud-sleutelhanger aan op beide apparaten en controleer opnieuw, of plak je herstelsleutel.";
+"vaultKey.missing.placeholder" = "Herstelsleutel";
+"vaultKey.missing.restore" = "Herstel";
+"vaultKey.missing.title" = "Kluissleutel staat niet op dit apparaat";
+"vaultKey.recovery.backup" = "Bewaar een kopie op een veilige plek. Als je je hoofdwachtwoord vergeet, is de herstelsleutel de enige manier om weer in je kluis te komen.";
+"vaultKey.recovery.copy" = "Kopieer herstelsleutel";
+"vaultKey.recovery.explanation" = "Je accounts zijn end-to-end versleuteld met deze sleutel. Munin kan ze niet lezen of voor je herstellen.";
+"vaultKey.recovery.title" = "Herstelsleutel";
+
+/** Master password **/
+"masterPassword.confirm" = "Bevestig hoofdwachtwoord";
+"masterPassword.create.message" = "Ontgrendel Munin op al je apparaten. Munin ziet het nooit en kan het niet herstellen. Vergeet je het, dan is je herstelsleutel de enige weg terug.";
+"masterPassword.create.title" = "Maak een hoofdwachtwoord aan";
+"masterPassword.exists" = "Er is net een hoofdwachtwoord ingesteld op een ander apparaat. Ontgrendel daarmee.";
+"masterPassword.field" = "Hoofdwachtwoord";
+"masterPassword.mismatch" = "De wachtwoorden komen niet overeen.";
+"masterPassword.reset.title" = "Kies een nieuw hoofdwachtwoord";
+"masterPassword.tooShort" = "Gebruik minstens %lld tekens.";
+
+/** Settings **/
+"settings.about" = "Over";
+"settings.autoFill" = "Automatisch invullen";
+"settings.autoFill.off" = "Uit";
+"settings.autoFill.on" = "Aan";
+"settings.autoLock" = "Automatisch vergrendelen";
+"settings.biometrics.face" = "Ontgrendel met Face ID";
+"settings.biometrics.touch" = "Ontgrendel met Touch ID";
+"settings.changeMasterPassword" = "Wijzig hoofdwachtwoord";
+"settings.currentMasterPassword" = "Huidig hoofdwachtwoord";
+"settings.data" = "Gegevens";
+"settings.export.confirm" = "Exporteer";
+"settings.export.failed" = "Exporteren mislukt";
+"settings.export.footer" = "Exports zijn niet versleuteld. Verwijder het bestand nadat je het elders hebt geïmporteerd.";
+"settings.export.locked" = "Ontgrendel Munin om te exporteren.";
+"settings.export.message" = "Het bestand is niet versleuteld. Iedereen die het in handen krijgt, kan alles erin lezen.";
+"settings.export.passwords" = "Exporteer wachtwoorden";
+"settings.export.passwords.filename" = "Munin-wachtwoorden";
+"settings.export.title" = "Onversleuteld bestand exporteren?";
+"settings.export.twoFactor" = "Exporteer 2FA-accounts";
+"settings.export.twoFactor.filename" = "Munin 2FA-accounts";
+"settings.locked" = "Ontgrendel Munin om de beveiligingsinstellingen te wijzigen.";
+"settings.privacyPolicy" = "Privacybeleid";
+"settings.security" = "Beveiliging";
+"settings.subscription" = "Abonnement";
+"settings.subscription.active" = "Actief";
+"settings.subscription.inactive" = "Geen abonnement";
+"settings.subscription.manage" = "Beheer abonnement";
+"settings.subscription.restore" = "Herstel aankopen";
+"settings.subscription.status" = "Status";
+"settings.termsOfUse" = "Gebruiksvoorwaarden";
+"settings.title" = "Instellingen";
+"settings.version" = "Versie";
+
+/** Search **/
+"search.empty.message" = "Vind wachtwoorden en 2FA-codes op naam, gebruikersnaam of website.";
+"search.empty.title" = "Zoek";
+"search.find" = "Zoek";
+"search.prompt" = "Wachtwoorden en 2FA";
+"search.section.codes" = "2FA";
+"search.section.passwords" = "Wachtwoorden";
+"search.title" = "Zoek";
+
+/** Import **/
+"import.button" = "Importeer wachtwoorden";
+"import.confirm.button" = "Importeer %lld wachtwoorden";
+"import.confirm.buttonAll" = "Importeer";
+"import.confirm.message" = "%lld nieuwe wachtwoorden worden versleuteld en toegevoegd. %lld staan al in je kluis en worden overgeslagen.";
+"import.confirm.messageWithCodes" = "%lld nieuwe wachtwoorden en %lld 2FA-accounts worden versleuteld en toegevoegd. %lld wachtwoorden staan al in je kluis en worden overgeslagen.";
+"import.confirm.title" = "Wachtwoorden importeren?";
+"import.done.message" = "%lld wachtwoorden geïmporteerd. Verwijder het CSV-bestand nu: het bevat al je wachtwoorden als platte tekst.";
+"import.done.messageWithCodes" = "%lld wachtwoorden en %lld 2FA-accounts geïmporteerd. Verwijder het CSV-bestand nu: het bevat je wachtwoorden en 2FA-geheimen als platte tekst.";
+"import.error.columns" = "Dit CSV-bestand mist de kolommen die Munin nodig heeft: een wachtwoord en een naam of website.";
+"import.error.unreadable" = "Kan het bestand niet lezen. Exporteer het als UTF-8-CSV.";
+"import.progress" = "%lld van %lld importeren";
+"import.title" = "Importeer";
+
+/** Auto-lock **/
+"autoLock.fifteenMinutes" = "Na 15 minuten";
+"autoLock.fiveMinutes" = "Na 5 minuten";
+"autoLock.immediately" = "Direct";
+"autoLock.never" = "Nooit";
+"autoLock.oneMinute" = "Na 1 minuut";
+
+/** Subscription **/
+"subscription.billingIssue" = "De App Store kon je abonnement niet verlengen. Werk je betaalmethode bij om te blijven toevoegen en wijzigen.";
+"subscription.error.unverified" = "De App Store kon deze aankoop niet verifiëren.";
+"subscription.gracePeriod" = "Je abonnement kon niet worden verlengd.";
+"subscription.message" = "End-to-end versleutelde wachtwoorden en 2FA-codes op al je Apple-apparaten.";
+"subscription.readOnly" = "Alleen-lezen. Neem een abonnement om items toe te voegen of te wijzigen.";
+"subscription.subscribe" = "Neem abonnement";
+"subscription.title" = "Munin";
+"subscription.updatePayment" = "Werk betaling bij";
+
+/** AutoFill **/
+"autofill.allCodes" = "Alle codes";
+"autofill.allPasswords" = "Alle wachtwoorden";
+"autofill.banner" = "Vul wachtwoorden en 2FA-codes in met Munin.";
+"autofill.banner.setUp" = "Stel in";
+"autofill.setup.done" = "Munin is ingeschakeld voor automatisch invullen.";
+"autofill.setup.message" = "Munin kan wachtwoorden en 2FA-codes invullen in Safari en apps, na Face ID of Touch ID. Wachtwoorden blijven versleuteld tot je er een kiest.";
+"autofill.setup.openSettings" = "Open Instellingen";
+"autofill.setup.step1.ios" = "Open Instellingen en ga naar Algemeen ▸ Automatisch invullen en wachtwoorden.";
+"autofill.setup.step1.mac" = "Open Systeeminstellingen en ga naar Algemeen ▸ Automatisch invullen en wachtwoorden.";
+"autofill.setup.step2" = "Zet Munin aan onder ‘Vul automatisch in vanuit’.";
+"autofill.setup.step3.ios" = "Tik in Safari of een app op een inlogveld en kies Munin boven het toetsenbord.";
+"autofill.setup.step3.mac" = "Klik in Safari op een inlogveld en kies Munin in het sleutelmenu.";
+"autofill.setup.step4" = "Optioneel: kies Munin onder ‘Stel codes in met’ zodat 2FA-configuratielinks in Munin openen.";
+"autofill.setup.turnOn" = "Zet automatisch invullen aan";
+"autofill.decryptFailed" = "Kan dit wachtwoord niet ontsleutelen.";
+"autofill.locked" = "Munin is vergrendeld";
+"autofill.search" = "Zoek";
+"autofill.signIn" = "Open Munin en log in om automatisch invullen te gebruiken.";
+"autofill.suggested" = "Voorgesteld";
+"autofill.title" = "Munin";
+"autofill.turnOnBiometrics" = "Open Munin, zet ontgrendelen met Face ID of Touch ID aan in Instellingen en ontgrendel Munin één keer. Daarna kan automatisch invullen het gebruiken.";
+"autofill.unavailable" = "Automatisch invullen is niet beschikbaar";

@@ -1,0 +1,3 @@
+/* Permission prompts and other Info.plist texts. */
+"NSCameraUsageDescription" = "Leia o código QR que um site mostra quando você configura a autenticação de dois fatores.";
+"NSFaceIDUsageDescription" = "Desbloqueie o Munin com Face ID.";

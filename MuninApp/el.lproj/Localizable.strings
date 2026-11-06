@@ -1,0 +1,299 @@
+/* Localizable.strings */
+
+/** Account **/
+"account.delete" = "Διαγραφή λογαριασμού";
+"account.delete.failed" = "Δεν ήταν δυνατή η διαγραφή του λογαριασμού";
+"account.delete.locked" = "Ξεκλειδώστε το Munin για να διαγράψετε τον λογαριασμό σας.";
+"account.delete.message" = "Ο λογαριασμός σας Munin, οι κωδικοί σας και οι λογαριασμοί 2FA θα διαγραφούν οριστικά. Αυτό δεν αναιρείται. Θα επιβεβαιώσετε με τον Λογαριασμό Apple, κάτι που αφαιρεί επίσης το Munin από τη «Σύνδεση μέσω Apple».\n\nΗ συνδρομή σας στο App Store δεν ακυρώνεται. Ακυρώστε την πρώτα στη Διαχείριση συνδρομής.";
+"account.delete.title" = "Διαγραφή του λογαριασμού σας Munin;";
+"account.showRecoveryKey" = "Εμφάνιση κλειδιού ανάκτησης";
+"account.signOut" = "Αποσύνδεση";
+
+/** Add Account **/
+"addAccount.chooseImage" = "Επιλογή εικόνας…";
+"addAccount.chooseScreenshot" = "Επιλογή στιγμιότυπου οθόνης…";
+"addAccount.encrypting" = "Κρυπτογράφηση…";
+"addAccount.error.alreadyAddedMany" = "Αυτοί οι λογαριασμοί υπάρχουν ήδη στο θησαυροφυλάκιό σας.";
+"addAccount.error.alreadyAddedOne" = "Αυτός ο λογαριασμός υπάρχει ήδη στο θησαυροφυλάκιό σας.";
+"addAccount.error.loadImage" = "Δεν ήταν δυνατή η φόρτωση της εικόνας.";
+"addAccount.error.noQRCode" = "Δεν βρέθηκε κωδικός QR στην εικόνα.";
+"addAccount.error.readImage" = "Δεν ήταν δυνατή η ανάγνωση της εικόνας.";
+"addAccount.link.add" = "Προσθήκη από σύνδεσμο";
+"addAccount.link.header" = "Σύνδεσμος";
+"addAccount.link.placeholder" = "otpauth://…";
+"addAccount.manual.account" = "Λογαριασμός, π.χ. eseis@paradeigma.gr";
+"addAccount.manual.add" = "Προσθήκη λογαριασμού";
+"addAccount.manual.digits" = "Ψηφία";
+"addAccount.manual.footer" = "Οι ιστότοποι δείχνουν το κλειδί ρύθμισης στο «Δεν μπορείτε να σαρώσετε τον κωδικό QR;».";
+"addAccount.manual.header" = "Χειροκίνητη εισαγωγή";
+"addAccount.manual.issuer" = "Εκδότης, π.χ. GitHub";
+"addAccount.manual.setupKey" = "Κλειδί ρύθμισης";
+"addAccount.qr.footer" = "Ο κωδικός QR 2FA ενός ιστότοπου ή ο κωδικός QR του Google Authenticator από Μεταφορά λογαριασμών → Εξαγωγή λογαριασμών για εισαγωγή όλων μαζί.";
+"addAccount.qr.header" = "Κωδικός QR";
+"addAccount.scanQRCode" = "Σάρωση κωδικού QR";
+"addAccount.title" = "Προσθήκη λογαριασμού";
+
+/** Codes **/
+"codes.add" = "Προσθήκη";
+"codes.copyCode" = "Αντιγραφή κωδικού";
+"codes.delete.button" = "Διαγραφή %@";
+"codes.delete.message" = "Βεβαιωθείτε ότι το 2FA είναι απενεργοποιημένο για %@ ή ότι έχετε άλλον τρόπο σύνδεσης. Αυτό δεν αναιρείται.";
+"codes.delete.title" = "Διαγραφή λογαριασμού;";
+"codes.empty.add" = "Προσθήκη λογαριασμού";
+"codes.import.button" = "Εισαγωγή λογαριασμών 2FA";
+"codes.import.confirm.button" = "Εισαγωγή %lld λογαριασμών";
+"codes.import.confirm.message" = "%lld νέοι λογαριασμοί θα κρυπτογραφηθούν και θα προστεθούν. %lld υπάρχουν ήδη στο Munin και θα παραλειφθούν.";
+"codes.import.confirm.messageWithFailures" = "%lld νέοι λογαριασμοί θα κρυπτογραφηθούν και θα προστεθούν. %lld υπάρχουν ήδη στο Munin και θα παραλειφθούν. Δεν ήταν δυνατή η ανάγνωση %lld γραμμών.";
+"codes.import.confirm.title" = "Εισαγωγή λογαριασμών 2FA;";
+"codes.import.done" = "Εισήχθησαν %lld λογαριασμοί. Διαγράψτε το αρχείο τώρα: περιέχει τα μυστικά 2FA σας σε απλό κείμενο.";
+"codes.import.error.empty" = "Αυτό το αρχείο δεν έχει συνδέσμους 2FA. Επιλέξτε ένα αρχείο με έναν σύνδεσμο otpauth:// ανά γραμμή, όπως η εξαγωγή του Munin.";
+"codes.import.title" = "Εισαγωγή";
+"codes.link.add" = "Προσθήκη";
+"codes.link.failed" = "Δεν ήταν δυνατή η προσθήκη του κωδικού";
+"codes.link.message" = "Ο λογαριασμός %@ θα κρυπτογραφηθεί και θα προστεθεί στο Munin.";
+"codes.link.title" = "Προσθήκη λογαριασμού 2FA;";
+"codes.empty.message" = "Σαρώστε έναν κωδικό QR 2FA ή κάντε εισαγωγή από το Google Authenticator.";
+"codes.empty.title" = "Δεν υπάρχουν λογαριασμοί ακόμη";
+"codes.row.copyHint" = "Αντιγράφει τον κωδικό";
+"codes.title" = "2FA";
+
+/** Errors **/
+"errors.keyMissing" = "Αυτή η συσκευή δεν έχει ακόμη το κλειδί του θησαυροφυλακίου σας.";
+"errors.loadVault.title" = "Δεν ήταν δυνατή η φόρτωση του θησαυροφυλακίου";
+"errors.munin.appStoreUnavailable" = "Δεν ήταν δυνατός ο έλεγχος της συνδρομής σας στο App Store. Δοκιμάστε ξανά αργότερα.";
+"errors.munin.badRequest" = "Δεν ήταν δυνατή η δημιουργία του αιτήματος.";
+"errors.munin.http" = "Το Munin απάντησε με HTTP %lld.";
+"errors.munin.notFound" = "Δεν υπάρχει API του Munin στο %@.";
+"errors.munin.proof" = "Το Munin δεν μπόρεσε να επαληθεύσει τον κύριο κωδικό σας. Κλειδώστε το Munin, ξεκλειδώστε το με τον κύριο κωδικό και δοκιμάστε ξανά.";
+"errors.munin.subscriptionLinkedElsewhere" = "Αυτή η συνδρομή χρησιμοποιείται ήδη από άλλον λογαριασμό Munin.";
+"errors.munin.subscriptionOtherAccount" = "Αυτή η συνδρομή αγοράστηκε για άλλον λογαριασμό Munin.";
+"errors.munin.subscriptionRequired" = "Χωρίς συνδρομή, το Munin είναι μόνο για ανάγνωση. Εγγραφείτε για να προσθέτετε ή να αλλάζετε στοιχεία.";
+"errors.munin.tooManyAttempts" = "Πάρα πολλές προσπάθειες. Δοκιμάστε ξανά σε μία ώρα.";
+"errors.munin.transactionNotFound" = "Το App Store δεν αναγνωρίζει αυτήν την αγορά.";
+"errors.munin.unexpectedResponse" = "Μη αναμενόμενη απάντηση από τον διακομιστή. Είναι το %@ το Munin;";
+"errors.munin.unreachable" = "Δεν είναι δυνατή η σύνδεση στο Munin. %@";
+"errors.munin.vaultFull" = "Το θησαυροφυλάκιό σας είναι γεμάτο (50 λογαριασμοί).";
+"errors.notSignedIn" = "Συνδεθείτε ξανά για να προσθέσετε λογαριασμούς.";
+"errors.openVault.title" = "Δεν ήταν δυνατό το άνοιγμα του θησαυροφυλακίου";
+"errors.parser.hotpNotSupported" = "Οι κωδικοί με μετρητή (HOTP) δεν υποστηρίζονται.";
+"errors.parser.invalidMigrationData" = "Δεν ήταν δυνατή η ανάγνωση της εξαγωγής του Google Authenticator.";
+"errors.parser.invalidSecret" = "Το μυστικό δεν είναι έγκυρο Base32.";
+"errors.parser.missingSecret" = "Από τον σύνδεσμο λείπει το μυστικό.";
+"errors.parser.unsupported" = "Αυτό δεν είναι σύνδεσμος ή κωδικός QR ελέγχου ταυτότητας.";
+
+/** Global **/
+"global.cancel" = "Ακύρωση";
+"global.close" = "Κλείσιμο";
+"global.copied" = "Αντιγράφηκε";
+"global.copy" = "Αντιγραφή";
+"global.delete" = "Διαγραφή";
+"global.done" = "Τέλος";
+"global.edit" = "Επεξεργασία";
+"global.refresh" = "Ανανέωση";
+"global.save" = "Αποθήκευση";
+"global.tryAgain" = "Δοκιμάστε ξανά";
+
+/** Lock **/
+"lock.command" = "Κλείδωμα";
+"lock.biometrics.failed" = "Τα βιομετρικά δεν λειτούργησαν. Χρησιμοποιήστε τον κύριο κωδικό σας.";
+"lock.biometrics.notSetUp" = "Ξεκλειδώστε μία φορά με τον κύριο κωδικό σας για να χρησιμοποιείτε βιομετρικά σε αυτήν τη συσκευή.";
+"lock.forgotMasterPassword" = "Ξεχάσατε τον κύριο κωδικό;";
+"lock.masterPassword.placeholder" = "Κύριος κωδικός";
+"lock.reason" = "Ξεκλείδωμα θησαυροφυλακίου";
+"lock.recovery.continue" = "Συνέχεια";
+"lock.recovery.message" = "Εισαγάγετε το κλειδί ανάκτησης για να επιλέξετε νέο κύριο κωδικό.";
+"lock.step.masterPassword" = "Χρήση κύριου κωδικού";
+"lock.step.recoveryKey" = "Εισαγωγή κλειδιού ανάκτησης";
+"lock.step.signIn" = "Σύνδεση";
+"lock.signedInAs" = "Συνδεδεμένος ως %@";
+"lock.switchAccount" = "%@ · Αλλαγή";
+"lock.title" = "Ξεκλείδωμα θησαυροφυλακίου";
+"lock.unlock" = "Ξεκλείδωμα";
+"lock.version" = "Έκδοση %@";
+"lock.wrongMasterPassword" = "Ο κύριος κωδικός δεν είναι σωστός.";
+
+/** Main **/
+"main.section.munin" = "Munin";
+"main.tab.codes" = "2FA";
+"main.tab.vault" = "Θησαυροφυλάκιο";
+"main.window.title" = "Munin";
+
+/** Menu Bar **/
+"menuBar.copyUsername" = "Αντιγραφή ονόματος χρήστη";
+"menuBar.open" = "Άνοιγμα Munin";
+"menuBar.quit" = "Έξοδος από Munin";
+
+/** Password **/
+"password.field.lastUpdated" = "Τελευταία ενημέρωση";
+"password.field.name" = "Όνομα";
+"password.field.note" = "Σημείωση";
+"password.field.password" = "Κωδικός";
+"password.field.url" = "URL";
+"password.field.username" = "Όνομα χρήστη";
+
+/** Password Editor **/
+"passwordEditor.editTitle" = "Επεξεργασία κωδικού";
+"passwordEditor.generate" = "Δημιουργία";
+"passwordEditor.newTitle" = "Νέος κωδικός";
+
+/** Password Generator **/
+"passwordGenerator.fillPassword" = "Συμπλήρωση κωδικού";
+"passwordGenerator.length" = "Μήκος";
+"passwordGenerator.regenerate" = "Νέα δημιουργία";
+"passwordGenerator.strength.good" = "Καλός κωδικός";
+"passwordGenerator.strength.strong" = "Ισχυρός κωδικός";
+"passwordGenerator.strength.weak" = "Αδύναμος κωδικός";
+"passwordGenerator.useCapitals" = "Κεφαλαία (A–Z)";
+"passwordGenerator.useDigits" = "Ψηφία (0–9)";
+"passwordGenerator.useSymbols" = "Σύμβολα (@!$%&*)";
+
+/** Password Inspector **/
+"passwordInspector.openWebsite" = "Άνοιγμα ιστότοπου";
+"passwordInspector.hide" = "Απόκρυψη";
+"passwordInspector.show" = "Εμφάνιση";
+
+/** Scanner **/
+"scanner.title" = "Σάρωση κωδικού QR";
+
+/** Sign In **/
+"signIn.error.missingAnonKey" = "Ορίστε το APIConfig.anonKey στο δημοσιεύσιμο κλειδί σας.";
+"signIn.error.noIdentityToken" = "Η Apple δεν επέστρεψε διακριτικό ταυτότητας. Δοκιμάστε ξανά.";
+"signIn.error.failed" = "Η σύνδεση απέτυχε. %@";
+
+/** Vault **/
+"vault.copyUsername" = "Αντιγραφή ονόματος χρήστη";
+"vault.copyPassword" = "Αντιγραφή κωδικού";
+"vault.createItem" = "Δημιουργία στοιχείου";
+"vault.delete.button" = "Διαγραφή %@";
+"vault.saveFailed.title" = "Δεν ήταν δυνατή η αποθήκευση της αλλαγής";
+"vault.delete.message" = "Το %@ θα διαγραφεί από όλες τις συσκευές σας. Αυτό δεν αναιρείται.";
+"vault.delete.title" = "Διαγραφή κωδικού;";
+"vault.empty.title" = "Κανένα στοιχείο";
+"vault.search.prompt" = "Αναζήτηση σε όλα τα στοιχεία";
+"vault.sort" = "Ταξινόμηση";
+"vault.sort.ascending" = "Αύξουσα";
+"vault.sort.dateEdited" = "Ημερομηνία επεξεργασίας";
+"vault.sort.descending" = "Φθίνουσα";
+"vault.sort.direction" = "Σειρά";
+"vault.sort.title" = "Τίτλος";
+"vault.title" = "Θησαυροφυλάκιο";
+
+/** Vault Key **/
+"vaultKey.missing.checkAgain" = "Νέος έλεγχος";
+"vaultKey.missing.invalid" = "Αυτό δεν είναι έγκυρο κλειδί ανάκτησης.";
+"vaultKey.missing.message" = "Το θησαυροφυλάκιό σας είναι κρυπτογραφημένο με κλειδί από την άλλη συσκευή σας. Ενεργοποιήστε το Μπρελόκ iCloud και στις δύο συσκευές και ελέγξτε ξανά, ή επικολλήστε το κλειδί ανάκτησης.";
+"vaultKey.missing.placeholder" = "Κλειδί ανάκτησης";
+"vaultKey.missing.restore" = "Επαναφορά";
+"vaultKey.missing.title" = "Το κλειδί του θησαυροφυλακίου δεν βρίσκεται σε αυτήν τη συσκευή";
+"vaultKey.recovery.backup" = "Φυλάξτε ένα αντίγραφο σε ασφαλές μέρος. Αν ξεχάσετε τον κύριο κωδικό σας, το κλειδί ανάκτησης είναι ο μόνος τρόπος επιστροφής στο θησαυροφυλάκιο.";
+"vaultKey.recovery.copy" = "Αντιγραφή κλειδιού ανάκτησης";
+"vaultKey.recovery.explanation" = "Οι λογαριασμοί σας είναι κρυπτογραφημένοι από άκρο σε άκρο με αυτό το κλειδί. Το Munin δεν μπορεί να τους διαβάσει ούτε να τους ανακτήσει για εσάς.";
+"vaultKey.recovery.title" = "Κλειδί ανάκτησης";
+
+/** Master password **/
+"masterPassword.confirm" = "Επιβεβαίωση κύριου κωδικού";
+"masterPassword.create.message" = "Ξεκλειδώνει το Munin σε όλες τις συσκευές σας. Το Munin δεν τον βλέπει ποτέ και δεν μπορεί να τον επαναφέρει. Αν τον ξεχάσετε, το κλειδί ανάκτησης είναι ο μόνος τρόπος επιστροφής.";
+"masterPassword.create.title" = "Δημιουργία κύριου κωδικού";
+"masterPassword.exists" = "Μόλις ορίστηκε κύριος κωδικός σε άλλη συσκευή. Ξεκλειδώστε με αυτόν.";
+"masterPassword.field" = "Κύριος κωδικός";
+"masterPassword.mismatch" = "Οι κωδικοί δεν ταιριάζουν.";
+"masterPassword.reset.title" = "Επιλογή νέου κύριου κωδικού";
+"masterPassword.tooShort" = "Χρησιμοποιήστε τουλάχιστον %lld χαρακτήρες.";
+
+/** Settings **/
+"settings.about" = "Πληροφορίες";
+"settings.autoFill" = "Αυτόματη συμπλήρωση";
+"settings.autoFill.off" = "Ανενεργή";
+"settings.autoFill.on" = "Ενεργή";
+"settings.autoLock" = "Αυτόματο κλείδωμα";
+"settings.biometrics.face" = "Ξεκλείδωμα με Face ID";
+"settings.biometrics.touch" = "Ξεκλείδωμα με Touch ID";
+"settings.changeMasterPassword" = "Αλλαγή κύριου κωδικού";
+"settings.currentMasterPassword" = "Τρέχων κύριος κωδικός";
+"settings.data" = "Δεδομένα";
+"settings.export.confirm" = "Εξαγωγή";
+"settings.export.failed" = "Η εξαγωγή απέτυχε";
+"settings.export.footer" = "Οι εξαγωγές δεν είναι κρυπτογραφημένες. Διαγράψτε το αρχείο αφού το εισαγάγετε αλλού.";
+"settings.export.locked" = "Ξεκλειδώστε το Munin για εξαγωγή.";
+"settings.export.message" = "Το αρχείο δεν είναι κρυπτογραφημένο. Όποιος το αποκτήσει μπορεί να διαβάσει όλο το περιεχόμενό του.";
+"settings.export.passwords" = "Εξαγωγή κωδικών";
+"settings.export.passwords.filename" = "Κωδικοί Munin";
+"settings.export.title" = "Εξαγωγή μη κρυπτογραφημένου αρχείου;";
+"settings.export.twoFactor" = "Εξαγωγή λογαριασμών 2FA";
+"settings.export.twoFactor.filename" = "Λογαριασμοί 2FA Munin";
+"settings.locked" = "Ξεκλειδώστε το Munin για να αλλάξετε τις ρυθμίσεις ασφάλειας.";
+"settings.privacyPolicy" = "Πολιτική απορρήτου";
+"settings.security" = "Ασφάλεια";
+"settings.subscription" = "Συνδρομή";
+"settings.subscription.active" = "Ενεργή";
+"settings.subscription.inactive" = "Χωρίς συνδρομή";
+"settings.subscription.manage" = "Διαχείριση συνδρομής";
+"settings.subscription.restore" = "Επαναφορά αγορών";
+"settings.subscription.status" = "Κατάσταση";
+"settings.termsOfUse" = "Όροι χρήσης";
+"settings.title" = "Ρυθμίσεις";
+"settings.version" = "Έκδοση";
+
+/** Search **/
+"search.empty.message" = "Βρείτε κωδικούς και κωδικούς 2FA με όνομα, όνομα χρήστη ή ιστότοπο.";
+"search.empty.title" = "Αναζήτηση";
+"search.find" = "Εύρεση";
+"search.prompt" = "Κωδικοί και 2FA";
+"search.section.codes" = "2FA";
+"search.section.passwords" = "Κωδικοί";
+"search.title" = "Αναζήτηση";
+
+/** Import **/
+"import.button" = "Εισαγωγή κωδικών";
+"import.confirm.button" = "Εισαγωγή %lld κωδικών";
+"import.confirm.buttonAll" = "Εισαγωγή";
+"import.confirm.message" = "%lld νέοι κωδικοί θα κρυπτογραφηθούν και θα προστεθούν. %lld υπάρχουν ήδη στο θησαυροφυλάκιο και θα παραλειφθούν.";
+"import.confirm.messageWithCodes" = "%lld νέοι κωδικοί και %lld λογαριασμοί 2FA θα κρυπτογραφηθούν και θα προστεθούν. %lld κωδικοί υπάρχουν ήδη στο θησαυροφυλάκιο και θα παραλειφθούν.";
+"import.confirm.title" = "Εισαγωγή κωδικών;";
+"import.done.message" = "Εισήχθησαν %lld κωδικοί. Διαγράψτε το αρχείο CSV τώρα: περιέχει όλους τους κωδικούς σας σε απλό κείμενο.";
+"import.done.messageWithCodes" = "Εισήχθησαν %lld κωδικοί και %lld λογαριασμοί 2FA. Διαγράψτε το αρχείο CSV τώρα: περιέχει τους κωδικούς και τα μυστικά 2FA σας σε απλό κείμενο.";
+"import.error.columns" = "Σε αυτό το CSV λείπουν οι στήλες που χρειάζεται το Munin: ένας κωδικός και ένα όνομα ή ιστότοπος.";
+"import.error.unreadable" = "Δεν ήταν δυνατή η ανάγνωση του αρχείου. Εξαγάγετέ το ως CSV UTF-8.";
+"import.progress" = "Εισαγωγή %lld από %lld";
+"import.title" = "Εισαγωγή";
+
+/** Auto-lock **/
+"autoLock.fifteenMinutes" = "Μετά από 15 λεπτά";
+"autoLock.fiveMinutes" = "Μετά από 5 λεπτά";
+"autoLock.immediately" = "Αμέσως";
+"autoLock.never" = "Ποτέ";
+"autoLock.oneMinute" = "Μετά από 1 λεπτό";
+
+/** Subscription **/
+"subscription.billingIssue" = "Το App Store δεν μπόρεσε να ανανεώσει τη συνδρομή σας. Ενημερώστε τον τρόπο πληρωμής για να συνεχίσετε να προσθέτετε και να επεξεργάζεστε.";
+"subscription.error.unverified" = "Το App Store δεν μπόρεσε να επαληθεύσει αυτήν την αγορά.";
+"subscription.gracePeriod" = "Δεν ήταν δυνατή η ανανέωση της συνδρομής σας.";
+"subscription.message" = "Κωδικοί και κωδικοί 2FA κρυπτογραφημένοι από άκρο σε άκρο σε όλες τις συσκευές Apple σας.";
+"subscription.readOnly" = "Μόνο για ανάγνωση. Εγγραφείτε για να προσθέτετε ή να αλλάζετε στοιχεία.";
+"subscription.subscribe" = "Εγγραφή";
+"subscription.title" = "Munin";
+"subscription.updatePayment" = "Ενημέρωση πληρωμής";
+
+/** AutoFill **/
+"autofill.allCodes" = "Όλοι οι κωδικοί 2FA";
+"autofill.allPasswords" = "Όλοι οι κωδικοί";
+"autofill.banner" = "Συμπληρώστε κωδικούς και κωδικούς 2FA με το Munin.";
+"autofill.banner.setUp" = "Ρύθμιση";
+"autofill.setup.done" = "Το Munin είναι ενεργό για την Αυτόματη συμπλήρωση.";
+"autofill.setup.message" = "Το Munin μπορεί να συμπληρώνει κωδικούς και κωδικούς 2FA στο Safari και σε εφαρμογές, μετά από Face ID ή Touch ID. Οι κωδικοί παραμένουν κρυπτογραφημένοι μέχρι να επιλέξετε κάποιον.";
+"autofill.setup.openSettings" = "Άνοιγμα Ρυθμίσεων";
+"autofill.setup.step1.ios" = "Ανοίξτε τις Ρυθμίσεις και μεταβείτε στα Γενικά ▸ Αυτόματη συμπλήρωση και κωδικοί.";
+"autofill.setup.step1.mac" = "Ανοίξτε τις Ρυθμίσεις συστήματος και μεταβείτε στα Γενικά ▸ Αυτόματη συμπλήρωση και κωδικοί.";
+"autofill.setup.step2" = "Στην ενότητα «Αυτόματη συμπλήρωση από», ενεργοποιήστε το Munin.";
+"autofill.setup.step3.ios" = "Στο Safari ή σε μια εφαρμογή, αγγίξτε ένα πεδίο σύνδεσης και επιλέξτε Munin πάνω από το πληκτρολόγιο.";
+"autofill.setup.step3.mac" = "Στο Safari, κάντε κλικ σε ένα πεδίο σύνδεσης και επιλέξτε Munin από το μενού του κλειδιού.";
+"autofill.setup.step4" = "Προαιρετικά: επιλέξτε το Munin στο «Ρύθμιση κωδικών σε» ώστε οι σύνδεσμοι ρύθμισης 2FA να ανοίγουν στο Munin.";
+"autofill.setup.turnOn" = "Ενεργοποίηση Αυτόματης συμπλήρωσης";
+"autofill.decryptFailed" = "Δεν ήταν δυνατή η αποκρυπτογράφηση αυτού του κωδικού.";
+"autofill.locked" = "Το Munin είναι κλειδωμένο";
+"autofill.search" = "Αναζήτηση";
+"autofill.signIn" = "Ανοίξτε το Munin και συνδεθείτε για να χρησιμοποιήσετε την Αυτόματη συμπλήρωση.";
+"autofill.suggested" = "Προτεινόμενα";
+"autofill.title" = "Munin";
+"autofill.turnOnBiometrics" = "Ανοίξτε το Munin, ενεργοποιήστε το ξεκλείδωμα με Face ID ή Touch ID στις Ρυθμίσεις και ξεκλειδώστε το Munin μία φορά. Μετά η Αυτόματη συμπλήρωση θα μπορεί να το χρησιμοποιεί.";
+"autofill.unavailable" = "Η Αυτόματη συμπλήρωση δεν είναι διαθέσιμη";

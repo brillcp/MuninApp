@@ -1,0 +1,299 @@
+/* Localizable.strings */
+
+/** Account **/
+"account.delete" = "계정 삭제";
+"account.delete.failed" = "계정을 삭제할 수 없음";
+"account.delete.locked" = "계정을 삭제하려면 Munin을 잠금 해제하십시오.";
+"account.delete.message" = "Munin 계정, 암호 및 2FA 계정이 영구적으로 삭제됩니다. 이 작업은 실행 취소할 수 없습니다. Apple 계정으로 확인하면 ‘Apple로 로그인’에서도 Munin이 제거됩니다.\n\nApp Store 구독은 취소되지 않습니다. 먼저 구독 관리에서 취소하십시오.";
+"account.delete.title" = "Munin 계정을 삭제하겠습니까?";
+"account.showRecoveryKey" = "복구 키 보기";
+"account.signOut" = "로그아웃";
+
+/** Add Account **/
+"addAccount.chooseImage" = "이미지 선택…";
+"addAccount.chooseScreenshot" = "스크린샷 선택…";
+"addAccount.encrypting" = "암호화 중…";
+"addAccount.error.alreadyAddedMany" = "해당 계정들은 이미 보관함에 있습니다.";
+"addAccount.error.alreadyAddedOne" = "해당 계정은 이미 보관함에 있습니다.";
+"addAccount.error.loadImage" = "이미지를 불러올 수 없습니다.";
+"addAccount.error.noQRCode" = "이미지에서 QR 코드를 찾을 수 없습니다.";
+"addAccount.error.readImage" = "이미지를 읽을 수 없습니다.";
+"addAccount.link.add" = "링크에서 추가";
+"addAccount.link.header" = "링크";
+"addAccount.link.placeholder" = "otpauth://…";
+"addAccount.manual.account" = "계정(예: you@example.com)";
+"addAccount.manual.add" = "계정 추가";
+"addAccount.manual.digits" = "자릿수";
+"addAccount.manual.footer" = "웹 사이트의 ‘QR 코드를 스캔할 수 없나요?’ 아래에 설정 키가 표시됩니다.";
+"addAccount.manual.header" = "수동으로 입력";
+"addAccount.manual.issuer" = "발급자(예: GitHub)";
+"addAccount.manual.setupKey" = "설정 키";
+"addAccount.qr.footer" = "웹 사이트의 2FA QR 코드, 또는 Google Authenticator의 계정 이전 → 계정 내보내기 QR 코드로 한 번에 모두 가져올 수 있습니다.";
+"addAccount.qr.header" = "QR 코드";
+"addAccount.scanQRCode" = "QR 코드 스캔";
+"addAccount.title" = "계정 추가";
+
+/** Codes **/
+"codes.add" = "추가";
+"codes.copyCode" = "코드 복사";
+"codes.delete.button" = "%@ 삭제";
+"codes.delete.message" = "%@의 2FA를 끄거나 다른 로그인 방법이 있는지 확인하십시오. 이 작업은 실행 취소할 수 없습니다.";
+"codes.delete.title" = "계정을 삭제하겠습니까?";
+"codes.empty.add" = "계정 추가";
+"codes.import.button" = "2FA 계정 가져오기";
+"codes.import.confirm.button" = "%lld개 계정 가져오기";
+"codes.import.confirm.message" = "새 계정 %lld개가 암호화되어 추가됩니다. %lld개는 이미 Munin에 있으므로 건너뜁니다.";
+"codes.import.confirm.messageWithFailures" = "새 계정 %lld개가 암호화되어 추가됩니다. %lld개는 이미 Munin에 있으므로 건너뜁니다. %lld개 줄은 읽을 수 없습니다.";
+"codes.import.confirm.title" = "2FA 계정을 가져오겠습니까?";
+"codes.import.done" = "계정 %lld개를 가져왔습니다. 2FA 비밀 키가 일반 텍스트로 들어 있으니 지금 파일을 삭제하십시오.";
+"codes.import.error.empty" = "이 파일에는 2FA 링크가 없습니다. Munin의 내보내기처럼 한 줄에 하나의 otpauth:// 링크가 있는 파일을 선택하십시오.";
+"codes.import.title" = "가져오기";
+"codes.link.add" = "추가";
+"codes.link.failed" = "코드를 추가할 수 없음";
+"codes.link.message" = "%@ 계정이 암호화되어 Munin에 추가됩니다.";
+"codes.link.title" = "2FA 계정을 추가하겠습니까?";
+"codes.empty.message" = "2FA QR 코드를 스캔하거나 Google Authenticator에서 가져오십시오.";
+"codes.empty.title" = "아직 계정 없음";
+"codes.row.copyHint" = "코드를 복사합니다";
+"codes.title" = "2FA";
+
+/** Errors **/
+"errors.keyMissing" = "이 기기에 아직 보관함 키가 없습니다.";
+"errors.loadVault.title" = "보관함을 불러올 수 없음";
+"errors.munin.appStoreUnavailable" = "App Store에서 구독을 확인할 수 없습니다. 나중에 다시 시도하십시오.";
+"errors.munin.badRequest" = "요청을 만들 수 없습니다.";
+"errors.munin.http" = "Munin이 HTTP %lld(으)로 응답했습니다.";
+"errors.munin.notFound" = "%@에 Munin API가 없습니다.";
+"errors.munin.proof" = "Munin이 마스터 암호를 확인할 수 없습니다. Munin을 잠그고 마스터 암호로 잠금 해제한 후 다시 시도하십시오.";
+"errors.munin.subscriptionLinkedElsewhere" = "이 구독은 이미 다른 Munin 계정에서 사용 중입니다.";
+"errors.munin.subscriptionOtherAccount" = "이 구독은 다른 Munin 계정용으로 구입되었습니다.";
+"errors.munin.subscriptionRequired" = "구독하지 않으면 Munin은 읽기 전용입니다. 항목을 추가하거나 변경하려면 구독하십시오.";
+"errors.munin.tooManyAttempts" = "시도 횟수가 너무 많습니다. 1시간 후에 다시 시도하십시오.";
+"errors.munin.transactionNotFound" = "App Store에서 이 구입을 인식하지 못합니다.";
+"errors.munin.unexpectedResponse" = "서버에서 예기치 않은 응답이 왔습니다. %@이(가) Munin입니까?";
+"errors.munin.unreachable" = "Munin에 연결할 수 없습니다. %@";
+"errors.munin.vaultFull" = "보관함이 가득 찼습니다(계정 50개).";
+"errors.notSignedIn" = "계정을 추가하려면 다시 로그인하십시오.";
+"errors.openVault.title" = "보관함을 열 수 없음";
+"errors.parser.hotpNotSupported" = "카운터 기반 코드(HOTP)는 지원되지 않습니다.";
+"errors.parser.invalidMigrationData" = "Google Authenticator 내보내기를 읽을 수 없습니다.";
+"errors.parser.invalidSecret" = "비밀 키가 유효한 Base32가 아닙니다.";
+"errors.parser.missingSecret" = "링크에 비밀 키가 없습니다.";
+"errors.parser.unsupported" = "인증 링크 또는 QR 코드가 아닙니다.";
+
+/** Global **/
+"global.cancel" = "취소";
+"global.close" = "닫기";
+"global.copied" = "복사됨";
+"global.copy" = "복사";
+"global.delete" = "삭제";
+"global.done" = "완료";
+"global.edit" = "편집";
+"global.refresh" = "새로 고침";
+"global.save" = "저장";
+"global.tryAgain" = "다시 시도";
+
+/** Lock **/
+"lock.command" = "잠금";
+"lock.biometrics.failed" = "생체 인식이 작동하지 않았습니다. 마스터 암호를 사용하십시오.";
+"lock.biometrics.notSetUp" = "이 기기에서 생체 인식을 사용하려면 마스터 암호로 한 번 잠금 해제하십시오.";
+"lock.forgotMasterPassword" = "마스터 암호를 잊으셨습니까?";
+"lock.masterPassword.placeholder" = "마스터 암호";
+"lock.reason" = "내 보관함 잠금 해제";
+"lock.recovery.continue" = "계속";
+"lock.recovery.message" = "새 마스터 암호를 설정하려면 복구 키를 입력하십시오.";
+"lock.step.masterPassword" = "마스터 암호 사용";
+"lock.step.recoveryKey" = "복구 키 입력";
+"lock.step.signIn" = "로그인";
+"lock.signedInAs" = "%@(으)로 로그인됨";
+"lock.switchAccount" = "%@ · 전환";
+"lock.title" = "내 보관함 잠금 해제";
+"lock.unlock" = "잠금 해제";
+"lock.version" = "버전 %@";
+"lock.wrongMasterPassword" = "마스터 암호가 올바르지 않습니다.";
+
+/** Main **/
+"main.section.munin" = "Munin";
+"main.tab.codes" = "2FA";
+"main.tab.vault" = "보관함";
+"main.window.title" = "Munin";
+
+/** Menu Bar **/
+"menuBar.copyUsername" = "사용자 이름 복사";
+"menuBar.open" = "Munin 열기";
+"menuBar.quit" = "Munin 종료";
+
+/** Password **/
+"password.field.lastUpdated" = "마지막 업데이트";
+"password.field.name" = "이름";
+"password.field.note" = "메모";
+"password.field.password" = "암호";
+"password.field.url" = "URL";
+"password.field.username" = "사용자 이름";
+
+/** Password Editor **/
+"passwordEditor.editTitle" = "암호 편집";
+"passwordEditor.generate" = "생성";
+"passwordEditor.newTitle" = "새로운 암호";
+
+/** Password Generator **/
+"passwordGenerator.fillPassword" = "암호 채우기";
+"passwordGenerator.length" = "길이";
+"passwordGenerator.regenerate" = "다시 생성";
+"passwordGenerator.strength.good" = "양호한 암호";
+"passwordGenerator.strength.strong" = "강력한 암호";
+"passwordGenerator.strength.weak" = "취약한 암호";
+"passwordGenerator.useCapitals" = "대문자 사용(A–Z)";
+"passwordGenerator.useDigits" = "숫자 사용(0–9)";
+"passwordGenerator.useSymbols" = "기호 사용(@!$%&*)";
+
+/** Password Inspector **/
+"passwordInspector.openWebsite" = "웹 사이트 열기";
+"passwordInspector.hide" = "가리기";
+"passwordInspector.show" = "보기";
+
+/** Scanner **/
+"scanner.title" = "QR 코드 스캔";
+
+/** Sign In **/
+"signIn.error.missingAnonKey" = "APIConfig.anonKey를 공개 키로 설정하십시오.";
+"signIn.error.noIdentityToken" = "Apple에서 ID 토큰을 반환하지 않았습니다. 다시 시도하십시오.";
+"signIn.error.failed" = "로그인에 실패했습니다. %@";
+
+/** Vault **/
+"vault.copyUsername" = "사용자 이름 복사";
+"vault.copyPassword" = "암호 복사";
+"vault.createItem" = "항목 생성";
+"vault.delete.button" = "%@ 삭제";
+"vault.saveFailed.title" = "변경 사항을 저장할 수 없음";
+"vault.delete.message" = "%@ 항목이 모든 기기에서 삭제됩니다. 이 작업은 실행 취소할 수 없습니다.";
+"vault.delete.title" = "암호를 삭제하겠습니까?";
+"vault.empty.title" = "항목 없음";
+"vault.search.prompt" = "모든 항목 검색";
+"vault.sort" = "정렬";
+"vault.sort.ascending" = "오름차순";
+"vault.sort.dateEdited" = "편집일";
+"vault.sort.descending" = "내림차순";
+"vault.sort.direction" = "순서";
+"vault.sort.title" = "제목";
+"vault.title" = "보관함";
+
+/** Vault Key **/
+"vaultKey.missing.checkAgain" = "다시 확인";
+"vaultKey.missing.invalid" = "유효한 복구 키가 아닙니다.";
+"vaultKey.missing.message" = "보관함이 다른 기기의 키로 암호화되어 있습니다. 두 기기 모두에서 iCloud 키체인을 켜고 다시 확인하거나 복구 키를 붙여넣으십시오.";
+"vaultKey.missing.placeholder" = "복구 키";
+"vaultKey.missing.restore" = "복원";
+"vaultKey.missing.title" = "이 기기에 보관함 키가 없음";
+"vaultKey.recovery.backup" = "안전한 곳에 사본을 보관하십시오. 마스터 암호를 잊으면 복구 키가 보관함으로 돌아가는 유일한 방법입니다.";
+"vaultKey.recovery.copy" = "복구 키 복사";
+"vaultKey.recovery.explanation" = "계정은 이 키로 종단 간 암호화되어 있습니다. Munin은 이를 읽거나 대신 복구할 수 없습니다.";
+"vaultKey.recovery.title" = "복구 키";
+
+/** Master password **/
+"masterPassword.confirm" = "마스터 암호 확인";
+"masterPassword.create.message" = "모든 기기에서 Munin을 잠금 해제합니다. Munin은 이 암호를 볼 수 없고 재설정할 수도 없습니다. 잊어버리면 복구 키가 유일한 방법입니다.";
+"masterPassword.create.title" = "마스터 암호 생성";
+"masterPassword.exists" = "방금 다른 기기에서 마스터 암호가 설정되었습니다. 해당 암호로 잠금 해제하십시오.";
+"masterPassword.field" = "마스터 암호";
+"masterPassword.mismatch" = "암호가 일치하지 않습니다.";
+"masterPassword.reset.title" = "새로운 마스터 암호 설정";
+"masterPassword.tooShort" = "%lld자 이상 사용하십시오.";
+
+/** Settings **/
+"settings.about" = "정보";
+"settings.autoFill" = "자동 완성";
+"settings.autoFill.off" = "끔";
+"settings.autoFill.on" = "켬";
+"settings.autoLock" = "자동 잠금";
+"settings.biometrics.face" = "Face ID로 잠금 해제";
+"settings.biometrics.touch" = "Touch ID로 잠금 해제";
+"settings.changeMasterPassword" = "마스터 암호 변경";
+"settings.currentMasterPassword" = "현재 마스터 암호";
+"settings.data" = "데이터";
+"settings.export.confirm" = "내보내기";
+"settings.export.failed" = "내보내기 실패";
+"settings.export.footer" = "내보낸 파일은 암호화되지 않습니다. 다른 곳에서 가져온 후에는 파일을 삭제하십시오.";
+"settings.export.locked" = "내보내려면 Munin을 잠금 해제하십시오.";
+"settings.export.message" = "파일이 암호화되지 않았습니다. 파일을 얻은 사람은 누구나 모든 내용을 읽을 수 있습니다.";
+"settings.export.passwords" = "암호 내보내기";
+"settings.export.passwords.filename" = "Munin 암호";
+"settings.export.title" = "암호화되지 않은 파일을 내보내겠습니까?";
+"settings.export.twoFactor" = "2FA 계정 내보내기";
+"settings.export.twoFactor.filename" = "Munin 2FA 계정";
+"settings.locked" = "보안 설정을 변경하려면 Munin을 잠금 해제하십시오.";
+"settings.privacyPolicy" = "개인정보 처리방침";
+"settings.security" = "보안";
+"settings.subscription" = "구독";
+"settings.subscription.active" = "활성";
+"settings.subscription.inactive" = "구독 안 함";
+"settings.subscription.manage" = "구독 관리";
+"settings.subscription.restore" = "구입 내역 복원";
+"settings.subscription.status" = "상태";
+"settings.termsOfUse" = "이용 약관";
+"settings.title" = "설정";
+"settings.version" = "버전";
+
+/** Search **/
+"search.empty.message" = "이름, 사용자 이름 또는 웹 사이트로 암호와 2FA 코드를 찾으십시오.";
+"search.empty.title" = "검색";
+"search.find" = "찾기";
+"search.prompt" = "암호 및 2FA";
+"search.section.codes" = "2FA";
+"search.section.passwords" = "암호";
+"search.title" = "검색";
+
+/** Import **/
+"import.button" = "암호 가져오기";
+"import.confirm.button" = "암호 %lld개 가져오기";
+"import.confirm.buttonAll" = "가져오기";
+"import.confirm.message" = "새 암호 %lld개가 암호화되어 추가됩니다. %lld개는 이미 보관함에 있으므로 건너뜁니다.";
+"import.confirm.messageWithCodes" = "새 암호 %lld개와 2FA 계정 %lld개가 암호화되어 추가됩니다. 암호 %lld개는 이미 보관함에 있으므로 건너뜁니다.";
+"import.confirm.title" = "암호를 가져오겠습니까?";
+"import.done.message" = "암호 %lld개를 가져왔습니다. 모든 암호가 일반 텍스트로 들어 있으니 지금 CSV 파일을 삭제하십시오.";
+"import.done.messageWithCodes" = "암호 %lld개와 2FA 계정 %lld개를 가져왔습니다. 암호와 2FA 비밀 키가 일반 텍스트로 들어 있으니 지금 CSV 파일을 삭제하십시오.";
+"import.error.columns" = "이 CSV에는 Munin에 필요한 열(암호, 그리고 이름 또는 웹 사이트)이 없습니다.";
+"import.error.unreadable" = "파일을 읽을 수 없습니다. UTF-8 CSV로 내보내십시오.";
+"import.progress" = "%lld/%lld 가져오는 중";
+"import.title" = "가져오기";
+
+/** Auto-lock **/
+"autoLock.fifteenMinutes" = "15분 후";
+"autoLock.fiveMinutes" = "5분 후";
+"autoLock.immediately" = "즉시";
+"autoLock.never" = "안 함";
+"autoLock.oneMinute" = "1분 후";
+
+/** Subscription **/
+"subscription.billingIssue" = "App Store에서 구독을 갱신할 수 없습니다. 계속 추가하고 편집하려면 결제 수단을 업데이트하십시오.";
+"subscription.error.unverified" = "App Store에서 이 구입을 확인할 수 없습니다.";
+"subscription.gracePeriod" = "구독을 갱신할 수 없습니다.";
+"subscription.message" = "모든 Apple 기기에서 종단 간 암호화된 암호 및 2FA 코드.";
+"subscription.readOnly" = "읽기 전용입니다. 항목을 추가하거나 변경하려면 구독하십시오.";
+"subscription.subscribe" = "구독";
+"subscription.title" = "Munin";
+"subscription.updatePayment" = "결제 업데이트";
+
+/** AutoFill **/
+"autofill.allCodes" = "모든 코드";
+"autofill.allPasswords" = "모든 암호";
+"autofill.banner" = "Munin으로 암호와 2FA 코드를 채우십시오.";
+"autofill.banner.setUp" = "설정";
+"autofill.setup.done" = "Munin이 자동 완성에 켜져 있습니다.";
+"autofill.setup.message" = "Munin은 Face ID 또는 Touch ID 인증 후 Safari와 앱에서 암호와 2FA 코드를 채울 수 있습니다. 암호는 선택하기 전까지 암호화된 상태로 유지됩니다.";
+"autofill.setup.openSettings" = "설정 열기";
+"autofill.setup.step1.ios" = "설정을 열고 일반 ▸ 자동 완성 및 암호로 이동하십시오.";
+"autofill.setup.step1.mac" = "시스템 설정을 열고 일반 ▸ 자동 완성 및 암호로 이동하십시오.";
+"autofill.setup.step2" = "‘다음에서 자동 완성’에서 Munin을 켜십시오.";
+"autofill.setup.step3.ios" = "Safari나 앱에서 로그인 필드를 탭하고 키보드 위에서 Munin을 선택하십시오.";
+"autofill.setup.step3.mac" = "Safari에서 로그인 필드를 클릭하고 열쇠 메뉴에서 Munin을 선택하십시오.";
+"autofill.setup.step4" = "선택 사항: ‘다음에서 코드 설정’에서 Munin을 선택하면 2FA 설정 링크가 Munin에서 열립니다.";
+"autofill.setup.turnOn" = "자동 완성 켜기";
+"autofill.decryptFailed" = "이 암호를 복호화할 수 없습니다.";
+"autofill.locked" = "Munin이 잠겨 있음";
+"autofill.search" = "검색";
+"autofill.signIn" = "자동 완성을 사용하려면 Munin을 열고 로그인하십시오.";
+"autofill.suggested" = "제안";
+"autofill.title" = "Munin";
+"autofill.turnOnBiometrics" = "Munin을 열고 설정에서 Face ID 또는 Touch ID 잠금 해제를 켠 다음 Munin을 한 번 잠금 해제하십시오. 그러면 자동 완성에서 사용할 수 있습니다.";
+"autofill.unavailable" = "자동 완성을 사용할 수 없음";

@@ -1,0 +1,299 @@
+/* Localizable.strings */
+
+/** Account **/
+"account.delete" = "Poista tili";
+"account.delete.failed" = "Tiliä ei voitu poistaa";
+"account.delete.locked" = "Avaa Munin poistaaksesi tilisi.";
+"account.delete.message" = "Munin-tilisi, salasanasi ja 2FA-tilisi poistetaan pysyvästi. Tätä ei voi kumota. Vahvistat Apple-tililläsi, mikä poistaa Muninin myös Kirjaudu Applella -palvelusta.\n\nApp Store -tilaustasi ei peruta. Peru se ensin kohdassa Hallitse tilausta.";
+"account.delete.title" = "Poistetaanko Munin-tilisi?";
+"account.showRecoveryKey" = "Näytä palautusavain";
+"account.signOut" = "Kirjaudu ulos";
+
+/** Add Account **/
+"addAccount.chooseImage" = "Valitse kuva…";
+"addAccount.chooseScreenshot" = "Valitse kuvakaappaus…";
+"addAccount.encrypting" = "Salataan…";
+"addAccount.error.alreadyAddedMany" = "Nämä tilit ovat jo holvissasi.";
+"addAccount.error.alreadyAddedOne" = "Tämä tili on jo holvissasi.";
+"addAccount.error.loadImage" = "Kuvaa ei voitu ladata.";
+"addAccount.error.noQRCode" = "Kuvasta ei löytynyt QR-koodia.";
+"addAccount.error.readImage" = "Kuvaa ei voitu lukea.";
+"addAccount.link.add" = "Lisää linkistä";
+"addAccount.link.header" = "Linkki";
+"addAccount.link.placeholder" = "otpauth://…";
+"addAccount.manual.account" = "Tili, esim. sinä@esimerkki.fi";
+"addAccount.manual.add" = "Lisää tili";
+"addAccount.manual.digits" = "Numerot";
+"addAccount.manual.footer" = "Sivustot näyttävät asetusavaimen kohdassa ”Etkö voi skannata QR-koodia?”.";
+"addAccount.manual.header" = "Syötä käsin";
+"addAccount.manual.issuer" = "Myöntäjä, esim. GitHub";
+"addAccount.manual.setupKey" = "Asetusavain";
+"addAccount.qr.footer" = "Sivuston 2FA-QR-koodi tai Google Authenticatorin QR-koodi kohdasta Siirrä tilejä → Vie tilit, jolloin kaikki tuodaan kerralla.";
+"addAccount.qr.header" = "QR-koodi";
+"addAccount.scanQRCode" = "Skannaa QR-koodi";
+"addAccount.title" = "Lisää tili";
+
+/** Codes **/
+"codes.add" = "Lisää";
+"codes.copyCode" = "Kopioi koodi";
+"codes.delete.button" = "Poista %@";
+"codes.delete.message" = "Varmista, että 2FA on poistettu käytöstä palvelussa %@ tai että voit kirjautua muulla tavalla. Tätä ei voi kumota.";
+"codes.delete.title" = "Poistetaanko tili?";
+"codes.empty.add" = "Lisää tili";
+"codes.import.button" = "Tuo 2FA-tilejä";
+"codes.import.confirm.button" = "Tuo %lld tiliä";
+"codes.import.confirm.message" = "%lld uutta tiliä salataan ja lisätään. %lld on jo Muninissa, ja ne ohitetaan.";
+"codes.import.confirm.messageWithFailures" = "%lld uutta tiliä salataan ja lisätään. %lld on jo Muninissa, ja ne ohitetaan. %lld riviä ei voitu lukea.";
+"codes.import.confirm.title" = "Tuodaanko 2FA-tilit?";
+"codes.import.done" = "%lld tiliä tuotiin. Poista tiedosto nyt – se sisältää 2FA-salaisuutesi selväkielisinä.";
+"codes.import.error.empty" = "Tiedostossa ei ole 2FA-linkkejä. Valitse tiedosto, jossa on yksi otpauth://-linkki riviä kohden, kuten Muninin vienti.";
+"codes.import.title" = "Tuo";
+"codes.link.add" = "Lisää";
+"codes.link.failed" = "Koodia ei voitu lisätä";
+"codes.link.message" = "%@ salataan ja lisätään Muniniin.";
+"codes.link.title" = "Lisätäänkö 2FA-tili?";
+"codes.empty.message" = "Skannaa 2FA-QR-koodi tai tuo tilit Google Authenticatorista.";
+"codes.empty.title" = "Ei vielä tilejä";
+"codes.row.copyHint" = "Kopioi koodin";
+"codes.title" = "2FA";
+
+/** Errors **/
+"errors.keyMissing" = "Tällä laitteella ei vielä ole holvisi avainta.";
+"errors.loadVault.title" = "Holvia ei voitu ladata";
+"errors.munin.appStoreUnavailable" = "Tilausta ei voitu tarkistaa App Storesta. Yritä myöhemmin uudelleen.";
+"errors.munin.badRequest" = "Pyyntöä ei voitu muodostaa.";
+"errors.munin.http" = "Munin vastasi HTTP-koodilla %lld.";
+"errors.munin.notFound" = "Osoitteessa %@ ei ole Munin-rajapintaa.";
+"errors.munin.proof" = "Munin ei voinut vahvistaa pääsalasanaasi. Lukitse Munin, avaa se pääsalasanalla ja yritä uudelleen.";
+"errors.munin.subscriptionLinkedElsewhere" = "Tämä tilaus on jo toisen Munin-tilin käytössä.";
+"errors.munin.subscriptionOtherAccount" = "Tämä tilaus ostettiin toiselle Munin-tilille.";
+"errors.munin.subscriptionRequired" = "Ilman tilausta Munin on vain luku -tilassa. Tilaa lisätäksesi tai muuttaaksesi kohteita.";
+"errors.munin.tooManyAttempts" = "Liian monta yritystä. Yritä uudelleen tunnin kuluttua.";
+"errors.munin.transactionNotFound" = "App Store ei tunnista tätä ostoa.";
+"errors.munin.unexpectedResponse" = "Odottamaton vastaus palvelimelta. Onko %@ Munin?";
+"errors.munin.unreachable" = "Muniniin ei saada yhteyttä. %@";
+"errors.munin.vaultFull" = "Holvisi on täynnä (50 tiliä).";
+"errors.notSignedIn" = "Kirjaudu uudelleen sisään lisätäksesi tilejä.";
+"errors.openVault.title" = "Holvia ei voitu avata";
+"errors.parser.hotpNotSupported" = "Laskuripohjaisia koodeja (HOTP) ei tueta.";
+"errors.parser.invalidMigrationData" = "Google Authenticatorin vientiä ei voitu lukea.";
+"errors.parser.invalidSecret" = "Salaisuus ei ole kelvollista Base32-muotoa.";
+"errors.parser.missingSecret" = "Linkistä puuttuu salaisuus.";
+"errors.parser.unsupported" = "Tämä ei ole todennuslinkki tai -QR-koodi.";
+
+/** Global **/
+"global.cancel" = "Kumoa";
+"global.close" = "Sulje";
+"global.copied" = "Kopioitu";
+"global.copy" = "Kopioi";
+"global.delete" = "Poista";
+"global.done" = "Valmis";
+"global.edit" = "Muokkaa";
+"global.refresh" = "Päivitä";
+"global.save" = "Tallenna";
+"global.tryAgain" = "Yritä uudelleen";
+
+/** Lock **/
+"lock.command" = "Lukitse";
+"lock.biometrics.failed" = "Biometria ei toiminut. Käytä pääsalasanaa.";
+"lock.biometrics.notSetUp" = "Avaa kerran pääsalasanalla, niin voit käyttää biometriaa tällä laitteella.";
+"lock.forgotMasterPassword" = "Unohditko pääsalasanan?";
+"lock.masterPassword.placeholder" = "Pääsalasana";
+"lock.reason" = "Avaa holvini";
+"lock.recovery.continue" = "Jatka";
+"lock.recovery.message" = "Syötä palautusavaimesi valitaksesi uuden pääsalasanan.";
+"lock.step.masterPassword" = "Käytä pääsalasanaa";
+"lock.step.recoveryKey" = "Syötä palautusavain";
+"lock.step.signIn" = "Kirjaudu sisään";
+"lock.signedInAs" = "Kirjautunut: %@";
+"lock.switchAccount" = "%@ · Vaihda";
+"lock.title" = "Avaa holvini";
+"lock.unlock" = "Avaa";
+"lock.version" = "Versio %@";
+"lock.wrongMasterPassword" = "Pääsalasana on väärä.";
+
+/** Main **/
+"main.section.munin" = "Munin";
+"main.tab.codes" = "2FA";
+"main.tab.vault" = "Holvi";
+"main.window.title" = "Munin";
+
+/** Menu Bar **/
+"menuBar.copyUsername" = "Kopioi käyttäjänimi";
+"menuBar.open" = "Avaa Munin";
+"menuBar.quit" = "Lopeta Munin";
+
+/** Password **/
+"password.field.lastUpdated" = "Päivitetty viimeksi";
+"password.field.name" = "Nimi";
+"password.field.note" = "Muistiinpano";
+"password.field.password" = "Salasana";
+"password.field.url" = "URL";
+"password.field.username" = "Käyttäjänimi";
+
+/** Password Editor **/
+"passwordEditor.editTitle" = "Muokkaa salasanaa";
+"passwordEditor.generate" = "Luo";
+"passwordEditor.newTitle" = "Uusi salasana";
+
+/** Password Generator **/
+"passwordGenerator.fillPassword" = "Täytä salasana";
+"passwordGenerator.length" = "Pituus";
+"passwordGenerator.regenerate" = "Luo uudelleen";
+"passwordGenerator.strength.good" = "Hyvä salasana";
+"passwordGenerator.strength.strong" = "Vahva salasana";
+"passwordGenerator.strength.weak" = "Heikko salasana";
+"passwordGenerator.useCapitals" = "Käytä isoja kirjaimia (A–Z)";
+"passwordGenerator.useDigits" = "Käytä numeroita (0–9)";
+"passwordGenerator.useSymbols" = "Käytä symboleja (@!$%&*)";
+
+/** Password Inspector **/
+"passwordInspector.openWebsite" = "Avaa verkkosivusto";
+"passwordInspector.hide" = "Piilota";
+"passwordInspector.show" = "Näytä";
+
+/** Scanner **/
+"scanner.title" = "Skannaa QR-koodi";
+
+/** Sign In **/
+"signIn.error.missingAnonKey" = "Aseta APIConfig.anonKey julkiseksi avaimeksesi.";
+"signIn.error.noIdentityToken" = "Apple ei palauttanut tunnistetunnusta. Yritä uudelleen.";
+"signIn.error.failed" = "Kirjautuminen epäonnistui. %@";
+
+/** Vault **/
+"vault.copyUsername" = "Kopioi käyttäjänimi";
+"vault.copyPassword" = "Kopioi salasana";
+"vault.createItem" = "Luo kohde";
+"vault.delete.button" = "Poista %@";
+"vault.saveFailed.title" = "Muutosta ei voitu tallentaa";
+"vault.delete.message" = "%@ poistetaan kaikilta laitteiltasi. Tätä ei voi kumota.";
+"vault.delete.title" = "Poistetaanko salasana?";
+"vault.empty.title" = "Ei kohteita";
+"vault.search.prompt" = "Hae kaikista kohteista";
+"vault.sort" = "Järjestä";
+"vault.sort.ascending" = "Nouseva";
+"vault.sort.dateEdited" = "Muokkauspäivä";
+"vault.sort.descending" = "Laskeva";
+"vault.sort.direction" = "Järjestys";
+"vault.sort.title" = "Otsikko";
+"vault.title" = "Holvi";
+
+/** Vault Key **/
+"vaultKey.missing.checkAgain" = "Tarkista uudelleen";
+"vaultKey.missing.invalid" = "Tämä ei ole kelvollinen palautusavain.";
+"vaultKey.missing.message" = "Holvisi on salattu toisen laitteesi avaimella. Ota iCloud-avainnippu käyttöön molemmilla laitteilla ja tarkista uudelleen, tai liitä palautusavaimesi.";
+"vaultKey.missing.placeholder" = "Palautusavain";
+"vaultKey.missing.restore" = "Palauta";
+"vaultKey.missing.title" = "Holvin avain ei ole tällä laitteella";
+"vaultKey.recovery.backup" = "Säilytä kopio turvallisessa paikassa. Jos unohdat pääsalasanasi, palautusavain on ainoa tapa päästä takaisin holviisi.";
+"vaultKey.recovery.copy" = "Kopioi palautusavain";
+"vaultKey.recovery.explanation" = "Tilisi on salattu päästä päähän tällä avaimella. Munin ei voi lukea niitä eikä palauttaa niitä puolestasi.";
+"vaultKey.recovery.title" = "Palautusavain";
+
+/** Master password **/
+"masterPassword.confirm" = "Vahvista pääsalasana";
+"masterPassword.create.message" = "Avaa Munin kaikilla laitteillasi. Munin ei koskaan näe sitä eikä voi nollata sitä – jos unohdat sen, palautusavain on ainoa tie takaisin.";
+"masterPassword.create.title" = "Luo pääsalasana";
+"masterPassword.exists" = "Pääsalasana asetettiin juuri toisella laitteella. Avaa sillä.";
+"masterPassword.field" = "Pääsalasana";
+"masterPassword.mismatch" = "Salasanat eivät täsmää.";
+"masterPassword.reset.title" = "Valitse uusi pääsalasana";
+"masterPassword.tooShort" = "Käytä vähintään %lld merkkiä.";
+
+/** Settings **/
+"settings.about" = "Tietoja";
+"settings.autoFill" = "Automaattinen täyttö";
+"settings.autoFill.off" = "Pois";
+"settings.autoFill.on" = "Päällä";
+"settings.autoLock" = "Automaattinen lukitus";
+"settings.biometrics.face" = "Avaa Face ID:llä";
+"settings.biometrics.touch" = "Avaa Touch ID:llä";
+"settings.changeMasterPassword" = "Vaihda pääsalasana";
+"settings.currentMasterPassword" = "Nykyinen pääsalasana";
+"settings.data" = "Tiedot";
+"settings.export.confirm" = "Vie";
+"settings.export.failed" = "Vienti epäonnistui";
+"settings.export.footer" = "Viedyt tiedostot eivät ole salattuja. Poista tiedosto, kun olet tuonut sen muualle.";
+"settings.export.locked" = "Avaa Munin viedäksesi tietoja.";
+"settings.export.message" = "Tiedosto ei ole salattu. Kuka tahansa, joka saa sen, voi lukea kaiken sen sisällön.";
+"settings.export.passwords" = "Vie salasanat";
+"settings.export.passwords.filename" = "Munin-salasanat";
+"settings.export.title" = "Viedäänkö salaamaton tiedosto?";
+"settings.export.twoFactor" = "Vie 2FA-tilit";
+"settings.export.twoFactor.filename" = "Munin 2FA-tilit";
+"settings.locked" = "Avaa Munin muuttaaksesi suojausasetuksia.";
+"settings.privacyPolicy" = "Tietosuojakäytäntö";
+"settings.security" = "Suojaus";
+"settings.subscription" = "Tilaus";
+"settings.subscription.active" = "Aktiivinen";
+"settings.subscription.inactive" = "Ei tilausta";
+"settings.subscription.manage" = "Hallitse tilausta";
+"settings.subscription.restore" = "Palauta ostot";
+"settings.subscription.status" = "Tila";
+"settings.termsOfUse" = "Käyttöehdot";
+"settings.title" = "Asetukset";
+"settings.version" = "Versio";
+
+/** Search **/
+"search.empty.message" = "Etsi salasanoja ja 2FA-koodeja nimen, käyttäjänimen tai verkkosivuston perusteella.";
+"search.empty.title" = "Haku";
+"search.find" = "Etsi";
+"search.prompt" = "Salasanat ja 2FA";
+"search.section.codes" = "2FA";
+"search.section.passwords" = "Salasanat";
+"search.title" = "Haku";
+
+/** Import **/
+"import.button" = "Tuo salasanoja";
+"import.confirm.button" = "Tuo %lld salasanaa";
+"import.confirm.buttonAll" = "Tuo";
+"import.confirm.message" = "%lld uutta salasanaa salataan ja lisätään. %lld on jo holvissasi, ja ne ohitetaan.";
+"import.confirm.messageWithCodes" = "%lld uutta salasanaa ja %lld 2FA-tiliä salataan ja lisätään. %lld salasanaa on jo holvissasi, ja ne ohitetaan.";
+"import.confirm.title" = "Tuodaanko salasanat?";
+"import.done.message" = "%lld salasanaa tuotiin. Poista CSV-tiedosto nyt – se sisältää kaikki salasanasi selväkielisinä.";
+"import.done.messageWithCodes" = "%lld salasanaa ja %lld 2FA-tiliä tuotiin. Poista CSV-tiedosto nyt – se sisältää salasanasi ja 2FA-salaisuutesi selväkielisinä.";
+"import.error.columns" = "Tästä CSV-tiedostosta puuttuvat sarakkeet, joita Munin tarvitsee: salasana sekä nimi tai verkkosivusto.";
+"import.error.unreadable" = "Tiedostoa ei voitu lukea. Vie se UTF-8-muotoisena CSV-tiedostona.";
+"import.progress" = "Tuodaan %lld/%lld";
+"import.title" = "Tuo";
+
+/** Auto-lock **/
+"autoLock.fifteenMinutes" = "15 minuutin jälkeen";
+"autoLock.fiveMinutes" = "5 minuutin jälkeen";
+"autoLock.immediately" = "Heti";
+"autoLock.never" = "Ei koskaan";
+"autoLock.oneMinute" = "1 minuutin jälkeen";
+
+/** Subscription **/
+"subscription.billingIssue" = "App Store ei voinut uusia tilaustasi. Päivitä maksutapasi, jotta voit jatkaa lisäämistä ja muokkaamista.";
+"subscription.error.unverified" = "App Store ei voinut vahvistaa tätä ostoa.";
+"subscription.gracePeriod" = "Tilaustasi ei voitu uusia.";
+"subscription.message" = "Päästä päähän salatut salasanat ja 2FA-koodit kaikilla Apple-laitteillasi.";
+"subscription.readOnly" = "Vain luku. Tilaa lisätäksesi tai muuttaaksesi kohteita.";
+"subscription.subscribe" = "Tilaa";
+"subscription.title" = "Munin";
+"subscription.updatePayment" = "Päivitä maksutapa";
+
+/** AutoFill **/
+"autofill.allCodes" = "Kaikki koodit";
+"autofill.allPasswords" = "Kaikki salasanat";
+"autofill.banner" = "Täytä salasanat ja 2FA-koodit Muninilla.";
+"autofill.banner.setUp" = "Ota käyttöön";
+"autofill.setup.done" = "Munin on käytössä automaattisessa täytössä.";
+"autofill.setup.message" = "Munin voi täyttää salasanoja ja 2FA-koodeja Safarissa ja apeissa Face ID:n tai Touch ID:n jälkeen. Salasanat pysyvät salattuina, kunnes valitset yhden.";
+"autofill.setup.openSettings" = "Avaa Asetukset";
+"autofill.setup.step1.ios" = "Avaa Asetukset ja siirry kohtaan Yleiset ▸ Automaattinen täyttö ja salasanat.";
+"autofill.setup.step1.mac" = "Avaa Järjestelmäasetukset ja siirry kohtaan Yleiset ▸ Automaattinen täyttö ja salasanat.";
+"autofill.setup.step2" = "Laita Munin päälle kohdassa ”Täytä automaattisesti”.";
+"autofill.setup.step3.ios" = "Napauta Safarissa tai apissa kirjautumiskenttää ja valitse Munin näppäimistön yläpuolelta.";
+"autofill.setup.step3.mac" = "Klikkaa Safarissa kirjautumiskenttää ja valitse Munin avainvalikosta.";
+"autofill.setup.step4" = "Valinnainen: valitse Munin kohdassa ”Määritä koodit”, niin 2FA-asetuslinkit avautuvat Muninissa.";
+"autofill.setup.turnOn" = "Ota automaattinen täyttö käyttöön";
+"autofill.decryptFailed" = "Tätä salasanaa ei voitu purkaa.";
+"autofill.locked" = "Munin on lukittu";
+"autofill.search" = "Hae";
+"autofill.signIn" = "Avaa Munin ja kirjaudu sisään käyttääksesi automaattista täyttöä.";
+"autofill.suggested" = "Ehdotetut";
+"autofill.title" = "Munin";
+"autofill.turnOnBiometrics" = "Avaa Munin, ota Face ID- tai Touch ID -avaus käyttöön asetuksissa ja avaa Munin kerran. Sen jälkeen automaattinen täyttö voi käyttää sitä.";
+"autofill.unavailable" = "Automaattinen täyttö ei ole käytettävissä";

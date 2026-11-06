@@ -1,0 +1,3 @@
+/* Permission prompts and other Info.plist texts. */
+"NSCameraUsageDescription" = "2 ファクタ認証の設定時にサイトに表示される QR コードをスキャンします。";
+"NSFaceIDUsageDescription" = "Face ID で Munin のロックを解除します。";

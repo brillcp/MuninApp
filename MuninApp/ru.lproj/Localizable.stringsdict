@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>codes.row.secondsLeft</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>few</key>
+			<string>Осталось %lld секунды</string>
+			<key>many</key>
+			<string>Осталось %lld секунд</string>
+			<key>one</key>
+			<string>Осталась %lld секунда</string>
+			<key>other</key>
+			<string>Осталось %lld секунды</string>
+		</dict>
+	</dict>
+	<key>codes.subtitle</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>few</key>
+			<string>%lld учетные записи</string>
+			<key>many</key>
+			<string>%lld учетных записей</string>
+			<key>one</key>
+			<string>%lld учетная запись</string>
+			<key>other</key>
+			<string>%lld учетной записи</string>
+		</dict>
+	</dict>
+	<key>codes.undecryptable</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>few</key>
+			<string>%lld записи не удалось расшифровать ключом этого устройства.</string>
+			<key>many</key>
+			<string>%lld записей не удалось расшифровать ключом этого устройства.</string>
+			<key>one</key>
+			<string>%lld запись не удалось расшифровать ключом этого устройства.</string>
+			<key>other</key>
+			<string>%lld записи не удалось расшифровать ключом этого устройства.</string>
+		</dict>
+	</dict>
+	<key>vault.subtitle</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>few</key>
+			<string>%lld объекта</string>
+			<key>many</key>
+			<string>%lld объектов</string>
+			<key>one</key>
+			<string>%lld объект</string>
+			<key>other</key>
+			<string>%lld объекта</string>
+		</dict>
+	</dict>
+	<key>vault.undecryptable</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>few</key>
+			<string>%lld объекта не удалось расшифровать ключом этого устройства.</string>
+			<key>many</key>
+			<string>%lld объектов не удалось расшифровать ключом этого устройства.</string>
+			<key>one</key>
+			<string>%lld объект не удалось расшифровать ключом этого устройства.</string>
+			<key>other</key>
+			<string>%lld объекта не удалось расшифровать ключом этого устройства.</string>
+		</dict>
+	</dict>
+</dict>
+</plist>

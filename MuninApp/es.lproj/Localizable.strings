@@ -1,0 +1,299 @@
+/* Localizable.strings */
+
+/** Account **/
+"account.delete" = "Eliminar cuenta";
+"account.delete.failed" = "No se pudo eliminar la cuenta";
+"account.delete.locked" = "Desbloquea Munin para eliminar tu cuenta.";
+"account.delete.message" = "Se eliminarán de forma permanente tu cuenta de Munin, tus contraseñas y tus cuentas 2FA. No se puede deshacer. Confirmarás con tu cuenta de Apple, lo que también quita Munin de «Iniciar sesión con Apple».\n\nTu suscripción del App Store no se cancela. Cancélala primero en Gestionar suscripción.";
+"account.delete.title" = "¿Eliminar tu cuenta de Munin?";
+"account.showRecoveryKey" = "Mostrar clave de recuperación";
+"account.signOut" = "Cerrar sesión";
+
+/** Add Account **/
+"addAccount.chooseImage" = "Elegir imagen…";
+"addAccount.chooseScreenshot" = "Elegir captura de pantalla…";
+"addAccount.encrypting" = "Cifrando…";
+"addAccount.error.alreadyAddedMany" = "Esas cuentas ya están en tu bóveda.";
+"addAccount.error.alreadyAddedOne" = "Esa cuenta ya está en tu bóveda.";
+"addAccount.error.loadImage" = "No se pudo cargar la imagen.";
+"addAccount.error.noQRCode" = "No se encontró ningún código QR en la imagen.";
+"addAccount.error.readImage" = "No se pudo leer la imagen.";
+"addAccount.link.add" = "Añadir desde enlace";
+"addAccount.link.header" = "Enlace";
+"addAccount.link.placeholder" = "otpauth://…";
+"addAccount.manual.account" = "Cuenta, p. ej. tu@ejemplo.com";
+"addAccount.manual.add" = "Añadir cuenta";
+"addAccount.manual.digits" = "Dígitos";
+"addAccount.manual.footer" = "Los sitios muestran la clave de configuración en «¿No puedes escanear el código QR?».";
+"addAccount.manual.header" = "Introducir manualmente";
+"addAccount.manual.issuer" = "Emisor, p. ej. GitHub";
+"addAccount.manual.setupKey" = "Clave de configuración";
+"addAccount.qr.footer" = "El código QR de 2FA de un sitio, o el código QR de Google Authenticator en Transferir cuentas → Exportar cuentas para importarlo todo de una vez.";
+"addAccount.qr.header" = "Código QR";
+"addAccount.scanQRCode" = "Escanear código QR";
+"addAccount.title" = "Añadir cuenta";
+
+/** Codes **/
+"codes.add" = "Añadir";
+"codes.copyCode" = "Copiar código";
+"codes.delete.button" = "Eliminar %@";
+"codes.delete.message" = "Asegúrate de que la 2FA esté desactivada para %@ o de que tienes otra forma de iniciar sesión. No se puede deshacer.";
+"codes.delete.title" = "¿Eliminar cuenta?";
+"codes.empty.add" = "Añadir cuenta";
+"codes.import.button" = "Importar cuentas 2FA";
+"codes.import.confirm.button" = "Importar %lld cuentas";
+"codes.import.confirm.message" = "Se cifrarán y añadirán %lld cuentas nuevas. %lld ya están en Munin y se omitirán.";
+"codes.import.confirm.messageWithFailures" = "Se cifrarán y añadirán %lld cuentas nuevas. %lld ya están en Munin y se omitirán. No se pudieron leer %lld líneas.";
+"codes.import.confirm.title" = "¿Importar cuentas 2FA?";
+"codes.import.done" = "Se importaron %lld cuentas. Elimina el archivo ahora: contiene tus secretos 2FA en texto plano.";
+"codes.import.error.empty" = "Este archivo no tiene enlaces 2FA. Elige un archivo con un enlace otpauth:// por línea, como la exportación de Munin.";
+"codes.import.title" = "Importar";
+"codes.link.add" = "Añadir";
+"codes.link.failed" = "No se pudo añadir el código";
+"codes.link.message" = "%@ se cifrará y se añadirá a Munin.";
+"codes.link.title" = "¿Añadir cuenta 2FA?";
+"codes.empty.message" = "Escanea un código QR de 2FA o importa desde Google Authenticator.";
+"codes.empty.title" = "Aún no hay cuentas";
+"codes.row.copyHint" = "Copia el código";
+"codes.title" = "2FA";
+
+/** Errors **/
+"errors.keyMissing" = "Este dispositivo aún no tiene la clave de tu bóveda.";
+"errors.loadVault.title" = "No se pudo cargar tu bóveda";
+"errors.munin.appStoreUnavailable" = "No se pudo comprobar tu suscripción con el App Store. Inténtalo más tarde.";
+"errors.munin.badRequest" = "No se pudo crear la solicitud.";
+"errors.munin.http" = "Munin respondió con HTTP %lld.";
+"errors.munin.notFound" = "No hay ninguna API de Munin en %@.";
+"errors.munin.proof" = "Munin no pudo verificar tu contraseña maestra. Bloquea Munin, desbloquéalo con tu contraseña maestra e inténtalo de nuevo.";
+"errors.munin.subscriptionLinkedElsewhere" = "Esta suscripción ya la usa otra cuenta de Munin.";
+"errors.munin.subscriptionOtherAccount" = "Esta suscripción se compró para otra cuenta de Munin.";
+"errors.munin.subscriptionRequired" = "Sin suscripción, Munin es de solo lectura. Suscríbete para añadir o cambiar elementos.";
+"errors.munin.tooManyAttempts" = "Demasiados intentos. Inténtalo de nuevo en una hora.";
+"errors.munin.transactionNotFound" = "El App Store no reconoce esta compra.";
+"errors.munin.unexpectedResponse" = "Respuesta inesperada del servidor. ¿Es %@ Munin?";
+"errors.munin.unreachable" = "No se puede conectar con Munin. %@";
+"errors.munin.vaultFull" = "Tu bóveda está llena (50 cuentas).";
+"errors.notSignedIn" = "Vuelve a iniciar sesión para añadir cuentas.";
+"errors.openVault.title" = "No se pudo abrir tu bóveda";
+"errors.parser.hotpNotSupported" = "Los códigos basados en contador (HOTP) no son compatibles.";
+"errors.parser.invalidMigrationData" = "No se pudo leer la exportación de Google Authenticator.";
+"errors.parser.invalidSecret" = "El secreto no es Base32 válido.";
+"errors.parser.missingSecret" = "El enlace no tiene secreto.";
+"errors.parser.unsupported" = "Eso no es un enlace ni un código QR de autenticación.";
+
+/** Global **/
+"global.cancel" = "Cancelar";
+"global.close" = "Cerrar";
+"global.copied" = "Copiado";
+"global.copy" = "Copiar";
+"global.delete" = "Eliminar";
+"global.done" = "OK";
+"global.edit" = "Editar";
+"global.refresh" = "Actualizar";
+"global.save" = "Guardar";
+"global.tryAgain" = "Reintentar";
+
+/** Lock **/
+"lock.command" = "Bloquear";
+"lock.biometrics.failed" = "La biometría no funcionó. Usa tu contraseña maestra.";
+"lock.biometrics.notSetUp" = "Desbloquea una vez con tu contraseña maestra para usar la biometría en este dispositivo.";
+"lock.forgotMasterPassword" = "¿Olvidaste la contraseña maestra?";
+"lock.masterPassword.placeholder" = "Contraseña maestra";
+"lock.reason" = "Desbloquear mi bóveda";
+"lock.recovery.continue" = "Continuar";
+"lock.recovery.message" = "Introduce tu clave de recuperación para elegir una nueva contraseña maestra.";
+"lock.step.masterPassword" = "Usar contraseña maestra";
+"lock.step.recoveryKey" = "Introducir clave de recuperación";
+"lock.step.signIn" = "Iniciar sesión";
+"lock.signedInAs" = "Sesión iniciada como %@";
+"lock.switchAccount" = "%@ · Cambiar";
+"lock.title" = "Desbloquear mi bóveda";
+"lock.unlock" = "Desbloquear";
+"lock.version" = "Versión %@";
+"lock.wrongMasterPassword" = "La contraseña maestra no es correcta.";
+
+/** Main **/
+"main.section.munin" = "Munin";
+"main.tab.codes" = "2FA";
+"main.tab.vault" = "Bóveda";
+"main.window.title" = "Munin";
+
+/** Menu Bar **/
+"menuBar.copyUsername" = "Copiar nombre de usuario";
+"menuBar.open" = "Abrir Munin";
+"menuBar.quit" = "Salir de Munin";
+
+/** Password **/
+"password.field.lastUpdated" = "Última actualización";
+"password.field.name" = "Nombre";
+"password.field.note" = "Nota";
+"password.field.password" = "Contraseña";
+"password.field.url" = "URL";
+"password.field.username" = "Nombre de usuario";
+
+/** Password Editor **/
+"passwordEditor.editTitle" = "Editar contraseña";
+"passwordEditor.generate" = "Generar";
+"passwordEditor.newTitle" = "Nueva contraseña";
+
+/** Password Generator **/
+"passwordGenerator.fillPassword" = "Rellenar contraseña";
+"passwordGenerator.length" = "Longitud";
+"passwordGenerator.regenerate" = "Volver a generar";
+"passwordGenerator.strength.good" = "Contraseña buena";
+"passwordGenerator.strength.strong" = "Contraseña segura";
+"passwordGenerator.strength.weak" = "Contraseña débil";
+"passwordGenerator.useCapitals" = "Usar mayúsculas (A–Z)";
+"passwordGenerator.useDigits" = "Usar dígitos (0–9)";
+"passwordGenerator.useSymbols" = "Usar símbolos (@!$%&*)";
+
+/** Password Inspector **/
+"passwordInspector.openWebsite" = "Abrir sitio web";
+"passwordInspector.hide" = "Ocultar";
+"passwordInspector.show" = "Mostrar";
+
+/** Scanner **/
+"scanner.title" = "Escanear código QR";
+
+/** Sign In **/
+"signIn.error.missingAnonKey" = "Define APIConfig.anonKey con tu clave pública.";
+"signIn.error.noIdentityToken" = "Apple no devolvió ningún token de identidad. Inténtalo de nuevo.";
+"signIn.error.failed" = "Error al iniciar sesión. %@";
+
+/** Vault **/
+"vault.copyUsername" = "Copiar nombre de usuario";
+"vault.copyPassword" = "Copiar contraseña";
+"vault.createItem" = "Crear elemento";
+"vault.delete.button" = "Eliminar %@";
+"vault.saveFailed.title" = "No se pudo guardar el cambio";
+"vault.delete.message" = "%@ se eliminará de todos tus dispositivos. No se puede deshacer.";
+"vault.delete.title" = "¿Eliminar contraseña?";
+"vault.empty.title" = "No hay elementos";
+"vault.search.prompt" = "Buscar en todos los elementos";
+"vault.sort" = "Ordenar";
+"vault.sort.ascending" = "Ascendente";
+"vault.sort.dateEdited" = "Fecha de edición";
+"vault.sort.descending" = "Descendente";
+"vault.sort.direction" = "Orden";
+"vault.sort.title" = "Título";
+"vault.title" = "Bóveda";
+
+/** Vault Key **/
+"vaultKey.missing.checkAgain" = "Volver a comprobar";
+"vaultKey.missing.invalid" = "No es una clave de recuperación válida.";
+"vaultKey.missing.message" = "Tu bóveda está cifrada con una clave de tu otro dispositivo. Activa el Llavero de iCloud en ambos dispositivos y vuelve a comprobar, o pega tu clave de recuperación.";
+"vaultKey.missing.placeholder" = "Clave de recuperación";
+"vaultKey.missing.restore" = "Restaurar";
+"vaultKey.missing.title" = "La clave de la bóveda no está en este dispositivo";
+"vaultKey.recovery.backup" = "Guarda una copia en un lugar seguro. Si olvidas tu contraseña maestra, la clave de recuperación es la única forma de volver a tu bóveda.";
+"vaultKey.recovery.copy" = "Copiar clave de recuperación";
+"vaultKey.recovery.explanation" = "Tus cuentas están cifradas de extremo a extremo con esta clave. Munin no puede leerlas ni recuperarlas por ti.";
+"vaultKey.recovery.title" = "Clave de recuperación";
+
+/** Master password **/
+"masterPassword.confirm" = "Confirmar contraseña maestra";
+"masterPassword.create.message" = "Desbloquea Munin en todos tus dispositivos. Munin nunca la ve y no puede restablecerla; si la olvidas, tu clave de recuperación es la única forma de volver.";
+"masterPassword.create.title" = "Crear una contraseña maestra";
+"masterPassword.exists" = "Se acaba de configurar una contraseña maestra en otro dispositivo. Desbloquea con esa.";
+"masterPassword.field" = "Contraseña maestra";
+"masterPassword.mismatch" = "Las contraseñas no coinciden.";
+"masterPassword.reset.title" = "Elegir una nueva contraseña maestra";
+"masterPassword.tooShort" = "Usa al menos %lld caracteres.";
+
+/** Settings **/
+"settings.about" = "Acerca de";
+"settings.autoFill" = "Autorrelleno";
+"settings.autoFill.off" = "Desactivado";
+"settings.autoFill.on" = "Activado";
+"settings.autoLock" = "Bloqueo automático";
+"settings.biometrics.face" = "Desbloquear con Face ID";
+"settings.biometrics.touch" = "Desbloquear con Touch ID";
+"settings.changeMasterPassword" = "Cambiar contraseña maestra";
+"settings.currentMasterPassword" = "Contraseña maestra actual";
+"settings.data" = "Datos";
+"settings.export.confirm" = "Exportar";
+"settings.export.failed" = "No se pudo exportar";
+"settings.export.footer" = "Las exportaciones no están cifradas. Elimina el archivo cuando lo hayas importado en otro sitio.";
+"settings.export.locked" = "Desbloquea Munin para exportar.";
+"settings.export.message" = "El archivo no está cifrado. Cualquiera que lo obtenga puede leer todo su contenido.";
+"settings.export.passwords" = "Exportar contraseñas";
+"settings.export.passwords.filename" = "Contraseñas de Munin";
+"settings.export.title" = "¿Exportar archivo sin cifrar?";
+"settings.export.twoFactor" = "Exportar cuentas 2FA";
+"settings.export.twoFactor.filename" = "Cuentas 2FA de Munin";
+"settings.locked" = "Desbloquea Munin para cambiar los ajustes de seguridad.";
+"settings.privacyPolicy" = "Política de privacidad";
+"settings.security" = "Seguridad";
+"settings.subscription" = "Suscripción";
+"settings.subscription.active" = "Activa";
+"settings.subscription.inactive" = "Sin suscripción";
+"settings.subscription.manage" = "Gestionar suscripción";
+"settings.subscription.restore" = "Restaurar compras";
+"settings.subscription.status" = "Estado";
+"settings.termsOfUse" = "Condiciones de uso";
+"settings.title" = "Ajustes";
+"settings.version" = "Versión";
+
+/** Search **/
+"search.empty.message" = "Encuentra contraseñas y códigos 2FA por nombre, nombre de usuario o sitio web.";
+"search.empty.title" = "Buscar";
+"search.find" = "Buscar";
+"search.prompt" = "Contraseñas y 2FA";
+"search.section.codes" = "2FA";
+"search.section.passwords" = "Contraseñas";
+"search.title" = "Buscar";
+
+/** Import **/
+"import.button" = "Importar contraseñas";
+"import.confirm.button" = "Importar %lld contraseñas";
+"import.confirm.buttonAll" = "Importar";
+"import.confirm.message" = "Se cifrarán y añadirán %lld contraseñas nuevas. %lld ya están en tu bóveda y se omitirán.";
+"import.confirm.messageWithCodes" = "Se cifrarán y añadirán %lld contraseñas nuevas y %lld cuentas 2FA. %lld contraseñas ya están en tu bóveda y se omitirán.";
+"import.confirm.title" = "¿Importar contraseñas?";
+"import.done.message" = "Se importaron %lld contraseñas. Elimina el archivo CSV ahora: contiene todas tus contraseñas en texto plano.";
+"import.done.messageWithCodes" = "Se importaron %lld contraseñas y %lld cuentas 2FA. Elimina el archivo CSV ahora: contiene tus contraseñas y secretos 2FA en texto plano.";
+"import.error.columns" = "Este CSV no tiene las columnas que Munin necesita: una contraseña y un nombre o sitio web.";
+"import.error.unreadable" = "No se pudo leer el archivo. Expórtalo como CSV UTF-8.";
+"import.progress" = "Importando %lld de %lld";
+"import.title" = "Importar";
+
+/** Auto-lock **/
+"autoLock.fifteenMinutes" = "Tras 15 minutos";
+"autoLock.fiveMinutes" = "Tras 5 minutos";
+"autoLock.immediately" = "Inmediatamente";
+"autoLock.never" = "Nunca";
+"autoLock.oneMinute" = "Tras 1 minuto";
+
+/** Subscription **/
+"subscription.billingIssue" = "El App Store no pudo renovar tu suscripción. Actualiza tu método de pago para seguir añadiendo y editando.";
+"subscription.error.unverified" = "El App Store no pudo verificar esta compra.";
+"subscription.gracePeriod" = "No se pudo renovar tu suscripción.";
+"subscription.message" = "Contraseñas y códigos 2FA cifrados de extremo a extremo en todos tus dispositivos Apple.";
+"subscription.readOnly" = "Solo lectura. Suscríbete para añadir o cambiar elementos.";
+"subscription.subscribe" = "Suscribirse";
+"subscription.title" = "Munin";
+"subscription.updatePayment" = "Actualizar pago";
+
+/** AutoFill **/
+"autofill.allCodes" = "Todos los códigos";
+"autofill.allPasswords" = "Todas las contraseñas";
+"autofill.banner" = "Rellena contraseñas y códigos 2FA con Munin.";
+"autofill.banner.setUp" = "Configurar";
+"autofill.setup.done" = "Munin está activado para el autorrelleno.";
+"autofill.setup.message" = "Munin puede rellenar contraseñas y códigos 2FA en Safari y en apps, tras Face ID o Touch ID. Las contraseñas siguen cifradas hasta que eliges una.";
+"autofill.setup.openSettings" = "Abrir Ajustes";
+"autofill.setup.step1.ios" = "Abre Ajustes y ve a General ▸ Autorrelleno y contraseñas.";
+"autofill.setup.step1.mac" = "Abre Ajustes del Sistema y ve a General ▸ Autorrelleno y contraseñas.";
+"autofill.setup.step2" = "En «Autorrellenar desde», activa Munin.";
+"autofill.setup.step3.ios" = "En Safari o una app, toca un campo de inicio de sesión y elige Munin encima del teclado.";
+"autofill.setup.step3.mac" = "En Safari, haz clic en un campo de inicio de sesión y elige Munin en el menú de la llave.";
+"autofill.setup.step4" = "Opcional: elige Munin en «Configurar códigos en» para que los enlaces de configuración 2FA se abran en Munin.";
+"autofill.setup.turnOn" = "Activar autorrelleno";
+"autofill.decryptFailed" = "No se pudo descifrar esta contraseña.";
+"autofill.locked" = "Munin está bloqueado";
+"autofill.search" = "Buscar";
+"autofill.signIn" = "Abre Munin e inicia sesión para usar el autorrelleno.";
+"autofill.suggested" = "Sugerencias";
+"autofill.title" = "Munin";
+"autofill.turnOnBiometrics" = "Abre Munin, activa el desbloqueo con Face ID o Touch ID en Ajustes y desbloquea Munin una vez. Después el autorrelleno podrá usarlo.";
+"autofill.unavailable" = "El autorrelleno no está disponible";

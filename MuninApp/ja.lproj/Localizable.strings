@@ -1,0 +1,299 @@
+/* Localizable.strings */
+
+/** Account **/
+"account.delete" = "アカウントを削除";
+"account.delete.failed" = "アカウントを削除できませんでした";
+"account.delete.locked" = "アカウントを削除するには Munin のロックを解除してください。";
+"account.delete.message" = "Munin アカウント、パスワード、2FA アカウントが完全に削除されます。この操作は取り消せません。Apple アカウントで確認すると、「Apple でサインイン」からも Munin が削除されます。\n\nApp Store のサブスクリプションは解約されません。先に「サブスクリプションを管理」で解約してください。";
+"account.delete.title" = "Munin アカウントを削除しますか？";
+"account.showRecoveryKey" = "復旧キーを表示";
+"account.signOut" = "サインアウト";
+
+/** Add Account **/
+"addAccount.chooseImage" = "画像を選択…";
+"addAccount.chooseScreenshot" = "スクリーンショットを選択…";
+"addAccount.encrypting" = "暗号化中…";
+"addAccount.error.alreadyAddedMany" = "これらのアカウントはすでに保管庫にあります。";
+"addAccount.error.alreadyAddedOne" = "このアカウントはすでに保管庫にあります。";
+"addAccount.error.loadImage" = "画像を読み込めませんでした。";
+"addAccount.error.noQRCode" = "画像に QR コードが見つかりませんでした。";
+"addAccount.error.readImage" = "画像を読み取れませんでした。";
+"addAccount.link.add" = "リンクから追加";
+"addAccount.link.header" = "リンク";
+"addAccount.link.placeholder" = "otpauth://…";
+"addAccount.manual.account" = "アカウント（例: you@example.com）";
+"addAccount.manual.add" = "アカウントを追加";
+"addAccount.manual.digits" = "桁数";
+"addAccount.manual.footer" = "サイトでは「QR コードをスキャンできない場合」の下に設定キーが表示されます。";
+"addAccount.manual.header" = "手動で入力";
+"addAccount.manual.issuer" = "発行元（例: GitHub）";
+"addAccount.manual.setupKey" = "設定キー";
+"addAccount.qr.footer" = "サイトの 2FA 用 QR コード、または Google Authenticator の「アカウントを移行」→「アカウントをエクスポート」の QR コードで一括読み込みできます。";
+"addAccount.qr.header" = "QR コード";
+"addAccount.scanQRCode" = "QR コードをスキャン";
+"addAccount.title" = "アカウントを追加";
+
+/** Codes **/
+"codes.add" = "追加";
+"codes.copyCode" = "コードをコピー";
+"codes.delete.button" = "%@ を削除";
+"codes.delete.message" = "%@ の 2FA をオフにしたか、別のサインイン方法があることを確認してください。この操作は取り消せません。";
+"codes.delete.title" = "アカウントを削除しますか？";
+"codes.empty.add" = "アカウントを追加";
+"codes.import.button" = "2FA アカウントを読み込む";
+"codes.import.confirm.button" = "%lld 件を読み込む";
+"codes.import.confirm.message" = "新しいアカウント %lld 件を暗号化して追加します。%lld 件はすでに Munin にあるためスキップします。";
+"codes.import.confirm.messageWithFailures" = "新しいアカウント %lld 件を暗号化して追加します。%lld 件はすでに Munin にあるためスキップします。%lld 行は読み取れませんでした。";
+"codes.import.confirm.title" = "2FA アカウントを読み込みますか？";
+"codes.import.done" = "%lld 件のアカウントを読み込みました。2FA シークレットが平文で含まれているため、今すぐファイルを削除してください。";
+"codes.import.error.empty" = "このファイルには 2FA リンクがありません。Munin のエクスポートのように、1 行に 1 つの otpauth:// リンクがあるファイルを選択してください。";
+"codes.import.title" = "読み込む";
+"codes.link.add" = "追加";
+"codes.link.failed" = "コードを追加できませんでした";
+"codes.link.message" = "%@ を暗号化して Munin に追加します。";
+"codes.link.title" = "2FA アカウントを追加しますか？";
+"codes.empty.message" = "2FA 用 QR コードをスキャンするか、Google Authenticator から読み込んでください。";
+"codes.empty.title" = "アカウントがありません";
+"codes.row.copyHint" = "コードをコピーします";
+"codes.title" = "2FA";
+
+/** Errors **/
+"errors.keyMissing" = "このデバイスにはまだ保管庫のキーがありません。";
+"errors.loadVault.title" = "保管庫を読み込めませんでした";
+"errors.munin.appStoreUnavailable" = "App Store でサブスクリプションを確認できませんでした。後でもう一度お試しください。";
+"errors.munin.badRequest" = "リクエストを作成できませんでした。";
+"errors.munin.http" = "Munin が HTTP %lld を返しました。";
+"errors.munin.notFound" = "%@ に Munin API がありません。";
+"errors.munin.proof" = "Munin はマスターパスワードを確認できませんでした。Munin をロックし、マスターパスワードでロック解除してからもう一度お試しください。";
+"errors.munin.subscriptionLinkedElsewhere" = "このサブスクリプションはすでに別の Munin アカウントで使用されています。";
+"errors.munin.subscriptionOtherAccount" = "このサブスクリプションは別の Munin アカウント用に購入されました。";
+"errors.munin.subscriptionRequired" = "サブスクリプションがない場合、Munin は読み取り専用です。項目を追加・変更するには登録してください。";
+"errors.munin.tooManyAttempts" = "試行回数が多すぎます。1 時間後にもう一度お試しください。";
+"errors.munin.transactionNotFound" = "App Store はこの購入を認識できません。";
+"errors.munin.unexpectedResponse" = "サーバから予期しない応答がありました。%@ は Munin ですか？";
+"errors.munin.unreachable" = "Munin に接続できません。%@";
+"errors.munin.vaultFull" = "保管庫がいっぱいです（50 アカウント）。";
+"errors.notSignedIn" = "アカウントを追加するには再度サインインしてください。";
+"errors.openVault.title" = "保管庫を開けませんでした";
+"errors.parser.hotpNotSupported" = "カウンタ方式のコード（HOTP）には対応していません。";
+"errors.parser.invalidMigrationData" = "Google Authenticator のエクスポートを読み取れませんでした。";
+"errors.parser.invalidSecret" = "シークレットが有効な Base32 ではありません。";
+"errors.parser.missingSecret" = "リンクにシークレットがありません。";
+"errors.parser.unsupported" = "認証用のリンクまたは QR コードではありません。";
+
+/** Global **/
+"global.cancel" = "キャンセル";
+"global.close" = "閉じる";
+"global.copied" = "コピーしました";
+"global.copy" = "コピー";
+"global.delete" = "削除";
+"global.done" = "完了";
+"global.edit" = "編集";
+"global.refresh" = "更新";
+"global.save" = "保存";
+"global.tryAgain" = "再試行";
+
+/** Lock **/
+"lock.command" = "ロック";
+"lock.biometrics.failed" = "生体認証に失敗しました。マスターパスワードを使用してください。";
+"lock.biometrics.notSetUp" = "このデバイスで生体認証を使うには、一度マスターパスワードでロックを解除してください。";
+"lock.forgotMasterPassword" = "マスターパスワードを忘れた場合";
+"lock.masterPassword.placeholder" = "マスターパスワード";
+"lock.reason" = "保管庫のロックを解除";
+"lock.recovery.continue" = "続ける";
+"lock.recovery.message" = "復旧キーを入力して、新しいマスターパスワードを設定してください。";
+"lock.step.masterPassword" = "マスターパスワードを使用";
+"lock.step.recoveryKey" = "復旧キーを入力";
+"lock.step.signIn" = "サインイン";
+"lock.signedInAs" = "%@ でサインイン中";
+"lock.switchAccount" = "%@ · 切り替え";
+"lock.title" = "保管庫のロックを解除";
+"lock.unlock" = "ロック解除";
+"lock.version" = "バージョン %@";
+"lock.wrongMasterPassword" = "マスターパスワードが正しくありません。";
+
+/** Main **/
+"main.section.munin" = "Munin";
+"main.tab.codes" = "2FA";
+"main.tab.vault" = "保管庫";
+"main.window.title" = "Munin";
+
+/** Menu Bar **/
+"menuBar.copyUsername" = "ユーザ名をコピー";
+"menuBar.open" = "Munin を開く";
+"menuBar.quit" = "Munin を終了";
+
+/** Password **/
+"password.field.lastUpdated" = "最終更新日";
+"password.field.name" = "名前";
+"password.field.note" = "メモ";
+"password.field.password" = "パスワード";
+"password.field.url" = "URL";
+"password.field.username" = "ユーザ名";
+
+/** Password Editor **/
+"passwordEditor.editTitle" = "パスワードを編集";
+"passwordEditor.generate" = "生成";
+"passwordEditor.newTitle" = "新規パスワード";
+
+/** Password Generator **/
+"passwordGenerator.fillPassword" = "パスワードを入力";
+"passwordGenerator.length" = "長さ";
+"passwordGenerator.regenerate" = "再生成";
+"passwordGenerator.strength.good" = "良好なパスワード";
+"passwordGenerator.strength.strong" = "強力なパスワード";
+"passwordGenerator.strength.weak" = "脆弱なパスワード";
+"passwordGenerator.useCapitals" = "大文字を使用（A–Z）";
+"passwordGenerator.useDigits" = "数字を使用（0–9）";
+"passwordGenerator.useSymbols" = "記号を使用（@!$%&*）";
+
+/** Password Inspector **/
+"passwordInspector.openWebsite" = "Web サイトを開く";
+"passwordInspector.hide" = "非表示";
+"passwordInspector.show" = "表示";
+
+/** Scanner **/
+"scanner.title" = "QR コードをスキャン";
+
+/** Sign In **/
+"signIn.error.missingAnonKey" = "APIConfig.anonKey に公開キーを設定してください。";
+"signIn.error.noIdentityToken" = "Apple から ID トークンが返されませんでした。もう一度お試しください。";
+"signIn.error.failed" = "サインインに失敗しました。%@";
+
+/** Vault **/
+"vault.copyUsername" = "ユーザ名をコピー";
+"vault.copyPassword" = "パスワードをコピー";
+"vault.createItem" = "項目を作成";
+"vault.delete.button" = "%@ を削除";
+"vault.saveFailed.title" = "変更を保存できませんでした";
+"vault.delete.message" = "%@ はすべてのデバイスから削除されます。この操作は取り消せません。";
+"vault.delete.title" = "パスワードを削除しますか？";
+"vault.empty.title" = "項目がありません";
+"vault.search.prompt" = "すべての項目を検索";
+"vault.sort" = "並べ替え";
+"vault.sort.ascending" = "昇順";
+"vault.sort.dateEdited" = "編集日";
+"vault.sort.descending" = "降順";
+"vault.sort.direction" = "順序";
+"vault.sort.title" = "タイトル";
+"vault.title" = "保管庫";
+
+/** Vault Key **/
+"vaultKey.missing.checkAgain" = "再確認";
+"vaultKey.missing.invalid" = "有効な復旧キーではありません。";
+"vaultKey.missing.message" = "保管庫はほかのデバイスのキーで暗号化されています。両方のデバイスで iCloud キーチェーンをオンにして再確認するか、復旧キーをペーストしてください。";
+"vaultKey.missing.placeholder" = "復旧キー";
+"vaultKey.missing.restore" = "復元";
+"vaultKey.missing.title" = "このデバイスに保管庫のキーがありません";
+"vaultKey.recovery.backup" = "安全な場所にコピーを保管してください。マスターパスワードを忘れた場合、保管庫に戻る唯一の方法は復旧キーです。";
+"vaultKey.recovery.copy" = "復旧キーをコピー";
+"vaultKey.recovery.explanation" = "アカウントはこのキーでエンドツーエンドで暗号化されています。Munin はそれらを読むことも、代わりに復旧することもできません。";
+"vaultKey.recovery.title" = "復旧キー";
+
+/** Master password **/
+"masterPassword.confirm" = "マスターパスワードを確認";
+"masterPassword.create.message" = "すべてのデバイスで Munin のロックを解除します。Munin がこれを見ることはなく、リセットもできません。忘れた場合は復旧キーが唯一の手段です。";
+"masterPassword.create.title" = "マスターパスワードを作成";
+"masterPassword.exists" = "別のデバイスでマスターパスワードが設定されました。そのパスワードでロックを解除してください。";
+"masterPassword.field" = "マスターパスワード";
+"masterPassword.mismatch" = "パスワードが一致しません。";
+"masterPassword.reset.title" = "新しいマスターパスワードを設定";
+"masterPassword.tooShort" = "%lld 文字以上にしてください。";
+
+/** Settings **/
+"settings.about" = "情報";
+"settings.autoFill" = "自動入力";
+"settings.autoFill.off" = "オフ";
+"settings.autoFill.on" = "オン";
+"settings.autoLock" = "自動ロック";
+"settings.biometrics.face" = "Face ID でロック解除";
+"settings.biometrics.touch" = "Touch ID でロック解除";
+"settings.changeMasterPassword" = "マスターパスワードを変更";
+"settings.currentMasterPassword" = "現在のマスターパスワード";
+"settings.data" = "データ";
+"settings.export.confirm" = "書き出す";
+"settings.export.failed" = "書き出しに失敗しました";
+"settings.export.footer" = "書き出したファイルは暗号化されません。ほかの場所で読み込んだらファイルを削除してください。";
+"settings.export.locked" = "書き出すには Munin のロックを解除してください。";
+"settings.export.message" = "ファイルは暗号化されていません。入手した人は誰でも内容をすべて読めます。";
+"settings.export.passwords" = "パスワードを書き出す";
+"settings.export.passwords.filename" = "Munin パスワード";
+"settings.export.title" = "暗号化されていないファイルを書き出しますか？";
+"settings.export.twoFactor" = "2FA アカウントを書き出す";
+"settings.export.twoFactor.filename" = "Munin 2FA アカウント";
+"settings.locked" = "セキュリティ設定を変更するには Munin のロックを解除してください。";
+"settings.privacyPolicy" = "プライバシーポリシー";
+"settings.security" = "セキュリティ";
+"settings.subscription" = "サブスクリプション";
+"settings.subscription.active" = "有効";
+"settings.subscription.inactive" = "未登録";
+"settings.subscription.manage" = "サブスクリプションを管理";
+"settings.subscription.restore" = "購入を復元";
+"settings.subscription.status" = "状況";
+"settings.termsOfUse" = "利用規約";
+"settings.title" = "設定";
+"settings.version" = "バージョン";
+
+/** Search **/
+"search.empty.message" = "名前、ユーザ名、Web サイトでパスワードや 2FA コードを検索できます。";
+"search.empty.title" = "検索";
+"search.find" = "検索";
+"search.prompt" = "パスワードと 2FA";
+"search.section.codes" = "2FA";
+"search.section.passwords" = "パスワード";
+"search.title" = "検索";
+
+/** Import **/
+"import.button" = "パスワードを読み込む";
+"import.confirm.button" = "%lld 件のパスワードを読み込む";
+"import.confirm.buttonAll" = "読み込む";
+"import.confirm.message" = "新しいパスワード %lld 件を暗号化して追加します。%lld 件はすでに保管庫にあるためスキップします。";
+"import.confirm.messageWithCodes" = "新しいパスワード %lld 件と 2FA アカウント %lld 件を暗号化して追加します。パスワード %lld 件はすでに保管庫にあるためスキップします。";
+"import.confirm.title" = "パスワードを読み込みますか？";
+"import.done.message" = "%lld 件のパスワードを読み込みました。すべてのパスワードが平文で含まれているため、今すぐ CSV ファイルを削除してください。";
+"import.done.messageWithCodes" = "%lld 件のパスワードと %lld 件の 2FA アカウントを読み込みました。パスワードと 2FA シークレットが平文で含まれているため、今すぐ CSV ファイルを削除してください。";
+"import.error.columns" = "この CSV には Munin に必要な列（パスワードと、名前または Web サイト）がありません。";
+"import.error.unreadable" = "ファイルを読み取れませんでした。UTF-8 の CSV として書き出してください。";
+"import.progress" = "%lld / %lld 件を読み込み中";
+"import.title" = "読み込む";
+
+/** Auto-lock **/
+"autoLock.fifteenMinutes" = "15 分後";
+"autoLock.fiveMinutes" = "5 分後";
+"autoLock.immediately" = "すぐに";
+"autoLock.never" = "しない";
+"autoLock.oneMinute" = "1 分後";
+
+/** Subscription **/
+"subscription.billingIssue" = "App Store でサブスクリプションを更新できませんでした。引き続き追加や編集をするには、お支払い方法を更新してください。";
+"subscription.error.unverified" = "App Store でこの購入を確認できませんでした。";
+"subscription.gracePeriod" = "サブスクリプションを更新できませんでした。";
+"subscription.message" = "すべての Apple デバイスで、エンドツーエンドで暗号化されたパスワードと 2FA コードを。";
+"subscription.readOnly" = "読み取り専用です。項目を追加・変更するには登録してください。";
+"subscription.subscribe" = "登録";
+"subscription.title" = "Munin";
+"subscription.updatePayment" = "お支払いを更新";
+
+/** AutoFill **/
+"autofill.allCodes" = "すべてのコード";
+"autofill.allPasswords" = "すべてのパスワード";
+"autofill.banner" = "Munin でパスワードと 2FA コードを自動入力しましょう。";
+"autofill.banner.setUp" = "設定";
+"autofill.setup.done" = "Munin は自動入力に使用できます。";
+"autofill.setup.message" = "Munin は Face ID または Touch ID の後、Safari やアプリでパスワードと 2FA コードを入力できます。パスワードは選択するまで暗号化されたままです。";
+"autofill.setup.openSettings" = "設定を開く";
+"autofill.setup.step1.ios" = "設定を開き、「一般」▸「自動入力とパスワード」に移動します。";
+"autofill.setup.step1.mac" = "システム設定を開き、「一般」▸「自動入力とパスワード」に移動します。";
+"autofill.setup.step2" = "「自動入力の提供元」で Munin をオンにします。";
+"autofill.setup.step3.ios" = "Safari やアプリでサインインのフィールドをタップし、キーボードの上で Munin を選択します。";
+"autofill.setup.step3.mac" = "Safari でサインインのフィールドをクリックし、鍵のメニューから Munin を選択します。";
+"autofill.setup.step4" = "オプション: 「コードの設定に使用」で Munin を選ぶと、2FA 設定リンクが Munin で開きます。";
+"autofill.setup.turnOn" = "自動入力をオンにする";
+"autofill.decryptFailed" = "このパスワードを復号できませんでした。";
+"autofill.locked" = "Munin はロックされています";
+"autofill.search" = "検索";
+"autofill.signIn" = "自動入力を使うには、Munin を開いてサインインしてください。";
+"autofill.suggested" = "候補";
+"autofill.title" = "Munin";
+"autofill.turnOnBiometrics" = "Munin を開いて設定で Face ID または Touch ID によるロック解除をオンにし、一度 Munin のロックを解除してください。その後、自動入力で使えるようになります。";
+"autofill.unavailable" = "自動入力を利用できません";

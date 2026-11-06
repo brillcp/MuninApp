@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>codes.row.secondsLeft</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>few</key>
+			<string>Pozostały %lld sekundy</string>
+			<key>many</key>
+			<string>Pozostało %lld sekund</string>
+			<key>one</key>
+			<string>Pozostała %lld sekunda</string>
+			<key>other</key>
+			<string>Pozostało %lld sekundy</string>
+		</dict>
+	</dict>
+	<key>codes.subtitle</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>few</key>
+			<string>%lld konta</string>
+			<key>many</key>
+			<string>%lld kont</string>
+			<key>one</key>
+			<string>%lld konto</string>
+			<key>other</key>
+			<string>%lld konta</string>
+		</dict>
+	</dict>
+	<key>codes.undecryptable</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>few</key>
+			<string>Nie można odszyfrować %lld wpisów kluczem tego urządzenia.</string>
+			<key>many</key>
+			<string>Nie można odszyfrować %lld wpisów kluczem tego urządzenia.</string>
+			<key>one</key>
+			<string>Nie można odszyfrować %lld wpisu kluczem tego urządzenia.</string>
+			<key>other</key>
+			<string>Nie można odszyfrować %lld wpisu kluczem tego urządzenia.</string>
+		</dict>
+	</dict>
+	<key>vault.subtitle</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>few</key>
+			<string>%lld elementy</string>
+			<key>many</key>
+			<string>%lld elementów</string>
+			<key>one</key>
+			<string>%lld element</string>
+			<key>other</key>
+			<string>%lld elementu</string>
+		</dict>
+	</dict>
+	<key>vault.undecryptable</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>few</key>
+			<string>Nie można odszyfrować %lld elementów kluczem tego urządzenia.</string>
+			<key>many</key>
+			<string>Nie można odszyfrować %lld elementów kluczem tego urządzenia.</string>
+			<key>one</key>
+			<string>Nie można odszyfrować %lld elementu kluczem tego urządzenia.</string>
+			<key>other</key>
+			<string>Nie można odszyfrować %lld elementu kluczem tego urządzenia.</string>
+		</dict>
+	</dict>
+</dict>
+</plist>
