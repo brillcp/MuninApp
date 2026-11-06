@@ -61,6 +61,8 @@
 		D54211623097CF4900FD91D4 /* Exceptions for "MuninApp" folder in "MuninAutoFill" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				"/Localized: Localizable.strings",
+				"/Localized: Localizable.stringsdict",
 				Core/DesignSystem/DesignKit.swift,
 				Core/Services/APIConfig.swift,
 				Core/Services/Auth/AuthRequest.swift,
@@ -82,8 +84,6 @@
 				Core/Vault/VaultKeyStore.swift,
 				Features/Vault/PasswordItem.swift,
 				Features/Vault/WebsiteIcon.swift,
-				Localizable.strings,
-				Localizable.stringsdict,
 			);
 			target = D542113A3097CF4900FD91D4 /* MuninAutoFill */;
 		};
@@ -227,6 +227,25 @@
 			knownRegions = (
 				en,
 				Base,
+				sv,
+				de,
+				es,
+				fr,
+				fi,
+				nb,
+				da,
+				ko,
+				ja,
+				el,
+				nl,
+				it,
+				ru,
+				cs,
+				pl,
+				"pt-BR",
+				ar,
+				he,
+				"zh-Hans",
 			);
 			mainGroup = 000000000000000000000001;
 			minimizedProjectReferenceProxies = 1;
@@ -440,7 +459,7 @@
 				INFOPLIST_KEY_CFBundleDisplayName = Munin;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Scan the QR code a site shows when you set up two-factor authentication.";
-				INFOPLIST_KEY_NSFaceIDUsageDescription = "Unlock your authenticator codes with Face ID.";
+				INFOPLIST_KEY_NSFaceIDUsageDescription = "Unlock Munin with Face ID.";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -502,7 +521,7 @@
 				INFOPLIST_KEY_CFBundleDisplayName = Munin;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Scan the QR code a site shows when you set up two-factor authentication.";
-				INFOPLIST_KEY_NSFaceIDUsageDescription = "Unlock your authenticator codes with Face ID.";
+				INFOPLIST_KEY_NSFaceIDUsageDescription = "Unlock Munin with Face ID.";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -559,6 +578,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = MuninAutoFill/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Munin;
+				"INFOPLIST_KEY_CFBundleDisplayName[sdk=macosx*]" = Munin;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 26.6;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -614,6 +634,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = MuninAutoFill/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Munin;
+				"INFOPLIST_KEY_CFBundleDisplayName[sdk=macosx*]" = Munin;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 26.6;
 				LD_RUNPATH_SEARCH_PATHS = (

@@ -117,27 +117,6 @@ private extension VaultView {
                 .overlay(alignment: .trailing) {
                     if isDetailVisible {
                         PasswordDetail(item: panelItem, viewModel: viewModel)
-                        .safeAreaInset(edge: .top, spacing: DesignKit.Spacing.Primitive.s0) {
-                            HStack {
-                                LockButton(systemImage: DesignKit.Icon.close, style: .clear) {
-                                    hapticTaps += 1
-                                    viewModel.selection = nil
-                                }
-                                Spacer()
-                                LockButton(systemImage: DesignKit.Icon.edit, style: .clear) {
-                                    hapticTaps += 1
-                                    if let item = viewModel.selectedItem { startEditing(item) }
-                                }
-                                .disabled(subscriptions.isReadOnly)
-                                .keyboardShortcut("e")
-                            }
-                            .padding([.horizontal, .top], DesignKit.Spacing.Primitive.s12)
-                        }
-                        .frame(width: 340)
-                        .frame(maxHeight: .infinity)
-                        .glassEffect(in: .rect(cornerRadius: DesignKit.Spacing.Primitive.s16))
-                        .padding(DesignKit.Spacing.Primitive.s12)
-                        .transition(.opacity.combined(with: .offset(x: DesignKit.Spacing.Primitive.s40)))
                     }
                 }
                 .onChange(of: viewModel.selectedItem) { _, newItem in
@@ -382,11 +361,11 @@ private struct VaultPasswordList: View {
             }
         }
         .listStyle(.plain)
+        .animation(DesignKit.Motion.listChange, value: viewModel.visibleItems.map(\.id))
         #if os(iOS)
         .listSectionIndexVisibility(UIDevice.current.userInterfaceIdiom == .phone ? .visible : .hidden)
-        #endif
-        .animation(DesignKit.Motion.listChange, value: viewModel.visibleItems.map(\.id))
-        #if os(macOS)
+        #else
+        .alternatingRowBackgrounds()
         .onExitCommand { viewModel.selection = nil }
         #endif
     }
@@ -396,7 +375,6 @@ private struct VaultPasswordList: View {
         NavigationLink(value: item.id) {
             PasswordTitleCell(item: item)
         }
-        .listRowSeparator(.hidden)
     }
 }
 
@@ -406,7 +384,14 @@ struct PasswordTitleCell: View {
     let item: PasswordItem
 
     var body: some View {
-        HStack(spacing: DesignKit.Spacing.Primitive.s12) {
+        #if os(iOS)
+        let spacing: CGFloat = DesignKit.Spacing.Primitive.s16
+        let vertical: CGFloat = DesignKit.Spacing.Primitive.s6
+        #else
+        let spacing: CGFloat = DesignKit.Spacing.Primitive.s12
+        let vertical: CGFloat = DesignKit.Spacing.Primitive.s8
+        #endif
+        HStack(spacing: spacing) {
             WebsiteIcon(url: item.url)
             VStack(alignment: .leading, spacing: DesignKit.Spacing.Primitive.s4) {
                 Text(item.name)
@@ -417,6 +402,7 @@ struct PasswordTitleCell: View {
                 }
             }
         }
+        .padding(.vertical, vertical)
     }
 }
 

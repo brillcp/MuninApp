@@ -41,8 +41,30 @@ struct PasswordDetail: View {
                     .keyboardShortcut("e")
             }
         }
-        #endif
         .sensoryFeedback(.impact(weight: .light), trigger: hapticTaps)
+        #else
+        .safeAreaInset(edge: .top, spacing: DesignKit.Spacing.Primitive.s0) {
+            HStack {
+                LockButton(systemImage: DesignKit.Icon.close, style: .clear) {
+                    hapticTaps += 1
+                    viewModel.selection = nil
+                }
+                Spacer()
+                LockButton(systemImage: DesignKit.Icon.edit, style: .clear) {
+                    hapticTaps += 1
+                    startEditing()
+                }
+                .disabled(subscriptions.isReadOnly)
+                .keyboardShortcut("e")
+            }
+            .padding([.horizontal, .top], DesignKit.Spacing.Primitive.s12)
+        }
+        .frame(width: 340)
+        .frame(maxHeight: .infinity)
+        .glassEffect(in: .rect(cornerRadius: DesignKit.Spacing.Primitive.s16))
+        .padding(DesignKit.Spacing.Primitive.s12)
+        .transition(.opacity.combined(with: .offset(x: DesignKit.Spacing.Primitive.s40)))
+        #endif
         .sheet(item: $editing) { draft in
             PasswordEditorView(fields: draft.fields, isEditing: true) { fields in
                 try viewModel.update(draft.item, with: fields, auth: auth)

@@ -10,7 +10,7 @@ struct WebsiteIcon: View {
     /// The item's website.
     let url: String
     /// The icon's width and height in points.
-    var size: CGFloat = 42.0
+    var size: CGFloat = DesignKit.Spacing.Primitive.s44
 
     var body: some View {
         Group {

@@ -27,56 +27,56 @@ struct TwoFactorView: View {
     var body: some View {
         NavigationStack {
             TwoFactorList(viewModel: viewModel, clock: clock, pendingDeletion: $pendingDeletion)
-            .overlay {
-                TwoFactorEmptyState(
-                    errorMessage: viewModel.items.isEmpty ? viewModel.errorMessage : nil,
-                    isEmpty: viewModel.items.isEmpty && viewModel.undecryptableCount == 0,
-                    hasLoaded: viewModel.hasLoaded,
-                    onRetry: { Task { await viewModel.refresh(auth: auth) } },
-                    onAdd: { isAdding = true }
-                )
-            }
-            .navigationTitle("codes.title")
-            .navigationSubtitle(LocalizedKey("codes.subtitle", viewModel.items.count))
-            .navigationSplitViewStyle(.prominentDetail)
-            .toolbar { toolbarContent }
-            .safeAreaInset(edge: .bottom) {
-                if subscriptions.isReadOnly {
-                    ReadOnlyBanner()
-                } else if subscriptions.isInGracePeriod {
-                    BillingIssueBanner()
+                .overlay {
+                    TwoFactorEmptyState(
+                        errorMessage: viewModel.items.isEmpty ? viewModel.errorMessage : nil,
+                        isEmpty: viewModel.items.isEmpty && viewModel.undecryptableCount == 0,
+                        hasLoaded: viewModel.hasLoaded,
+                        onRetry: { Task { await viewModel.refresh(auth: auth) } },
+                        onAdd: { isAdding = true }
+                    )
                 }
-            }
-            .refreshable { await viewModel.refresh(auth: auth) }
-            .task { await viewModel.refresh(auth: auth) }
-            .task(clock.run)
-            .sensoryFeedback(.impact(weight: .light), trigger: hapticTaps)
-            .sheet(isPresented: $isAdding) {
-                AddAccountView { accounts in
-                    try await viewModel.add(accounts, auth: auth)
+                .navigationTitle("codes.title")
+                .navigationSubtitle(LocalizedKey("codes.subtitle", viewModel.items.count))
+                .navigationSplitViewStyle(.prominentDetail)
+                .toolbar { toolbarContent }
+                .safeAreaInset(edge: .bottom) {
+                    if subscriptions.isReadOnly {
+                        ReadOnlyBanner()
+                    } else if subscriptions.isInGracePeriod {
+                        BillingIssueBanner()
+                    }
                 }
-            }
-            .fileImporter(isPresented: $isPickingImportFile, allowedContentTypes: [.plainText, .text], onCompletion: importFilePicked)
-            .confirmationDialog("codes.import.confirm.title", item: $importPlan, titleVisibility: .visible) { plan in
-                Button(LocalizedKey("codes.import.confirm.button", plan.accounts.count)) { runImport(plan) }
-                    .disabled(plan.accounts.isEmpty)
-            } message: { plan in
-                Text(plan.failedLines > 0
-                     ? LocalizedKey("codes.import.confirm.messageWithFailures", plan.accounts.count, plan.duplicateCount, plan.failedLines)
-                     : LocalizedKey("codes.import.confirm.message", plan.accounts.count, plan.duplicateCount))
-            }
-            .alert("codes.import.title", item: $importMessage) { _ in
-                Button("global.done") {}
-            } message: { message in
-                Text(message)
-            }
-            .confirmationDialog("codes.delete.title", item: $pendingDeletion, titleVisibility: .visible) { item in
-                Button(LocalizedKey("codes.delete.button", item.account.title), role: .destructive) {
-                    Task { await viewModel.delete(item, auth: auth) }
+                .refreshable { await viewModel.refresh(auth: auth) }
+                .task { await viewModel.refresh(auth: auth) }
+                .task(clock.run)
+                .sensoryFeedback(.impact(weight: .light), trigger: hapticTaps)
+                .sheet(isPresented: $isAdding) {
+                    AddAccountView { accounts in
+                        try await viewModel.add(accounts, auth: auth)
+                    }
                 }
-            } message: { item in
-                Text(LocalizedKey("codes.delete.message", item.account.title))
-            }
+                .fileImporter(isPresented: $isPickingImportFile, allowedContentTypes: [.plainText, .text], onCompletion: importFilePicked)
+                .confirmationDialog("codes.import.confirm.title", item: $importPlan, titleVisibility: .visible) { plan in
+                    Button(LocalizedKey("codes.import.confirm.button", plan.accounts.count)) { runImport(plan) }
+                        .disabled(plan.accounts.isEmpty)
+                } message: { plan in
+                    Text(plan.failedLines > 0
+                         ? LocalizedKey("codes.import.confirm.messageWithFailures", plan.accounts.count, plan.duplicateCount, plan.failedLines)
+                         : LocalizedKey("codes.import.confirm.message", plan.accounts.count, plan.duplicateCount))
+                }
+                .alert("codes.import.title", item: $importMessage) { _ in
+                    Button("global.done") {}
+                } message: { message in
+                    Text(message)
+                }
+                .confirmationDialog("codes.delete.title", item: $pendingDeletion, titleVisibility: .visible) { item in
+                    Button(LocalizedKey("codes.delete.button", item.account.title), role: .destructive) {
+                        Task { await viewModel.delete(item, auth: auth) }
+                    }
+                } message: { item in
+                    Text(LocalizedKey("codes.delete.message", item.account.title))
+                }
         }
     }
 }
@@ -206,6 +206,9 @@ private struct TwoFactorList: View {
                 }
             }
         }
+        #if os(macOS)
+        .alternatingRowBackgrounds()
+        #endif
         .listStyle(.plain)
     }
 

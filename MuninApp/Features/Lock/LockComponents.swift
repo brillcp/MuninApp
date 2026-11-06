@@ -76,7 +76,7 @@ struct LockPanel: View {
 
             if auth.isSignedIn {
                 if step == .biometrics || step == .masterPassword, let email = auth.email {
-                    LockButton("\(email) · Switch", style: .tertiary) { go(to: .signIn) }
+                    LockButton(LocalizedKey("lock.switchAccount", email), style: .tertiary) { go(to: .signIn) }
                 }
             }
 
@@ -448,7 +448,7 @@ struct LockAccountRow: View {
 
     var body: some View {
         if let email {
-            Text("Signed in as: \(email)")
+            Text(LocalizedKey("lock.signedInAs", email))
                 .lineLimit(1)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .font(.callout)

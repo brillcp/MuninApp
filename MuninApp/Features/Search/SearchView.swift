@@ -35,7 +35,6 @@ struct SearchView: View {
                             NavigationLink(value: item.id) {
                                 PasswordTitleCell(item: item)
                             }
-                            .listRowSeparator(.hidden)
                         }
                     }
                 }
@@ -47,6 +46,9 @@ struct SearchView: View {
                     }
                 }
             }
+            #if os(macOS)
+            .alternatingRowBackgrounds()
+            #endif
             .listStyle(.plain)
             .overlay {
                 if trimmedQuery.isEmpty {

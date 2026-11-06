@@ -27,7 +27,7 @@ struct TwoFactorRow: View {
                 .equatable()
         }
         .padding(.vertical, DesignKit.Spacing.Primitive.s4)
-        .contentShape(Rectangle())
+        .contentShape(.rect)
         .onTapGesture(perform: copy)
         .sensoryFeedback(.success, trigger: didCopy) { _, new in new }
         .animation(DesignKit.Motion.linear, value: didCopy)
@@ -108,7 +108,7 @@ struct TwoFactorCell: View {
             CountdownGauge(remaining: account.secondsRemaining(at: now), period: account.period)
                 .equatable()
         }
-        .contentShape(Rectangle())
+        .contentShape(.rect)
         .onTapGesture {
             TwoFactorRow.copyCode(of: account)
             didCopy = true
