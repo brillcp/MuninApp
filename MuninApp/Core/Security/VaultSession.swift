@@ -119,7 +119,7 @@ extension VaultSession {
         get {
             if case .failed(let message) = state { message } else { nil }
         }
-        set { }
+        set { } // swiftlint:disable:this unused_setter_value
     }
 
     /// A Boolean value that indicates whether the user is choosing a new

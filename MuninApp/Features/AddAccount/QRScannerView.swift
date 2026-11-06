@@ -1,7 +1,7 @@
 #if os(iOS)
 import SwiftUI
-import VisionKit
 internal import Vision
+import VisionKit
 
 /// A full-screen camera view that reports the first QR code it detects.
 struct ScannerSheet: View {

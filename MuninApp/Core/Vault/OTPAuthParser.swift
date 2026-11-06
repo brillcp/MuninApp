@@ -181,8 +181,9 @@ private enum Protobuf {
             case 0:
                 fields.append(Field(number: number, value: .varint(try varint())))
             case 2:
-                let length = Int(try varint())
-                guard length >= 0, index + length <= bytes.count else { throw OTPAuthParser.ParseError.invalidMigrationData }
+                guard let length = Int(exactly: try varint()), length <= bytes.count - index else {
+                    throw OTPAuthParser.ParseError.invalidMigrationData
+                }
                 fields.append(Field(number: number, value: .bytes(Data(bytes[index..<index + length]))))
                 index += length
             case 1:

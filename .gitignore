@@ -9,3 +9,7 @@ DerivedData/
 xcuserdata/
 *.xcuserstate
 _to_delete/
+
+# Local build configuration
+Config/Local.xcconfig
+.DS_Store

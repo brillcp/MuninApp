@@ -1,0 +1,67 @@
+# SwiftLint configuration for Munin. Run `swiftlint` from the repository root.
+
+included:
+  - MuninApp
+  - MuninAutoFill
+  - MuninTests
+
+opt_in_rules:
+  - closure_spacing
+  - collection_alignment
+  - contains_over_first_not_nil
+  - empty_count
+  - empty_string
+  - first_where
+  - implicit_return
+  - last_where
+  - modifier_order
+  - multiline_parameters
+  - operator_usage_whitespace
+  - redundant_type_annotation
+  - sorted_imports
+  - toggle_bool
+  - unneeded_parentheses_in_closure_argument
+  - vertical_whitespace_closing_braces
+
+disabled_rules:
+  - todo
+  - trailing_comma
+  # "Master password" is the established term for a password manager's key.
+  - inclusive_language
+  # `String(decoding:as:)` is used on purpose where invalid UTF-8 should be repaired, not rejected.
+  - optional_data_string_conversion
+
+# Member order (see CONTRIBUTING.md) isn't linted: `type_contents_order` misreads
+# SwiftUI property wrappers and can't express the extension-based layout.
+
+line_length:
+  warning: 180
+  error: 250
+  ignores_comments: true
+  ignores_urls: true
+
+file_length:
+  warning: 500
+  error: 800
+
+type_body_length:
+  warning: 300
+  error: 500
+
+function_body_length:
+  warning: 60
+  error: 120
+
+cyclomatic_complexity:
+  warning: 15
+  error: 25
+
+identifier_name:
+  min_length: 2
+  excluded: [id, x, y, i, r, g, b]
+  # `Localized` and `LocalizedKey` mirror the `LocalizedStringKey` type they build.
+  allowed_symbols: []
+  validates_start_with_lowercase: off
+
+nesting:
+  type_level: 2

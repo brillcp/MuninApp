@@ -1,5 +1,5 @@
-import SwiftUI
 import Playgrounds
+import SwiftUI
 
 /// The app's root view, which shows either the lock screen or the signed-in content.
 ///

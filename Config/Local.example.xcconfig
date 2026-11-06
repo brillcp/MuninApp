@@ -1,0 +1,5 @@
+// Copy this file to Config/Local.xcconfig and set your own values.
+// Local.xcconfig is git-ignored and overrides Config/Base.xcconfig.
+
+DEVELOPMENT_TEAM = YOUR_TEAM_ID
+APP_BUNDLE_ID = com.example.Munin

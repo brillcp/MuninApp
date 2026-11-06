@@ -230,7 +230,7 @@ private extension AutoFillModel {
         switch identifier.type {
         case .domain: host = identifier.identifier
         case .URL: host = URL(string: identifier.identifier)?.host
-        @unknown default: host = nil
+        default: host = nil
         }
         guard let host = host?.lowercased(), !host.isEmpty else { return nil }
         return host.hasPrefix("www.") ? String(host.dropFirst(4)) : host

@@ -8,7 +8,7 @@
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>CFBundleURLName</key>
-			<string>dev.gidlof.Munin.otpauth</string>
+			<string>$(APP_BUNDLE_ID).otpauth</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>otpauth</string>
@@ -16,7 +16,13 @@
 			</array>
 		</dict>
 	</array>
+	<key>MuninAPIHost</key>
+	<string>$(MUNIN_API_HOST)</string>
+	<key>SupabaseHost</key>
+	<string>$(SUPABASE_HOST)</string>
+	<key>SupabasePublishableKey</key>
+	<string>$(SUPABASE_PUBLISHABLE_KEY)</string>
 	<key>MuninKeychainGroup</key>
-	<string>$(AppIdentifierPrefix)dev.gidlof.Munin.shared</string>
+	<string>$(AppIdentifierPrefix)$(APP_BUNDLE_ID).shared</string>
 </dict>
 </plist>

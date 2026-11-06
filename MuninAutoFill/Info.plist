@@ -2,8 +2,14 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>MuninAPIHost</key>
+	<string>$(MUNIN_API_HOST)</string>
+	<key>SupabaseHost</key>
+	<string>$(SUPABASE_HOST)</string>
+	<key>SupabasePublishableKey</key>
+	<string>$(SUPABASE_PUBLISHABLE_KEY)</string>
 	<key>MuninKeychainGroup</key>
-	<string>$(AppIdentifierPrefix)dev.gidlof.Munin.shared</string>
+	<string>$(AppIdentifierPrefix)$(APP_BUNDLE_ID).shared</string>
 	<key>NSExtension</key>
 	<dict>
 		<key>NSExtensionAttributes</key>

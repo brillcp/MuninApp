@@ -18,7 +18,7 @@ enum AccentColorOverride {
     /// The color that the swizzled getters return.
     ///
     /// AppKit can read it from any thread; it's written only at launch.
-    nonisolated(unsafe) fileprivate static var color = NSColor(resource: .accent)
+    nonisolated(unsafe) fileprivate static var color = NSColor(named: "AccentColor") ?? .systemBlue
 
     /// Makes `controlAccentColor` and `selectedContentBackgroundColor` return
     /// the given color.

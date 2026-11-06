@@ -181,7 +181,7 @@ struct LockButton: View {
     @State private var taps = 0
 
     /// The title, or `nil` for an icon-only button.
-    var title: LocalizedStringKey? = nil
+    var title: LocalizedStringKey?
     /// The SF Symbol name, or `nil` for a text-only button.
     let systemImage: String?
     /// The visual style.

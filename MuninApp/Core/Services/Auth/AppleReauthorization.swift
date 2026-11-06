@@ -59,7 +59,8 @@ extension AppleReauthorization: ASAuthorizationControllerPresentationContextProv
         #if os(iOS)
         let scenes = UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }
         if let window = scenes.flatMap(\.windows).first(where: \.isKeyWindow) { return window }
-        return scenes.first.map { UIWindow(windowScene: $0) } ?? UIWindow()
+        guard let scene = scenes.first else { preconditionFailure("Sign in with Apple requires a connected window scene.") }
+        return UIWindow(windowScene: scene)
         #else
         return NSApp.keyWindow ?? NSApp.mainWindow ?? NSWindow()
         #endif

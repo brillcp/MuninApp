@@ -1,7 +1,7 @@
 import SwiftUI
 
 /// The app's design tokens.
-enum DesignKit {
+nonisolated enum DesignKit {
     /// Spacing tokens, for paddings and stack spacing.
     enum Spacing {
         /// Raw spacing values in points, named by size.

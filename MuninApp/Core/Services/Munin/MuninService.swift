@@ -138,7 +138,7 @@ extension MuninService {
 // MARK: - Errors
 
 /// The API's error body, `{"error": "code"}`.
-private nonisolated struct MuninErrorBody: Decodable {
+nonisolated private struct MuninErrorBody: Decodable {
     /// The error code, such as `subscription_account_mismatch`.
     let error: String
 }

@@ -84,7 +84,11 @@ struct SettingsView: View {
                             recoveryKey = RecoveryKeyItem(key: VaultKeyStore.recoveryString(for: vault.key))
                         }
                         if session.canUseBiometrics {
-                            Toggle(session.usesFaceID ? "settings.biometrics.face" : "settings.biometrics.touch", systemImage: session.usesFaceID ? DesignKit.Icon.faceID : DesignKit.Icon.touchID, isOn: $session.isBiometricUnlockEnabled)
+                            Toggle(
+                                session.usesFaceID ? "settings.biometrics.face" : "settings.biometrics.touch",
+                                systemImage: session.usesFaceID ? DesignKit.Icon.faceID : DesignKit.Icon.touchID,
+                                isOn: $session.isBiometricUnlockEnabled
+                            )
                         }
                     } else {
                         Text("settings.locked")
