@@ -10,9 +10,6 @@
 Munin is an end-to-end encrypted password manager and two-factor authenticator
 for iPhone, iPad, and Mac.
 
-This repository contains the source code of the Munin apps for iOS, iPadOS,
-and macOS.
-
 ## Features
 
 - **Passwords.** Store names, websites, usernames, passwords, and notes.
@@ -27,10 +24,7 @@ and macOS.
   including Chrome, Apple Passwords, 1Password, Bitwarden, LastPass, Proton
   Pass, NordPass, and Firefox. Export passwords as CSV and 2FA accounts as
   `otpauth://` links.
-- **Sign in with Apple.** Accounts are created and signed in with Apple.
-- **Subscription.** A monthly App Store subscription. Without an active
-  subscription, the vault becomes read-only: reading, copying, and unlocking
-  still work, but changes are blocked.
+- **Sign in with Apple.** No separate account or password to create.
 - **Localization.** 20 languages: Arabic, Chinese (Simplified), Czech, Danish,
   Dutch, English, Finnish, French, German, Greek, Hebrew, Italian, Japanese,
   Korean, Norwegian Bokmål, Polish, Portuguese (Brazil), Russian, Spanish, and
@@ -45,19 +39,7 @@ design and how to report a vulnerability.
 
 ## Requirements
 
-- Xcode 27.1 or later
-- iOS 26.6, iPadOS 26.6, or macOS 26.6 or later
-- An Apple Developer account, to sign the app and use Sign in with Apple
-
-## Getting started
-
-1. Clone the repository.
-2. Open `MuninApp.xcodeproj`.
-3. Run the **MuninApp** scheme on an iPhone, iPad, or Mac.
-
-Swift packages are resolved automatically:
-
-- [brillcp/Networking](https://github.com/brillcp/networking)
+Xcode 27.1 or later.
 
 ## Configuration
 
@@ -71,8 +53,6 @@ Build settings live in `Config/Base.xcconfig`:
 | `SUPABASE_HOST` | The host of the authentication service. |
 | `SUPABASE_PUBLISHABLE_KEY` | The authentication service's publishable key. It's public by design and ships in the app. |
 
-The values reach Swift through Info.plist keys, which `APIConfig` reads.
-
 ## Project structure
 
 ```
@@ -84,30 +64,21 @@ MuninApp/              The app target
 │   ├── Services/      API requests, sign-in, subscription, AutoFill, icons
 │   ├── Utilities/     Keychain, clipboard, localization helpers
 │   └── Vault/         Encryption, keys, TOTP, and import/export
-├── Features/
-│   ├── AddAccount/    Adding 2FA accounts by QR code, link, or setup key
-│   ├── AutoFill/      AutoFill setup guide and banner
-│   ├── Lock/          Sign-in and lock screen
-│   ├── Main/          The main window: sidebar and tabs
-│   ├── MenuBar/       The Mac menu bar extra
-│   ├── Search/        The iOS Search tab, across passwords and 2FA accounts
-│   ├── Settings/      Settings and changing the master password
-│   ├── Subscription/  Paywall and subscription banners
-│   ├── TwoFactor/     The list of 2FA codes
-│   ├── Vault/         The password list, detail, editor, and generator
-│   └── VaultKey/      Master password setup and the recovery key
-└── *.lproj/           Localized strings
+└── Features/
+    ├── AddAccount/    Adding 2FA accounts by QR code, link, or setup key
+    ├── AutoFill/      AutoFill setup guide and banner
+    ├── Lock/          Sign-in and lock screen
+    ├── Main/          The main window: sidebar and tabs
+    ├── MenuBar/       The Mac menu bar extra
+    ├── Search/        The iOS Search tab, across passwords and 2FA accounts
+    ├── Settings/      Settings and changing the master password
+    ├── Subscription/  Paywall and subscription banners
+    ├── TwoFactor/     The list of 2FA codes
+    ├── Vault/         The password list, detail, editor, and generator
+    └── VaultKey/      Master password setup and the recovery key
 MuninAutoFill/         The AutoFill credential provider extension
 MuninTests/            Unit tests
-Config/                Build configuration
-```
-
-## Tests
-
-Unit tests use Swift Testing. Run them with Command-U in Xcode, or:
-
-```
-xcodebuild test -scheme MuninApp -destination 'platform=macOS'
+Config/                Build settings
 ```
 
 ## License
