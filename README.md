@@ -2,12 +2,16 @@
 
 # Munin
 
+![swift](https://img.shields.io/badge/Swift-6-orange)
+![platforms](https://img.shields.io/badge/Platforms-iOS%2026.6%2B%20%7C%20macOS%2026.6%2B-blue)
+[![license](https://img.shields.io/github/license/brillcp/MuninApp)](/LICENSE)
+![stars](https://img.shields.io/github/stars/brillcp/MuninApp?style=social)
+
 Munin is an end-to-end encrypted password manager and two-factor authenticator
 for iPhone, iPad, and Mac.
 
 This repository contains the source code of the Munin apps for iOS, iPadOS,
-and macOS. The Munin sync service the apps talk to isn't part of this
-repository.
+and macOS.
 
 ## Features
 
@@ -23,13 +27,14 @@ repository.
   including Chrome, Apple Passwords, 1Password, Bitwarden, LastPass, Proton
   Pass, NordPass, and Firefox. Export passwords as CSV and 2FA accounts as
   `otpauth://` links.
-- **Mac.** A main window, a Settings window, and a menu bar extra for copying
-  usernames and passwords.
 - **Sign in with Apple.** Accounts are created and signed in with Apple.
 - **Subscription.** A monthly App Store subscription. Without an active
   subscription, the vault becomes read-only: reading, copying, and unlocking
   still work, but changes are blocked.
-- **Localization.** 20 languages.
+- **Localization.** 20 languages: Arabic, Chinese (Simplified), Czech, Danish,
+  Dutch, English, Finnish, French, German, Greek, Hebrew, Italian, Japanese,
+  Korean, Norwegian Bokmål, Polish, Portuguese (Brazil), Russian, Spanish, and
+  Swedish.
 
 ## Security
 
