@@ -3,6 +3,8 @@
 # Munin
 
 ![swift](https://img.shields.io/badge/Swift-6-orange)
+![tests](https://img.shields.io/github/actions/workflow/status/brillcp/MuninApp/tests.yml?branch=main&event=push&label=tests)
+![release](https://img.shields.io/github/v/release/brillcp/MuninApp)
 ![platforms](https://img.shields.io/badge/Platforms-iOS%2026.6%2B%20%7C%20macOS%2026.6%2B-blue)
 [![license](https://img.shields.io/github/license/brillcp/MuninApp)](/LICENSE)
 ![stars](https://img.shields.io/github/stars/brillcp/MuninApp?style=social)

@@ -33,7 +33,6 @@ All encryption uses Apple [CryptoKit](https://developer.apple.com/documentation/
 | Storing proofs on the server | [bcrypt](https://www.usenix.org/legacy/events/usenix99/provos/provos.pdf) |
 | Transport | HTTPS over [TLS](https://www.rfc-editor.org/rfc/rfc8446), enforced by [App Transport Security](https://developer.apple.com/documentation/bundleresources/information-property-list/nsapptransportsecurity) |
 
-
 Every AES-GCM operation uses a fresh random 96-bit nonce and a 128-bit
 authentication tag. Each ciphertext is stored as the nonce, the encrypted
 bytes, and the tag, base64-encoded. A wrong key, a wrong owner or field, or
