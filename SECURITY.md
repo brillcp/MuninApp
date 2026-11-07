@@ -23,6 +23,49 @@ master password. This section describes both the apps and the server.
 
 All encryption uses Apple CryptoKit, except PBKDF2, which uses CommonCrypto.
 
+### Algorithms
+
+| Purpose | Algorithm |
+| --- | --- |
+| Encrypting vault data and wrapping the vault key | AES-256-GCM |
+| Stretching the master password | PBKDF2-HMAC-SHA256, 600,000 iterations, 16-byte random salt |
+| Splitting a secret into a wrapping key and a proof | HKDF-SHA256 |
+| Storing proofs on the server | bcrypt |
+| Transport | HTTPS (TLS), enforced by App Transport Security |
+
+Every AES-GCM operation uses a fresh random 96-bit nonce and a 128-bit
+authentication tag. Each ciphertext is stored as the nonce, the encrypted
+bytes, and the tag, base64-encoded. A wrong key, a wrong owner or field, or
+any change to the ciphertext makes decryption fail instead of returning wrong
+data.
+
+### End to end
+
+The vault key is created on your device and never leaves it unencrypted. The
+server only ever receives ciphertext, wrapped keys, KDF parameters, and
+proofs.
+
+- **Setting up a vault.** The app creates a random vault key, derives a
+  wrapping key and proof from the master password and from the recovery key,
+  wraps the vault key with each wrapping key, and uploads both wrapped copies,
+  the KDF parameters, and both proofs.
+- **Saving an item.** The app encrypts the item with the vault key on the
+  device (each password field separately, or a 2FA account as one item), then
+  uploads the ciphertext.
+- **Unlocking on a new device.** After Sign in with Apple, the app downloads
+  the wrapped vault key and the KDF parameters, derives the wrapping key from
+  the master password you enter, and unwraps the vault key locally. A wrong
+  password fails to unwrap; nothing about it is sent to the server. Because
+  this check happens on the device, the server's rate limit doesn't apply to
+  it: the cost of PBKDF2 is what slows down guessing a master password.
+- **Reading an item.** The app downloads the ciphertext and decrypts it on
+  the device.
+- **Changing the master password.** The app derives new keys with a new salt,
+  wraps the same vault key again, and replaces the wrapped copies on the
+  server. Vault data isn't re-encrypted, and the recovery key stays the same.
+- **Resetting with the recovery key.** The app unwraps the vault key with the
+  recovery key, then sets a new master password the same way.
+
 ### Keys
 
 - **Vault key.** A random 256-bit key, created on the device when a new vault
