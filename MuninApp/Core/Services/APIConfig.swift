@@ -2,9 +2,8 @@ import Foundation
 
 /// The server addresses and public keys the app uses.
 ///
-/// The values come from the build settings in `Config/Base.xcconfig`, which
-/// `Config/Local.xcconfig` can override, and reach the app through the
-/// `Info.plist` keys `MuninAPIHost`, `SupabaseHost`, and `SupabasePublishableKey`.
+/// The values come from the build settings in `Config/Base.xcconfig` and reach
+/// the app through the `Info.plist` keys `MuninAPIHost`, `SupabaseHost`, and `SupabasePublishableKey`.
 enum APIConfig {
     /// The base URL of the Munin API.
     static let apiBaseURL = URL(string: "https://\(infoValue("MuninAPIHost"))/v1")!

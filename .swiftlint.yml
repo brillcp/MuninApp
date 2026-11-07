@@ -31,7 +31,7 @@ disabled_rules:
   # `String(decoding:as:)` is used on purpose where invalid UTF-8 should be repaired, not rejected.
   - optional_data_string_conversion
 
-# Member order (see CONTRIBUTING.md) isn't linted: `type_contents_order` misreads
+# Member order isn't linted: `type_contents_order` misreads
 # SwiftUI property wrappers and can't express the extension-based layout.
 
 line_length:

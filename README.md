@@ -47,15 +47,8 @@ design and how to report a vulnerability.
 ## Getting started
 
 1. Clone the repository.
-2. Copy `Config/Local.example.xcconfig` to `Config/Local.xcconfig` and set your own team and bundle identifier:
-
-   ```
-   DEVELOPMENT_TEAM = ABCDE12345
-   APP_BUNDLE_ID = com.example.Munin
-   ```
-
-3. Open `MuninApp.xcodeproj`.
-4. Run the **MuninApp** scheme on an iPhone, iPad, or Mac.
+2. Open `MuninApp.xcodeproj`.
+3. Run the **MuninApp** scheme on an iPhone, iPad, or Mac.
 
 Swift packages are resolved automatically:
 
@@ -63,7 +56,7 @@ Swift packages are resolved automatically:
 
 ## Configuration
 
-Build settings live in `Config/Base.xcconfig`, which is committed:
+Build settings live in `Config/Base.xcconfig`:
 
 | Setting | Purpose |
 | --- | --- |
@@ -73,15 +66,7 @@ Build settings live in `Config/Base.xcconfig`, which is committed:
 | `SUPABASE_HOST` | The host of the authentication service. |
 | `SUPABASE_PUBLISHABLE_KEY` | The authentication service's publishable key. It's public by design and ships in the app. |
 
-`Base.xcconfig` ends with `#include? "Local.xcconfig"`. Put your overrides in
-`Config/Local.xcconfig`, which git ignores. At minimum, set
-`DEVELOPMENT_TEAM` and `APP_BUNDLE_ID` to sign with your own account.
-
-By default, the app talks to the production backend. The values reach Swift
-through Info.plist keys, which `APIConfig` reads. The server's source code
-isn't public. Sign in with Apple against the hosted service only works with
-the official bundle identifier, so a build with your own identifier can't
-sign in.
+The values reach Swift through Info.plist keys, which `APIConfig` reads.
 
 ## Project structure
 
@@ -119,11 +104,6 @@ Unit tests use Swift Testing. Run them with Command-U in Xcode, or:
 ```
 xcodebuild test -scheme MuninApp -destination 'platform=macOS'
 ```
-
-## Contributing
-
-Contributions are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for setup,
-code conventions, and how to open a pull request.
 
 ## License
 

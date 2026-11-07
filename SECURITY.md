@@ -19,8 +19,7 @@ Only the latest release on the App Store receives security fixes.
 
 Everything you store is encrypted on your device before it's sent to the
 server. The server stores ciphertext it can't read, and can't reset your
-master password. The server's source code is private; this section
-describes both the apps and the server.
+master password. This section describes both the apps and the server.
 
 All encryption uses Apple CryptoKit, except PBKDF2, which uses CommonCrypto.
 
