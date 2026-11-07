@@ -27,21 +27,12 @@ All encryption uses Apple [CryptoKit](https://developer.apple.com/documentation/
 
 | Purpose | Algorithm |
 | --- | --- |
-| Encrypting vault data and wrapping the vault key | [AES-256][aes] in [GCM][gcm] mode |
-| Stretching the master password | [PBKDF2][pbkdf2] with [HMAC][hmac]-[SHA-256][sha], 600,000 iterations, 16-byte random salt |
-| Splitting a secret into a wrapping key and a proof | [HKDF][hkdf] with [SHA-256][sha] |
-| Storing proofs on the server | [bcrypt][bcrypt] |
-| Transport | HTTPS over [TLS][tls], enforced by [App Transport Security][ats] |
+| Encrypting vault data and wrapping the vault key | [AES-256](https://csrc.nist.gov/pubs/fips/197/final) in [GCM](https://csrc.nist.gov/pubs/sp/800/38/d/final) mode |
+| Stretching the master password | [PBKDF2](https://www.rfc-editor.org/rfc/rfc8018) with [HMAC](https://www.rfc-editor.org/rfc/rfc2104)-[SHA-256](https://csrc.nist.gov/pubs/fips/180-4/upd1/final), 600,000 iterations, 16-byte random salt |
+| Splitting a secret into a wrapping key and a proof | [HKDF](https://www.rfc-editor.org/rfc/rfc5869) with [SHA-256](https://csrc.nist.gov/pubs/fips/180-4/upd1/final) |
+| Storing proofs on the server | [bcrypt](https://www.usenix.org/legacy/events/usenix99/provos/provos.pdf) |
+| Transport | HTTPS over [TLS](https://www.rfc-editor.org/rfc/rfc8446), enforced by [App Transport Security](https://developer.apple.com/documentation/bundleresources/information-property-list/nsapptransportsecurity) |
 
-[aes]: https://csrc.nist.gov/pubs/fips/197/final
-[gcm]: https://csrc.nist.gov/pubs/sp/800/38/d/final
-[pbkdf2]: https://www.rfc-editor.org/rfc/rfc8018
-[hmac]: https://www.rfc-editor.org/rfc/rfc2104
-[sha]: https://csrc.nist.gov/pubs/fips/180-4/upd1/final
-[hkdf]: https://www.rfc-editor.org/rfc/rfc5869
-[bcrypt]: https://www.usenix.org/legacy/events/usenix99/provos/provos.pdf
-[tls]: https://www.rfc-editor.org/rfc/rfc8446
-[ats]: https://developer.apple.com/documentation/bundleresources/information-property-list/nsapptransportsecurity
 
 Every AES-GCM operation uses a fresh random 96-bit nonce and a 128-bit
 authentication tag. Each ciphertext is stored as the nonce, the encrypted
