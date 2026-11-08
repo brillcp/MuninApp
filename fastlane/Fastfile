@@ -1,0 +1,93 @@
+default_platform(:ios)
+
+APP_ID = "dev.gidlof.Munin"
+AUTOFILL_ID = "dev.gidlof.Munin.AutoFill"
+PROJECT = "MuninApp.xcodeproj"
+SCHEME = "MuninApp"
+
+# The App Store Connect API key. On CI, the key comes from repository secrets.
+def api_key
+  app_store_connect_api_key(
+    key_id: ENV.fetch("APP_STORE_CONNECT_KEY_ID"),
+    issuer_id: ENV.fetch("APP_STORE_CONNECT_ISSUER_ID"),
+    key_filepath: ENV.fetch("APP_STORE_CONNECT_API_KEY_KEY_FILEPATH"),
+    in_house: false
+  )
+end
+
+# Installs the App Store certificates and profiles for a platform, and switches
+# the app and AutoFill targets to manual signing with them.
+#
+# Returns the bundle identifier → profile name mapping for the export options.
+def install_signing(platform:, key:)
+  match(
+    api_key: key,
+    platform: platform,
+    additional_cert_types: platform == "macos" ? ["mac_installer_distribution"] : nil,
+    readonly: is_ci
+  )
+  profiles = lane_context[SharedValues::MATCH_PROVISIONING_PROFILE_MAPPING]
+
+  { "MuninApp" => APP_ID, "MuninAutoFill" => AUTOFILL_ID }.each do |target, identifier|
+    update_code_signing_settings(
+      path: PROJECT,
+      targets: [target],
+      use_automatic_signing: false,
+      code_sign_identity: "Apple Distribution",
+      profile_name: profiles.fetch(identifier)
+    )
+  end
+  profiles
+end
+
+desc "Creates or updates the App Store certificates and profiles for iOS and macOS. Run locally once."
+lane :certificates do
+  key = api_key
+  match(api_key: key, platform: "ios")
+  match(api_key: key, platform: "macos", additional_cert_types: ["mac_installer_distribution"])
+end
+
+platform :ios do
+  desc "Archives the iOS app and uploads it to TestFlight"
+  lane :testflight do
+    setup_ci if is_ci
+    key = api_key
+    profiles = install_signing(platform: "ios", key: key)
+
+    build_app(
+      project: PROJECT,
+      scheme: SCHEME,
+      destination: "generic/platform=iOS",
+      export_method: "app-store",
+      export_options: { provisioningProfiles: profiles },
+      output_directory: "build/ios"
+    )
+
+    upload_to_testflight(api_key: key, skip_waiting_for_build_processing: true)
+  end
+end
+
+platform :mac do
+  desc "Archives the macOS app and uploads it to TestFlight"
+  lane :testflight do
+    setup_ci if is_ci
+    key = api_key
+    profiles = install_signing(platform: "macos", key: key)
+
+    build_mac_app(
+      project: PROJECT,
+      scheme: SCHEME,
+      destination: "generic/platform=macOS",
+      export_method: "app-store",
+      export_options: { provisioningProfiles: profiles },
+      output_directory: "build/macos"
+    )
+
+    upload_to_testflight(
+      api_key: key,
+      app_platform: "osx",
+      pkg: lane_context[SharedValues::PKG_OUTPUT_PATH],
+      skip_waiting_for_build_processing: true
+    )
+  end
+end

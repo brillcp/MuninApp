@@ -1,0 +1,23 @@
+name: Setup
+description: Selects Xcode, installs the gems, and writes the App Store Connect key.
+inputs:
+  app_store_connect_key:
+    description: The App Store Connect API key (.p8 contents).
+    required: false
+runs:
+  using: composite
+  steps:
+    - uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: '27.1'
+
+    - uses: ruby/setup-ruby@v1
+      with:
+        bundler-cache: true
+
+    - name: Write App Store Connect key
+      if: inputs.app_store_connect_key != ''
+      shell: bash
+      env:
+        KEY: ${{ inputs.app_store_connect_key }}
+      run: printf '%s\n' "$KEY" > "$APP_STORE_CONNECT_API_KEY_KEY_FILEPATH"

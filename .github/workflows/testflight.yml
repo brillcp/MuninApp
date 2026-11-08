@@ -1,0 +1,62 @@
+name: TestFlight
+run-name: "TestFlight ${{ inputs.version }}"
+
+on:
+  workflow_call:
+    inputs:
+      version:
+        description: 'Version to build. Its vX.Y.Z tag must exist.'
+        required: true
+        type: string
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to build (for example 1.2.3). Its vX.Y.Z tag must exist.'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+env:
+  APP_STORE_CONNECT_API_KEY_KEY_FILEPATH: ${{ github.workspace }}/app_store_connect_key.p8
+  APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+  APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+  FASTLANE_SKIP_UPDATE_CHECK: 1
+
+jobs:
+  upload:
+    name: Upload ${{ matrix.platform }}
+    runs-on: xcode-27
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [ios, mac]
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: v${{ inputs.version }}
+
+      - uses: ./.github/setup
+        with:
+          app_store_connect_key: ${{ secrets.APP_STORE_CONNECT_KEY }}
+
+      - name: Archive and upload
+        env:
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+          MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
+        run: bundle exec fastlane ${{ matrix.platform }} testflight
+
+      - name: Upload build log
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gym-log-${{ matrix.platform }}
+          path: ~/Library/Logs/gym/
+          if-no-files-found: ignore
+
+      - name: Remove App Store Connect key
+        if: always()
+        run: rm -f "$APP_STORE_CONNECT_API_KEY_KEY_FILEPATH"

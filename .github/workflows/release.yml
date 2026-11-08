@@ -1,0 +1,92 @@
+name: Release
+run-name: "Release ${{ inputs.version || github.ref_name }}"
+
+on:
+  push:
+    branches:
+      - 'release/v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version (for example 1.2.3)'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Bump version, tag, and create the GitHub release
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Resolve version
+        id: version
+        env:
+          INPUT_VERSION: ${{ inputs.version }}
+        run: |
+          set -euo pipefail
+          VERSION="${INPUT_VERSION:-}"
+          if [ -z "$VERSION" ] && [[ "$GITHUB_REF_NAME" =~ ^release/v([0-9]+\.[0-9]+(\.[0-9]+)?)$ ]]; then
+            VERSION="${BASH_REMATCH[1]}"
+          fi
+          if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+(\.[0-9]+)?$ ]]; then
+            echo "::error::Push a release/vX.Y.Z branch or pass a version like 1.2.3."
+            exit 1
+          fi
+          if git rev-parse "refs/tags/v$VERSION" >/dev/null 2>&1; then
+            echo "::error::Tag v$VERSION already exists."
+            exit 1
+          fi
+          # Days since 2020-01-01, then the UTC time, so every build number is higher than the last.
+          BUILD=$(( ( $(date -u +%s) - $(date -u -d 2020-01-01 +%s) ) / 86400 )).$(date -u +%H%M)
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "build=$BUILD" >> "$GITHUB_OUTPUT"
+
+      - name: Bump version on main
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+          BUILD: ${{ steps.version.outputs.build }}
+        run: |
+          set -euo pipefail
+          sed -i -E "s/^MARKETING_VERSION = .*/MARKETING_VERSION = $VERSION/" Config/Base.xcconfig
+          sed -i -E "s/^CURRENT_PROJECT_VERSION = .*/CURRENT_PROJECT_VERSION = $BUILD/" Config/Base.xcconfig
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -am "Release v$VERSION ($BUILD)"
+          git push origin main
+
+      - name: Tag and create the GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          set -euo pipefail
+          git tag -a "v$VERSION" -m "Munin $VERSION"
+          git push origin "v$VERSION"
+          gh release create "v$VERSION" --title "Munin $VERSION" --generate-notes --verify-tag
+
+      - name: Delete the release branch
+        if: github.event_name == 'push'
+        run: git push origin --delete "$GITHUB_REF_NAME"
+
+  testflight:
+    name: TestFlight
+    needs: release
+    uses: ./.github/workflows/testflight.yml
+    with:
+      version: ${{ needs.release.outputs.version }}
+    secrets: inherit
