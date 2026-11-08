@@ -49,6 +49,17 @@ jobs:
           MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
         run: bundle exec fastlane ${{ matrix.platform }} release_testflight
 
+      - name: Print build log
+        if: failure()
+        run: |
+          for log in ~/Library/Logs/gym/*.log; do
+            [ -f "$log" ] || continue
+            echo "::group::$log"
+            tail -150 "$log"
+            echo "::endgroup::"
+          done
+          grep -rh -B2 -A8 "error" "${TMPDIR:-/tmp}"/*.xcdistributionlogs/IDEDistribution*.log 2>/dev/null | tail -80 || true
+
       - name: Upload build log
         if: failure()
         uses: actions/upload-artifact@v4
