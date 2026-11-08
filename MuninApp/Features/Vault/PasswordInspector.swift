@@ -132,14 +132,9 @@ struct PasswordInspector: View {
         }
         .navigationBarTitleDisplayMode(.inline)
         #endif
-        .task(id: item.id) {
-            revealedPassword = nil
-            note = try? decrypt(item.encryptedNote, "note")
-        }
-        .onDisappear {
-            revealedPassword = nil
-            note = nil
-        }
+        .task(id: item.encryptedNote, loadNote)
+        .onChange(of: item.encryptedPassword, hidePassword)
+        .onDisappear(perform: clearDecrypted)
         .tint(tint ?? .accent)
     }
 }
@@ -147,6 +142,22 @@ struct PasswordInspector: View {
 private extension PasswordInspector {
     /// A field that can be copied.
     enum Field { case url, username, password, note }
+
+    /// Decrypts the note, and again whenever an edit changes it.
+    func loadNote() async {
+        note = try? decrypt(item.encryptedNote, "note")
+    }
+
+    /// Hides a revealed password once an edit changes it.
+    func hidePassword() {
+        revealedPassword = nil
+    }
+
+    /// Drops the decrypted password and note when the inspector goes away.
+    func clearDecrypted() {
+        revealedPassword = nil
+        note = nil
+    }
 
     /// The item's website URL, using HTTPS when no scheme is given.
     var websiteURL: URL? {

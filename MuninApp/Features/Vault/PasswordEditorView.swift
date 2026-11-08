@@ -75,8 +75,9 @@ struct PasswordEditorView: View {
                 }
 
                 Section("password.field.note") {
-                    TextField("password.field.note", text: $fields.note, axis: .vertical)
-                        .lineLimit(3...8)
+                    TextEditor(text: $fields.note)
+                        .frame(minHeight: DesignKit.Spacing.Primitive.s72)
+                        .scrollContentBackground(.hidden)
                 }
 
                 if let errorMessage {
