@@ -1,6 +1,6 @@
 ![icon](https://github.com/user-attachments/assets/4947bff9-c02e-41a0-ab7a-0272424aaa4f)
 
-# Munin
+# Munin -- Passwords and Authenticator
 
 ![swift](https://img.shields.io/badge/Swift-6-orange)
 ![tests](https://img.shields.io/github/actions/workflow/status/brillcp/MuninApp/tests.yml?branch=main&event=push&label=tests)
