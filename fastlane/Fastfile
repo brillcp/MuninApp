@@ -80,6 +80,7 @@ platform :ios do
       project: PROJECT,
       scheme: SCHEME,
       destination: "generic/platform=iOS",
+      sdk: "iphoneos",
       export_method: "app-store",
       export_options: { provisioningProfiles: profiles },
       output_directory: "build/ios"
@@ -100,6 +101,7 @@ platform :mac do
       project: PROJECT,
       scheme: SCHEME,
       destination: "generic/platform=macOS",
+      sdk: "macosx",
       export_method: "app-store",
       export_options: { provisioningProfiles: profiles },
       output_directory: "build/macos"
