@@ -89,10 +89,10 @@ struct PasswordInspector: View {
                 Section {
                     DetailRow(label: "password.field.note", isCopied: copiedField == .note) {
                         Text(note)
+                            .textSelection(.enabled)
                     } actions: {
-                        EmptyView()
+                        copyButton(.note) { Pasteboard.copy(note) }
                     }
-                    .onTapGesture { copy(.note) { Pasteboard.copy(note) } }
                 }
             }
 
