@@ -49,7 +49,7 @@ end
 
 platform :ios do
   desc "Archives the iOS app and uploads it to TestFlight"
-  lane :testflight do
+  lane :release_testflight do
     setup_ci if is_ci
     key = api_key
     profiles = install_signing(platform: "ios", key: key)
@@ -69,7 +69,7 @@ end
 
 platform :mac do
   desc "Archives the macOS app and uploads it to TestFlight"
-  lane :testflight do
+  lane :release_testflight do
     setup_ci if is_ci
     key = api_key
     profiles = install_signing(platform: "macos", key: key)

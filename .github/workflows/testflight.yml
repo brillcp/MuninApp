@@ -47,7 +47,7 @@ jobs:
         env:
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
           MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
-        run: bundle exec fastlane ${{ matrix.platform }} testflight
+        run: bundle exec fastlane ${{ matrix.platform }} release_testflight
 
       - name: Upload build log
         if: failure()
