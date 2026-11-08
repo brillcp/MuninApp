@@ -11,3 +11,9 @@ xcuserdata/
 _to_delete/
 
 .DS_Store
+
+# fastlane
+fastlane/report.xml
+fastlane/README.md
+build/
+*.p8
