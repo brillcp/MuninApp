@@ -28,16 +28,38 @@ def install_signing(platform:, key:)
   )
   profiles = lane_context[SharedValues::MATCH_PROVISIONING_PROFILE_MAPPING]
 
-  { "MuninApp" => APP_ID, "MuninAutoFill" => AUTOFILL_ID }.each do |target, identifier|
-    update_code_signing_settings(
-      path: PROJECT,
-      targets: [target],
-      use_automatic_signing: false,
-      code_sign_identity: "Apple Distribution",
-      profile_name: profiles.fetch(identifier)
-    )
+  RELEASE_CONFIGURATIONS.each do |configuration, identifier|
+    use_manual_signing(configuration, profile: profiles.fetch(identifier))
   end
   profiles
+end
+
+# The Release build configurations of the app and AutoFill targets, by object ID.
+RELEASE_CONFIGURATIONS = {
+  "000000000000000112000000" => APP_ID,
+  "D542114C3097CF4900FD91D4" => AUTOFILL_ID
+}.freeze
+
+# Switches one build configuration to manual signing with an App Store profile.
+#
+# This edits `project.pbxproj` as text instead of using `update_code_signing_settings`:
+# that action rewrites the whole file with a parser that drops keys it doesn't know,
+# such as `dstSubfolder` on the Embed Foundation Extensions phase, which leaves the
+# AutoFill extension outside the app in the archive.
+def use_manual_signing(configuration, profile:)
+  path = File.expand_path("../#{PROJECT}/project.pbxproj", __dir__)
+  project = File.read(path)
+  pattern = /(\t\t#{configuration} \/\*.*?\*\/ = \{\n\t\t\tisa = XCBuildConfiguration;\n\t\t\tbuildSettings = \{\n)(.*?)(\n\t\t\t\};)/m
+  updated = project.sub(pattern) do
+    head, settings, tail = Regexp.last_match(1), Regexp.last_match(2), Regexp.last_match(3)
+    settings = settings.lines.reject { |line| line =~ /^\t+(CODE_SIGN_STYLE|CODE_SIGN_IDENTITY|PROVISIONING_PROFILE_SPECIFIER) = / }.join
+    signing = "\t\t\t\tCODE_SIGN_IDENTITY = \"Apple Distribution\";\n" \
+              "\t\t\t\tCODE_SIGN_STYLE = Manual;\n" \
+              "\t\t\t\tPROVISIONING_PROFILE_SPECIFIER = \"#{profile}\";\n"
+    "#{head}#{signing}#{settings.chomp}#{tail}"
+  end
+  UI.user_error!("Build configuration #{configuration} not found in #{path}") if updated == project
+  File.write(path, updated)
 end
 
 desc "Creates or updates the App Store certificates and profiles for iOS and macOS. Run locally once."
