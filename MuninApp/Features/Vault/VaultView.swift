@@ -4,7 +4,6 @@ import UniformTypeIdentifiers
 /// A view that shows the password list and the selected password's detail,
 /// and handles creating, editing, deleting, and importing passwords.
 struct VaultView: View {
-    @Environment(AuthManager.self) private var auth
     /// The subscription status; without a subscription, the vault is read-only.
     @Environment(SubscriptionManager.self) private var subscriptions
     /// The AutoFill status, which shows a banner while AutoFill is off.
@@ -18,10 +17,8 @@ struct VaultView: View {
     @FocusState private var isSearchFocused: Bool
     /// The trigger that lets ⌘F focus the search field on macOS.
     @State private var searchFocusRequest = SearchFocusRequest()
-    /// A parsed CSV waiting for import confirmation.
-    @State private var importPlan: VaultViewModel.ImportPlan?
-    /// The import result: the number of items added, or why the file couldn't be read.
-    @State private var importMessage: String?
+    /// The CSV import in progress.
+    @State private var importer: PasswordImporter
     /// A counter that toolbar buttons increment to play a light haptic.
     @State private var hapticTaps = 0
     /// A Boolean value that indicates whether the detail panel is visible on
@@ -36,32 +33,44 @@ struct VaultView: View {
     /// The 2FA accounts, which receive 2FA secrets from an imported CSV.
     let twoFactorModel: TwoFactorViewModel
 
+    /// Creates the vault view.
+    ///
+    /// - Parameters:
+    ///   - viewModel: The passwords and their selection.
+    ///   - twoFactorModel: The 2FA accounts, which receive 2FA secrets from an imported CSV.
+    init(viewModel: VaultViewModel, twoFactorModel: TwoFactorViewModel) {
+        _viewModel = Bindable(viewModel)
+        self.twoFactorModel = twoFactorModel
+        _importer = State(initialValue: PasswordImporter(vaultModel: viewModel, twoFactorModel: twoFactorModel))
+    }
+
     var body: some View {
+        @Bindable var importer = importer
         columns
             .sensoryFeedback(.impact(weight: .light), trigger: hapticTaps)
-            .task { await viewModel.refresh(auth: auth) }
+            .task(viewModel.refresh)
             .onChange(of: autoFill.isEnabled, autoFillChanged)
             .sheet(isPresented: $isCreating) {
                 PasswordEditorView { fields in
-                    try viewModel.create(fields, auth: auth)
+                    try viewModel.create(fields)
                 }
             }
             .confirmationDialog("vault.delete.title", item: $pendingDeletion, titleVisibility: .visible) { item in
                 Button(LocalizedKey("vault.delete.button", item.name), role: .destructive) {
-                    viewModel.delete(item, auth: auth)
+                    viewModel.delete(item)
                 }
             } message: { item in
                 Text(LocalizedKey("vault.delete.message", item.name))
             }
             .sheet(item: $editing) { draft in
                 PasswordEditorView(fields: draft.fields, isEditing: true) { fields in
-                    try viewModel.update(draft.item, with: fields, auth: auth)
+                    try viewModel.update(draft.item, with: fields)
                 }
             }
             .fileImporter(isPresented: $isPickingImportFile, allowedContentTypes: [.commaSeparatedText]) { result in
                 if case .success(let url) = result { prepareImport(from: url) }
             }
-            .confirmationDialog("import.confirm.title", item: $importPlan, titleVisibility: .visible) { plan in
+            .confirmationDialog("import.confirm.title", item: $importer.plan, titleVisibility: .visible) { plan in
                 Button(plan.twoFactorAccounts.isEmpty
                        ? LocalizedKey("import.confirm.button", plan.newItems.count)
                        : LocalizedKey("import.confirm.buttonAll")) { runImport(plan) }
@@ -71,7 +80,7 @@ struct VaultView: View {
                      ? LocalizedKey("import.confirm.message", plan.newItems.count, plan.duplicateCount)
                      : LocalizedKey("import.confirm.messageWithCodes", plan.newItems.count, plan.twoFactorAccounts.count, plan.duplicateCount))
             }
-            .alert("import.title", item: $importMessage) { _ in
+            .alert("import.title", item: $importer.message) { _ in
                 Button("global.done") {}
             } message: { message in
                 Text(message)
@@ -238,56 +247,25 @@ private extension VaultView {
         .disabled(!viewModel.hasLoaded || viewModel.importProgress != nil || subscriptions.isReadOnly)
     }
 
-    /// Reads a CSV file in memory and asks the user to confirm the import.
-    ///
-    /// The file's 2FA accounts are checked against the existing 2FA list,
-    /// which loads first if needed.
+    /// Reads a CSV file and asks the user to confirm the import.
     func prepareImport(from url: URL) {
-        let isScoped = url.startAccessingSecurityScopedResource()
-        defer { if isScoped { url.stopAccessingSecurityScopedResource() } }
-        let parsed: PasswordCSVParser.Import
-        do {
-            parsed = try PasswordCSVParser.parse(try Data(contentsOf: url))
-        } catch {
-            importMessage = error.localizedDescription
-            return
-        }
-        Task {
-            if !parsed.twoFactorAccounts.isEmpty, !twoFactorModel.hasLoaded {
-                await twoFactorModel.refresh(auth: auth)
-            }
-            let newAccounts = twoFactorModel.newAccounts(in: parsed.twoFactorAccounts)
-            importPlan = viewModel.planImport(parsed.passwords, twoFactorAccounts: newAccounts)
-        }
+        Task { await importer.prepare(from: url) }
     }
 
-    /// Imports the plan's passwords, then its 2FA accounts, and reports how
-    /// many of each were added.
+    /// Imports the confirmed plan.
     func runImport(_ plan: VaultViewModel.ImportPlan) {
-        Task {
-            let saved = await viewModel.runImport(plan, auth: auth)
-            guard !plan.twoFactorAccounts.isEmpty else {
-                importMessage = Localized("import.done.message", saved)
-                return
-            }
-            do {
-                let added = try await twoFactorModel.add(plan.twoFactorAccounts, auth: auth)
-                importMessage = Localized("import.done.messageWithCodes", saved, added)
-            } catch {
-                importMessage = Localized("import.done.message", saved) + "\n\n" + error.muninDescription
-            }
-        }
+        Task { await importer.run(plan) }
     }
 
     /// Registers the AutoFill credential identities once AutoFill is on,
     /// because the system keeps them only while it's enabled.
     func autoFillChanged() {
-        if autoFill.isEnabled == true { AutoFillIdentities.update(viewModel.items) }
+        if autoFill.isEnabled == true { AutoFillIdentities.replaceAll(with: viewModel.items) }
     }
 
     /// Decrypts the item's password and note and opens the editor with them.
     func startEditing(_ item: PasswordItem) {
-        editing = viewModel.editDraft(for: item, auth: auth)
+        editing = viewModel.editDraft(for: item)
     }
 }
 

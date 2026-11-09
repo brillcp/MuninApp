@@ -105,7 +105,6 @@
 "lock.step.masterPassword" = "استخدام كلمة السر الرئيسية";
 "lock.step.recoveryKey" = "إدخال مفتاح الاسترداد";
 "lock.step.signIn" = "تسجيل الدخول";
-"lock.signedInAs" = "تم تسجيل الدخول باسم %@";
 "lock.switchAccount" = "%@ · تبديل";
 "lock.title" = "فتح قفل خزنتي";
 "lock.unlock" = "فتح القفل";
@@ -179,12 +178,8 @@
 "vault.title" = "الخزنة";
 
 /** Vault Key **/
-"vaultKey.missing.checkAgain" = "التحقق مرة أخرى";
-"vaultKey.missing.invalid" = "هذا ليس مفتاح استرداد صالحًا.";
-"vaultKey.missing.message" = "خزنتك مشفّرة بمفتاح من جهازك الآخر. شغّل سلسلة مفاتيح iCloud على الجهازين ثم تحقق مرة أخرى، أو الصق مفتاح الاسترداد.";
-"vaultKey.missing.placeholder" = "مفتاح الاسترداد";
-"vaultKey.missing.restore" = "استعادة";
-"vaultKey.missing.title" = "مفتاح الخزنة غير موجود على هذا الجهاز";
+"lock.recovery.invalid" = "هذا ليس مفتاح استرداد صالحًا.";
+"lock.recovery.placeholder" = "مفتاح الاسترداد";
 "vaultKey.recovery.backup" = "احتفظ بنسخة في مكان آمن. إذا نسيت كلمة السر الرئيسية، فمفتاح الاسترداد هو الطريقة الوحيدة للعودة إلى خزنتك.";
 "vaultKey.recovery.copy" = "نسخ مفتاح الاسترداد";
 "vaultKey.recovery.explanation" = "حساباتك مشفّرة تشفيرًا تامًا بين الطرفين بهذا المفتاح. لا يستطيع Munin قراءتها أو استردادها نيابةً عنك.";
@@ -295,5 +290,4 @@
 "autofill.signIn" = "افتح Munin وسجّل الدخول لاستخدام التعبئة التلقائية.";
 "autofill.suggested" = "مقترحة";
 "autofill.title" = "Munin";
-"autofill.turnOnBiometrics" = "افتح Munin، وشغّل فتح القفل باستخدام Face ID أو Touch ID من الإعدادات، ثم افتح قفل Munin مرة واحدة. بعد ذلك يمكن للتعبئة التلقائية استخدامه.";
 "autofill.unavailable" = "التعبئة التلقائية غير متاحة";

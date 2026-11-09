@@ -105,7 +105,6 @@
 "lock.step.masterPassword" = "Use master password";
 "lock.step.recoveryKey" = "Enter recovery key";
 "lock.step.signIn" = "Sign in";
-"lock.signedInAs" = "Signed in as %@";
 "lock.switchAccount" = "%@ · Switch";
 "lock.title" = "Unlock my vault";
 "lock.unlock" = "Unlock";
@@ -179,12 +178,8 @@
 "vault.title" = "Vault";
 
 /** Vault Key **/
-"vaultKey.missing.checkAgain" = "Check Again";
-"vaultKey.missing.invalid" = "That isn't a valid recovery key.";
-"vaultKey.missing.message" = "Your vault is encrypted with a key from your other device. Turn on iCloud Keychain on both devices and check again, or paste your recovery key.";
-"vaultKey.missing.placeholder" = "Recovery key";
-"vaultKey.missing.restore" = "Restore";
-"vaultKey.missing.title" = "Vault key not on this device";
+"lock.recovery.invalid" = "That isn't a valid recovery key.";
+"lock.recovery.placeholder" = "Recovery key";
 "vaultKey.recovery.backup" = "Save a copy somewhere safe. If you forget your master password, the recovery key is the only way back into your vault.";
 "vaultKey.recovery.copy" = "Copy Recovery Key";
 "vaultKey.recovery.explanation" = "Your accounts are end-to-end encrypted with this key. Munin can't read them, and can't recover them for you.";
@@ -295,5 +290,4 @@
 "autofill.signIn" = "Open Munin and sign in to use AutoFill.";
 "autofill.suggested" = "Suggested";
 "autofill.title" = "Munin";
-"autofill.turnOnBiometrics" = "Open Munin, turn on Face ID or Touch ID unlock in Settings, and unlock Munin once. Then AutoFill can use it.";
 "autofill.unavailable" = "AutoFill Isn't Available";

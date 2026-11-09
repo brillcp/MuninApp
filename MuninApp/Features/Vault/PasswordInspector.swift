@@ -26,7 +26,7 @@ struct PasswordInspector: View {
     /// The item to display.
     let item: PasswordItem
     /// Decrypts a ciphertext for the given field, `password` or `note`.
-    let decrypt: (_ ciphertext: String, _ field: String) throws -> String
+    let decrypt: (_ ciphertext: String, _ field: PasswordField) throws -> String
     /// Decrypts and copies the password.
     let onCopyPassword: () -> Void
     /// Requests deletion of the item, typically after confirmation.
@@ -63,7 +63,7 @@ struct PasswordInspector: View {
                            systemImage: revealedPassword == nil ? DesignKit.Icon.showPassword : DesignKit.Icon.hidePassword) {
                         hapticTaps += 1
                         if revealedPassword == nil {
-                            revealedPassword = try? decrypt(item.encryptedPassword, "password")
+                            revealedPassword = try? decrypt(item.encryptedPassword, .password)
                         } else {
                             revealedPassword = nil
                         }
@@ -145,7 +145,7 @@ private extension PasswordInspector {
 
     /// Decrypts the note, and again whenever an edit changes it.
     func loadNote() async {
-        note = try? decrypt(item.encryptedNote, "note")
+        note = try? decrypt(item.encryptedNote, .note)
     }
 
     /// Hides a revealed password once an edit changes it.

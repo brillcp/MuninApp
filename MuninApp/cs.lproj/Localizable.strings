@@ -105,7 +105,6 @@
 "lock.step.masterPassword" = "Použít hlavní heslo";
 "lock.step.recoveryKey" = "Zadat klíč pro obnovení";
 "lock.step.signIn" = "Přihlásit se";
-"lock.signedInAs" = "Přihlášeno jako %@";
 "lock.switchAccount" = "%@ · Přepnout";
 "lock.title" = "Odemknout můj trezor";
 "lock.unlock" = "Odemknout";
@@ -179,12 +178,8 @@
 "vault.title" = "Trezor";
 
 /** Vault Key **/
-"vaultKey.missing.checkAgain" = "Zkontrolovat znovu";
-"vaultKey.missing.invalid" = "Toto není platný klíč pro obnovení.";
-"vaultKey.missing.message" = "Váš trezor je zašifrován klíčem z jiného vašeho zařízení. Zapněte na obou zařízeních Klíčenku na iCloudu a zkontrolujte to znovu, nebo vložte klíč pro obnovení.";
-"vaultKey.missing.placeholder" = "Klíč pro obnovení";
-"vaultKey.missing.restore" = "Obnovit";
-"vaultKey.missing.title" = "Klíč trezoru není na tomto zařízení";
+"lock.recovery.invalid" = "Toto není platný klíč pro obnovení.";
+"lock.recovery.placeholder" = "Klíč pro obnovení";
 "vaultKey.recovery.backup" = "Uložte si kopii na bezpečné místo. Pokud zapomenete hlavní heslo, je klíč pro obnovení jedinou cestou zpět do trezoru.";
 "vaultKey.recovery.copy" = "Kopírovat klíč pro obnovení";
 "vaultKey.recovery.explanation" = "Vaše účty jsou tímto klíčem koncově šifrované. Munin je nemůže číst ani je za vás obnovit.";
@@ -295,5 +290,4 @@
 "autofill.signIn" = "Chcete-li používat automatické vyplňování, otevřete Munin a přihlaste se.";
 "autofill.suggested" = "Návrhy";
 "autofill.title" = "Munin";
-"autofill.turnOnBiometrics" = "Otevřete Munin, v Nastavení zapněte odemykání pomocí Face ID nebo Touch ID a jednou Munin odemkněte. Pak ho bude moci používat automatické vyplňování.";
 "autofill.unavailable" = "Automatické vyplňování není k dispozici";

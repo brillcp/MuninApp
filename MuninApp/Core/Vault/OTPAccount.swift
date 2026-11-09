@@ -31,7 +31,7 @@ nonisolated struct OTPAccount: Codable, Sendable, Hashable {
 }
 
 /// A decrypted account and its server identifier.
-nonisolated struct VaultItem: Identifiable, Hashable {
+nonisolated struct VaultItem: Identifiable, Hashable, Sendable {
     /// The entry's identifier on the server.
     let id: UUID
     /// The decrypted account.

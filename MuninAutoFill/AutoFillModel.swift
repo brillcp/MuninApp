@@ -20,25 +20,37 @@ protocol AutoFillHandler: AnyObject {
     func cancel()
 }
 
-/// The model behind the AutoFill extension: biometric unlock, vault loading,
-/// and the passwords or 2FA codes to choose from.
+/// The model behind the AutoFill extension: unlocking with Face ID, Touch ID,
+/// or the master password, vault loading, and the passwords or 2FA codes to
+/// choose from.
 ///
 /// Decrypted data lives only in memory and is discarded when AutoFill closes.
 /// Passwords stay encrypted until the user chooses one.
 @Observable
 final class AutoFillModel {
+    private let api: any MuninAPI
     /// The unlocked vault key, held while AutoFill is open.
     private var vault: UnlockedVault?
     private weak var handler: AutoFillHandler?
 
+    /// The signed-in user's ID, read from the shared Keychain.
+    private let userID = KeychainService.loadUserID()
+
     /// The current stage.
     private(set) var state: State = .locked
+    /// A Boolean value that indicates whether this device has a Face ID or
+    /// Touch ID copy of the vault key, so the lock screen offers biometric unlock.
+    private(set) var offersBiometrics = false
+    /// Why the last unlock attempt failed, such as a wrong master password.
+    private(set) var errorMessage: String?
     /// The user's passwords, with name, URL, and username decrypted.
     private(set) var passwords: [PasswordItem] = []
     /// The user's 2FA accounts, decrypted.
     private(set) var codes: [VaultItem] = []
     /// The search field's text.
     var searchText = ""
+    /// The master password the user is typing.
+    var masterPassword = ""
 
     /// The kind of field that opened AutoFill.
     let mode: Mode
@@ -53,12 +65,15 @@ final class AutoFillModel {
     ///   - mode: The kind of field that opened AutoFill.
     ///   - serviceIdentifiers: The services requesting credentials.
     ///   - requestedItemID: The item to fill after unlocking, if any.
+    ///   - api: The API that loads the encrypted vault.
     ///   - handler: The object that completes or cancels the request.
-    init(mode: Mode, serviceIdentifiers: [ASCredentialServiceIdentifier], requestedItemID: UUID? = nil, handler: AutoFillHandler) {
+    init(mode: Mode, serviceIdentifiers: [ASCredentialServiceIdentifier], requestedItemID: UUID? = nil, api: any MuninAPI, handler: AutoFillHandler) {
+        self.api = api
         self.mode = mode
         self.requestedItemID = requestedItemID
         self.handler = handler
         domains = serviceIdentifiers.compactMap(Self.domain(of:))
+        offersBiometrics = userID.map(VaultKeyStore.hasBiometric(userID:)) ?? false
     }
 }
 
@@ -74,7 +89,7 @@ extension AutoFillModel {
 
     /// The stages of an AutoFill session.
     enum State: Equatable {
-        /// Waiting for Face ID or Touch ID.
+        /// Waiting for Face ID, Touch ID, or the master password.
         case locked
         /// Unlocking or loading the vault.
         case working
@@ -120,18 +135,17 @@ extension AutoFillModel {
     /// Unlocks the biometric copy of the vault key, then loads the vault.
     ///
     /// The app saves the biometric copy when the vault is unlocked with Face ID
-    /// or Touch ID turned on.
-    func unlock() async {
+    /// or Touch ID turned on. Without one, or if Face ID or Touch ID fails,
+    /// the lock screen asks for the master password instead.
+    func unlockWithBiometrics() async {
         guard state == .locked else { return }
-        guard let userID = KeychainService.loadUserID() else {
+        guard let userID else {
             state = .unavailable(Localized("autofill.signIn"))
             return
         }
-        guard VaultKeyStore.hasBiometric(userID: userID) else {
-            state = .unavailable(Localized("autofill.turnOnBiometrics"))
-            return
-        }
+        guard offersBiometrics else { return }
         state = .working
+        errorMessage = nil
         let reason = Localized("lock.reason")
         let result = await Task.detached(priority: .userInitiated) {
             VaultKeyStore.loadWithBiometrics(userID: userID, reason: reason)
@@ -143,16 +157,50 @@ extension AutoFillModel {
         case .canceled:
             state = .locked
         case .notAvailable:
-            state = .unavailable(Localized("autofill.turnOnBiometrics"))
+            offersBiometrics = false
+            state = .locked
         case .failed:
-            state = .unavailable(Localized("lock.biometrics.failed"))
+            errorMessage = Localized("lock.biometrics.failed")
+            state = .locked
+        }
+    }
+
+    /// Unlocks by unwrapping the server's vault key with ``masterPassword``,
+    /// then loads the vault.
+    ///
+    /// The master password stays in this extension; nothing is saved for
+    /// later unlocks.
+    func unlockWithMasterPassword() async {
+        guard state == .locked, !masterPassword.isEmpty else { return }
+        guard let userID else {
+            state = .unavailable(Localized("autofill.signIn"))
+            return
+        }
+        state = .working
+        errorMessage = nil
+        defer { masterPassword = "" }
+        do {
+            guard let record = try await api.vaultKey() else {
+                state = .unavailable(Localized("errors.keyMissing"))
+                return
+            }
+            guard let unlocked = try await VaultKeyCrypto.unlock(record, password: masterPassword, userID: userID) else {
+                errorMessage = Localized("lock.wrongMasterPassword")
+                state = .locked
+                return
+            }
+            vault = unlocked
+            await load()
+        } catch {
+            errorMessage = error.muninDescription
+            state = .locked
         }
     }
 
     /// Decrypts and fills the chosen password.
     func choose(_ item: PasswordItem) {
         guard let vault,
-              let password = try? VaultCrypto.open(item.encryptedPassword, field: "password", key: vault.key, userID: vault.userID) else {
+              let password = try? VaultDecoder.open(item.encryptedPassword, .password, vault: vault) else {
             state = .unavailable(Localized("autofill.decryptFailed"))
             return
         }
@@ -177,20 +225,18 @@ private extension AutoFillModel {
     /// If the user tapped a keyboard suggestion, fills that item immediately.
     func load() async {
         guard let vault else { return }
-        let service = MuninService(tokenProvider: AuthTokenProvider.shared)
         do {
             switch mode {
             case .passwords:
-                passwords = try await service.passwords().compactMap { Self.item(from: $0, vault: vault) }
+                let records = try await api.passwords()
+                passwords = await VaultDecoder.passwordItems(from: records, vault: vault).items
                 if let requestedItemID, let item = passwords.first(where: { $0.id == requestedItemID }) {
                     choose(item)
                     return
                 }
             case .oneTimeCodes:
-                codes = try await service.entries().compactMap { entry in
-                    (try? VaultCrypto.open(entry.ciphertext, key: vault.key, userID: vault.userID))
-                        .map { VaultItem(id: entry.id, account: $0) }
-                }
+                let records = try await api.entries()
+                codes = await VaultDecoder.twoFactorItems(from: records, vault: vault).items
             }
             state = .ready
         } catch {
@@ -207,21 +253,6 @@ private extension AutoFillModel {
         domains.contains { requested in
             requested == domain || requested.hasSuffix("." + domain) || domain.hasSuffix("." + requested)
         }
-    }
-
-    /// Decrypts an item's name, URL, and username, leaving the password and
-    /// note encrypted.
-    static func item(from entry: EncryptedPassword, vault: UnlockedVault) -> PasswordItem? {
-        func open(_ ciphertext: String, _ field: String) -> String? {
-            try? VaultCrypto.open(ciphertext, field: field, key: vault.key, userID: vault.userID)
-        }
-        guard let name = open(entry.name, "name"),
-              let url = open(entry.url, "url"),
-              let username = open(entry.username, "username") else { return nil }
-        return PasswordItem(
-            id: entry.id, name: name, url: url, username: username,
-            encryptedPassword: entry.password, encryptedNote: entry.note, lastUpdated: entry.updatedAt
-        )
     }
 
     /// Returns a service identifier's domain, lowercased and without `www.`.

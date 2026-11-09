@@ -105,7 +105,6 @@
 "lock.step.masterPassword" = "Använd huvudlösenord";
 "lock.step.recoveryKey" = "Ange återställningsnyckel";
 "lock.step.signIn" = "Logga in";
-"lock.signedInAs" = "Inloggad som %@";
 "lock.switchAccount" = "%@ · Byt";
 "lock.title" = "Lås upp mitt valv";
 "lock.unlock" = "Lås upp";
@@ -179,12 +178,8 @@
 "vault.title" = "Valv";
 
 /** Vault Key **/
-"vaultKey.missing.checkAgain" = "Kontrollera igen";
-"vaultKey.missing.invalid" = "Det är ingen giltig återställningsnyckel.";
-"vaultKey.missing.message" = "Ditt valv är krypterat med en nyckel från din andra enhet. Slå på iCloud-nyckelring på båda enheterna och kontrollera igen, eller klistra in din återställningsnyckel.";
-"vaultKey.missing.placeholder" = "Återställningsnyckel";
-"vaultKey.missing.restore" = "Återställ";
-"vaultKey.missing.title" = "Valvnyckeln finns inte på den här enheten";
+"lock.recovery.invalid" = "Det är ingen giltig återställningsnyckel.";
+"lock.recovery.placeholder" = "Återställningsnyckel";
 "vaultKey.recovery.backup" = "Spara en kopia på ett säkert ställe. Om du glömmer ditt huvudlösenord är återställningsnyckeln det enda sättet att komma in i ditt valv igen.";
 "vaultKey.recovery.copy" = "Kopiera återställningsnyckel";
 "vaultKey.recovery.explanation" = "Dina konton är end-to-end-krypterade med den här nyckeln. Munin kan inte läsa dem och kan inte återställa dem åt dig.";
@@ -295,5 +290,4 @@
 "autofill.signIn" = "Öppna Munin och logga in för att använda autofyll.";
 "autofill.suggested" = "Förslag";
 "autofill.title" = "Munin";
-"autofill.turnOnBiometrics" = "Öppna Munin, slå på upplåsning med Face ID eller Touch ID i Inställningar och lås upp Munin en gång. Sedan kan autofyll använda det.";
 "autofill.unavailable" = "Autofyll är inte tillgängligt";

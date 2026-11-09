@@ -127,8 +127,6 @@ nonisolated enum DesignKit {
         static let useMasterPassword = "lock.shield.fill"
         /// The recovery key.
         static let recoveryKey = "key"
-        /// The vault key is missing on this device.
-        static let missingKey = "key.slash"
         /// Set up AutoFill.
         static let autoFill = "rectangle.and.pencil.and.ellipsis"
         /// Face ID.

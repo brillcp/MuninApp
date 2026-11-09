@@ -5,7 +5,6 @@ import SwiftUI
 /// The user enters the current password, then the new one twice. The vault
 /// key doesn't change; it's rewrapped with the new password.
 struct ChangeMasterPasswordView: View {
-    @Environment(AuthManager.self) private var auth
     @Environment(VaultSession.self) private var session
     @Environment(\.dismiss) private var dismiss
 
@@ -98,7 +97,7 @@ private extension ChangeMasterPasswordView {
     func save() {
         guard isValid else { return }
         Task {
-            if await session.changeMasterPassword(current: current, new: password, auth: auth) {
+            if await session.changeMasterPassword(current: current, new: password) {
                 dismiss()
             }
         }

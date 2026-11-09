@@ -4,7 +4,7 @@ import Foundation
 ///
 /// The name, URL, and username are decrypted for display and search. The
 /// password and note stay encrypted until needed.
-nonisolated struct PasswordItem: Identifiable, Hashable {
+nonisolated struct PasswordItem: Identifiable, Hashable, Sendable {
     /// The item's server identifier.
     let id: UUID
     /// The item's name, typically the service it belongs to.
@@ -23,8 +23,8 @@ nonisolated struct PasswordItem: Identifiable, Hashable {
 
 /// The decrypted field values of a password item being edited.
 ///
-/// Exists only while the editor is open.
-struct PasswordFields {
+/// Exists only while the editor is open, or while an item is being saved or exported.
+nonisolated struct PasswordFields: Sendable {
     /// The item's name.
     var name = ""
     /// The website.
@@ -37,7 +37,7 @@ struct PasswordFields {
     var note = ""
 }
 
-extension PasswordItem {
+nonisolated extension PasswordItem {
     /// The website's lowercase domain without a `www.` prefix, used for
     /// AutoFill.
     ///

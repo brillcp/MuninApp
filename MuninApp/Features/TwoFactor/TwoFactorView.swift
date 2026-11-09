@@ -5,7 +5,6 @@ import UniformTypeIdentifiers
 ///
 /// Supports adding, importing, refreshing, and deleting accounts.
 struct TwoFactorView: View {
-    @Environment(AuthManager.self) private var auth
     /// The subscription state. Without an active subscription, the vault is
     /// read-only.
     @Environment(SubscriptionManager.self) private var subscriptions
@@ -35,7 +34,7 @@ struct TwoFactorView: View {
                         errorMessage: viewModel.items.isEmpty ? viewModel.errorMessage : nil,
                         isEmpty: viewModel.items.isEmpty && viewModel.undecryptableCount == 0,
                         hasLoaded: viewModel.hasLoaded,
-                        onRetry: { Task { await viewModel.refresh(auth: auth) } },
+                        onRetry: { Task { await viewModel.refresh() } },
                         onAdd: { isAdding = true }
                     )
                 }
@@ -50,13 +49,13 @@ struct TwoFactorView: View {
                         BillingIssueBanner()
                     }
                 }
-                .refreshable { await viewModel.refresh(auth: auth) }
-                .task { await viewModel.refresh(auth: auth) }
+                .refreshable { await viewModel.refresh() }
+                .task { await viewModel.refresh() }
                 .task(clock.run)
                 .sensoryFeedback(.impact(weight: .light), trigger: hapticTaps)
                 .sheet(isPresented: $isAdding) {
                     AddAccountView { accounts in
-                        try await viewModel.add(accounts, auth: auth)
+                        try await viewModel.add(accounts)
                     }
                 }
                 .fileImporter(isPresented: $isPickingImportFile, allowedContentTypes: [.plainText, .text], onCompletion: importFilePicked)
@@ -75,7 +74,7 @@ struct TwoFactorView: View {
                 }
                 .confirmationDialog("codes.delete.title", item: $pendingDeletion, titleVisibility: .visible) { item in
                     Button(LocalizedKey("codes.delete.button", item.account.title), role: .destructive) {
-                        Task { await viewModel.delete(item, auth: auth) }
+                        Task { await viewModel.delete(item) }
                     }
                 } message: { item in
                     Text(LocalizedKey("codes.delete.message", item.account.title))
@@ -95,7 +94,7 @@ private extension TwoFactorView {
             importButton
             Button("global.refresh", systemImage: DesignKit.Icon.refresh) {
                 hapticTaps += 1
-                Task { await viewModel.refresh(auth: auth) }
+                Task { await viewModel.refresh() }
             }
             .keyboardShortcut("r")
         }
@@ -143,7 +142,7 @@ private extension TwoFactorView {
     func runImport(_ plan: TwoFactorImportPlan) {
         Task {
             do {
-                let added = try await viewModel.add(plan.accounts, auth: auth)
+                let added = try await viewModel.add(plan.accounts)
                 importMessage = Localized("codes.import.done", added)
             } catch {
                 importMessage = error.muninDescription

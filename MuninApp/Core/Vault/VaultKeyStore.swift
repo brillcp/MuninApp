@@ -8,8 +8,6 @@ import LocalAuthentication
 /// - Term Biometric: A copy of the key and proof lives in the device's
 ///   Keychain, readable only after Face ID or Touch ID
 ///   (`.biometryCurrentSet`), and never syncs.
-/// - Term Legacy: A key synced through iCloud Keychain, from before master
-///   passwords. It's read once to set up the master password, then deleted.
 nonisolated enum VaultKeyStore {
     /// The outcome of unlocking with Face ID or Touch ID.
     enum BiometricResult: Sendable {
@@ -23,27 +21,8 @@ nonisolated enum VaultKeyStore {
         case failed
     }
 
-    /// The Keychain account of the legacy synced key.
-    private static func legacyAccount(userID: String) -> String { "vault.key.\(userID.lowercased())" }
     /// The Keychain account of the biometric copy.
     private static func biometricAccount(userID: String) -> String { "vault.unlock.\(userID.lowercased())" }
-
-    // MARK: - Legacy (iCloud Keychain)
-
-    /// Returns the legacy synced vault key, if the device has one.
-    static func loadLegacy(userID: String) -> SymmetricKey? {
-        guard let data = KeychainService.loadSynced(account: legacyAccount(userID: userID)), data.count == 32 else {
-            return nil
-        }
-        return SymmetricKey(data: data)
-    }
-
-    /// Deletes the legacy synced key from all devices.
-    ///
-    /// Call this only after the vault key is stored on the server, wrapped by a master password.
-    static func deleteLegacy(userID: String) {
-        KeychainService.deleteSynced(account: legacyAccount(userID: userID))
-    }
 
     // MARK: - Biometrics
 

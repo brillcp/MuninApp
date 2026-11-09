@@ -3,7 +3,7 @@ import Foundation
 /// RFC 4648 Base32 encoding, the format of authenticator secrets.
 ///
 /// Decoding is case-insensitive and ignores padding, spaces, and dashes.
-enum Base32 {
+nonisolated enum Base32 {
     /// The 32 symbols, in order of value.
     private static let alphabet = Array("ABCDEFGHIJKLMNOPQRSTUVWXYZ234567")
     /// The 5-bit value of each symbol.

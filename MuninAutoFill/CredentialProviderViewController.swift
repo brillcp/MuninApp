@@ -9,6 +9,9 @@ import SwiftUI
 /// unlocks with Face ID or Touch ID, loads the vault, and returns the chosen
 /// password or code to complete the request.
 final class CredentialProviderViewController: ASCredentialProviderViewController {
+    /// The API client, created once for the extension and passed to each model.
+    private let api: any MuninAPI = MuninService(tokenProvider: .shared)
+
     /// Creates a plain container view for the SwiftUI interface.
     override func loadView() {
         #if os(macOS)
@@ -21,12 +24,12 @@ final class CredentialProviderViewController: ASCredentialProviderViewController
 
     /// Shows the password list, with matches for the service first.
     override func prepareCredentialList(for serviceIdentifiers: [ASCredentialServiceIdentifier]) {
-        show(AutoFillModel(mode: .passwords, serviceIdentifiers: serviceIdentifiers, handler: self))
+        show(AutoFillModel(mode: .passwords, serviceIdentifiers: serviceIdentifiers, api: api, handler: self))
     }
 
     /// Shows the one-time code list, with matches for the service first.
     override func prepareOneTimeCodeCredentialList(for serviceIdentifiers: [ASCredentialServiceIdentifier]) {
-        show(AutoFillModel(mode: .oneTimeCodes, serviceIdentifiers: serviceIdentifiers, handler: self))
+        show(AutoFillModel(mode: .oneTimeCodes, serviceIdentifiers: serviceIdentifiers, api: api, handler: self))
     }
 
     /// Requests user interaction, because the vault must be unlocked with
@@ -43,7 +46,7 @@ final class CredentialProviderViewController: ASCredentialProviderViewController
             extensionContext.cancelRequest(withError: Self.error(.credentialIdentityNotFound))
             return
         }
-        show(AutoFillModel(mode: .passwords, serviceIdentifiers: [identity.serviceIdentifier], requestedItemID: id, handler: self))
+        show(AutoFillModel(mode: .passwords, serviceIdentifiers: [identity.serviceIdentifier], requestedItemID: id, api: api, handler: self))
     }
 }
 

@@ -105,7 +105,6 @@
 "lock.step.masterPassword" = "Käytä pääsalasanaa";
 "lock.step.recoveryKey" = "Syötä palautusavain";
 "lock.step.signIn" = "Kirjaudu sisään";
-"lock.signedInAs" = "Kirjautunut: %@";
 "lock.switchAccount" = "%@ · Vaihda";
 "lock.title" = "Avaa holvini";
 "lock.unlock" = "Avaa";
@@ -179,12 +178,8 @@
 "vault.title" = "Holvi";
 
 /** Vault Key **/
-"vaultKey.missing.checkAgain" = "Tarkista uudelleen";
-"vaultKey.missing.invalid" = "Tämä ei ole kelvollinen palautusavain.";
-"vaultKey.missing.message" = "Holvisi on salattu toisen laitteesi avaimella. Ota iCloud-avainnippu käyttöön molemmilla laitteilla ja tarkista uudelleen, tai liitä palautusavaimesi.";
-"vaultKey.missing.placeholder" = "Palautusavain";
-"vaultKey.missing.restore" = "Palauta";
-"vaultKey.missing.title" = "Holvin avain ei ole tällä laitteella";
+"lock.recovery.invalid" = "Tämä ei ole kelvollinen palautusavain.";
+"lock.recovery.placeholder" = "Palautusavain";
 "vaultKey.recovery.backup" = "Säilytä kopio turvallisessa paikassa. Jos unohdat pääsalasanasi, palautusavain on ainoa tapa päästä takaisin holviisi.";
 "vaultKey.recovery.copy" = "Kopioi palautusavain";
 "vaultKey.recovery.explanation" = "Tilisi on salattu päästä päähän tällä avaimella. Munin ei voi lukea niitä eikä palauttaa niitä puolestasi.";
@@ -295,5 +290,4 @@
 "autofill.signIn" = "Avaa Munin ja kirjaudu sisään käyttääksesi automaattista täyttöä.";
 "autofill.suggested" = "Ehdotetut";
 "autofill.title" = "Munin";
-"autofill.turnOnBiometrics" = "Avaa Munin, ota Face ID- tai Touch ID -avaus käyttöön asetuksissa ja avaa Munin kerran. Sen jälkeen automaattinen täyttö voi käyttää sitä.";
 "autofill.unavailable" = "Automaattinen täyttö ei ole käytettävissä";

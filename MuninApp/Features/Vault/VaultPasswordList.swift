@@ -6,7 +6,6 @@ import SwiftUI
 /// its detail. On iOS, it's a list whose rows push the detail column, because
 /// a `Table` doesn't navigate when the split view is collapsed.
 struct VaultPasswordList: View {
-    @Environment(AuthManager.self) private var auth
     @Environment(SubscriptionManager.self) private var subscriptions
 
     /// The passwords, selection and sort order.
@@ -26,7 +25,7 @@ struct VaultPasswordList: View {
                     .disabled(item.username.isEmpty)
                     .tint(.primary)
                     Button("vault.copyPassword", systemImage: DesignKit.Icon.copy) {
-                        Task { await viewModel.copyPassword(item, auth: auth) }
+                        Task { await viewModel.copyPassword(item) }
                     }
                     .tint(.primary)
                     Button("global.edit", systemImage: DesignKit.Icon.edit) { onEdit(item) }
@@ -44,7 +43,7 @@ struct VaultPasswordList: View {
                     isEmpty: viewModel.items.isEmpty,
                     hasLoaded: viewModel.hasLoaded,
                     searchText: viewModel.visibleItems.isEmpty ? viewModel.searchText : nil,
-                    onRetry: { Task { await viewModel.refresh(auth: auth) } }
+                    onRetry: { Task { await viewModel.refresh() } }
                 )
             }
     }

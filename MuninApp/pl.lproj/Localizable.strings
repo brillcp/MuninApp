@@ -105,7 +105,6 @@
 "lock.step.masterPassword" = "Użyj hasła głównego";
 "lock.step.recoveryKey" = "Wpisz klucz odzyskiwania";
 "lock.step.signIn" = "Zaloguj się";
-"lock.signedInAs" = "Zalogowano jako %@";
 "lock.switchAccount" = "%@ · Zmień";
 "lock.title" = "Odblokuj mój sejf";
 "lock.unlock" = "Odblokuj";
@@ -179,12 +178,8 @@
 "vault.title" = "Sejf";
 
 /** Vault Key **/
-"vaultKey.missing.checkAgain" = "Sprawdź ponownie";
-"vaultKey.missing.invalid" = "To nie jest prawidłowy klucz odzyskiwania.";
-"vaultKey.missing.message" = "Twój sejf jest zaszyfrowany kluczem z innego Twojego urządzenia. Włącz Pęk kluczy iCloud na obu urządzeniach i sprawdź ponownie albo wklej klucz odzyskiwania.";
-"vaultKey.missing.placeholder" = "Klucz odzyskiwania";
-"vaultKey.missing.restore" = "Przywróć";
-"vaultKey.missing.title" = "Klucza sejfu nie ma na tym urządzeniu";
+"lock.recovery.invalid" = "To nie jest prawidłowy klucz odzyskiwania.";
+"lock.recovery.placeholder" = "Klucz odzyskiwania";
 "vaultKey.recovery.backup" = "Przechowuj kopię w bezpiecznym miejscu. Jeśli zapomnisz hasła głównego, klucz odzyskiwania to jedyny sposób na powrót do sejfu.";
 "vaultKey.recovery.copy" = "Kopiuj klucz odzyskiwania";
 "vaultKey.recovery.explanation" = "Twoje konta są szyfrowane end-to-end tym kluczem. Munin nie może ich odczytać ani odzyskać za Ciebie.";
@@ -295,5 +290,4 @@
 "autofill.signIn" = "Otwórz Munin i zaloguj się, aby używać autouzupełniania.";
 "autofill.suggested" = "Sugerowane";
 "autofill.title" = "Munin";
-"autofill.turnOnBiometrics" = "Otwórz Munin, włącz odblokowywanie za pomocą Face ID lub Touch ID w Ustawieniach i raz odblokuj Munin. Potem autouzupełnianie będzie mogło z niego korzystać.";
 "autofill.unavailable" = "Autouzupełnianie jest niedostępne";

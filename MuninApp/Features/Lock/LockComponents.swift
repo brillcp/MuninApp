@@ -101,7 +101,7 @@ struct LockPanel: View {
         }
         .onChange(of: session.state) { startUnlockIfReady() }
         .alert("errors.openVault.title", item: $session.failureMessage) { _ in
-            Button("global.tryAgain") { Task { await session.prepare(auth: auth) } }
+            Button("global.tryAgain") { Task { await session.prepare() } }
             Button("account.signOut", role: .destructive, action: auth.signOut)
         } message: { message in
             Text(message)
@@ -154,7 +154,7 @@ private extension LockPanel {
         guard unlocksAfterSignIn, session.state == .locked else { return }
         unlocksAfterSignIn = false
         if session.offersBiometricUnlock {
-            Task { await session.unlockWithBiometrics(prefetchingInto: vaultModel, auth: auth) }
+            Task { await session.unlockWithBiometrics(prefetchingInto: vaultModel) }
         }
     }
 
@@ -296,21 +296,6 @@ private extension LockButton {
             button
                 .buttonStyle(.plain)
                 .foregroundStyle(.primary)
-        }
-    }
-}
-
-/// A view that shows the signed-in account's email on one line.
-struct LockAccountRow: View {
-    /// The signed-in email, or `nil` to show nothing.
-    let email: String?
-
-    var body: some View {
-        if let email {
-            Text(LocalizedKey("lock.signedInAs", email))
-                .lineLimit(1)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .font(.callout)
         }
     }
 }

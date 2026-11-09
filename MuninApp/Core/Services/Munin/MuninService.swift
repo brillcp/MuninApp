@@ -1,22 +1,20 @@
 import Foundation
 import Networking
 
-/// A typed client for the Munin API.
+/// The live client for the Munin API.
 ///
-/// Every call refreshes the access token first if needed.
-final class MuninService {
+/// Every call refreshes the access token first if needed. Calls that need the
+/// master password proof send it in a header.
+final class MuninService: MuninAPI {
     private let service: Network.Service
     private let tokenProvider: AuthTokenProvider
 
     /// Creates a service.
     ///
-    /// - Parameters:
-    ///   - tokenProvider: The provider that supplies the bearer token.
-    ///   - proof: The vault proof that the server requires for deletions and
-    ///     password edits.
-    init(tokenProvider: AuthTokenProvider, proof: String? = nil) {
+    /// - Parameter tokenProvider: The provider that supplies the bearer token.
+    init(tokenProvider: AuthTokenProvider = .shared) {
         self.tokenProvider = tokenProvider
-        service = MuninServiceFactory.makeService(tokenProvider: tokenProvider, proof: proof)
+        service = MuninServiceFactory.makeService(tokenProvider: tokenProvider)
     }
 }
 
@@ -34,10 +32,10 @@ extension MuninService {
         return try await service.request(MuninRequest.createEntry(CreateEntryBody(ciphertext: ciphertext)))
     }
 
-    /// Deletes a 2FA account. Requires a proof.
-    func deleteEntry(id: UUID) async throws {
+    /// Deletes a 2FA account.
+    func deleteEntry(id: UUID, proof: String) async throws {
         try await tokenProvider.ensureFresh()
-        _ = try await service.response(MuninRequest.deleteEntry(id))
+        _ = try await authorizedService(proof: proof).response(MuninRequest.deleteEntry(id))
     }
 
     /// Fetches the user's encrypted password items.
@@ -53,16 +51,16 @@ extension MuninService {
         return try await service.request(MuninRequest.createPassword(body))
     }
 
-    /// Replaces a password item's fields. Requires a proof.
-    func updatePassword(id: UUID, _ body: PasswordFieldsBody) async throws -> EncryptedPassword {
+    /// Replaces a password item's fields.
+    func updatePassword(id: UUID, _ body: PasswordFieldsBody, proof: String) async throws -> EncryptedPassword {
         try await tokenProvider.ensureFresh()
-        return try await service.request(MuninRequest.updatePassword(id, body))
+        return try await authorizedService(proof: proof).request(MuninRequest.updatePassword(id, body))
     }
 
-    /// Deletes a password item. Requires a proof.
-    func deletePassword(id: UUID) async throws {
+    /// Deletes a password item.
+    func deletePassword(id: UUID, proof: String) async throws {
         try await tokenProvider.ensureFresh()
-        _ = try await service.response(MuninRequest.deletePassword(id))
+        _ = try await authorizedService(proof: proof).response(MuninRequest.deletePassword(id))
     }
 
     /// Updates a password item's modification date, such as after its password
@@ -127,11 +125,22 @@ extension MuninService {
     ///
     /// Requires a proof once a master password is set up.
     ///
-    /// - Parameter appleAuthorizationCode: An authorization code the server
-    ///   uses to revoke the user's Sign in with Apple tokens, if available.
-    func deleteAccount(appleAuthorizationCode: String?) async throws {
+    /// - Parameters:
+    ///   - appleAuthorizationCode: An authorization code the server uses to
+    ///     revoke the user's Sign in with Apple tokens, if available.
+    ///   - proof: The master password proof, if a master password is set up.
+    func deleteAccount(appleAuthorizationCode: String?, proof: String?) async throws {
         try await tokenProvider.ensureFresh()
-        _ = try await service.response(MuninRequest.deleteAccount(DeleteAccountBody(appleAuthorizationCode: appleAuthorizationCode)))
+        let body = DeleteAccountBody(appleAuthorizationCode: appleAuthorizationCode)
+        _ = try await authorizedService(proof: proof).response(MuninRequest.deleteAccount(body))
+    }
+}
+
+private extension MuninService {
+    /// Returns a network service that sends the master password proof with each request.
+    func authorizedService(proof: String?) -> Network.Service {
+        guard let proof else { return service }
+        return MuninServiceFactory.makeService(tokenProvider: tokenProvider, proof: proof)
     }
 }
 

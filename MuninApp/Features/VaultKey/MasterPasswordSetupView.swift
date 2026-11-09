@@ -2,7 +2,6 @@ import SwiftUI
 
 /// A view for choosing a master password, during first setup or after unlocking with the recovery key.
 struct MasterPasswordSetupView: View {
-    @Environment(AuthManager.self) private var auth
     @Environment(VaultSession.self) private var session
 
     /// The new master password.
@@ -81,6 +80,6 @@ private extension MasterPasswordSetupView {
     /// Sets the master password and unlocks the vault.
     func save() {
         guard isValid else { return }
-        Task { await session.setMasterPassword(password, auth: auth) }
+        Task { await session.setMasterPassword(password) }
     }
 }

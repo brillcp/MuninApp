@@ -105,7 +105,6 @@
 "lock.step.masterPassword" = "Мастер-пароль";
 "lock.step.recoveryKey" = "Ввести ключ восстановления";
 "lock.step.signIn" = "Войти";
-"lock.signedInAs" = "Вход выполнен: %@";
 "lock.switchAccount" = "%@ · Сменить";
 "lock.title" = "Разблокировать хранилище";
 "lock.unlock" = "Разблокировать";
@@ -179,12 +178,8 @@
 "vault.title" = "Хранилище";
 
 /** Vault Key **/
-"vaultKey.missing.checkAgain" = "Проверить снова";
-"vaultKey.missing.invalid" = "Это недопустимый ключ восстановления.";
-"vaultKey.missing.message" = "Хранилище зашифровано ключом с другого вашего устройства. Включите Связку ключей iCloud на обоих устройствах и проверьте снова или вставьте ключ восстановления.";
-"vaultKey.missing.placeholder" = "Ключ восстановления";
-"vaultKey.missing.restore" = "Восстановить";
-"vaultKey.missing.title" = "Ключа хранилища нет на этом устройстве";
+"lock.recovery.invalid" = "Это недопустимый ключ восстановления.";
+"lock.recovery.placeholder" = "Ключ восстановления";
 "vaultKey.recovery.backup" = "Сохраните копию в надежном месте. Если вы забудете мастер-пароль, ключ восстановления — единственный способ вернуться в хранилище.";
 "vaultKey.recovery.copy" = "Скопировать ключ восстановления";
 "vaultKey.recovery.explanation" = "Ваши учетные записи защищены сквозным шифрованием с этим ключом. Munin не может их прочитать или восстановить за вас.";
@@ -295,5 +290,4 @@
 "autofill.signIn" = "Откройте Munin и войдите, чтобы использовать автозаполнение.";
 "autofill.suggested" = "Предложения";
 "autofill.title" = "Munin";
-"autofill.turnOnBiometrics" = "Откройте Munin, включите разблокировку с Face ID или Touch ID в настройках и разблокируйте Munin один раз. После этого автозаполнение сможет ее использовать.";
 "autofill.unavailable" = "Автозаполнение недоступно";

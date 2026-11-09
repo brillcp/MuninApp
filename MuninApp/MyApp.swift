@@ -3,25 +3,38 @@ import SwiftUI
 /// The app's entry point.
 ///
 /// On macOS, the app provides a main window, a Settings window, and a menu bar
-/// extra. On iOS, it provides a single window group. All scenes share one
-/// ``AuthManager``, ``VaultSession``, ``VaultViewModel``, and
-/// ``SubscriptionManager``.
+/// extra. On iOS, it provides a single window group.
+///
+/// This is the composition root: it creates the API client and every shared
+/// model once, passes each its dependencies, and puts the models in the
+/// environment of all scenes.
 @main struct MyApp: App {
-    @State private var auth = AuthManager()
+    @State private var auth: AuthManager
     @State private var session: VaultSession
     /// The password list, shared by the main window and the Mac menu bar.
     @State private var vaultModel: VaultViewModel
+    /// The 2FA accounts, shared by the 2FA tab, Search, and imports.
+    @State private var twoFactorModel: TwoFactorViewModel
     /// The App Store subscription, shared by the main window and Settings.
-    @State private var subscriptions = SubscriptionManager()
+    @State private var subscriptions: SubscriptionManager
+    /// The model behind Settings.
+    @State private var settingsModel: SettingsViewModel
     /// The AutoFill extension's status, shared by the main window and Settings.
     @State private var autoFill = AutoFillSetup()
 
     /// Creates the shared models and, on macOS, applies the AppKit color
     /// overrides for table selection and accent.
     init() {
-        let session = VaultSession()
+        let api = MuninService(tokenProvider: .shared)
+        let auth = AuthManager(tokenProvider: .shared, api: api)
+        let session = VaultSession(api: api, user: auth)
+        let subscriptions = SubscriptionManager(api: api, user: auth)
+        _auth = State(initialValue: auth)
         _session = State(initialValue: session)
-        _vaultModel = State(initialValue: VaultViewModel(session: session))
+        _vaultModel = State(initialValue: VaultViewModel(session: session, api: api, user: auth))
+        _twoFactorModel = State(initialValue: TwoFactorViewModel(session: session, api: api, user: auth))
+        _subscriptions = State(initialValue: subscriptions)
+        _settingsModel = State(initialValue: SettingsViewModel(api: api, auth: auth, session: session, subscriptions: subscriptions))
         #if os(macOS)
         TableSelectionStyle.apply(color: NSColor(resource: .wood))
         AccentColorOverride.apply(color: NSColor(resource: .accent))
@@ -46,6 +59,7 @@ import SwiftUI
                 .environment(auth)
                 .environment(session)
                 .environment(subscriptions)
+                .environment(settingsModel)
                 .environment(autoFill)
                 .tint(.accent)
         }
@@ -81,7 +95,9 @@ import SwiftUI
             .environment(auth)
             .environment(session)
             .environment(vaultModel)
+            .environment(twoFactorModel)
             .environment(subscriptions)
+            .environment(settingsModel)
             .environment(autoFill)
             .tint(.accent)
     }

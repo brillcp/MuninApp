@@ -105,7 +105,6 @@
 "lock.step.masterPassword" = "Gebruik hoofdwachtwoord";
 "lock.step.recoveryKey" = "Voer herstelsleutel in";
 "lock.step.signIn" = "Log in";
-"lock.signedInAs" = "Ingelogd als %@";
 "lock.switchAccount" = "%@ · Wissel";
 "lock.title" = "Ontgrendel mijn kluis";
 "lock.unlock" = "Ontgrendel";
@@ -179,12 +178,8 @@
 "vault.title" = "Kluis";
 
 /** Vault Key **/
-"vaultKey.missing.checkAgain" = "Controleer opnieuw";
-"vaultKey.missing.invalid" = "Dat is geen geldige herstelsleutel.";
-"vaultKey.missing.message" = "Je kluis is versleuteld met een sleutel van je andere apparaat. Zet iCloud-sleutelhanger aan op beide apparaten en controleer opnieuw, of plak je herstelsleutel.";
-"vaultKey.missing.placeholder" = "Herstelsleutel";
-"vaultKey.missing.restore" = "Herstel";
-"vaultKey.missing.title" = "Kluissleutel staat niet op dit apparaat";
+"lock.recovery.invalid" = "Dat is geen geldige herstelsleutel.";
+"lock.recovery.placeholder" = "Herstelsleutel";
 "vaultKey.recovery.backup" = "Bewaar een kopie op een veilige plek. Als je je hoofdwachtwoord vergeet, is de herstelsleutel de enige manier om weer in je kluis te komen.";
 "vaultKey.recovery.copy" = "Kopieer herstelsleutel";
 "vaultKey.recovery.explanation" = "Je accounts zijn end-to-end versleuteld met deze sleutel. Munin kan ze niet lezen of voor je herstellen.";
@@ -295,5 +290,4 @@
 "autofill.signIn" = "Open Munin en log in om automatisch invullen te gebruiken.";
 "autofill.suggested" = "Voorgesteld";
 "autofill.title" = "Munin";
-"autofill.turnOnBiometrics" = "Open Munin, zet ontgrendelen met Face ID of Touch ID aan in Instellingen en ontgrendel Munin één keer. Daarna kan automatisch invullen het gebruiken.";
 "autofill.unavailable" = "Automatisch invullen is niet beschikbaar";

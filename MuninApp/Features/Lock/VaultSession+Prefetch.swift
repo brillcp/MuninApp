@@ -9,11 +9,9 @@ import Foundation
 extension VaultSession {
     /// Unlocks with Face ID or Touch ID while downloading the password list.
     ///
-    /// - Parameters:
-    ///   - vaultModel: The view model that receives the password list.
-    ///   - auth: The authentication manager for the download.
-    func unlockWithBiometrics(prefetchingInto vaultModel: VaultViewModel, auth: AuthManager) async {
-        vaultModel.prefetch(auth: auth)
+    /// - Parameter vaultModel: The view model that receives the password list.
+    func unlockWithBiometrics(prefetchingInto vaultModel: VaultViewModel) async {
+        vaultModel.prefetch()
         await unlockWithBiometrics()
         if state != .unlocked { vaultModel.discardPrefetch() }
     }
@@ -23,9 +21,8 @@ extension VaultSession {
     /// - Parameters:
     ///   - masterPassword: The master password.
     ///   - vaultModel: The view model that receives the password list.
-    ///   - auth: The authentication manager for the download.
-    func unlock(masterPassword: String, prefetchingInto vaultModel: VaultViewModel, auth: AuthManager) async {
-        vaultModel.prefetch(auth: auth)
+    func unlock(masterPassword: String, prefetchingInto vaultModel: VaultViewModel) async {
+        vaultModel.prefetch()
         await unlock(masterPassword: masterPassword)
         if state != .unlocked { vaultModel.discardPrefetch() }
     }
