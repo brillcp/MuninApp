@@ -105,7 +105,6 @@
 "lock.step.masterPassword" = "마스터 암호 사용";
 "lock.step.recoveryKey" = "복구 키 입력";
 "lock.step.signIn" = "로그인";
-"lock.signedInAs" = "%@(으)로 로그인됨";
 "lock.switchAccount" = "%@ · 전환";
 "lock.title" = "내 보관함 잠금 해제";
 "lock.unlock" = "잠금 해제";
@@ -179,12 +178,8 @@
 "vault.title" = "보관함";
 
 /** Vault Key **/
-"vaultKey.missing.checkAgain" = "다시 확인";
-"vaultKey.missing.invalid" = "유효한 복구 키가 아닙니다.";
-"vaultKey.missing.message" = "보관함이 다른 기기의 키로 암호화되어 있습니다. 두 기기 모두에서 iCloud 키체인을 켜고 다시 확인하거나 복구 키를 붙여넣으십시오.";
-"vaultKey.missing.placeholder" = "복구 키";
-"vaultKey.missing.restore" = "복원";
-"vaultKey.missing.title" = "이 기기에 보관함 키가 없음";
+"lock.recovery.invalid" = "유효한 복구 키가 아닙니다.";
+"lock.recovery.placeholder" = "복구 키";
 "vaultKey.recovery.backup" = "안전한 곳에 사본을 보관하십시오. 마스터 암호를 잊으면 복구 키가 보관함으로 돌아가는 유일한 방법입니다.";
 "vaultKey.recovery.copy" = "복구 키 복사";
 "vaultKey.recovery.explanation" = "계정은 이 키로 종단 간 암호화되어 있습니다. Munin은 이를 읽거나 대신 복구할 수 없습니다.";
@@ -295,5 +290,4 @@
 "autofill.signIn" = "자동 완성을 사용하려면 Munin을 열고 로그인하십시오.";
 "autofill.suggested" = "제안";
 "autofill.title" = "Munin";
-"autofill.turnOnBiometrics" = "Munin을 열고 설정에서 Face ID 또는 Touch ID 잠금 해제를 켠 다음 Munin을 한 번 잠금 해제하십시오. 그러면 자동 완성에서 사용할 수 있습니다.";
 "autofill.unavailable" = "자동 완성을 사용할 수 없음";

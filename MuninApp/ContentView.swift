@@ -17,6 +17,7 @@ struct ContentView: View {
     @Environment(AuthManager.self) private var auth
     @Environment(VaultSession.self) private var session
     @Environment(VaultViewModel.self) private var vaultModel
+    @Environment(TwoFactorViewModel.self) private var twoFactorModel
     @Environment(SubscriptionManager.self) private var subscriptions
     /// The app's AutoFill status, refreshed whenever the app becomes active.
     @Environment(AutoFillSetup.self) private var autoFill
@@ -41,7 +42,7 @@ struct ContentView: View {
         .animation(DesignKit.Motion.slowSmooth, value: showsLockScreen)
         .task(id: auth.userID, prepare)
         .onOpenURL(perform: openURL)
-        .onChange(of: scenePhase, initial: true, refreshAutoFill)
+        .onChange(of: scenePhase, initial: true, becameActive)
         .autoLock(session)
         .onChange(of: session.state) { _, state in
             if state != .unlocked { clearOnLock() }
@@ -56,17 +57,20 @@ private extension ContentView {
         pendingCodeLink = url
     }
 
-    func refreshAutoFill() {
+    /// Refreshes the AutoFill status and the Face ID or Touch ID capability,
+    /// which can change in the system settings while the app is in the background.
+    func becameActive() {
         guard scenePhase == .active else { return }
+        session.refreshBiometry()
         Task { await autoFill.refresh() }
     }
 
     /// Determines the vault's state for the signed-in user.
     func prepare() async {
-        await session.prepare(auth: auth)
+        await session.prepare()
     }
 
-    /// Clears the decrypted passwords and subscription state on lock or sign-out.
+    /// Clears the decrypted passwords, 2FA accounts, and subscription state on lock or sign-out.
     ///
     /// Animations are disabled so the list's rows don't animate away during the lock transition.
     func clearOnLock() {
@@ -74,6 +78,7 @@ private extension ContentView {
         transaction.disablesAnimations = true
         withTransaction(transaction) {
             vaultModel.clear()
+            twoFactorModel.clear()
             subscriptions.stop()
         }
     }

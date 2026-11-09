@@ -105,7 +105,6 @@
 "lock.step.masterPassword" = "Utiliser le mot de passe principal";
 "lock.step.recoveryKey" = "Saisir la clé de récupération";
 "lock.step.signIn" = "Se connecter";
-"lock.signedInAs" = "Connecté en tant que %@";
 "lock.switchAccount" = "%@ · Changer";
 "lock.title" = "Déverrouiller mon coffre";
 "lock.unlock" = "Déverrouiller";
@@ -179,12 +178,8 @@
 "vault.title" = "Coffre";
 
 /** Vault Key **/
-"vaultKey.missing.checkAgain" = "Vérifier à nouveau";
-"vaultKey.missing.invalid" = "Ce n’est pas une clé de récupération valide.";
-"vaultKey.missing.message" = "Votre coffre est chiffré avec une clé de votre autre appareil. Activez le trousseau iCloud sur les deux appareils et vérifiez à nouveau, ou collez votre clé de récupération.";
-"vaultKey.missing.placeholder" = "Clé de récupération";
-"vaultKey.missing.restore" = "Restaurer";
-"vaultKey.missing.title" = "Clé du coffre absente de cet appareil";
+"lock.recovery.invalid" = "Ce n’est pas une clé de récupération valide.";
+"lock.recovery.placeholder" = "Clé de récupération";
 "vaultKey.recovery.backup" = "Conservez-en une copie en lieu sûr. Si vous oubliez votre mot de passe principal, la clé de récupération est le seul moyen de retrouver l’accès à votre coffre.";
 "vaultKey.recovery.copy" = "Copier la clé de récupération";
 "vaultKey.recovery.explanation" = "Vos comptes sont chiffrés de bout en bout avec cette clé. Munin ne peut pas les lire ni les récupérer pour vous.";
@@ -295,5 +290,4 @@
 "autofill.signIn" = "Ouvrez Munin et connectez-vous pour utiliser le remplissage automatique.";
 "autofill.suggested" = "Suggestions";
 "autofill.title" = "Munin";
-"autofill.turnOnBiometrics" = "Ouvrez Munin, activez le déverrouillage par Face ID ou Touch ID dans les réglages, puis déverrouillez Munin une fois. Le remplissage automatique pourra alors l’utiliser.";
 "autofill.unavailable" = "Remplissage automatique indisponible";

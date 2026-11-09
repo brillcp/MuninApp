@@ -8,7 +8,6 @@ import SwiftUI
 /// cleared from the clipboard after a minute. While the vault is locked, the
 /// view shows only a locked state.
 struct MenuBarContent: View {
-    @Environment(AuthManager.self) private var auth
     @Environment(VaultSession.self) private var session
     @Environment(VaultViewModel.self) private var vaultModel
     @Environment(\.openWindow) private var openWindow
@@ -42,7 +41,7 @@ struct MenuBarContent: View {
         .onChange(of: vaultModel.items) { updateFilteredItems() }
         .task(id: session.state) {
             if session.state == .unlocked, !vaultModel.hasLoaded {
-                await vaultModel.refresh(auth: auth)
+                await vaultModel.refresh()
             }
         }
     }
@@ -125,7 +124,7 @@ private extension MenuBarContent {
     ///
     /// The password is cleared from the clipboard after a minute.
     func copyPassword(_ item: PasswordItem) {
-        Task { await vaultModel.copyPassword(item, auth: auth) }
+        Task { await vaultModel.copyPassword(item) }
         showCopied(CopiedField(id: item.id, field: .password))
     }
 

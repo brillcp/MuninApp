@@ -198,8 +198,6 @@ nonisolated struct SubscriptionStatus: Sendable, Decodable, Equatable {
     /// A Boolean value that indicates whether the user has an active subscription
     /// or free trial.
     let active: Bool
-    /// The end date of the current subscription period, if any.
-    let expiresAt: Date?
     /// A Boolean value that indicates whether Apple couldn't charge the renewal and
     /// is retrying, or `nil` if the server doesn't report it.
     let billingIssue: Bool?

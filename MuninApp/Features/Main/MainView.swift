@@ -20,10 +20,10 @@ struct MainView: View {
     @Environment(SubscriptionManager.self) private var subscriptions
     /// The AutoFill setup state, used to present the setup guide.
     @Environment(AutoFillSetup.self) private var autoFill
+    /// The 2FA model shared by the 2FA and Search tabs.
+    @Environment(TwoFactorViewModel.self) private var twoFactorModel
 
     @State private var selection: Section = .vault
-    /// The 2FA model shared by the 2FA and Search tabs.
-    @State private var twoFactorModel: TwoFactorViewModel
     /// Accounts from a 2FA setup link, awaiting confirmation.
     @State private var linkedAccounts: LinkedAccounts?
     /// The reason a 2FA setup link couldn't be added, shown in an alert.
@@ -31,16 +31,6 @@ struct MainView: View {
 
     /// A 2FA setup link that opened the app, cleared once handled.
     @Binding var pendingCodeLink: URL?
-
-    /// Creates the main view.
-    ///
-    /// - Parameters:
-    ///   - session: The vault session used to create the 2FA model.
-    ///   - pendingCodeLink: A binding to a 2FA setup link waiting to be handled.
-    init(session: VaultSession, pendingCodeLink: Binding<URL?>) {
-        _twoFactorModel = State(initialValue: TwoFactorViewModel(session: session))
-        _pendingCodeLink = pendingCodeLink
-    }
 
     var body: some View {
         @Bindable var subscriptions = subscriptions
@@ -74,7 +64,7 @@ struct MainView: View {
         }
         .tabViewStyle(.sidebarAdaptable)
         .scrollIndicators(.never)
-        .task { await subscriptions.start(auth: auth) }
+        .task { await subscriptions.start() }
         .sheet(isPresented: $subscriptions.isPaywallPresented) {
             PaywallView()
         }
@@ -87,6 +77,7 @@ struct MainView: View {
             Text(message)
         }
         .onChange(of: pendingCodeLink, initial: true, openPendingCodeLink)
+        .onChange(of: canPresentAutoFillGuide, initial: true, presentAutoFillGuide)
         .confirmationDialog("codes.link.title", item: $linkedAccounts, titleVisibility: .visible) { linked in
             Button("codes.link.add") { addLinkedAccounts(linked.accounts) }
         } message: { linked in
@@ -135,6 +126,23 @@ extension MainView {
 }
 
 private extension MainView {
+    /// A Boolean value that indicates whether the AutoFill guide can open by
+    /// itself: AutoFill's status is known, the subscription has loaded, and
+    /// no other sheet is showing, such as the paywall or a new recovery key.
+    var canPresentAutoFillGuide: Bool {
+        autoFill.isEnabled != nil
+            && subscriptions.status != nil
+            && !subscriptions.isPaywallPresented
+            && session.newRecoveryKey == nil
+            && linkedAccounts == nil
+    }
+
+    /// Opens the AutoFill setup guide once, the first time it can.
+    func presentAutoFillGuide() {
+        guard canPresentAutoFillGuide else { return }
+        autoFill.presentGuideIfNeeded()
+    }
+
     /// Handles a pending 2FA setup link by switching to the 2FA tab and asking
     /// to add its accounts, or explaining why when the vault is read-only.
     func openPendingCodeLink() {
@@ -155,9 +163,9 @@ private extension MainView {
     /// Adds the confirmed accounts, skipping any that already exist.
     func addLinkedAccounts(_ accounts: [OTPAccount]) {
         Task {
-            if !twoFactorModel.hasLoaded { await twoFactorModel.refresh(auth: auth) }
+            if !twoFactorModel.hasLoaded { await twoFactorModel.refresh() }
             do {
-                try await twoFactorModel.add(accounts, auth: auth)
+                try await twoFactorModel.add(accounts)
             } catch {
                 linkError = error.muninDescription
             }

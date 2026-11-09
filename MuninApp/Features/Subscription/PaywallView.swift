@@ -8,7 +8,6 @@ import SwiftUI
 /// user's identifier as their app account token and sent to the server for
 /// verification. The view dismisses itself once the server confirms the subscription.
 struct PaywallView: View {
-    @Environment(AuthManager.self) private var auth
     @Environment(SubscriptionManager.self) private var subscriptions
     @Environment(\.dismiss) private var dismiss
 
@@ -32,7 +31,7 @@ struct PaywallView: View {
 private extension PaywallView {
     /// Returns purchase options that tag the purchase with the user's identifier, so the server can match it to the account.
     func purchaseOptions(_ product: Product) async -> Set<Product.PurchaseOption> {
-        guard let token = subscriptions.appAccountToken(auth: auth) else { return [] }
+        guard let token = subscriptions.appAccountToken() else { return [] }
         return [.appAccountToken(token)]
     }
 
@@ -40,7 +39,7 @@ private extension PaywallView {
     ///
     /// If confirmation fails, the header shows the error.
     func purchaseCompleted(_ product: Product, _ result: Result<Product.PurchaseResult, any Error>) async {
-        await subscriptions.handlePurchase(result, auth: auth)
+        await subscriptions.handlePurchase(result)
         if subscriptions.status?.active == true { dismiss() }
     }
 }

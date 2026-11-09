@@ -105,7 +105,6 @@
 "lock.step.masterPassword" = "Usar contraseña maestra";
 "lock.step.recoveryKey" = "Introducir clave de recuperación";
 "lock.step.signIn" = "Iniciar sesión";
-"lock.signedInAs" = "Sesión iniciada como %@";
 "lock.switchAccount" = "%@ · Cambiar";
 "lock.title" = "Desbloquear mi bóveda";
 "lock.unlock" = "Desbloquear";
@@ -179,12 +178,8 @@
 "vault.title" = "Bóveda";
 
 /** Vault Key **/
-"vaultKey.missing.checkAgain" = "Volver a comprobar";
-"vaultKey.missing.invalid" = "No es una clave de recuperación válida.";
-"vaultKey.missing.message" = "Tu bóveda está cifrada con una clave de tu otro dispositivo. Activa el Llavero de iCloud en ambos dispositivos y vuelve a comprobar, o pega tu clave de recuperación.";
-"vaultKey.missing.placeholder" = "Clave de recuperación";
-"vaultKey.missing.restore" = "Restaurar";
-"vaultKey.missing.title" = "La clave de la bóveda no está en este dispositivo";
+"lock.recovery.invalid" = "No es una clave de recuperación válida.";
+"lock.recovery.placeholder" = "Clave de recuperación";
 "vaultKey.recovery.backup" = "Guarda una copia en un lugar seguro. Si olvidas tu contraseña maestra, la clave de recuperación es la única forma de volver a tu bóveda.";
 "vaultKey.recovery.copy" = "Copiar clave de recuperación";
 "vaultKey.recovery.explanation" = "Tus cuentas están cifradas de extremo a extremo con esta clave. Munin no puede leerlas ni recuperarlas por ti.";
@@ -295,5 +290,4 @@
 "autofill.signIn" = "Abre Munin e inicia sesión para usar el autorrelleno.";
 "autofill.suggested" = "Sugerencias";
 "autofill.title" = "Munin";
-"autofill.turnOnBiometrics" = "Abre Munin, activa el desbloqueo con Face ID o Touch ID en Ajustes y desbloquea Munin una vez. Después el autorrelleno podrá usarlo.";
 "autofill.unavailable" = "El autorrelleno no está disponible";

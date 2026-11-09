@@ -10,6 +10,8 @@ struct SettingsView: View {
     @Environment(VaultSession.self) private var session
     @Environment(SubscriptionManager.self) private var subscriptions
     @Environment(AutoFillSetup.self) private var autoFill
+    /// The model that restores purchases, exports, and deletes the account.
+    @Environment(SettingsViewModel.self) private var model
     @Environment(\.openURL) private var openURL
 
     /// A Boolean value that indicates whether the Change Master Password sheet is presented.
@@ -22,24 +24,11 @@ struct SettingsView: View {
     /// A Boolean value that indicates whether the system's Manage Subscriptions sheet is presented on iOS.
     @State private var isManagingSubscription = false
     @State private var isShowingAutoFillGuide = false
-    @State private var isRestoring = false
     @State private var isConfirmingDeletion = false
-    @State private var isDeletingAccount = false
-    /// A description of why deleting the account failed, shown in an alert.
-    @State private var deletionError: String?
-    /// The export awaiting confirmation.
-    @State private var pendingExport: ExportKind?
-    /// A Boolean value that indicates whether an export is being loaded and decrypted.
-    @State private var isPreparingExport = false
-    /// The decrypted export, held in memory only until the save panel closes.
-    @State private var exportDocument: ExportDocument?
-    /// A Boolean value that indicates whether the save panel for ``exportDocument`` is presented.
-    @State private var isSavingExport = false
-    /// A description of why an export failed, shown in an alert.
-    @State private var exportError: String?
 
     var body: some View {
         @Bindable var session = session
+        @Bindable var model = model
         Form {
             if auth.isSignedIn {
                 Section {
@@ -59,7 +48,7 @@ struct SettingsView: View {
                             }
                         }
                         Button("settings.subscription.restore", systemImage: DesignKit.Icon.restorePurchases, action: restorePurchases)
-                            .disabled(isRestoring)
+                            .disabled(model.isRestoring)
                         #if os(iOS)
                         Button("settings.subscription.manage", systemImage: DesignKit.Icon.manageSubscription) {
                             hapticTaps += 1
@@ -118,7 +107,7 @@ struct SettingsView: View {
                 } footer: {
                     Text(session.vault == nil ? "settings.export.locked" : "settings.export.footer")
                 }
-                .disabled(session.vault == nil || isPreparingExport)
+                .disabled(session.vault == nil || model.isPreparingExport)
             }
 
             Section("settings.about") {
@@ -142,7 +131,7 @@ struct SettingsView: View {
                     Button("account.delete", systemImage: DesignKit.Icon.deleteAccount, role: .destructive, action: confirmDeletion)
                         .foregroundStyle(.red)
                         .tint(.red)
-                        .disabled(session.vault == nil || isDeletingAccount)
+                        .disabled(session.vault == nil || model.isDeletingAccount)
                 } footer: {
                     if session.vault == nil {
                         Text("account.delete.locked")
@@ -174,25 +163,24 @@ struct SettingsView: View {
         } message: {
             Text("account.delete.message")
         }
-        .alert("account.delete.failed", item: $deletionError) { _ in
+        .alert("account.delete.failed", item: $model.deletionError) { _ in
             Button("global.done") {}
         } message: { message in
             Text(message)
         }
-        .confirmationDialog("settings.export.title", item: $pendingExport, titleVisibility: .visible) { kind in
+        .confirmationDialog("settings.export.title", item: $model.pendingExport, titleVisibility: .visible) { kind in
             Button("settings.export.confirm") { export(kind) }
         } message: { _ in
             Text("settings.export.message")
         }
         .fileExporter(
-            isPresented: $isSavingExport,
-            document: exportDocument,
-            contentType: exportDocument?.contentType ?? .plainText,
-            defaultFilename: exportDocument?.filename,
-            onCompletion: exportSaved
+            isPresented: $model.isSavingExport,
+            document: model.exportDocument,
+            contentType: model.exportDocument?.contentType ?? .plainText,
+            defaultFilename: model.exportDocument?.filename,
+            onCompletion: model.exportSaved
         )
-        .onChange(of: isSavingExport, savePanelChanged)
-        .alert("settings.export.failed", item: $exportError) { _ in
+        .alert("settings.export.failed", item: $model.exportError) { _ in
             Button("global.done") {}
         } message: { message in
             Text(message)
@@ -211,55 +199,22 @@ private extension SettingsView {
     /// Syncs App Store purchases and links any active subscription to this account.
     func restorePurchases() {
         hapticTaps += 1
-        Task {
-            isRestoring = true
-            defer { isRestoring = false }
-            await subscriptions.restore(auth: auth)
-        }
+        Task { await model.restorePurchases() }
     }
 
     func confirmPasswordExport() {
         hapticTaps += 1
-        pendingExport = .passwords
+        model.pendingExport = .passwords
     }
 
     func confirmTwoFactorExport() {
         hapticTaps += 1
-        pendingExport = .twoFactor
+        model.pendingExport = .twoFactor
     }
 
     /// Loads and decrypts the export, then presents the save panel.
-    func export(_ kind: ExportKind) {
-        guard let vault = session.vault else { return }
-        Task {
-            isPreparingExport = true
-            defer { isPreparingExport = false }
-            do {
-                switch kind {
-                case .passwords:
-                    let data = try await VaultExporter.passwordsCSV(vault: vault, auth: auth)
-                    exportDocument = ExportDocument(data: data, contentType: .commaSeparatedText, filename: Localized("settings.export.passwords.filename"))
-                case .twoFactor:
-                    let data = try await VaultExporter.twoFactorLinks(vault: vault, auth: auth)
-                    exportDocument = ExportDocument(data: data, contentType: .plainText, filename: Localized("settings.export.twoFactor.filename"))
-                }
-                isSavingExport = true
-            } catch {
-                exportError = error.muninDescription
-            }
-        }
-    }
-
-    /// Reports an error if saving the export failed.
-    func exportSaved(_ result: Result<URL, any Error>) {
-        if case .failure(let error) = result {
-            exportError = error.localizedDescription
-        }
-    }
-
-    /// Releases the decrypted export when the save panel closes, whether it was saved or cancelled.
-    func savePanelChanged() {
-        if !isSavingExport { exportDocument = nil }
+    func export(_ kind: SettingsViewModel.ExportKind) {
+        Task { await model.export(kind) }
     }
 
     func showAutoFillGuide() {
@@ -288,26 +243,8 @@ private extension SettingsView {
     /// The user confirms with Sign in with Apple, and the request includes the
     /// unlocked vault's proof. Dismissing the Apple sheet cancels the deletion.
     func deleteAccount() {
-        Task {
-            isDeletingAccount = true
-            defer { isDeletingAccount = false }
-            do {
-                _ = try await auth.deleteAccount(proof: session.vault?.proof)
-            } catch {
-                deletionError = error.muninDescription
-            }
-        }
+        Task { await model.deleteAccount() }
     }
-}
-
-/// The kinds of data that settings can export.
-private enum ExportKind: Identifiable {
-    /// Passwords, as a CSV file.
-    case passwords
-    /// Two-factor accounts, as `otpauth` links.
-    case twoFactor
-
-    var id: Self { self }
 }
 
 /// A recovery key, wrapped for presentation as a sheet item.

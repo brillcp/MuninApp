@@ -105,7 +105,6 @@
 "lock.step.masterPassword" = "Usar Senha Mestra";
 "lock.step.recoveryKey" = "Digitar Chave de Recuperação";
 "lock.step.signIn" = "Iniciar Sessão";
-"lock.signedInAs" = "Sessão iniciada como %@";
 "lock.switchAccount" = "%@ · Trocar";
 "lock.title" = "Desbloquear meu cofre";
 "lock.unlock" = "Desbloquear";
@@ -179,12 +178,8 @@
 "vault.title" = "Cofre";
 
 /** Vault Key **/
-"vaultKey.missing.checkAgain" = "Verificar Novamente";
-"vaultKey.missing.invalid" = "Essa não é uma chave de recuperação válida.";
-"vaultKey.missing.message" = "Seu cofre está criptografado com uma chave do seu outro dispositivo. Ative as Chaves do iCloud nos dois dispositivos e verifique novamente, ou cole sua chave de recuperação.";
-"vaultKey.missing.placeholder" = "Chave de recuperação";
-"vaultKey.missing.restore" = "Restaurar";
-"vaultKey.missing.title" = "A chave do cofre não está neste dispositivo";
+"lock.recovery.invalid" = "Essa não é uma chave de recuperação válida.";
+"lock.recovery.placeholder" = "Chave de recuperação";
 "vaultKey.recovery.backup" = "Guarde uma cópia em um lugar seguro. Se você esquecer sua senha mestra, a chave de recuperação é a única forma de voltar ao seu cofre.";
 "vaultKey.recovery.copy" = "Copiar Chave de Recuperação";
 "vaultKey.recovery.explanation" = "Suas contas são criptografadas de ponta a ponta com esta chave. O Munin não pode lê-las nem recuperá-las para você.";
@@ -295,5 +290,4 @@
 "autofill.signIn" = "Abra o Munin e inicie sessão para usar o Preenchimento Automático.";
 "autofill.suggested" = "Sugestões";
 "autofill.title" = "Munin";
-"autofill.turnOnBiometrics" = "Abra o Munin, ative o desbloqueio com Face ID ou Touch ID nos Ajustes e desbloqueie o Munin uma vez. Depois disso, o Preenchimento Automático poderá usá-lo.";
 "autofill.unavailable" = "Preenchimento Automático indisponível";

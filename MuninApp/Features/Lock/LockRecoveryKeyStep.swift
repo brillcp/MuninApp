@@ -17,7 +17,7 @@ struct LockRecoveryKeyStep: View {
         VStack(alignment: .leading, spacing: DesignKit.Spacing.Primitive.s24) {
             Text("lock.recovery.message")
                 .foregroundStyle(.secondary)
-            TextField("vaultKey.missing.placeholder", text: $recoveryKey, axis: .vertical)
+            TextField("lock.recovery.placeholder", text: $recoveryKey, axis: .vertical)
                 .focused($isFieldFocused)
                 .task { isFieldFocused = true }
                 .textFieldStyle(.roundedBorder)

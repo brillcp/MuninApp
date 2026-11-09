@@ -1,10 +1,10 @@
-import LocalAuthentication
 import SwiftUI
 
 /// The AutoFill extension's interface for choosing a password or 2FA code.
 ///
-/// The user unlocks with Face ID or Touch ID, then picks an item. Suggestions
-/// for the requesting site come first; the rest are searchable.
+/// The user unlocks with Face ID, Touch ID, or the master password, then picks
+/// an item. Suggestions for the requesting site come first; the rest are
+/// searchable.
 struct AutoFillView: View {
     /// The app's accent color, defined in code because the extension has no asset catalog.
     private static let accent = Color(red: 0x38 / 255, green: 0x86 / 255, blue: 0x59 / 255)
@@ -26,7 +26,7 @@ struct AutoFillView: View {
                 }
         }
         .tint(Self.accent)
-        .task(model.unlock)
+        .task(model.unlockWithBiometrics)
     }
 }
 
@@ -56,15 +56,32 @@ private extension AutoFillView {
         }
     }
 
-    /// A prompt to retry unlocking after biometric authentication is canceled.
+    /// The unlock prompt: the master password, and Face ID or Touch ID when
+    /// this device has a biometric copy of the key.
     var unlockPrompt: some View {
         ContentUnavailableView {
             Label("autofill.locked", systemImage: DesignKit.Icon.locked)
+        } description: {
+            if let message = model.errorMessage {
+                Text(message)
+            }
         } actions: {
-            Button(Self.usesFaceID ? "settings.biometrics.face" : "settings.biometrics.touch",
-                   systemImage: Self.usesFaceID ? DesignKit.Icon.faceID : DesignKit.Icon.touchID,
-                   action: unlock)
-                .buttonStyle(.glassProminent)
+            VStack(spacing: DesignKit.Spacing.Primitive.s12) {
+                SecureField("lock.masterPassword.placeholder", text: $model.masterPassword)
+                    .textContentType(.password)
+                    .textFieldStyle(.roundedBorder)
+                    .onSubmit(unlockWithMasterPassword)
+                Button("lock.unlock", action: unlockWithMasterPassword)
+                    .buttonStyle(.glassProminent)
+                    .disabled(model.masterPassword.isEmpty)
+                if model.offersBiometrics {
+                    Button(Self.usesFaceID ? "settings.biometrics.face" : "settings.biometrics.touch",
+                           systemImage: Self.usesFaceID ? DesignKit.Icon.faceID : DesignKit.Icon.touchID,
+                           action: unlockWithBiometrics)
+                        .buttonStyle(.glass)
+                }
+            }
+            .frame(maxWidth: 320)
         }
     }
 
@@ -119,14 +136,15 @@ private extension AutoFillView {
     }
 
     /// A Boolean value that indicates whether this device uses Face ID rather than Touch ID.
-    static var usesFaceID: Bool {
-        let context = LAContext()
-        _ = context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: nil)
-        return context.biometryType == .faceID
+    static var usesFaceID: Bool { Biometry.current().usesFaceID }
+
+    /// Retries Face ID or Touch ID.
+    func unlockWithBiometrics() {
+        Task { await model.unlockWithBiometrics() }
     }
 
-    /// Retries biometric unlock.
-    func unlock() {
-        Task { await model.unlock() }
+    /// Unlocks with the typed master password.
+    func unlockWithMasterPassword() {
+        Task { await model.unlockWithMasterPassword() }
     }
 }

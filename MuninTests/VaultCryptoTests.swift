@@ -16,14 +16,14 @@ struct VaultCryptoTests {
 
     @Test("Round-trips a password field, including empty and non-ASCII values", arguments: ["hunter2", "", "pässwörd 🔐"])
     func fieldRoundTrip(_ value: String) throws {
-        let sealed = try VaultCrypto.seal(value, field: "password", key: key, userID: "user-1")
-        #expect(try VaultCrypto.open(sealed, field: "password", key: key, userID: "user-1") == value)
+        let sealed = try VaultCrypto.seal(value, field: .password, key: key, userID: "user-1")
+        #expect(try VaultCrypto.open(sealed, field: .password, key: key, userID: "user-1") == value)
     }
 
     @Test("Uses a fresh nonce for every seal")
     func freshNonce() throws {
-        let first = try VaultCrypto.seal("same", field: "password", key: key, userID: "user-1")
-        let second = try VaultCrypto.seal("same", field: "password", key: key, userID: "user-1")
+        let first = try VaultCrypto.seal("same", field: .password, key: key, userID: "user-1")
+        let second = try VaultCrypto.seal("same", field: .password, key: key, userID: "user-1")
         #expect(first != second)
     }
 
@@ -47,30 +47,30 @@ struct VaultCryptoTests {
 
     @Test("Fails for another field")
     func wrongField() throws {
-        let sealed = try VaultCrypto.seal("hunter2", field: "password", key: key, userID: "user-1")
-        #expect(throws: (any Error).self) { try VaultCrypto.open(sealed, field: "note", key: key, userID: "user-1") }
+        let sealed = try VaultCrypto.seal("hunter2", field: .password, key: key, userID: "user-1")
+        #expect(throws: (any Error).self) { try VaultCrypto.open(sealed, field: .note, key: key, userID: "user-1") }
     }
 
     @Test("Keeps code entries and password fields apart")
     func domainSeparation() throws {
-        let sealed = try VaultCrypto.seal("{}", field: "password", key: key, userID: "user-1")
+        let sealed = try VaultCrypto.seal("{}", field: .password, key: key, userID: "user-1")
         #expect(throws: (any Error).self) { try VaultCrypto.open(sealed, key: key, userID: "user-1") }
     }
 
     @Test("Fails when the ciphertext is tampered with")
     func tampered() throws {
-        let sealed = try VaultCrypto.seal("hunter2", field: "password", key: key, userID: "user-1")
+        let sealed = try VaultCrypto.seal("hunter2", field: .password, key: key, userID: "user-1")
         var bytes = try #require(Data(base64Encoded: sealed))
         bytes[bytes.count / 2] ^= 0x01
         #expect(throws: (any Error).self) {
-            try VaultCrypto.open(bytes.base64EncodedString(), field: "password", key: key, userID: "user-1")
+            try VaultCrypto.open(bytes.base64EncodedString(), field: .password, key: key, userID: "user-1")
         }
     }
 
     @Test("Rejects input that isn't base64")
     func notBase64() {
         #expect(throws: VaultCrypto.CryptoError.invalidCiphertext) {
-            try VaultCrypto.open("not base64!", field: "password", key: key, userID: "user-1")
+            try VaultCrypto.open("not base64!", field: .password, key: key, userID: "user-1")
         }
         #expect(throws: VaultCrypto.CryptoError.invalidCiphertext) {
             try VaultCrypto.open("not base64!", key: key, userID: "user-1")

@@ -46,10 +46,11 @@ MuninApp/              The app target
 ├── App/               Menu bar commands (Find, Lock, sections)
 ├── Core/
 │   ├── DesignSystem/  Spacing, motion, icons, and AppKit color overrides
-│   ├── Security/      Vault session, unlocking, and auto-lock
-│   ├── Services/      API requests, sign-in, subscription, AutoFill, icons
+│   ├── Domain/        Password items, the password generator, and vault errors
+│   ├── Security/      The vault session's lock states, settings, and auto-lock
+│   ├── Services/      The API protocol and client, sign-in, subscription, AutoFill, icons
 │   ├── Utilities/     Keychain, clipboard, localization helpers
-│   └── Vault/         Encryption, keys, TOTP, and import/export
+│   └── Vault/         Encryption, key wrapping, decoding, TOTP, and import/export
 └── Features/
     ├── AddAccount/    Adding 2FA accounts by QR code, link, or setup key
     ├── AutoFill/      AutoFill setup guide and banner

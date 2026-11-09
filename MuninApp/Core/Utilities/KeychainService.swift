@@ -9,11 +9,7 @@ import Security
 /// see the same session and the same biometric copy of the vault key.
 ///
 /// - Session tokens and user details are stored on this device only.
-/// - Synced items, such as the legacy vault key, sync through iCloud Keychain
-///   and live outside the shared group.
 /// - Biometric items require Face ID or Touch ID to read.
-///
-/// Items found outside the shared group are moved into it when first read.
 nonisolated enum KeychainService {
     /// The keychain service for all items.
     ///
@@ -59,40 +55,6 @@ nonisolated enum KeychainService {
     static func loadEmail() -> String? { load(account: emailAccount) }
     /// Deletes the saved email address.
     static func deleteEmail() { delete(account: emailAccount) }
-
-    // MARK: - iCloud Keychain
-
-    /// Returns the data of an item synced through iCloud Keychain.
-    static func loadSynced(account: String) -> Data? {
-        var query = baseQuery(account: account, inSharedGroup: false)
-        query[kSecAttrSynchronizable as String] = true
-        query[kSecReturnData as String] = true
-        query[kSecMatchLimit as String] = kSecMatchLimitOne
-
-        var result: CFTypeRef?
-        guard SecItemCopyMatching(query as CFDictionary, &result) == errSecSuccess else { return nil }
-        return result as? Data
-    }
-
-    /// Saves an item that syncs to the user's other devices through iCloud Keychain.
-    ///
-    /// Replaces any existing item for the account.
-    static func saveSynced(_ data: Data, account: String) {
-        var query = baseQuery(account: account, inSharedGroup: false)
-        query[kSecAttrSynchronizable as String] = true
-        SecItemDelete(query as CFDictionary)
-        query[kSecValueData as String] = data
-        // Synced items can't be ThisDeviceOnly.
-        query[kSecAttrAccessible as String] = kSecAttrAccessibleAfterFirstUnlock
-        SecItemAdd(query as CFDictionary, nil)
-    }
-
-    /// Deletes a synced item from all of the user's devices.
-    static func deleteSynced(account: String) {
-        var query = baseQuery(account: account, inSharedGroup: false)
-        query[kSecAttrSynchronizable as String] = true
-        SecItemDelete(query as CFDictionary)
-    }
 
     // MARK: - Biometrics
 
@@ -141,7 +103,7 @@ nonisolated enum KeychainService {
         // The lock screen has its own "Use Master Password" button.
         context.localizedFallbackTitle = ""
 
-        var query = baseQuery(account: account, inSharedGroup: false)
+        var query = baseQuery(account: account)
         query[kSecReturnData as String] = true
         query[kSecMatchLimit as String] = kSecMatchLimitOne
         query[kSecUseAuthenticationContext as String] = context
@@ -150,10 +112,6 @@ nonisolated enum KeychainService {
         switch SecItemCopyMatching(query as CFDictionary, &result) {
         case errSecSuccess:
             guard let data = result as? Data else { return .failed }
-            if !hasBiometric(account: account, inSharedGroup: true) {
-                // Move the item into the shared group so the AutoFill extension can read it.
-                _ = saveBiometric(data, account: account)
-            }
             return .success(data)
         case errSecItemNotFound:
             return .notFound
@@ -165,15 +123,10 @@ nonisolated enum KeychainService {
     }
 
     /// Returns a Boolean value that indicates whether a biometric item exists, without prompting.
-    ///
-    /// - Parameters:
-    ///   - account: The item's account name.
-    ///   - inSharedGroup: Whether to search only the shared access group, rather
-    ///     than every group the app can reach.
-    static func hasBiometric(account: String, inSharedGroup: Bool = false) -> Bool {
+    static func hasBiometric(account: String) -> Bool {
         let context = LAContext()
         context.interactionNotAllowed = true
-        var query = baseQuery(account: account, inSharedGroup: inSharedGroup)
+        var query = baseQuery(account: account)
         query[kSecMatchLimit as String] = kSecMatchLimitOne
         query[kSecUseAuthenticationContext as String] = context
         let status = SecItemCopyMatching(query as CFDictionary, nil)
@@ -188,17 +141,8 @@ nonisolated enum KeychainService {
     // MARK: - Private
 
     /// Returns an item's value as a UTF-8 string.
-    ///
-    /// An item found outside the shared group is moved into it.
     private static func load(account: String) -> String? {
-        if let data = read(baseQuery(account: account)) {
-            return String(data: data, encoding: .utf8)
-        }
-        guard sharedGroup != nil,
-              let data = read(baseQuery(account: account, inSharedGroup: false)),
-              let value = String(data: data, encoding: .utf8) else { return nil }
-        save(value, account: account)
-        return value
+        read(baseQuery(account: account)).flatMap { String(data: $0, encoding: .utf8) }
     }
 
     /// Returns the data of the first item matching the query, without prompting.

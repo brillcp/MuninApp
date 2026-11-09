@@ -105,7 +105,6 @@
 "lock.step.masterPassword" = "שימוש בסיסמה הראשית";
 "lock.step.recoveryKey" = "הזנת מפתח שחזור";
 "lock.step.signIn" = "התחברות";
-"lock.signedInAs" = "מחובר/ת בתור %@";
 "lock.switchAccount" = "%@ · החלפה";
 "lock.title" = "ביטול נעילת הכספת שלי";
 "lock.unlock" = "ביטול נעילה";
@@ -179,12 +178,8 @@
 "vault.title" = "כספת";
 
 /** Vault Key **/
-"vaultKey.missing.checkAgain" = "בדיקה חוזרת";
-"vaultKey.missing.invalid" = "זה אינו מפתח שחזור תקין.";
-"vaultKey.missing.message" = "הכספת שלך מוצפנת במפתח מהמכשיר האחר שלך. יש להפעיל את מחזיק המפתחות של iCloud בשני המכשירים ולבדוק שוב, או להדביק את מפתח השחזור.";
-"vaultKey.missing.placeholder" = "מפתח שחזור";
-"vaultKey.missing.restore" = "שחזור";
-"vaultKey.missing.title" = "מפתח הכספת לא נמצא במכשיר זה";
+"lock.recovery.invalid" = "זה אינו מפתח שחזור תקין.";
+"lock.recovery.placeholder" = "מפתח שחזור";
 "vaultKey.recovery.backup" = "יש לשמור עותק במקום בטוח. אם שכחת את הסיסמה הראשית, מפתח השחזור הוא הדרך היחידה לחזור לכספת.";
 "vaultKey.recovery.copy" = "העתקת מפתח השחזור";
 "vaultKey.recovery.explanation" = "החשבונות שלך מוצפנים מקצה לקצה עם מפתח זה. Munin לא יכול לקרוא אותם או לשחזר אותם עבורך.";
@@ -295,5 +290,4 @@
 "autofill.signIn" = "יש לפתוח את Munin ולהתחבר כדי להשתמש במילוי אוטומטי.";
 "autofill.suggested" = "הצעות";
 "autofill.title" = "Munin";
-"autofill.turnOnBiometrics" = "יש לפתוח את Munin, להפעיל ביטול נעילה עם Face ID או Touch ID ב״הגדרות״ ולבטל את נעילת Munin פעם אחת. לאחר מכן המילוי האוטומטי יוכל להשתמש בו.";
 "autofill.unavailable" = "מילוי אוטומטי אינו זמין";

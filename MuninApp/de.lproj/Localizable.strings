@@ -105,7 +105,6 @@
 "lock.step.masterPassword" = "Master-Passwort verwenden";
 "lock.step.recoveryKey" = "Wiederherstellungsschlüssel eingeben";
 "lock.step.signIn" = "Anmelden";
-"lock.signedInAs" = "Angemeldet als %@";
 "lock.switchAccount" = "%@ · Wechseln";
 "lock.title" = "Meinen Tresor entsperren";
 "lock.unlock" = "Entsperren";
@@ -179,12 +178,8 @@
 "vault.title" = "Tresor";
 
 /** Vault Key **/
-"vaultKey.missing.checkAgain" = "Erneut prüfen";
-"vaultKey.missing.invalid" = "Das ist kein gültiger Wiederherstellungsschlüssel.";
-"vaultKey.missing.message" = "Dein Tresor ist mit einem Schlüssel von deinem anderen Gerät verschlüsselt. Aktiviere den iCloud-Schlüsselbund auf beiden Geräten und prüfe erneut, oder füge deinen Wiederherstellungsschlüssel ein.";
-"vaultKey.missing.placeholder" = "Wiederherstellungsschlüssel";
-"vaultKey.missing.restore" = "Wiederherstellen";
-"vaultKey.missing.title" = "Tresorschlüssel nicht auf diesem Gerät";
+"lock.recovery.invalid" = "Das ist kein gültiger Wiederherstellungsschlüssel.";
+"lock.recovery.placeholder" = "Wiederherstellungsschlüssel";
 "vaultKey.recovery.backup" = "Bewahre eine Kopie an einem sicheren Ort auf. Wenn du dein Master-Passwort vergisst, ist der Wiederherstellungsschlüssel der einzige Weg zurück in deinen Tresor.";
 "vaultKey.recovery.copy" = "Wiederherstellungsschlüssel kopieren";
 "vaultKey.recovery.explanation" = "Deine Konten sind mit diesem Schlüssel Ende-zu-Ende-verschlüsselt. Munin kann sie nicht lesen und nicht für dich wiederherstellen.";
@@ -295,5 +290,4 @@
 "autofill.signIn" = "Öffne Munin und melde dich an, um „Automatisch ausfüllen“ zu verwenden.";
 "autofill.suggested" = "Vorschläge";
 "autofill.title" = "Munin";
-"autofill.turnOnBiometrics" = "Öffne Munin, aktiviere das Entsperren mit Face ID oder Touch ID in den Einstellungen und entsperre Munin einmal. Dann kann „Automatisch ausfüllen“ es verwenden.";
 "autofill.unavailable" = "Automatisch ausfüllen ist nicht verfügbar";

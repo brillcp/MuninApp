@@ -105,7 +105,6 @@
 "lock.step.masterPassword" = "マスターパスワードを使用";
 "lock.step.recoveryKey" = "復旧キーを入力";
 "lock.step.signIn" = "サインイン";
-"lock.signedInAs" = "%@ でサインイン中";
 "lock.switchAccount" = "%@ · 切り替え";
 "lock.title" = "保管庫のロックを解除";
 "lock.unlock" = "ロック解除";
@@ -179,12 +178,8 @@
 "vault.title" = "保管庫";
 
 /** Vault Key **/
-"vaultKey.missing.checkAgain" = "再確認";
-"vaultKey.missing.invalid" = "有効な復旧キーではありません。";
-"vaultKey.missing.message" = "保管庫はほかのデバイスのキーで暗号化されています。両方のデバイスで iCloud キーチェーンをオンにして再確認するか、復旧キーをペーストしてください。";
-"vaultKey.missing.placeholder" = "復旧キー";
-"vaultKey.missing.restore" = "復元";
-"vaultKey.missing.title" = "このデバイスに保管庫のキーがありません";
+"lock.recovery.invalid" = "有効な復旧キーではありません。";
+"lock.recovery.placeholder" = "復旧キー";
 "vaultKey.recovery.backup" = "安全な場所にコピーを保管してください。マスターパスワードを忘れた場合、保管庫に戻る唯一の方法は復旧キーです。";
 "vaultKey.recovery.copy" = "復旧キーをコピー";
 "vaultKey.recovery.explanation" = "アカウントはこのキーでエンドツーエンドで暗号化されています。Munin はそれらを読むことも、代わりに復旧することもできません。";
@@ -295,5 +290,4 @@
 "autofill.signIn" = "自動入力を使うには、Munin を開いてサインインしてください。";
 "autofill.suggested" = "候補";
 "autofill.title" = "Munin";
-"autofill.turnOnBiometrics" = "Munin を開いて設定で Face ID または Touch ID によるロック解除をオンにし、一度 Munin のロックを解除してください。その後、自動入力で使えるようになります。";
 "autofill.unavailable" = "自動入力を利用できません";

@@ -7,9 +7,11 @@ import Observation
 /// The user's ID and email are stored in the Keychain; the session tokens are
 /// managed by ``AuthTokenProvider``. Views observe ``isSignedIn``.
 @Observable
-final class AuthManager {
+final class AuthManager: UserSession {
     /// The raw nonce of the sign-in in progress, sent with the identity token.
     private var currentNonce: String?
+    /// The API used to delete the account.
+    private let api: any MuninAPI
 
     /// A Boolean value that indicates whether a session exists.
     private(set) var isSignedIn: Bool
@@ -27,11 +29,13 @@ final class AuthManager {
 
     /// Creates an authentication manager, restoring the stored session and user.
     ///
-    /// - Parameter tokenProvider: The provider that stores and refreshes session tokens.
-    init(tokenProvider: AuthTokenProvider = .shared) {
+    /// - Parameters:
+    ///   - tokenProvider: The provider that stores and refreshes session tokens.
+    ///   - api: The API used to delete the account.
+    init(tokenProvider: AuthTokenProvider = .shared, api: any MuninAPI) {
         self.tokenProvider = tokenProvider
+        self.api = api
         isSignedIn = tokenProvider.hasSession
-        Self.moveUserFromUserDefaults()
         email = KeychainService.loadEmail()
         userID = KeychainService.loadUserID()
     }
@@ -112,26 +116,13 @@ extension AuthManager {
         } catch let error as ASAuthorizationError where error.code == .canceled {
             return false
         }
-        try await MuninService(tokenProvider: tokenProvider, proof: proof).deleteAccount(appleAuthorizationCode: code)
+        try await api.deleteAccount(appleAuthorizationCode: code, proof: proof)
         signOut()
         return true
     }
 }
 
 private extension AuthManager {
-    /// Migrates a stored email and user ID from user defaults to the Keychain.
-    static func moveUserFromUserDefaults() {
-        let defaults = UserDefaults.standard
-        if let id = defaults.string(forKey: "munin.user.id") {
-            if KeychainService.loadUserID() == nil { KeychainService.saveUserID(id) }
-            defaults.removeObject(forKey: "munin.user.id")
-        }
-        if let email = defaults.string(forKey: "munin.user.email") {
-            if KeychainService.loadEmail() == nil { KeychainService.saveEmail(email) }
-            defaults.removeObject(forKey: "munin.user.email")
-        }
-    }
-
     /// Stores the user's ID and email in memory and in the Keychain; `nil` deletes them.
     func setUser(id: String?, email: String?) {
         userID = id

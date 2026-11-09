@@ -105,7 +105,6 @@
 "lock.step.masterPassword" = "Usa password principale";
 "lock.step.recoveryKey" = "Inserisci chiave di recupero";
 "lock.step.signIn" = "Accedi";
-"lock.signedInAs" = "Accesso come %@";
 "lock.switchAccount" = "%@ · Cambia";
 "lock.title" = "Sblocca la mia cassaforte";
 "lock.unlock" = "Sblocca";
@@ -179,12 +178,8 @@
 "vault.title" = "Cassaforte";
 
 /** Vault Key **/
-"vaultKey.missing.checkAgain" = "Controlla di nuovo";
-"vaultKey.missing.invalid" = "Non è una chiave di recupero valida.";
-"vaultKey.missing.message" = "La tua cassaforte è codificata con una chiave dell’altro dispositivo. Attiva Portachiavi iCloud su entrambi i dispositivi e controlla di nuovo, oppure incolla la chiave di recupero.";
-"vaultKey.missing.placeholder" = "Chiave di recupero";
-"vaultKey.missing.restore" = "Ripristina";
-"vaultKey.missing.title" = "La chiave della cassaforte non è su questo dispositivo";
+"lock.recovery.invalid" = "Non è una chiave di recupero valida.";
+"lock.recovery.placeholder" = "Chiave di recupero";
 "vaultKey.recovery.backup" = "Conservane una copia in un luogo sicuro. Se dimentichi la password principale, la chiave di recupero è l’unico modo per tornare nella cassaforte.";
 "vaultKey.recovery.copy" = "Copia chiave di recupero";
 "vaultKey.recovery.explanation" = "I tuoi account sono codificati end-to-end con questa chiave. Munin non può leggerli né recuperarli per te.";
@@ -295,5 +290,4 @@
 "autofill.signIn" = "Apri Munin e accedi per usare l’inserimento automatico.";
 "autofill.suggested" = "Suggeriti";
 "autofill.title" = "Munin";
-"autofill.turnOnBiometrics" = "Apri Munin, attiva lo sblocco con Face ID o Touch ID nelle Impostazioni e sblocca Munin una volta. Dopodiché l’inserimento automatico potrà usarlo.";
 "autofill.unavailable" = "Inserimento automatico non disponibile";

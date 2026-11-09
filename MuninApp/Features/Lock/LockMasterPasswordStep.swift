@@ -3,7 +3,6 @@ import SwiftUI
 /// A step that unlocks with the master password, with options to use
 /// biometrics or the recovery key.
 struct LockMasterPasswordStep: View {
-    @Environment(AuthManager.self) private var auth
     @Environment(VaultSession.self) private var session
     /// The view model that receives the password list during unlock.
     @Environment(VaultViewModel.self) private var vaultModel
@@ -55,6 +54,6 @@ private extension LockMasterPasswordStep {
         guard !password.isEmpty else { return }
         let entered = password
         password = ""
-        Task { await session.unlock(masterPassword: entered, prefetchingInto: vaultModel, auth: auth) }
+        Task { await session.unlock(masterPassword: entered, prefetchingInto: vaultModel) }
     }
 }

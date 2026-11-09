@@ -11,7 +11,6 @@ import SwiftUI
 /// applied to the `NavigationStack` rather than its content, so the tab bar can
 /// turn the Search tab into a search field.
 struct SearchView: View {
-    @Environment(AuthManager.self) private var auth
     @State private var query = ""
     /// The passwords matching the query.
     ///
@@ -63,8 +62,8 @@ struct SearchView: View {
                 PasswordDetail(item: vaultModel.items.first { $0.id == id }, viewModel: vaultModel, dismissesWhenDeleted: true)
             }
             .task {
-                if !vaultModel.hasLoaded { await vaultModel.refresh(auth: auth) }
-                if !twoFactorModel.hasLoaded { await twoFactorModel.refresh(auth: auth) }
+                if !vaultModel.hasLoaded { await vaultModel.refresh() }
+                if !twoFactorModel.hasLoaded { await twoFactorModel.refresh() }
             }
             .task(clock.run)
         }

@@ -1,11 +1,25 @@
 import CryptoKit
 import Foundation
 
+/// An encrypted field of a password item.
+///
+/// The raw value is bound into each field's ciphertext, so a value can't be
+/// moved to another field. Don't change the raw values.
+nonisolated enum PasswordField: String, Sendable, CaseIterable {
+    case name
+    case url
+    case username
+    case password
+    case note
+}
+
 /// End-to-end encryption for vault entries.
 ///
 /// Entries are sealed with AES-256-GCM using a key that exists only on the
 /// user's devices. The server stores the ciphertext and can't read it.
-enum VaultCrypto {
+///
+/// Nonisolated, so decryption can run off the main actor.
+nonisolated enum VaultCrypto {
     /// Errors that occur while sealing or opening.
     enum CryptoError: Error {
         /// The ciphertext isn't valid base64, or sealing produced no output.
@@ -32,19 +46,19 @@ enum VaultCrypto {
 
     /// Returns associated data that binds a password field's ciphertext to its
     /// owner and column, so ciphertext can't move between users or fields.
-    private static func passwordAssociatedData(field: String, userID: String) -> Data {
-        Data("munin.password.v1:\(userID.lowercased()):\(field)".utf8)
+    private static func passwordAssociatedData(field: PasswordField, userID: String) -> Data {
+        Data("munin.password.v1:\(userID.lowercased()):\(field.rawValue)".utf8)
     }
 
     /// Encrypts a password field.
     ///
     /// - Parameters:
     ///   - value: The plaintext value.
-    ///   - field: The field name: `name`, `url`, `username`, `password`, or `note`.
+    ///   - field: The field the value belongs to.
     ///   - key: The vault key.
     ///   - userID: The owner's user ID.
     /// - Returns: The sealed box, base64-encoded.
-    static func seal(_ value: String, field: String, key: SymmetricKey, userID: String) throws -> String {
+    static func seal(_ value: String, field: PasswordField, key: SymmetricKey, userID: String) throws -> String {
         let box = try AES.GCM.seal(Data(value.utf8), using: key, authenticating: passwordAssociatedData(field: field, userID: userID))
         guard let combined = box.combined else { throw CryptoError.invalidCiphertext }
         return combined.base64EncodedString()
@@ -53,7 +67,7 @@ enum VaultCrypto {
     /// Decrypts a password field.
     ///
     /// - Throws: An error if the key, user, or field doesn't match.
-    static func open(_ ciphertext: String, field: String, key: SymmetricKey, userID: String) throws -> String {
+    static func open(_ ciphertext: String, field: PasswordField, key: SymmetricKey, userID: String) throws -> String {
         guard let data = Data(base64Encoded: ciphertext) else { throw CryptoError.invalidCiphertext }
         let box = try AES.GCM.SealedBox(combined: data)
         let plaintext = try AES.GCM.open(box, using: key, authenticating: passwordAssociatedData(field: field, userID: userID))

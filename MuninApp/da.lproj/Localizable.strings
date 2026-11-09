@@ -105,7 +105,6 @@
 "lock.step.masterPassword" = "Brug hovedadgangskode";
 "lock.step.recoveryKey" = "Indtast gendannelsesnøgle";
 "lock.step.signIn" = "Log ind";
-"lock.signedInAs" = "Logget ind som %@";
 "lock.switchAccount" = "%@ · Skift";
 "lock.title" = "Lås min boks op";
 "lock.unlock" = "Lås op";
@@ -179,12 +178,8 @@
 "vault.title" = "Boks";
 
 /** Vault Key **/
-"vaultKey.missing.checkAgain" = "Tjek igen";
-"vaultKey.missing.invalid" = "Det er ikke en gyldig gendannelsesnøgle.";
-"vaultKey.missing.message" = "Din boks er krypteret med en nøgle fra din anden enhed. Slå iCloud-nøglering til på begge enheder og tjek igen, eller indsæt din gendannelsesnøgle.";
-"vaultKey.missing.placeholder" = "Gendannelsesnøgle";
-"vaultKey.missing.restore" = "Gendan";
-"vaultKey.missing.title" = "Boksnøglen er ikke på denne enhed";
+"lock.recovery.invalid" = "Det er ikke en gyldig gendannelsesnøgle.";
+"lock.recovery.placeholder" = "Gendannelsesnøgle";
 "vaultKey.recovery.backup" = "Gem en kopi et sikkert sted. Hvis du glemmer din hovedadgangskode, er gendannelsesnøglen den eneste vej tilbage til din boks.";
 "vaultKey.recovery.copy" = "Kopiér gendannelsesnøgle";
 "vaultKey.recovery.explanation" = "Dine konti er end-to-end-krypteret med denne nøgle. Munin kan ikke læse dem eller gendanne dem for dig.";
@@ -295,5 +290,4 @@
 "autofill.signIn" = "Åbn Munin, og log ind for at bruge autoudfyld.";
 "autofill.suggested" = "Forslag";
 "autofill.title" = "Munin";
-"autofill.turnOnBiometrics" = "Åbn Munin, slå oplåsning med Face ID eller Touch ID til i Indstillinger, og lås Munin op én gang. Derefter kan autoudfyld bruge det.";
 "autofill.unavailable" = "Autoudfyld er ikke tilgængelig";

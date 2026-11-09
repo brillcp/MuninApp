@@ -3,7 +3,6 @@ import SwiftUI
 /// A step that unlocks with Face ID or Touch ID, with the master password as
 /// an alternative.
 struct LockBiometricsStep: View {
-    @Environment(AuthManager.self) private var auth
     @Environment(VaultSession.self) private var session
     /// The view model that receives the password list during unlock.
     @Environment(VaultViewModel.self) private var vaultModel
@@ -32,6 +31,6 @@ private extension LockBiometricsStep {
 
     /// Unlocks with Face ID or Touch ID and downloads the password list.
     func unlockWithBiometrics() {
-        Task { await session.unlockWithBiometrics(prefetchingInto: vaultModel, auth: auth) }
+        Task { await session.unlockWithBiometrics(prefetchingInto: vaultModel) }
     }
 }

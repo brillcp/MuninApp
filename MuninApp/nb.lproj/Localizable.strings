@@ -105,7 +105,6 @@
 "lock.step.masterPassword" = "Bruk hovedpassord";
 "lock.step.recoveryKey" = "Skriv inn gjenopprettingsnøkkel";
 "lock.step.signIn" = "Logg på";
-"lock.signedInAs" = "Logget på som %@";
 "lock.switchAccount" = "%@ · Bytt";
 "lock.title" = "Lås opp hvelvet mitt";
 "lock.unlock" = "Lås opp";
@@ -179,12 +178,8 @@
 "vault.title" = "Hvelv";
 
 /** Vault Key **/
-"vaultKey.missing.checkAgain" = "Sjekk igjen";
-"vaultKey.missing.invalid" = "Det er ikke en gyldig gjenopprettingsnøkkel.";
-"vaultKey.missing.message" = "Hvelvet ditt er kryptert med en nøkkel fra den andre enheten din. Slå på iCloud-nøkkelring på begge enhetene og sjekk igjen, eller lim inn gjenopprettingsnøkkelen.";
-"vaultKey.missing.placeholder" = "Gjenopprettingsnøkkel";
-"vaultKey.missing.restore" = "Gjenopprett";
-"vaultKey.missing.title" = "Hvelvnøkkelen er ikke på denne enheten";
+"lock.recovery.invalid" = "Det er ikke en gyldig gjenopprettingsnøkkel.";
+"lock.recovery.placeholder" = "Gjenopprettingsnøkkel";
 "vaultKey.recovery.backup" = "Ta vare på en kopi et trygt sted. Hvis du glemmer hovedpassordet, er gjenopprettingsnøkkelen den eneste veien tilbake til hvelvet.";
 "vaultKey.recovery.copy" = "Kopier gjenopprettingsnøkkel";
 "vaultKey.recovery.explanation" = "Kontoene dine er ende-til-ende-kryptert med denne nøkkelen. Munin kan ikke lese dem eller gjenopprette dem for deg.";
@@ -295,5 +290,4 @@
 "autofill.signIn" = "Åpne Munin og logg på for å bruke autoutfylling.";
 "autofill.suggested" = "Forslag";
 "autofill.title" = "Munin";
-"autofill.turnOnBiometrics" = "Åpne Munin, slå på opplåsing med Face ID eller Touch ID i Innstillinger, og lås opp Munin én gang. Deretter kan autoutfylling bruke det.";
 "autofill.unavailable" = "Autoutfylling er ikke tilgjengelig";

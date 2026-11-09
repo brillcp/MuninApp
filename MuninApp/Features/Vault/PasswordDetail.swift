@@ -8,7 +8,6 @@ import SwiftUI
 /// `dismissesWhenDeleted` is true, the view dismisses itself once the item is
 /// gone.
 struct PasswordDetail: View {
-    @Environment(AuthManager.self) private var auth
     /// The subscription state. Editing and deleting are disabled while the
     /// vault is read-only.
     @Environment(SubscriptionManager.self) private var subscriptions
@@ -69,12 +68,12 @@ struct PasswordDetail: View {
         #endif
         .sheet(item: $editing) { draft in
             PasswordEditorView(fields: draft.fields, isEditing: true) { fields in
-                try viewModel.update(draft.item, with: fields, auth: auth)
+                try viewModel.update(draft.item, with: fields)
             }
         }
         .confirmationDialog("vault.delete.title", item: $pendingDeletion, titleVisibility: .visible) { item in
             Button(LocalizedKey("vault.delete.button", item.name), role: .destructive) {
-                viewModel.delete(item, auth: auth)
+                viewModel.delete(item)
             }
         } message: { item in
             Text(LocalizedKey("vault.delete.message", item.name))
@@ -85,14 +84,14 @@ struct PasswordDetail: View {
 
 private extension PasswordDetail {
     /// Decrypts one of the item's fields for the inspector.
-    func decrypt(_ ciphertext: String, field: String) throws -> String {
-        try viewModel.decrypt(ciphertext, field: field, auth: auth)
+    func decrypt(_ ciphertext: String, field: PasswordField) throws -> String {
+        try viewModel.decrypt(ciphertext, field: field)
     }
 
     /// Copies the password and updates the item's modification date.
     func copyPassword() {
         guard let item else { return }
-        Task { await viewModel.copyPassword(item, auth: auth) }
+        Task { await viewModel.copyPassword(item) }
     }
 
     func confirmDeletion() {
@@ -103,7 +102,7 @@ private extension PasswordDetail {
     func startEditing() {
         hapticTaps += 1
         guard let item else { return }
-        editing = viewModel.editDraft(for: item, auth: auth)
+        editing = viewModel.editDraft(for: item)
     }
 
     /// Dismisses the view once the item is gone, if `dismissesWhenDeleted` is
