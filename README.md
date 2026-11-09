@@ -39,22 +39,6 @@ server. The server stores ciphertext it can't read, and can't reset your
 master password for you. See [SECURITY.md](SECURITY.md) for the cryptographic
 design and how to report a vulnerability.
 
-## Requirements
-
-Xcode 27.1 or later.
-
-## Configuration
-
-Build settings live in `Config/Base.xcconfig`:
-
-| Setting | Purpose |
-| --- | --- |
-| `DEVELOPMENT_TEAM` | The team that signs the app and extension. |
-| `APP_BUNDLE_ID` | The app's bundle identifier. The AutoFill extension uses `$(APP_BUNDLE_ID).AutoFill`, and the shared keychain group is `$(AppIdentifierPrefix)$(APP_BUNDLE_ID).shared`. |
-| `MUNIN_API_HOST` | The host of the Munin API. |
-| `SUPABASE_HOST` | The host of the authentication service. |
-| `SUPABASE_PUBLISHABLE_KEY` | The authentication service's publishable key. It's public by design and ships in the app. |
-
 ## Project structure
 
 ```
@@ -82,6 +66,10 @@ MuninAutoFill/         The AutoFill credential provider extension
 MuninTests/            Unit tests
 Config/                Build settings
 ```
+
+## Requirements
+
+Xcode 27.1 or later.
 
 ## License
 
