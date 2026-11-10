@@ -1,0 +1,293 @@
+/* Localizable.strings */
+
+/** Account **/
+"account.delete" = "Видалити обліковий запис";
+"account.delete.failed" = "Не вдалося видалити обліковий запис";
+"account.delete.locked" = "Розблокуйте Munin, щоб видалити обліковий запис.";
+"account.delete.message" = "Ваш обліковий запис Munin, паролі та облікові записи 2FA буде видалено назавжди. Цю дію не можна скасувати. Ви підтвердите її своїм обліковим записом Apple, і Munin також зникне зі «Входу через Apple».\n\nПідписку в App Store не буде скасовано. Спочатку скасуйте її в розділі «Керувати підпискою».";
+"account.delete.title" = "Видалити обліковий запис Munin?";
+"account.showRecoveryKey" = "Показати ключ відновлення";
+"account.signOut" = "Вийти";
+
+/** Add Account **/
+"addAccount.chooseImage" = "Вибрати зображення…";
+"addAccount.chooseScreenshot" = "Вибрати знімок екрана…";
+"addAccount.encrypting" = "Шифрування…";
+"addAccount.error.alreadyAddedMany" = "Ці облікові записи вже є у вашому сховищі.";
+"addAccount.error.alreadyAddedOne" = "Цей обліковий запис уже є у вашому сховищі.";
+"addAccount.error.loadImage" = "Не вдалося завантажити зображення.";
+"addAccount.error.noQRCode" = "На зображенні не знайдено QR-код.";
+"addAccount.error.readImage" = "Не вдалося прочитати зображення.";
+"addAccount.link.add" = "Додати з посилання";
+"addAccount.link.header" = "Посилання";
+"addAccount.link.placeholder" = "otpauth://…";
+"addAccount.manual.account" = "Обліковий запис, напр. you@example.com";
+"addAccount.manual.add" = "Додати обліковий запис";
+"addAccount.manual.digits" = "Цифри";
+"addAccount.manual.footer" = "Сайти показують ключ налаштування в розділі «Не вдається сканувати QR-код?».";
+"addAccount.manual.header" = "Ввести вручну";
+"addAccount.manual.issuer" = "Постачальник, напр. GitHub";
+"addAccount.manual.setupKey" = "Ключ налаштування";
+"addAccount.qr.footer" = "QR-код 2FA із сайту або QR-код Google Authenticator з «Перенесення облікових записів» → «Експорт облікових записів», щоб імпортувати все одразу.";
+"addAccount.qr.header" = "QR-код";
+"addAccount.scanQRCode" = "Сканувати QR-код";
+"addAccount.title" = "Додати обліковий запис";
+
+/** Codes **/
+"codes.add" = "Додати";
+"codes.copyCode" = "Копіювати код";
+"codes.delete.button" = "Видалити %@";
+"codes.delete.message" = "Переконайтеся, що 2FA вимкнено для %@ або у вас є інший спосіб увійти. Цю дію не можна скасувати.";
+"codes.delete.title" = "Видалити обліковий запис?";
+"codes.empty.add" = "Додати обліковий запис";
+"codes.import.button" = "Імпортувати облікові записи 2FA";
+"codes.import.confirm.button" = "Імпортувати (%lld)";
+"codes.import.confirm.message" = "Нових облікових записів: %lld — їх буде зашифровано й додано. Уже в Munin: %lld — їх буде пропущено.";
+"codes.import.confirm.messageWithFailures" = "Нових облікових записів: %lld — їх буде зашифровано й додано. Уже в Munin: %lld — їх буде пропущено. Не вдалося прочитати рядків: %lld.";
+"codes.import.confirm.title" = "Імпортувати облікові записи 2FA?";
+"codes.import.done" = "Імпортовано облікових записів: %lld. Видаліть файл зараз — у ньому ваші секрети 2FA відкритим текстом.";
+"codes.import.error.empty" = "У цьому файлі немає посилань 2FA. Виберіть файл з одним посиланням otpauth:// у кожному рядку, як в експорті Munin.";
+"codes.import.title" = "Імпорт";
+"codes.link.add" = "Додати";
+"codes.link.failed" = "Не вдалося додати код";
+"codes.link.message" = "%@ буде зашифровано й додано до Munin.";
+"codes.link.title" = "Додати обліковий запис 2FA?";
+"codes.empty.message" = "Скануйте QR-код 2FA або імпортуйте з Google Authenticator.";
+"codes.empty.title" = "Облікових записів ще немає";
+"codes.row.copyHint" = "Копіює код";
+"codes.title" = "2FA";
+
+/** Errors **/
+"errors.keyMissing" = "На цьому пристрої ще немає ключа вашого сховища.";
+"errors.loadVault.title" = "Не вдалося завантажити сховище";
+"errors.munin.appStoreUnavailable" = "Не вдалося перевірити підписку в App Store. Спробуйте пізніше.";
+"errors.munin.badRequest" = "Не вдалося сформувати запит.";
+"errors.munin.http" = "Munin відповів кодом HTTP %lld.";
+"errors.munin.notFound" = "За адресою %@ немає API Munin.";
+"errors.munin.proof" = "Munin не зміг перевірити ваш головний пароль. Заблокуйте Munin, розблокуйте його головним паролем і спробуйте ще раз.";
+"errors.munin.subscriptionLinkedElsewhere" = "Ця підписка вже використовується іншим обліковим записом Munin.";
+"errors.munin.subscriptionOtherAccount" = "Цю підписку придбано для іншого облікового запису Munin.";
+"errors.munin.subscriptionRequired" = "Без підписки Munin доступний лише для читання. Оформіть підписку, щоб додавати або змінювати елементи.";
+"errors.munin.tooManyAttempts" = "Забагато спроб. Спробуйте ще раз за годину.";
+"errors.munin.transactionNotFound" = "App Store не розпізнає цю покупку.";
+"errors.munin.unexpectedResponse" = "Неочікувана відповідь сервера. Чи %@ — це Munin?";
+"errors.munin.unreachable" = "Не вдається підʼєднатися до Munin. %@";
+"errors.munin.vaultFull" = "Ваше сховище заповнене (50 облікових записів).";
+"errors.notSignedIn" = "Увійдіть знову, щоб додавати облікові записи.";
+"errors.openVault.title" = "Не вдалося відкрити сховище";
+"errors.parser.hotpNotSupported" = "Коди на основі лічильника (HOTP) не підтримуються.";
+"errors.parser.invalidMigrationData" = "Не вдалося прочитати експорт Google Authenticator.";
+"errors.parser.invalidSecret" = "Секрет не є дійсним Base32.";
+"errors.parser.missingSecret" = "У посиланні немає секрету.";
+"errors.parser.unsupported" = "Це не посилання й не QR-код автентифікатора.";
+
+/** Global **/
+"global.cancel" = "Скасувати";
+"global.close" = "Закрити";
+"global.copied" = "Скопійовано";
+"global.copy" = "Копіювати";
+"global.delete" = "Видалити";
+"global.done" = "Готово";
+"global.edit" = "Змінити";
+"global.refresh" = "Оновити";
+"global.save" = "Зберегти";
+"global.tryAgain" = "Спробувати ще раз";
+
+/** Lock **/
+"lock.command" = "Заблокувати";
+"lock.biometrics.failed" = "Біометрія не спрацювала. Використайте головний пароль.";
+"lock.biometrics.notSetUp" = "Розблокуйте один раз головним паролем, щоб використовувати біометрію на цьому пристрої.";
+"lock.forgotMasterPassword" = "Забули головний пароль?";
+"lock.masterPassword.placeholder" = "Головний пароль";
+"lock.reason" = "Розблокувати моє сховище";
+"lock.recovery.continue" = "Продовжити";
+"lock.recovery.message" = "Введіть ключ відновлення, щоб вибрати новий головний пароль.";
+"lock.step.masterPassword" = "Використати головний пароль";
+"lock.step.recoveryKey" = "Ввести ключ відновлення";
+"lock.step.signIn" = "Увійти";
+"lock.switchAccount" = "%@ · Змінити";
+"lock.title" = "Розблокувати моє сховище";
+"lock.unlock" = "Розблокувати";
+"lock.version" = "Версія %@";
+"lock.wrongMasterPassword" = "Неправильний головний пароль.";
+
+/** Main **/
+"main.section.munin" = "Munin";
+"main.tab.codes" = "2FA";
+"main.tab.vault" = "Сховище";
+"main.window.title" = "Munin";
+
+/** Menu Bar **/
+"menuBar.copyUsername" = "Копіювати імʼя користувача";
+"menuBar.open" = "Відкрити Munin";
+"menuBar.quit" = "Вийти з Munin";
+
+/** Password **/
+"password.field.lastUpdated" = "Останнє оновлення";
+"password.field.name" = "Назва";
+"password.field.note" = "Нотатка";
+"password.field.password" = "Пароль";
+"password.field.url" = "URL";
+"password.field.username" = "Імʼя користувача";
+
+/** Password Editor **/
+"passwordEditor.editTitle" = "Змінити пароль";
+"passwordEditor.generate" = "Згенерувати";
+"passwordEditor.newTitle" = "Новий пароль";
+
+/** Password Generator **/
+"passwordGenerator.fillPassword" = "Вставити пароль";
+"passwordGenerator.length" = "Довжина";
+"passwordGenerator.regenerate" = "Згенерувати знову";
+"passwordGenerator.strength.good" = "Добрий пароль";
+"passwordGenerator.strength.strong" = "Надійний пароль";
+"passwordGenerator.strength.weak" = "Слабкий пароль";
+"passwordGenerator.useCapitals" = "Великі літери (A-Z)";
+"passwordGenerator.useDigits" = "Цифри (0-9)";
+"passwordGenerator.useSymbols" = "Символи (@!$%&*)";
+
+/** Password Inspector **/
+"passwordInspector.openWebsite" = "Відкрити сайт";
+"passwordInspector.hide" = "Сховати";
+"passwordInspector.show" = "Показати";
+
+/** Scanner **/
+"scanner.title" = "Сканувати QR-код";
+
+/** Sign In **/
+"signIn.error.missingAnonKey" = "Укажіть у APIConfig.anonKey ваш публічний ключ.";
+"signIn.error.noIdentityToken" = "Apple не повернула токен ідентифікації. Спробуйте ще раз.";
+"signIn.error.failed" = "Не вдалося увійти. %@";
+
+/** Vault **/
+"vault.copyUsername" = "Копіювати імʼя користувача";
+"vault.copyPassword" = "Копіювати пароль";
+"vault.createItem" = "Створити елемент";
+"vault.delete.button" = "Видалити %@";
+"vault.saveFailed.title" = "Не вдалося зберегти зміну";
+"vault.delete.message" = "%@ буде видалено з усіх ваших пристроїв. Цю дію не можна скасувати.";
+"vault.delete.title" = "Видалити пароль?";
+"vault.empty.title" = "Немає елементів";
+"vault.search.prompt" = "Шукати в усіх елементах";
+"vault.sort" = "Сортування";
+"vault.sort.ascending" = "За зростанням";
+"vault.sort.dateEdited" = "Дата зміни";
+"vault.sort.descending" = "За спаданням";
+"vault.sort.direction" = "Порядок";
+"vault.sort.title" = "Назва";
+"vault.title" = "Сховище";
+
+/** Vault Key **/
+"lock.recovery.invalid" = "Це недійсний ключ відновлення.";
+"lock.recovery.placeholder" = "Ключ відновлення";
+"vaultKey.recovery.backup" = "Збережіть копію в надійному місці. Якщо ви забудете головний пароль, ключ відновлення — єдиний спосіб повернутися до сховища.";
+"vaultKey.recovery.copy" = "Копіювати ключ відновлення";
+"vaultKey.recovery.explanation" = "Ваші облікові записи наскрізно зашифровано цим ключем. Munin не може їх прочитати чи відновити за вас.";
+"vaultKey.recovery.title" = "Ключ відновлення";
+
+/** Master password **/
+"masterPassword.confirm" = "Підтвердьте головний пароль";
+"masterPassword.create.message" = "Він розблоковує Munin на всіх ваших пристроях. Munin ніколи його не бачить і не може скинути — якщо ви його забудете, повернутися можна лише за допомогою ключа відновлення.";
+"masterPassword.create.title" = "Створіть головний пароль";
+"masterPassword.exists" = "Головний пароль щойно налаштовано на іншому пристрої. Розблокуйте ним.";
+"masterPassword.field" = "Головний пароль";
+"masterPassword.mismatch" = "Паролі не збігаються.";
+"masterPassword.reset.title" = "Виберіть новий головний пароль";
+"masterPassword.tooShort" = "Мінімальна довжина: %lld символів.";
+
+/** Settings **/
+"settings.about" = "Про програму";
+"settings.autoFill" = "Автозаповнення";
+"settings.autoFill.off" = "Вимк.";
+"settings.autoFill.on" = "Увімк.";
+"settings.autoLock" = "Автоблокування";
+"settings.biometrics.face" = "Розблоковувати за Face ID";
+"settings.biometrics.touch" = "Розблоковувати за Touch ID";
+"settings.changeMasterPassword" = "Змінити головний пароль";
+"settings.currentMasterPassword" = "Поточний головний пароль";
+"settings.data" = "Дані";
+"settings.export.confirm" = "Експортувати";
+"settings.export.failed" = "Не вдалося експортувати";
+"settings.export.footer" = "Експорт не шифрується. Видаліть файл після імпорту в інше місце.";
+"settings.export.locked" = "Розблокуйте Munin, щоб експортувати.";
+"settings.export.message" = "Файл не зашифровано. Будь-хто, хто його отримає, зможе прочитати весь його вміст.";
+"settings.export.passwords" = "Експортувати паролі";
+"settings.export.passwords.filename" = "Паролі Munin";
+"settings.export.title" = "Експортувати незашифрований файл?";
+"settings.export.twoFactor" = "Експортувати облікові записи 2FA";
+"settings.export.twoFactor.filename" = "Облікові записи 2FA Munin";
+"settings.locked" = "Розблокуйте Munin, щоб змінити параметри безпеки.";
+"settings.privacyPolicy" = "Політика конфіденційності";
+"settings.security" = "Безпека";
+"settings.subscription" = "Підписка";
+"settings.subscription.active" = "Активна";
+"settings.subscription.inactive" = "Без підписки";
+"settings.subscription.manage" = "Керувати підпискою";
+"settings.subscription.restore" = "Відновити покупки";
+"settings.subscription.status" = "Статус";
+"settings.termsOfUse" = "Умови використання";
+"settings.title" = "Параметри";
+"settings.version" = "Версія";
+
+/** Search **/
+"search.empty.message" = "Знаходьте паролі та коди 2FA за назвою, іменем користувача або сайтом.";
+"search.empty.title" = "Шукайте що завгодно";
+"search.find" = "Знайти";
+"search.prompt" = "Паролі та 2FA";
+"search.section.codes" = "2FA";
+"search.section.passwords" = "Паролі";
+"search.title" = "Пошук";
+
+/** Import **/
+"import.button" = "Імпортувати паролі";
+"import.confirm.button" = "Імпортувати (%lld)";
+"import.confirm.buttonAll" = "Імпортувати";
+"import.confirm.message" = "Нових паролів: %lld — їх буде зашифровано й додано. Уже у сховищі: %lld — їх буде пропущено.";
+"import.confirm.messageWithCodes" = "Нових паролів: %lld і облікових записів 2FA: %lld — їх буде зашифровано й додано. Паролів уже у сховищі: %lld — їх буде пропущено.";
+"import.confirm.title" = "Імпортувати паролі?";
+"import.done.message" = "Імпортовано паролів: %lld. Видаліть CSV-файл зараз — у ньому всі ваші паролі відкритим текстом.";
+"import.done.messageWithCodes" = "Імпортовано паролів: %lld, облікових записів 2FA: %lld. Видаліть CSV-файл зараз — у ньому ваші паролі та секрети 2FA відкритим текстом.";
+"import.error.columns" = "У цьому CSV немає стовпців, потрібних Munin: пароля, а також назви або сайту.";
+"import.error.unreadable" = "Не вдалося прочитати файл. Експортуйте його як CSV у кодуванні UTF-8.";
+"import.progress" = "Імпорт: %lld з %lld";
+"import.title" = "Імпорт";
+
+/** Auto-lock **/
+"autoLock.fifteenMinutes" = "Через 15 хвилин";
+"autoLock.fiveMinutes" = "Через 5 хвилин";
+"autoLock.immediately" = "Одразу";
+"autoLock.never" = "Ніколи";
+"autoLock.oneMinute" = "Через 1 хвилину";
+
+/** Subscription **/
+"subscription.billingIssue" = "App Store не вдалося поновити вашу підписку. Оновіть спосіб оплати, щоб і далі додавати та змінювати елементи.";
+"subscription.error.unverified" = "App Store не вдалося підтвердити цю покупку.";
+"subscription.gracePeriod" = "Не вдалося поновити вашу підписку.";
+"subscription.message" = "Наскрізно зашифровані паролі та коди 2FA на всіх ваших пристроях Apple.";
+"subscription.readOnly" = "Лише читання. Оформіть підписку, щоб додавати або змінювати елементи.";
+"subscription.subscribe" = "Оформити підписку";
+"subscription.title" = "Munin";
+"subscription.updatePayment" = "Оновити оплату";
+
+/** AutoFill **/
+"autofill.allCodes" = "Усі коди";
+"autofill.allPasswords" = "Усі паролі";
+"autofill.banner" = "Заповнюйте паролі та коди 2FA за допомогою Munin.";
+"autofill.banner.setUp" = "Налаштувати";
+"autofill.setup.done" = "Munin увімкнено для автозаповнення.";
+"autofill.setup.message" = "Munin може заповнювати паролі та коди 2FA в Safari і програмах після Face ID або Touch ID. Паролі залишаються зашифрованими, доки ви не виберете один із них.";
+"autofill.setup.openSettings" = "Відкрити Параметри";
+"autofill.setup.step1.ios" = "Відкрийте «Параметри» й перейдіть у «Загальні» ▸ «Автозаповнення і паролі».";
+"autofill.setup.step1.mac" = "Відкрийте «Системні параметри» й перейдіть у «Загальні» ▸ «Автозаповнення і паролі».";
+"autofill.setup.step2" = "У розділі «Автозаповнення з» увімкніть Munin.";
+"autofill.setup.step3.ios" = "У Safari чи програмі торкніться поля входу й виберіть Munin над клавіатурою.";
+"autofill.setup.step3.mac" = "У Safari клацніть поле входу й виберіть Munin у меню ключа.";
+"autofill.setup.step4" = "Необовʼязково: виберіть Munin у розділі «Налаштовувати коди в», щоб посилання для налаштування 2FA відкривалися в Munin.";
+"autofill.setup.turnOn" = "Увімкнути автозаповнення";
+"autofill.decryptFailed" = "Не вдалося розшифрувати цей пароль.";
+"autofill.locked" = "Munin заблоковано";
+"autofill.search" = "Пошук";
+"autofill.signIn" = "Відкрийте Munin і увійдіть, щоб користуватися автозаповненням.";
+"autofill.suggested" = "Пропозиції";
+"autofill.title" = "Munin";
+"autofill.unavailable" = "Автозаповнення недоступне";

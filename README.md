@@ -27,10 +27,10 @@ for iPhone, iPad, and Mac.
   Pass, NordPass, and Firefox. Export passwords as CSV and 2FA accounts as
   `otpauth://` links.
 - **Sign in with Apple.** No separate account or password to create.
-- **Localization.** 20 languages: Arabic, Chinese (Simplified), Czech, Danish,
-  Dutch, English, Finnish, French, German, Greek, Hebrew, Italian, Japanese,
-  Korean, Norwegian Bokmål, Polish, Portuguese (Brazil), Russian, Spanish, and
-  Swedish.
+- **Localization.** 20 languages: Chinese (Simplified), Czech, Danish, Dutch,
+  English, Finnish, French, German, Greek, Icelandic, Italian, Japanese, Korean,
+  Norwegian Bokmål, Polish, Portuguese (Brazil), Russian, Spanish, Swedish, and
+  Ukrainian.
 
 ## Security
 
