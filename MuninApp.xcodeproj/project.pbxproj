@@ -294,9 +294,9 @@
 				cs,
 				pl,
 				"pt-BR",
-				ar,
-				he,
 				"zh-Hans",
+				uk,
+				is,
 			);
 			mainGroup = 000000000000000000000001;
 			minimizedProjectReferenceProxies = 1;

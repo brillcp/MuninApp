@@ -1,0 +1,293 @@
+/* Localizable.strings */
+
+/** Account **/
+"account.delete" = "Eyða aðgangi";
+"account.delete.failed" = "Ekki tókst að eyða aðganginum";
+"account.delete.locked" = "Taktu Munin úr lás til að eyða aðganginum.";
+"account.delete.message" = "Munin-aðganginum þínum, aðgangsorðum og 2FA-aðgöngum verður eytt varanlega. Ekki er hægt að afturkalla þetta. Þú staðfestir með Apple-aðganginum þínum, sem fjarlægir Munin einnig úr „Innskráning með Apple“.\n\nÁskriftinni þinni í App Store er ekki sagt upp. Segðu henni fyrst upp undir „Stjórna áskrift“.";
+"account.delete.title" = "Eyða Munin-aðganginum?";
+"account.showRecoveryKey" = "Sýna endurheimtarlykil";
+"account.signOut" = "Skrá út";
+
+/** Add Account **/
+"addAccount.chooseImage" = "Velja mynd…";
+"addAccount.chooseScreenshot" = "Velja skjámynd…";
+"addAccount.encrypting" = "Dulkóðar…";
+"addAccount.error.alreadyAddedMany" = "Þessir aðgangar eru þegar í hvelfingunni þinni.";
+"addAccount.error.alreadyAddedOne" = "Þessi aðgangur er þegar í hvelfingunni þinni.";
+"addAccount.error.loadImage" = "Ekki tókst að hlaða myndinni.";
+"addAccount.error.noQRCode" = "Enginn QR-kóði fannst á myndinni.";
+"addAccount.error.readImage" = "Ekki tókst að lesa myndina.";
+"addAccount.link.add" = "Bæta við úr tengli";
+"addAccount.link.header" = "Tengill";
+"addAccount.link.placeholder" = "otpauth://…";
+"addAccount.manual.account" = "Aðgangur, t.d. þú@dæmi.is";
+"addAccount.manual.add" = "Bæta við aðgangi";
+"addAccount.manual.digits" = "Tölustafir";
+"addAccount.manual.footer" = "Vefsvæði sýna uppsetningarlykilinn undir „Geturðu ekki skannað QR-kóðann?“.";
+"addAccount.manual.header" = "Slá inn handvirkt";
+"addAccount.manual.issuer" = "Útgefandi, t.d. GitHub";
+"addAccount.manual.setupKey" = "Uppsetningarlykill";
+"addAccount.qr.footer" = "2FA-QR-kóði vefsvæðis, eða QR-kóði Google Authenticator úr Flytja aðganga → Flytja út aðganga til að flytja allt inn í einu.";
+"addAccount.qr.header" = "QR-kóði";
+"addAccount.scanQRCode" = "Skanna QR-kóða";
+"addAccount.title" = "Bæta við aðgangi";
+
+/** Codes **/
+"codes.add" = "Bæta við";
+"codes.copyCode" = "Afrita kóða";
+"codes.delete.button" = "Eyða %@";
+"codes.delete.message" = "Gakktu úr skugga um að slökkt sé á 2FA fyrir %@, eða að þú hafir aðra leið til að skrá þig inn. Ekki er hægt að afturkalla þetta.";
+"codes.delete.title" = "Eyða aðgangi?";
+"codes.empty.add" = "Bæta við aðgangi";
+"codes.import.button" = "Flytja inn 2FA-aðganga";
+"codes.import.confirm.button" = "Flytja inn (%lld)";
+"codes.import.confirm.message" = "Nýir aðgangar sem verða dulkóðaðir og bætt við: %lld. Þegar í Munin og sleppt: %lld.";
+"codes.import.confirm.messageWithFailures" = "Nýir aðgangar sem verða dulkóðaðir og bætt við: %lld. Þegar í Munin og sleppt: %lld. Línur sem ekki tókst að lesa: %lld.";
+"codes.import.confirm.title" = "Flytja inn 2FA-aðganga?";
+"codes.import.done" = "Innfluttir aðgangar: %lld. Eyddu skránni núna — hún geymir 2FA-leyndarmálin þín sem venjulegan texta.";
+"codes.import.error.empty" = "Þessi skrá inniheldur enga 2FA-tengla. Veldu skrá með einum otpauth://-tengli í hverri línu, eins og útflutning Munin.";
+"codes.import.title" = "Flytja inn";
+"codes.link.add" = "Bæta við";
+"codes.link.failed" = "Ekki tókst að bæta kóðanum við";
+"codes.link.message" = "%@ verður dulkóðaður og bætt við Munin.";
+"codes.link.title" = "Bæta við 2FA-aðgangi?";
+"codes.empty.message" = "Skannaðu 2FA-QR-kóða eða fluttu inn úr Google Authenticator.";
+"codes.empty.title" = "Engir aðgangar enn";
+"codes.row.copyHint" = "Afritar kóðann";
+"codes.title" = "2FA";
+
+/** Errors **/
+"errors.keyMissing" = "Þetta tæki er ekki enn með lykil hvelfingarinnar þinnar.";
+"errors.loadVault.title" = "Ekki tókst að hlaða hvelfingunni";
+"errors.munin.appStoreUnavailable" = "Ekki tókst að athuga áskriftina hjá App Store. Reyndu aftur síðar.";
+"errors.munin.badRequest" = "Ekki tókst að búa til beiðnina.";
+"errors.munin.http" = "Munin svaraði með HTTP %lld.";
+"errors.munin.notFound" = "Ekkert Munin-API á %@.";
+"errors.munin.proof" = "Munin gat ekki staðfest aðalaðgangsorðið þitt. Læstu Munin, taktu úr lás með aðalaðgangsorðinu og reyndu aftur.";
+"errors.munin.subscriptionLinkedElsewhere" = "Annar Munin-aðgangur notar þegar þessa áskrift.";
+"errors.munin.subscriptionOtherAccount" = "Þessi áskrift var keypt fyrir annan Munin-aðgang.";
+"errors.munin.subscriptionRequired" = "Án áskriftar er aðeins hægt að lesa í Munin. Fáðu áskrift til að bæta við eða breyta atriðum.";
+"errors.munin.tooManyAttempts" = "Of margar tilraunir. Reyndu aftur eftir klukkustund.";
+"errors.munin.transactionNotFound" = "App Store þekkir ekki þessi kaup.";
+"errors.munin.unexpectedResponse" = "Óvænt svar frá þjóninum. Er %@ Munin?";
+"errors.munin.unreachable" = "Ekki næst samband við Munin. %@";
+"errors.munin.vaultFull" = "Hvelfingin þín er full (50 aðgangar).";
+"errors.notSignedIn" = "Skráðu þig aftur inn til að bæta við aðgöngum.";
+"errors.openVault.title" = "Ekki tókst að opna hvelfinguna";
+"errors.parser.hotpNotSupported" = "Kóðar byggðir á teljara (HOTP) eru ekki studdir.";
+"errors.parser.invalidMigrationData" = "Ekki tókst að lesa útflutning Google Authenticator.";
+"errors.parser.invalidSecret" = "Leyndarmálið er ekki gilt Base32.";
+"errors.parser.missingSecret" = "Tengilinn vantar leyndarmál.";
+"errors.parser.unsupported" = "Þetta er hvorki auðkenningartengill né QR-kóði.";
+
+/** Global **/
+"global.cancel" = "Hætta við";
+"global.close" = "Loka";
+"global.copied" = "Afritað";
+"global.copy" = "Afrita";
+"global.delete" = "Eyða";
+"global.done" = "Lokið";
+"global.edit" = "Breyta";
+"global.refresh" = "Endurnýja";
+"global.save" = "Vista";
+"global.tryAgain" = "Reyna aftur";
+
+/** Lock **/
+"lock.command" = "Læsa";
+"lock.biometrics.failed" = "Lífkenni virkuðu ekki. Notaðu aðalaðgangsorðið.";
+"lock.biometrics.notSetUp" = "Taktu úr lás einu sinni með aðalaðgangsorðinu til að nota lífkenni á þessu tæki.";
+"lock.forgotMasterPassword" = "Gleymdirðu aðalaðgangsorðinu?";
+"lock.masterPassword.placeholder" = "Aðalaðgangsorð";
+"lock.reason" = "Taka hvelfinguna mína úr lás";
+"lock.recovery.continue" = "Halda áfram";
+"lock.recovery.message" = "Sláðu inn endurheimtarlykilinn til að velja nýtt aðalaðgangsorð.";
+"lock.step.masterPassword" = "Nota aðalaðgangsorð";
+"lock.step.recoveryKey" = "Slá inn endurheimtarlykil";
+"lock.step.signIn" = "Skrá inn";
+"lock.switchAccount" = "%@ · Skipta";
+"lock.title" = "Taka hvelfinguna mína úr lás";
+"lock.unlock" = "Taka úr lás";
+"lock.version" = "Útgáfa %@";
+"lock.wrongMasterPassword" = "Aðalaðgangsorðið er ekki rétt.";
+
+/** Main **/
+"main.section.munin" = "Munin";
+"main.tab.codes" = "2FA";
+"main.tab.vault" = "Hvelfing";
+"main.window.title" = "Munin";
+
+/** Menu Bar **/
+"menuBar.copyUsername" = "Afrita notandanafn";
+"menuBar.open" = "Opna Munin";
+"menuBar.quit" = "Hætta í Munin";
+
+/** Password **/
+"password.field.lastUpdated" = "Síðast uppfært";
+"password.field.name" = "Heiti";
+"password.field.note" = "Athugasemd";
+"password.field.password" = "Aðgangsorð";
+"password.field.url" = "Vefslóð";
+"password.field.username" = "Notandanafn";
+
+/** Password Editor **/
+"passwordEditor.editTitle" = "Breyta aðgangsorði";
+"passwordEditor.generate" = "Búa til";
+"passwordEditor.newTitle" = "Nýtt aðgangsorð";
+
+/** Password Generator **/
+"passwordGenerator.fillPassword" = "Fylla út aðgangsorð";
+"passwordGenerator.length" = "Lengd";
+"passwordGenerator.regenerate" = "Búa til aftur";
+"passwordGenerator.strength.good" = "Gott aðgangsorð";
+"passwordGenerator.strength.strong" = "Sterkt aðgangsorð";
+"passwordGenerator.strength.weak" = "Veikt aðgangsorð";
+"passwordGenerator.useCapitals" = "Nota hástafi (A-Z)";
+"passwordGenerator.useDigits" = "Nota tölustafi (0-9)";
+"passwordGenerator.useSymbols" = "Nota tákn (@!$%&*)";
+
+/** Password Inspector **/
+"passwordInspector.openWebsite" = "Opna vefsvæði";
+"passwordInspector.hide" = "Fela";
+"passwordInspector.show" = "Sýna";
+
+/** Scanner **/
+"scanner.title" = "Skanna QR-kóða";
+
+/** Sign In **/
+"signIn.error.missingAnonKey" = "Stilltu APIConfig.anonKey á opinbera lykilinn þinn.";
+"signIn.error.noIdentityToken" = "Apple skilaði ekki auðkenni. Reyndu aftur.";
+"signIn.error.failed" = "Innskráning mistókst. %@";
+
+/** Vault **/
+"vault.copyUsername" = "Afrita notandanafn";
+"vault.copyPassword" = "Afrita aðgangsorð";
+"vault.createItem" = "Búa til atriði";
+"vault.delete.button" = "Eyða %@";
+"vault.saveFailed.title" = "Ekki tókst að vista breytinguna";
+"vault.delete.message" = "%@ verður fjarlægt úr öllum tækjunum þínum. Ekki er hægt að afturkalla þetta.";
+"vault.delete.title" = "Eyða aðgangsorði?";
+"vault.empty.title" = "Engin atriði";
+"vault.search.prompt" = "Leita í öllum atriðum";
+"vault.sort" = "Raða";
+"vault.sort.ascending" = "Hækkandi";
+"vault.sort.dateEdited" = "Breytingardagur";
+"vault.sort.descending" = "Lækkandi";
+"vault.sort.direction" = "Röð";
+"vault.sort.title" = "Heiti";
+"vault.title" = "Hvelfing";
+
+/** Vault Key **/
+"lock.recovery.invalid" = "Þetta er ekki gildur endurheimtarlykill.";
+"lock.recovery.placeholder" = "Endurheimtarlykill";
+"vaultKey.recovery.backup" = "Geymdu afrit á öruggum stað. Ef þú gleymir aðalaðgangsorðinu er endurheimtarlykillinn eina leiðin aftur inn í hvelfinguna.";
+"vaultKey.recovery.copy" = "Afrita endurheimtarlykil";
+"vaultKey.recovery.explanation" = "Aðgangarnir þínir eru dulkóðaðir frá enda til enda með þessum lykli. Munin getur hvorki lesið þá né endurheimt þá fyrir þig.";
+"vaultKey.recovery.title" = "Endurheimtarlykill";
+
+/** Master password **/
+"masterPassword.confirm" = "Staðfesta aðalaðgangsorð";
+"masterPassword.create.message" = "Það tekur Munin úr lás á öllum tækjunum þínum. Munin sér það aldrei og getur ekki endurstillt það — ef þú gleymir því er endurheimtarlykillinn eina leiðin til baka.";
+"masterPassword.create.title" = "Búðu til aðalaðgangsorð";
+"masterPassword.exists" = "Aðalaðgangsorð var rétt í þessu sett upp á öðru tæki. Taktu úr lás með því.";
+"masterPassword.field" = "Aðalaðgangsorð";
+"masterPassword.mismatch" = "Aðgangsorðin passa ekki saman.";
+"masterPassword.reset.title" = "Veldu nýtt aðalaðgangsorð";
+"masterPassword.tooShort" = "Notaðu minnst %lld stafi.";
+
+/** Settings **/
+"settings.about" = "Um";
+"settings.autoFill" = "Sjálfvirk útfylling";
+"settings.autoFill.off" = "Slökkt";
+"settings.autoFill.on" = "Kveikt";
+"settings.autoLock" = "Sjálfvirk læsing";
+"settings.biometrics.face" = "Taka úr lás með Face ID";
+"settings.biometrics.touch" = "Taka úr lás með Touch ID";
+"settings.changeMasterPassword" = "Breyta aðalaðgangsorði";
+"settings.currentMasterPassword" = "Núverandi aðalaðgangsorð";
+"settings.data" = "Gögn";
+"settings.export.confirm" = "Flytja út";
+"settings.export.failed" = "Útflutningur mistókst";
+"settings.export.footer" = "Útfluttar skrár eru ekki dulkóðaðar. Eyddu skránni þegar þú hefur flutt hana inn annars staðar.";
+"settings.export.locked" = "Taktu Munin úr lás til að flytja út.";
+"settings.export.message" = "Skráin er ekki dulkóðuð. Hver sem fær hana getur lesið allt sem í henni er.";
+"settings.export.passwords" = "Flytja út aðgangsorð";
+"settings.export.passwords.filename" = "Munin-aðgangsorð";
+"settings.export.title" = "Flytja út ódulkóðaða skrá?";
+"settings.export.twoFactor" = "Flytja út 2FA-aðganga";
+"settings.export.twoFactor.filename" = "Munin 2FA-aðgangar";
+"settings.locked" = "Taktu Munin úr lás til að breyta öryggisstillingum.";
+"settings.privacyPolicy" = "Persónuverndarstefna";
+"settings.security" = "Öryggi";
+"settings.subscription" = "Áskrift";
+"settings.subscription.active" = "Virk";
+"settings.subscription.inactive" = "Engin áskrift";
+"settings.subscription.manage" = "Stjórna áskrift";
+"settings.subscription.restore" = "Endurheimta kaup";
+"settings.subscription.status" = "Staða";
+"settings.termsOfUse" = "Notkunarskilmálar";
+"settings.title" = "Stillingar";
+"settings.version" = "Útgáfa";
+
+/** Search **/
+"search.empty.message" = "Finndu aðgangsorð og 2FA-kóða eftir heiti, notandanafni eða vefsvæði.";
+"search.empty.title" = "Leitaðu að hverju sem er";
+"search.find" = "Finna";
+"search.prompt" = "Aðgangsorð og 2FA";
+"search.section.codes" = "2FA";
+"search.section.passwords" = "Aðgangsorð";
+"search.title" = "Leita";
+
+/** Import **/
+"import.button" = "Flytja inn aðgangsorð";
+"import.confirm.button" = "Flytja inn (%lld)";
+"import.confirm.buttonAll" = "Flytja inn";
+"import.confirm.message" = "Ný aðgangsorð sem verða dulkóðuð og bætt við: %lld. Þegar í hvelfingunni og sleppt: %lld.";
+"import.confirm.messageWithCodes" = "Ný aðgangsorð: %lld og 2FA-aðgangar: %lld verða dulkóðuð og bætt við. Aðgangsorð þegar í hvelfingunni og sleppt: %lld.";
+"import.confirm.title" = "Flytja inn aðgangsorð?";
+"import.done.message" = "Innflutt aðgangsorð: %lld. Eyddu CSV-skránni núna — hún geymir öll aðgangsorðin þín sem venjulegan texta.";
+"import.done.messageWithCodes" = "Innflutt aðgangsorð: %lld, 2FA-aðgangar: %lld. Eyddu CSV-skránni núna — hún geymir aðgangsorðin og 2FA-leyndarmálin þín sem venjulegan texta.";
+"import.error.columns" = "Í þessari CSV-skrá vantar dálkana sem Munin þarf: aðgangsorð og heiti eða vefsvæði.";
+"import.error.unreadable" = "Ekki tókst að lesa skrána. Flyttu hana út sem UTF-8 CSV.";
+"import.progress" = "Flytur inn %lld af %lld";
+"import.title" = "Flytja inn";
+
+/** Auto-lock **/
+"autoLock.fifteenMinutes" = "Eftir 15 mínútur";
+"autoLock.fiveMinutes" = "Eftir 5 mínútur";
+"autoLock.immediately" = "Strax";
+"autoLock.never" = "Aldrei";
+"autoLock.oneMinute" = "Eftir 1 mínútu";
+
+/** Subscription **/
+"subscription.billingIssue" = "App Store gat ekki endurnýjað áskriftina þína. Uppfærðu greiðslumátann til að halda áfram að bæta við og breyta.";
+"subscription.error.unverified" = "App Store gat ekki staðfest þessi kaup.";
+"subscription.gracePeriod" = "Ekki tókst að endurnýja áskriftina þína.";
+"subscription.message" = "Aðgangsorð og 2FA-kóðar dulkóðuð frá enda til enda á öllum Apple-tækjunum þínum.";
+"subscription.readOnly" = "Aðeins lestur. Fáðu áskrift til að bæta við eða breyta atriðum.";
+"subscription.subscribe" = "Fá áskrift";
+"subscription.title" = "Munin";
+"subscription.updatePayment" = "Uppfæra greiðslu";
+
+/** AutoFill **/
+"autofill.allCodes" = "Allir kóðar";
+"autofill.allPasswords" = "Öll aðgangsorð";
+"autofill.banner" = "Fylltu út aðgangsorð og 2FA-kóða með Munin.";
+"autofill.banner.setUp" = "Setja upp";
+"autofill.setup.done" = "Kveikt er á Munin fyrir sjálfvirka útfyllingu.";
+"autofill.setup.message" = "Munin getur fyllt út aðgangsorð og 2FA-kóða í Safari og forritum eftir Face ID eða Touch ID. Aðgangsorðin eru dulkóðuð þar til þú velur eitt.";
+"autofill.setup.openSettings" = "Opna Stillingar";
+"autofill.setup.step1.ios" = "Opnaðu Stillingar og farðu í Almennt ▸ Sjálfvirk útfylling og aðgangsorð.";
+"autofill.setup.step1.mac" = "Opnaðu Kerfisstillingar og farðu í Almennt ▸ Sjálfvirk útfylling og aðgangsorð.";
+"autofill.setup.step2" = "Undir „Sjálfvirk útfylling frá“ skaltu kveikja á Munin.";
+"autofill.setup.step3.ios" = "Í Safari eða forriti skaltu ýta á innskráningarreit og velja Munin fyrir ofan lyklaborðið.";
+"autofill.setup.step3.mac" = "Í Safari skaltu smella á innskráningarreit og velja Munin í lyklavalmyndinni.";
+"autofill.setup.step4" = "Valfrjálst: veldu Munin undir „Setja upp kóða í“ svo 2FA-uppsetningartenglar opnist í Munin.";
+"autofill.setup.turnOn" = "Kveikja á sjálfvirkri útfyllingu";
+"autofill.decryptFailed" = "Ekki tókst að afkóða þetta aðgangsorð.";
+"autofill.locked" = "Munin er læst";
+"autofill.search" = "Leita";
+"autofill.signIn" = "Opnaðu Munin og skráðu þig inn til að nota sjálfvirka útfyllingu.";
+"autofill.suggested" = "Tillögur";
+"autofill.title" = "Munin";
+"autofill.unavailable" = "Sjálfvirk útfylling er ekki í boði";

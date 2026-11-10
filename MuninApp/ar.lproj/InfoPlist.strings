@@ -1,3 +1,0 @@
-/* Permission prompts and other Info.plist texts. */
-"NSCameraUsageDescription" = "امسح رمز QR الذي يعرضه الموقع عند إعداد المصادقة بخطوتين.";
-"NSFaceIDUsageDescription" = "افتح قفل Munin باستخدام Face ID.";

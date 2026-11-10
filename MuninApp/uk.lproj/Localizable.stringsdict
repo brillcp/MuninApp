@@ -12,12 +12,14 @@
 			<string>NSStringPluralRuleType</string>
 			<key>NSStringFormatValueTypeKey</key>
 			<string>lld</string>
+			<key>few</key>
+			<string>Залишилось %lld секунди</string>
+			<key>many</key>
+			<string>Залишилось %lld секунд</string>
 			<key>one</key>
-			<string>נותרה שנייה אחת</string>
+			<string>Залишилась %lld секунда</string>
 			<key>other</key>
-			<string>נותרו %lld שניות</string>
-			<key>two</key>
-			<string>נותרו שתי שניות</string>
+			<string>Залишилось %lld секунди</string>
 		</dict>
 	</dict>
 	<key>codes.subtitle</key>
@@ -30,12 +32,14 @@
 			<string>NSStringPluralRuleType</string>
 			<key>NSStringFormatValueTypeKey</key>
 			<string>lld</string>
+			<key>few</key>
+			<string>%lld облікові записи</string>
+			<key>many</key>
+			<string>%lld облікових записів</string>
 			<key>one</key>
-			<string>חשבון אחד</string>
+			<string>%lld обліковий запис</string>
 			<key>other</key>
-			<string>%lld חשבונות</string>
-			<key>two</key>
-			<string>שני חשבונות</string>
+			<string>%lld облікового запису</string>
 		</dict>
 	</dict>
 	<key>codes.undecryptable</key>
@@ -48,12 +52,14 @@
 			<string>NSStringPluralRuleType</string>
 			<key>NSStringFormatValueTypeKey</key>
 			<string>lld</string>
+			<key>few</key>
+			<string>%lld записи не вдалося розшифрувати ключем цього пристрою.</string>
+			<key>many</key>
+			<string>%lld записів не вдалося розшифрувати ключем цього пристрою.</string>
 			<key>one</key>
-			<string>לא ניתן לפענח רשומה אחת עם המפתח של מכשיר זה.</string>
+			<string>%lld запис не вдалося розшифрувати ключем цього пристрою.</string>
 			<key>other</key>
-			<string>לא ניתן לפענח %lld רשומות עם המפתח של מכשיר זה.</string>
-			<key>two</key>
-			<string>לא ניתן לפענח שתי רשומות עם המפתח של מכשיר זה.</string>
+			<string>%lld запису не вдалося розшифрувати ключем цього пристрою.</string>
 		</dict>
 	</dict>
 	<key>vault.subtitle</key>
@@ -66,12 +72,14 @@
 			<string>NSStringPluralRuleType</string>
 			<key>NSStringFormatValueTypeKey</key>
 			<string>lld</string>
+			<key>few</key>
+			<string>%lld елементи</string>
+			<key>many</key>
+			<string>%lld елементів</string>
 			<key>one</key>
-			<string>פריט אחד</string>
+			<string>%lld елемент</string>
 			<key>other</key>
-			<string>%lld פריטים</string>
-			<key>two</key>
-			<string>שני פריטים</string>
+			<string>%lld елемента</string>
 		</dict>
 	</dict>
 	<key>vault.undecryptable</key>
@@ -84,12 +92,14 @@
 			<string>NSStringPluralRuleType</string>
 			<key>NSStringFormatValueTypeKey</key>
 			<string>lld</string>
+			<key>few</key>
+			<string>%lld елементи не вдалося розшифрувати ключем цього пристрою.</string>
+			<key>many</key>
+			<string>%lld елементів не вдалося розшифрувати ключем цього пристрою.</string>
 			<key>one</key>
-			<string>לא ניתן לפענח פריט אחד עם המפתח של מכשיר זה.</string>
+			<string>%lld елемент не вдалося розшифрувати ключем цього пристрою.</string>
 			<key>other</key>
-			<string>לא ניתן לפענח %lld פריטים עם המפתח של מכשיר זה.</string>
-			<key>two</key>
-			<string>לא ניתן לפענח שני פריטים עם המפתח של מכשיר זה.</string>
+			<string>%lld елемента не вдалося розшифрувати ключем цього пристрою.</string>
 		</dict>
 	</dict>
 </dict>

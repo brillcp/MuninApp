@@ -1,3 +1,0 @@
-/* Permission prompts and other Info.plist texts. */
-"NSCameraUsageDescription" = "סריקת קוד ה‑QR שאתר מציג בעת הגדרת אימות דו־שלבי.";
-"NSFaceIDUsageDescription" = "ביטול נעילת Munin עם Face ID.";
