@@ -31,7 +31,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "000000000000000100000000"
-               BuildableName = "MuninApp.app"
+               BuildableName = "Munin.app"
                ReferencedContainer = "container:MuninApp.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -66,7 +66,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "000000000000000100000000"
-            BuildableName = "MuninApp.app"
+            BuildableName = "Munin.app"
             ReferencedContainer = "container:MuninApp.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -84,7 +84,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "000000000000000100000000"
-            BuildableName = "MuninApp.app"
+            BuildableName = "Munin.app"
             ReferencedContainer = "container:MuninApp.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

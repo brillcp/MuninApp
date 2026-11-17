@@ -18,11 +18,11 @@
 	</array>
 	<key>MuninAPIHost</key>
 	<string>$(MUNIN_API_HOST)</string>
+	<key>MuninKeychainGroup</key>
+	<string>$(AppIdentifierPrefix)$(APP_BUNDLE_ID).shared</string>
 	<key>SupabaseHost</key>
 	<string>$(SUPABASE_HOST)</string>
 	<key>SupabasePublishableKey</key>
 	<string>$(SUPABASE_PUBLISHABLE_KEY)</string>
-	<key>MuninKeychainGroup</key>
-	<string>$(AppIdentifierPrefix)$(APP_BUNDLE_ID).shared</string>
 </dict>
 </plist>
