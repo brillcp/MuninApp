@@ -148,9 +148,6 @@ extension share one access group.
   `biometryCurrentSet`. It never syncs, and it becomes unreadable if the
   enrolled faces or fingerprints change. Turning biometric unlock off, or
   signing out, deletes it.
-- **Legacy key.** Vaults created before master passwords kept the vault key in
-  iCloud Keychain. It's read once to set up a master password, then deleted
-  from all devices.
 
 Decrypted vault data isn't written to disk. Exports are built in memory and
 written only to the location the user picks in the save panel.
@@ -176,7 +173,8 @@ app clears only its own value, never something copied afterward.
 - On macOS, the value is cleared after 60 seconds if nothing else was copied
   in the meantime. If the app quits first, the value stays on the clipboard.
 
-Usernames, websites, and notes are copied without clearing.
+Usernames, websites, notes, 2FA codes, and the recovery key are copied
+without clearing.
 
 ### What the server can see
 

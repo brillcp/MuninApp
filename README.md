@@ -45,7 +45,7 @@ design and how to report a vulnerability.
 MuninApp/              The app target
 ├── App/               Menu bar commands (Find, Lock, sections)
 ├── Core/
-│   ├── DesignSystem/  Spacing, motion, icons, and AppKit color overrides
+│   ├── DesignSystem/  Design tokens, shared components, and AppKit color overrides
 │   ├── Domain/        Password items, the password generator, and vault errors
 │   ├── Security/      The vault session's lock states, settings, and auto-lock
 │   ├── Services/      The API protocol and client, sign-in, subscription, AutoFill, icons
