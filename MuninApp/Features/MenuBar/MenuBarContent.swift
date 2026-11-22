@@ -8,10 +8,14 @@ import SwiftUI
 /// cleared from the clipboard after a minute. While the vault is locked, the
 /// view shows only a locked state.
 struct MenuBarContent: View {
+    /// The vault session, which decides whether the vault is unlocked.
     @Environment(VaultSession.self) private var session
+    /// The vault model that provides and copies the passwords.
     @Environment(VaultViewModel.self) private var vaultModel
+    /// The action that opens the main window.
     @Environment(\.openWindow) private var openWindow
 
+    /// The search text.
     @State private var query = ""
     /// The items to show, sorted and filtered.
     ///
@@ -52,6 +56,7 @@ private extension MenuBarContent {
     struct CopiedField: Equatable {
         /// The identifier of the row's item.
         let id: PasswordItem.ID
+        /// The field that was copied.
         let field: MenuBarPasswordRow.Field
     }
 

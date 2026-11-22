@@ -10,6 +10,8 @@ import SwiftUI
 /// the trailing edge of the tab bar, and it opens passwords in its own
 /// navigation stack.
 struct MainView: View {
+    /// The vault session, used to hold the AutoFill guide while a new recovery
+    /// key is shown.
     @Environment(VaultSession.self) private var session
     /// The vault model shared by the vault, Search, and the macOS menu bar.
     @Environment(VaultViewModel.self) private var vaultModel
@@ -186,6 +188,8 @@ private extension MainView {
 
 /// Accounts from a 2FA setup link, presented as a dialog item.
 private struct LinkedAccounts: Identifiable {
+    /// A unique identifier, so each link presents a new dialog.
     let id = UUID()
+    /// The accounts in the link.
     let accounts: [OTPAccount]
 }

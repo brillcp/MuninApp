@@ -11,6 +11,7 @@ import SwiftUI
 /// applied to the `NavigationStack` rather than its content, so the tab bar can
 /// turn the Search tab into a search field.
 struct SearchView: View {
+    /// The search text.
     @State private var query = ""
     /// The passwords matching the query.
     ///
@@ -46,9 +47,6 @@ struct SearchView: View {
                     }
                 }
             }
-            #if os(macOS)
-            .alternatingRowBackgrounds()
-            #endif
             .listStyle(.plain)
             .overlay {
                 if trimmedQuery.isEmpty {
@@ -75,6 +73,7 @@ struct SearchView: View {
 }
 
 private extension SearchView {
+    /// The search text without leading and trailing spaces.
     var trimmedQuery: String {
         query.trimmingCharacters(in: .whitespaces)
     }

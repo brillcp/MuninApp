@@ -3,6 +3,7 @@ import SwiftUI
 /// A banner that explains why the vault is read-only, with a button that opens
 /// the paywall.
 struct ReadOnlyBanner: View {
+    /// The subscription state, which presents the paywall.
     @Environment(SubscriptionManager.self) private var subscriptions
 
     var body: some View {

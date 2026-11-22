@@ -7,6 +7,7 @@ import SwiftUI
 /// except the password while it's revealed, so it can be selected instead.
 /// On iOS, the background and tint use the website icon's dominant color.
 struct PasswordInspector: View {
+    /// The action that opens the item's website.
     @Environment(\.openURL) private var openURL
     /// The subscription state; Delete is disabled while the vault is read-only.
     @Environment(SubscriptionManager.self) private var subscriptions

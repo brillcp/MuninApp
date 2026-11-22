@@ -7,7 +7,10 @@ import SwiftUI
 /// issue with a button to manage the subscription, or the error from the last
 /// purchase or restore.
 struct PaywallHeader: View {
+    /// The subscription state, which provides the billing issue and the
+    /// last error.
     @Environment(SubscriptionManager.self) private var subscriptions
+    /// The action that opens the App Store's subscription page on macOS.
     @Environment(\.openURL) private var openURL
     /// A Boolean value that indicates whether the system's Manage Subscriptions sheet is presented on iOS.
     @State private var isManagingSubscription = false

@@ -9,6 +9,7 @@ struct AppIcon: View {
     /// The home screen's corner radius as a share of the icon's size.
     private static let cornerRadiusRatio: CGFloat = 0.225
 
+    /// The color scheme, which picks the light or dark icon.
     @Environment(\.colorScheme) private var colorScheme
 
     /// The icon's width and height.

@@ -50,7 +50,10 @@ enum LockStep: Hashable {
 /// card is disabled while work is in progress. After Sign in with Apple,
 /// biometric unlock starts automatically once the vault is ready.
 struct LockPanel: View {
+    /// The sign-in state, which decides the first step and provides the email
+    /// shown on the switch account button.
     @Environment(AuthManager.self) private var auth
+    /// The vault session that the steps unlock.
     @Environment(VaultSession.self) private var session
     /// The view model that receives the password list during unlock.
     @Environment(VaultViewModel.self) private var vaultModel
@@ -115,6 +118,7 @@ private extension LockPanel {
         return session.offersBiometricUnlock ? .biometrics : .masterPassword
     }
 
+    /// The current step's view.
     @ViewBuilder
     var stepView: some View {
         switch step {
@@ -266,6 +270,7 @@ private extension LockButton {
         return .handled
     }
 
+    /// The title, the icon, or both.
     @ViewBuilder
     var label: some View {
         if let title, let systemImage {

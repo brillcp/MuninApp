@@ -18,6 +18,7 @@ extension EnvironmentValues {
 /// It lists the vault and 2FA sections. At the bottom, the user's initials
 /// open the Settings window.
 struct MainSidebar: View {
+    /// The sign-in state, which provides the email the initials come from.
     @Environment(AuthManager.self) private var auth
 
     /// The panel's width.

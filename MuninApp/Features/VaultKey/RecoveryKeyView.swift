@@ -4,7 +4,10 @@ import SwiftUI
 ///
 /// The recovery key resets a forgotten master password.
 struct RecoveryKeyView: View {
+    /// The action that closes the view.
     @Environment(\.dismiss) private var dismiss
+    /// A Boolean value that indicates whether the key was copied, which
+    /// changes the button to “Copied”.
     @State private var didCopy = false
 
     /// The recovery key, formatted in groups of four characters.

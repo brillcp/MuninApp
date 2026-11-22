@@ -83,6 +83,7 @@ struct TwoFactorView: View {
 }
 
 private extension TwoFactorView {
+    /// The toolbar's buttons: lock, add, and import, plus refresh on macOS.
     @ToolbarContentBuilder
     var toolbarContent: some ToolbarContent {
         ToolbarItem(placement: .navigation) { LockToolbarButton() }
@@ -110,6 +111,7 @@ private extension TwoFactorView {
             .disabled(!viewModel.hasLoaded || subscriptions.isReadOnly)
     }
 
+    /// Opens the file picker for importing accounts.
     func pickImportFile() {
         hapticTaps += 1
         isPickingImportFile = true
@@ -166,7 +168,9 @@ private extension TwoFactorView {
 /// Accounts from an import file that aren't in the vault yet, awaiting
 /// confirmation.
 private struct TwoFactorImportPlan: Identifiable {
+    /// A unique identifier, so each import presents a new dialog.
     let id = UUID()
+    /// The accounts to add.
     let accounts: [OTPAccount]
     /// The number of accounts already in the vault or repeated in the file.
     let duplicateCount: Int

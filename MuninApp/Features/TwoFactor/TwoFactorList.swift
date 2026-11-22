@@ -11,6 +11,7 @@ struct TwoFactorList: View {
     /// The width the macOS sidebar covers, which the rows start after.
     @Environment(\.sidebarWidth) private var sidebarWidth
 
+    /// The view model that provides the accounts.
     let viewModel: TwoFactorViewModel
     /// The clock shared by every row.
     let clock: TwoFactorClock
@@ -38,7 +39,7 @@ struct TwoFactorList: View {
             }
         }
         #if os(macOS)
-        .alternatingRowBackgrounds()
+        .alternatingRowBackgrounds(viewModel.items.isEmpty ? .disabled : .enabled)
         #endif
         .listStyle(.plain)
     }

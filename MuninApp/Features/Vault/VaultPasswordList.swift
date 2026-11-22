@@ -6,6 +6,8 @@ import SwiftUI
 /// its detail. On iOS, it's a list whose rows push the detail column, because
 /// a `Table` doesn't navigate when the split view is collapsed.
 struct VaultPasswordList: View {
+    /// The subscription state. Edit and Delete are disabled while the vault
+    /// is read-only.
     @Environment(SubscriptionManager.self) private var subscriptions
     /// The width the macOS sidebar covers, which the rows start after.
     @Environment(\.sidebarWidth) private var sidebarWidth
@@ -82,7 +84,7 @@ private extension VaultPasswordList {
         #if os(iOS)
         .listSectionIndexVisibility(UIDevice.current.userInterfaceIdiom == .phone ? .visible : .hidden)
         #else
-        .alternatingRowBackgrounds()
+        .alternatingRowBackgrounds(viewModel.visibleItems.isEmpty ? .disabled : .enabled)
         .onExitCommand { viewModel.selection = nil }
         #endif
     }

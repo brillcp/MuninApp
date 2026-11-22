@@ -7,6 +7,7 @@ import SwiftUI
 /// functional during the grace period. The Manage Subscription button lets
 /// the user update their payment method.
 struct BillingIssueBanner: View {
+    /// The action that opens the App Store's subscription page on macOS.
     @Environment(\.openURL) private var openURL
     /// A Boolean value that indicates whether the Manage Subscriptions sheet is
     /// presented (iOS).

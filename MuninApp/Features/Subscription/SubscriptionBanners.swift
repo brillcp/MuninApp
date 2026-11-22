@@ -5,6 +5,7 @@ import SwiftUI
 ///
 /// On macOS, the banners start after the sidebar.
 struct SubscriptionBanners<Fallback: View>: View {
+    /// The subscription state, which decides which banner shows.
     @Environment(SubscriptionManager.self) private var subscriptions
     /// The width the macOS sidebar covers, which the banners start after.
     @Environment(\.sidebarWidth) private var sidebarWidth

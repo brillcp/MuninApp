@@ -5,6 +5,8 @@ import SwiftUI
 /// The vault shows the banner while AutoFill is off. Set Up opens the setup
 /// guide, and the close button dismisses the banner permanently.
 struct AutoFillBanner: View {
+    /// The AutoFill setup state, which presents the guide and remembers that
+    /// the banner was dismissed.
     @Environment(AutoFillSetup.self) private var autoFill
 
     var body: some View {
