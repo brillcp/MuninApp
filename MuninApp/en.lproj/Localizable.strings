@@ -291,3 +291,10 @@
 "autofill.suggested" = "Suggested";
 "autofill.title" = "Munin";
 "autofill.unavailable" = "AutoFill Isn't Available";
+
+/** Update **/
+"update.title" = "New Version Available";
+"update.message" = "A newer version of Munin is available on the App Store. Update now so you don't miss any new features.";
+"update.now" = "Update Now";
+"update.snooze" = "Don't Ask for a While";
+"update.later" = "Later";

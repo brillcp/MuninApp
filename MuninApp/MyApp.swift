@@ -21,6 +21,8 @@ import SwiftUI
     @State private var settingsModel: SettingsViewModel
     /// The AutoFill extension's status, shared by the main window and Settings.
     @State private var autoFill = AutoFillSetup()
+    /// The App Store update check, run once at launch.
+    @State private var updateChecker = AppUpdateChecker()
 
     /// Creates the shared models and, on macOS, applies the AppKit color
     /// overrides for table selection and accent.
@@ -99,6 +101,7 @@ import SwiftUI
             .environment(subscriptions)
             .environment(settingsModel)
             .environment(autoFill)
+            .environment(updateChecker)
             .tint(.accent)
     }
 }

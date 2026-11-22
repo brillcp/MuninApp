@@ -291,3 +291,10 @@
 "autofill.suggested" = "Tillögur";
 "autofill.title" = "Munin";
 "autofill.unavailable" = "Sjálfvirk útfylling er ekki í boði";
+
+/** Update **/
+"update.title" = "Ný útgáfa í boði";
+"update.message" = "Nýrri útgáfa af appinu er fáanleg í App Store. Sæktu hana núna svo þú missir ekki af nýjum eiginleikum.";
+"update.now" = "Uppfæra núna";
+"update.snooze" = "Ekki spyrja í bili";
+"update.later" = "Seinna";

@@ -291,3 +291,10 @@
 "autofill.suggested" = "제안";
 "autofill.title" = "Munin";
 "autofill.unavailable" = "자동 완성을 사용할 수 없음";
+
+/** Update **/
+"update.title" = "새 버전이 있습니다";
+"update.message" = "앱의 새 버전이 App Store에 있습니다. 새로운 기능을 놓치지 않도록 지금 다운로드하세요.";
+"update.now" = "지금 업데이트";
+"update.snooze" = "잠시 묻지 않기";
+"update.later" = "나중에";

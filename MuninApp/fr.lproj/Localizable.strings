@@ -291,3 +291,10 @@
 "autofill.suggested" = "Suggestions";
 "autofill.title" = "Munin";
 "autofill.unavailable" = "Remplissage automatique indisponible";
+
+/** Update **/
+"update.title" = "Nouvelle version disponible";
+"update.message" = "Une version plus récente de l’application est disponible sur l’App Store. Téléchargez-la maintenant pour ne manquer aucune nouvelle fonctionnalité.";
+"update.now" = "Mettre à jour maintenant";
+"update.snooze" = "Ne pas redemander avant un moment";
+"update.later" = "Plus tard";

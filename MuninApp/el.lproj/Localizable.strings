@@ -291,3 +291,10 @@
 "autofill.suggested" = "Προτεινόμενα";
 "autofill.title" = "Munin";
 "autofill.unavailable" = "Η Αυτόματη συμπλήρωση δεν είναι διαθέσιμη";
+
+/** Update **/
+"update.title" = "Διαθέσιμη νέα έκδοση";
+"update.message" = "Μια νεότερη έκδοση της εφαρμογής είναι διαθέσιμη στο App Store. Κατεβάστε την τώρα για να μην χάσετε νέες λειτουργίες.";
+"update.now" = "Ενημέρωση τώρα";
+"update.snooze" = "Μην ρωτήσεις για λίγο";
+"update.later" = "Αργότερα";

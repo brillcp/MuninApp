@@ -291,3 +291,10 @@
 "autofill.suggested" = "Vorschläge";
 "autofill.title" = "Munin";
 "autofill.unavailable" = "Automatisch ausfüllen ist nicht verfügbar";
+
+/** Update **/
+"update.title" = "Neue Version verfügbar";
+"update.message" = "Eine neuere Version der App ist im App Store verfügbar. Lade sie jetzt herunter, damit du keine neuen Funktionen verpasst.";
+"update.now" = "Jetzt aktualisieren";
+"update.snooze" = "Eine Weile nicht fragen";
+"update.later" = "Später";

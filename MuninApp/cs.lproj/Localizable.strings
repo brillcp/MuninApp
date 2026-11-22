@@ -291,3 +291,10 @@
 "autofill.suggested" = "Návrhy";
 "autofill.title" = "Munin";
 "autofill.unavailable" = "Automatické vyplňování není k dispozici";
+
+/** Update **/
+"update.title" = "K dispozici je nová verze";
+"update.message" = "V App Store je k dispozici novější verze aplikace. Stáhněte si ji nyní, abyste nepřišli o nové funkce.";
+"update.now" = "Aktualizovat nyní";
+"update.snooze" = "Neptat se po nějakou dobu";
+"update.later" = "Později";

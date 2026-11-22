@@ -291,3 +291,10 @@
 "autofill.suggested" = "Ehdotetut";
 "autofill.title" = "Munin";
 "autofill.unavailable" = "Automaattinen täyttö ei ole käytettävissä";
+
+/** Update **/
+"update.title" = "Uusi versio saatavilla";
+"update.message" = "Sovelluksesta on saatavilla uudempi versio App Storesta. Lataa se nyt, ettet menetä uusia ominaisuuksia.";
+"update.now" = "Päivitä nyt";
+"update.snooze" = "Älä kysy vähään aikaan";
+"update.later" = "Myöhemmin";

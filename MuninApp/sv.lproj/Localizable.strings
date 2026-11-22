@@ -291,3 +291,10 @@
 "autofill.suggested" = "Förslag";
 "autofill.title" = "Munin";
 "autofill.unavailable" = "Autofyll är inte tillgängligt";
+
+/** Update **/
+"update.title" = "Ny version tillgänglig";
+"update.message" = "En nyare version av appen finns tillgänglig i App Store. Ladda ner den nu så du inte missar nya funktioner.";
+"update.now" = "Uppdatera nu";
+"update.snooze" = "Fråga inte på ett tag";
+"update.later" = "Senare";

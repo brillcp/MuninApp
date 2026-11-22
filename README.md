@@ -48,7 +48,7 @@ MuninApp/              The app target
 │   ├── DesignSystem/  Design tokens, shared components, and AppKit color overrides
 │   ├── Domain/        Password items, the password generator, and vault errors
 │   ├── Security/      The vault session's lock states, settings, and auto-lock
-│   ├── Services/      The API protocol and client, sign-in, subscription, AutoFill, icons
+│   ├── Services/      The API protocol and client, sign-in, subscription, AutoFill, icons, updates
 │   ├── Utilities/     Keychain, clipboard, localization helpers
 │   └── Vault/         Encryption, key wrapping, decoding, TOTP, and import/export
 └── Features/

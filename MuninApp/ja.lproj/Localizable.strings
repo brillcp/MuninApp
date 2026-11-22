@@ -291,3 +291,10 @@
 "autofill.suggested" = "候補";
 "autofill.title" = "Munin";
 "autofill.unavailable" = "自動入力を利用できません";
+
+/** Update **/
+"update.title" = "新しいバージョンがあります";
+"update.message" = "App Storeに新しいバージョンのアプリがあります。今すぐダウンロードして、新機能をお見逃しなく。";
+"update.now" = "今すぐアップデート";
+"update.snooze" = "しばらく表示しない";
+"update.later" = "後で";

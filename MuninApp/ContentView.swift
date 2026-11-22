@@ -27,6 +27,11 @@ struct ContentView: View {
     @Environment(SubscriptionManager.self) private var subscriptions
     /// The app's AutoFill status, refreshed whenever the app becomes active.
     @Environment(AutoFillSetup.self) private var autoFill
+    /// The App Store update check, which presents the update alert.
+    @Environment(AppUpdateChecker.self) private var updateChecker
+    /// The action that opens the App Store page of a new version.
+    @Environment(\.openURL) private var openURL
+    /// The scene phase, which triggers the refreshes when the app becomes active.
     @Environment(\.scenePhase) private var scenePhase
     /// A two-factor setup link that opened the app, held until the vault unlocks.
     ///
@@ -35,6 +40,7 @@ struct ContentView: View {
     @State private var pendingCodeLink: URL?
 
     var body: some View {
+        @Bindable var updateChecker = updateChecker
         ZStack {
             Group {
                 if showsLockScreen {
@@ -47,7 +53,15 @@ struct ContentView: View {
         }
         .animation(DesignKit.Motion.slowSmooth, value: showsLockScreen)
         .task(id: auth.userID, prepare)
-        .onOpenURL(perform: openURL)
+        .onOpenURL(perform: handleURL)
+        .task(updateChecker.check)
+        .alert("update.title", isPresented: $updateChecker.isAlertPresented) {
+            Button("update.now", action: openStore)
+            Button("update.snooze", action: updateChecker.snooze)
+            Button("update.later", role: .cancel, action: updateChecker.remindLater)
+        } message: {
+            Text("update.message")
+        }
         .onChange(of: scenePhase, initial: true, becameActive)
         .autoLock(session)
         .onChange(of: session.state) { _, state in
@@ -58,9 +72,15 @@ struct ContentView: View {
 
 private extension ContentView {
     /// Holds a two-factor setup link until the vault unlocks, when the two-factor screen offers to add it.
-    func openURL(_ url: URL) {
+    func handleURL(_ url: URL) {
         guard let scheme = url.scheme?.lowercased(), scheme == "otpauth" || scheme == "otpauth-migration" else { return }
         pendingCodeLink = url
+    }
+
+    /// Opens the new version's App Store page.
+    func openStore() {
+        guard let url = updateChecker.storeURL else { return }
+        openURL(url)
     }
 
     /// Refreshes the AutoFill status and the Face ID or Touch ID capability,
