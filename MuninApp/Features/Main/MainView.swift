@@ -1,18 +1,15 @@
 import SwiftUI
-#if os(macOS)
-import AppKit
-#endif
 
 /// The root view of the unlocked app, with a sidebar on macOS and iPad and a
 /// tab bar on iPhone.
 ///
 /// The main section holds the vault and 2FA tabs. On iOS, Settings and Search
-/// are tabs too; on macOS, Settings is a separate window linked from the
-/// sidebar's bottom bar. The Search tab uses the `.search` role, so the system
-/// places it at the trailing edge of the tab bar, and it opens passwords in
-/// its own navigation stack.
+/// are tabs too; on macOS, the sidebar is a fixed ``MainSidebar``, and
+/// Settings is a separate window opened from the user's initials at its
+/// bottom. The Search tab uses the `.search` role, so the system places it at
+/// the trailing edge of the tab bar, and it opens passwords in its own
+/// navigation stack.
 struct MainView: View {
-    @Environment(AuthManager.self) private var auth
     @Environment(VaultSession.self) private var session
     /// The vault model shared by the vault, Search, and the macOS menu bar.
     @Environment(VaultViewModel.self) private var vaultModel
@@ -36,33 +33,7 @@ struct MainView: View {
         @Bindable var subscriptions = subscriptions
         @Bindable var vaultModel = vaultModel
         @Bindable var autoFill = autoFill
-        TabView(selection: $selection) {
-            TabSection("main.section.munin") {
-                Tab(value: Section.vault) {
-                    VaultView(viewModel: vaultModel, twoFactorModel: twoFactorModel)
-                } label: {
-                    SidebarTabLabel(title: "main.tab.vault", systemImage: DesignKit.Icon.vault, isSelected: selection == .vault)
-                }
-                Tab(value: Section.twoFactor) {
-                    TwoFactorView(viewModel: twoFactorModel)
-                } label: {
-                    SidebarTabLabel(title: "main.tab.codes", systemImage: DesignKit.Icon.twoFactor, isSelected: selection == .twoFactor)
-                }
-            }
-            #if os(iOS)
-            Tab("settings.title", systemImage: DesignKit.Icon.settings, value: Section.settings) {
-                NavigationStack {
-                    SettingsView()
-                        .navigationTitle("settings.title")
-                        .navigationBarTitleDisplayMode(.inline)
-                }
-            }
-            Tab(value: Section.search, role: .search) {
-                SearchView(vaultModel: vaultModel, twoFactorModel: twoFactorModel)
-            }
-            #endif
-        }
-        .tabViewStyle(.sidebarAdaptable)
+        sections
         .scrollIndicators(.never)
         .task { await subscriptions.start() }
         .sheet(isPresented: $subscriptions.isPaywallPresented) {
@@ -94,24 +65,6 @@ struct MainView: View {
         #if os(iOS)
         .tabViewSearchActivation(.searchTabSelection)
         #endif
-        #if os(macOS)
-        .tabViewSidebarBottomBar {
-            SettingsLink {
-                Label {
-                    if let email = auth.email {
-                        Text(verbatim: email)
-                    } else {
-                        Text("settings.title")
-                    }
-                } icon: {
-                    Image(systemName: DesignKit.Icon.settingsSelected)
-                }
-            }
-            .buttonStyle(.glassProminent)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.vertical)
-        }
-        #endif
     }
 }
 
@@ -126,6 +79,62 @@ extension MainView {
 }
 
 private extension MainView {
+    /// The sections and the way to switch between them.
+    ///
+    /// On macOS, a fixed ``MainSidebar`` floats on the leading edge and the
+    /// selected section fills the window behind it, like the password panel.
+    /// The lists inset their content by ``EnvironmentValues/sidebarWidth``. On iOS,
+    /// it's a tab view that shows a sidebar on iPad and a tab bar on iPhone.
+    @ViewBuilder
+    var sections: some View {
+        #if os(macOS)
+        selectedSection
+            .environment(\.sidebarWidth, MainSidebar.occupiedWidth)
+            .overlay(alignment: .leading) {
+                MainSidebar(selection: $selection)
+            }
+        #else
+        TabView(selection: $selection) {
+            TabSection("main.section.munin") {
+                Tab(value: Section.vault) {
+                    VaultView(viewModel: vaultModel, twoFactorModel: twoFactorModel)
+                } label: {
+                    SidebarTabLabel(title: "main.tab.vault", systemImage: DesignKit.Icon.vault, isSelected: selection == .vault)
+                }
+                Tab(value: Section.twoFactor) {
+                    TwoFactorView(viewModel: twoFactorModel)
+                } label: {
+                    SidebarTabLabel(title: "main.tab.codes", systemImage: DesignKit.Icon.twoFactor, isSelected: selection == .twoFactor)
+                }
+            }
+            Tab("settings.title", systemImage: DesignKit.Icon.settings, value: Section.settings) {
+                NavigationStack {
+                    SettingsView()
+                        .navigationTitle("settings.title")
+                        .navigationBarTitleDisplayMode(.inline)
+                }
+            }
+            Tab(value: Section.search, role: .search) {
+                SearchView(vaultModel: vaultModel, twoFactorModel: twoFactorModel)
+            }
+        }
+        .tabViewStyle(.sidebarAdaptable)
+        #endif
+    }
+
+    #if os(macOS)
+    /// The selected section's view.
+    @ViewBuilder
+    var selectedSection: some View {
+        switch selection {
+        case .twoFactor:
+            TwoFactorView(viewModel: twoFactorModel)
+        default:
+            VaultView(viewModel: vaultModel, twoFactorModel: twoFactorModel)
+        }
+    }
+    #endif
+
     /// A Boolean value that indicates whether the AutoFill guide can open by
     /// itself: AutoFill's status is known, the subscription has loaded, and
     /// no other sheet is showing, such as the paywall or a new recovery key.

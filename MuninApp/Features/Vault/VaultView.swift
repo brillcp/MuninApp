@@ -8,6 +8,9 @@ struct VaultView: View {
     @Environment(SubscriptionManager.self) private var subscriptions
     /// The AutoFill status, which shows a banner while AutoFill is off.
     @Environment(AutoFillSetup.self) private var autoFill
+    /// The width the macOS sidebar covers, which the banners and import
+    /// progress start after.
+    @Environment(\.sidebarWidth) private var sidebarWidth
     @State private var isCreating = false
     /// The item being edited, with its password and note decrypted for the editor.
     @State private var editing: VaultViewModel.EditDraft?
@@ -93,12 +96,27 @@ struct VaultView: View {
                     .padding()
                     .glassEffect(in: .rect(cornerRadius: DesignKit.Spacing.Primitive.s16))
                     .padding()
+                    .padding(.leading, sidebarWidth)
                 }
             }
     }
 }
 
 private extension VaultView {
+    #if os(macOS)
+    /// A Boolean value that indicates whether the search field has been
+    /// focused since the app launched.
+    static var didFocusSearchAtLaunch = false
+
+    /// Focuses the search field the first time the vault appears after
+    /// launch, but not when returning to it from another section.
+    func focusSearchAtLaunch() {
+        guard !Self.didFocusSearchAtLaunch else { return }
+        Self.didFocusSearchAtLaunch = true
+        isSearchFocused = true
+    }
+    #endif
+
     /// The list and the detail.
     ///
     /// On macOS, the detail floats over the list's trailing edge as a glass
@@ -157,13 +175,16 @@ private extension VaultView {
         .navigationSubtitle(LocalizedKey("vault.subtitle", viewModel.items.count))
         .toolbar { toolbarContent }
         .safeAreaInset(edge: .bottom) {
-            if subscriptions.isReadOnly {
-                ReadOnlyBanner()
-            } else if subscriptions.isInGracePeriod {
-                BillingIssueBanner()
-            } else if autoFill.showsBanner {
-                AutoFillBanner()
+            Group {
+                if subscriptions.isReadOnly {
+                    ReadOnlyBanner()
+                } else if subscriptions.isInGracePeriod {
+                    BillingIssueBanner()
+                } else if autoFill.showsBanner {
+                    AutoFillBanner()
+                }
             }
+            .padding(.leading, sidebarWidth)
         }
         #if os(macOS)
         .dropDestination(for: URL.self) { urls, _ in
@@ -176,7 +197,7 @@ private extension VaultView {
         .searchFocused($isSearchFocused)
         .focusedSceneValue(\.searchFocusRequest, searchFocusRequest)
         .onChange(of: searchFocusRequest.count) { isSearchFocused = true }
-        .task { isSearchFocused = true }
+        .task(focusSearchAtLaunch)
         #endif
     }
 

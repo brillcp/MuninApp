@@ -7,6 +7,8 @@ import SwiftUI
 /// a `Table` doesn't navigate when the split view is collapsed.
 struct VaultPasswordList: View {
     @Environment(SubscriptionManager.self) private var subscriptions
+    /// The width the macOS sidebar covers, which the rows start after.
+    @Environment(\.sidebarWidth) private var sidebarWidth
 
     /// The passwords, selection and sort order.
     @Bindable var viewModel: VaultViewModel
@@ -45,6 +47,7 @@ struct VaultPasswordList: View {
                     searchText: viewModel.visibleItems.isEmpty ? viewModel.searchText : nil,
                     onRetry: { Task { await viewModel.refresh() } }
                 )
+                .padding(.leading, sidebarWidth)
             }
     }
 }
@@ -62,8 +65,11 @@ private extension VaultPasswordList {
                 ForEach(viewModel.visibleItems, content: row)
             } else {
                 ForEach(viewModel.sections) { section in
-                    Section(section.letter) {
+                    Section {
                         ForEach(section.items, content: row)
+                    } header: {
+                        Text(verbatim: section.letter)
+                            .padding(.leading, sidebarWidth)
                     }
                     #if os(iOS)
                     .sectionIndexLabel(section.letter)
@@ -85,6 +91,7 @@ private extension VaultPasswordList {
     func row(_ item: PasswordItem) -> some View {
         NavigationLink(value: item.id) {
             PasswordTitleCell(item: item)
+                .padding(.leading, sidebarWidth)
         }
     }
 }

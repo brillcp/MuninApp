@@ -8,6 +8,8 @@ import SwiftUI
 struct TwoFactorList: View {
     /// The subscription state. Delete is disabled while the vault is read-only.
     @Environment(SubscriptionManager.self) private var subscriptions
+    /// The width the macOS sidebar covers, which the rows start after.
+    @Environment(\.sidebarWidth) private var sidebarWidth
 
     let viewModel: TwoFactorViewModel
     /// The clock shared by every row.
@@ -19,6 +21,7 @@ struct TwoFactorList: View {
         List {
             ForEach(viewModel.items) { item in
                 TwoFactorRow(account: item.account, clock: clock)
+                    .padding(.leading, sidebarWidth)
                     .contextMenu {
                         Button("codes.copyCode", systemImage: DesignKit.Icon.copy) { TwoFactorRow.copyCode(of: item.account) }
                             .tint(.primary)
@@ -30,6 +33,7 @@ struct TwoFactorList: View {
             if viewModel.undecryptableCount > 0 {
                 Section {
                     undecryptableLabel
+                        .padding(.leading, sidebarWidth)
                 }
             }
         }
