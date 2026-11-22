@@ -8,8 +8,8 @@ import SwiftUI
 /// `dismissesWhenDeleted` is true, the view dismisses itself once the item is
 /// gone.
 struct PasswordDetail: View {
-    /// The subscription state. Editing and deleting are disabled while the
-    /// vault is read-only.
+    /// The subscription state. While the vault is read-only, Edit shows the
+    /// paywall and Delete is disabled.
     @Environment(SubscriptionManager.self) private var subscriptions
     @Environment(\.dismiss) private var dismiss
     /// The item being edited, with its password and note decrypted.
@@ -38,7 +38,7 @@ struct PasswordDetail: View {
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Button("global.edit", systemImage: DesignKit.Icon.edit, action: startEditing)
-                    .disabled(item == nil || subscriptions.isReadOnly)
+                    .disabled(item == nil)
                     .keyboardShortcut("e")
             }
         }
@@ -55,7 +55,6 @@ struct PasswordDetail: View {
                     hapticTaps += 1
                     startEditing()
                 }
-                .disabled(subscriptions.isReadOnly)
                 .keyboardShortcut("e")
             }
             .padding([.horizontal, .top], DesignKit.Spacing.Primitive.s12)
@@ -98,9 +97,14 @@ private extension PasswordDetail {
         pendingDeletion = item
     }
 
-    /// Decrypts the password and note, and opens the editor.
+    /// Decrypts the password and note, and opens the editor, or shows the
+    /// paywall while the vault is read-only.
     func startEditing() {
         hapticTaps += 1
+        guard !subscriptions.isReadOnly else {
+            subscriptions.isPaywallPresented = true
+            return
+        }
         guard let item else { return }
         editing = viewModel.editDraft(for: item)
     }

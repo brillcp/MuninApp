@@ -13,6 +13,10 @@ struct LockLogo: View {
                 .resizable()
                 .scaledToFit()
                 .frame(width: DesignKit.Spacing.Primitive.s64)
+                .overlay {
+                    RoundedRectangle(cornerRadius: DesignKit.Spacing.Primitive.s12, style: .continuous)
+                        .strokeBorder(.tertiary, lineWidth: 1)
+                }
             Text("main.window.title")
                 .font(.title.bold())
                 .foregroundStyle(.primary)
@@ -241,11 +245,9 @@ private extension LockButton {
     ///
     /// Its width comes from the `buttonSizing` set by the lock screen layout.
     var button: some View {
-        Button {
-            taps += 1
-            action()
-        } label: {
+        Button(action: tap) {
             label
+                .environment(\.openURL, OpenURLAction(handler: openLink))
                 .opacity(isLoading ? 0 : 1)
                 .overlay {
                     if isLoading {
@@ -254,8 +256,23 @@ private extension LockButton {
                             .tint(.primary)
                     }
                 }
+                .padding(labelPadding)
+                .contentShape(.capsule)
         }
         .animation(DesignKit.Motion.linear, value: isLoading)
+    }
+
+    /// Performs the action and triggers the haptic.
+    func tap() {
+        taps += 1
+        action()
+    }
+
+    /// Treats a tap on a link that Markdown found in the title, such as an
+    /// email address, as a tap on the button instead of opening it.
+    func openLink(_ url: URL) -> OpenURLAction.Result {
+        tap()
+        return .handled
     }
 
     @ViewBuilder
@@ -275,6 +292,12 @@ private extension LockButton {
         }
     }
 
+    /// The padding around the label, inside the button so the whole glass
+    /// is tappable.
+    var labelPadding: CGFloat {
+        style == .clear ? DesignKit.Spacing.Primitive.s6 : DesignKit.Spacing.Primitive.s0
+    }
+
     /// Applies the button's style.
     ///
     /// Each glass style is a distinct type, so each is applied in its own branch.
@@ -289,13 +312,14 @@ private extension LockButton {
                 .tint(.primary)
         case .clear:
             button
-                .padding(DesignKit.Spacing.Primitive.s6)
-                .glassEffect()
+                .buttonStyle(.plain)
+                .glassEffect(.regular.interactive())
                 .foregroundStyle(.primary)
         case .tertiary:
             button
                 .buttonStyle(.plain)
                 .foregroundStyle(.primary)
+                .tint(.primary)
         }
     }
 }

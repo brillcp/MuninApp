@@ -34,8 +34,8 @@ nonisolated enum DesignKit {
         static let quickBouncy: Animation = .bouncy(duration: 0.25)
         /// A gentle ease, for color and tint changes.
         static let easeInOut: Animation = .easeInOut
-        /// A smooth curve, for rows being added to or removed from a list.
-        static let listChange: Animation = .smooth(duration: 0.3)
+        /// A short bounce, for rows being added, removed or moved in a list.
+        static let listChange: Animation = .bouncy(duration: 0.25)
         /// A slow, smooth curve, for full-screen transitions like the lock screen.
         static let slowSmooth: Animation = .smooth(duration: 0.45)
     }

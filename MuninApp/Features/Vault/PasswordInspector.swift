@@ -56,8 +56,14 @@ struct PasswordInspector: View {
                 .onTapGesture { copy(.username) { Pasteboard.copy(item.username) } }
 
                 DetailRow(label: "password.field.password", isCopied: copiedField == .password) {
-                    Text(revealedPassword ?? "••••••••••••")
-                        .font(.body.monospaced())
+                    if let revealedPassword {
+                        Text(revealedPassword)
+                            .font(.body.monospaced())
+                            .textSelection(.enabled)
+                    } else {
+                        Text("••••••••••••")
+                            .font(.body.monospaced())
+                    }
                 } actions: {
                     Button(revealedPassword == nil ? "passwordInspector.show" : "passwordInspector.hide",
                            systemImage: revealedPassword == nil ? DesignKit.Icon.showPassword : DesignKit.Icon.hidePassword) {
@@ -70,7 +76,7 @@ struct PasswordInspector: View {
                     }
                     copyButton(.password, perform: onCopyPassword)
                 }
-                .onTapGesture { copy(.password, perform: onCopyPassword) }
+                .gesture(TapGesture().onEnded(copyPassword), isEnabled: revealedPassword == nil)
 
                 DetailRow(label: "password.field.url", isCopied: copiedField == .url) {
                     Text(item.url)
@@ -164,6 +170,11 @@ private extension PasswordInspector {
         let trimmed = item.url.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return nil }
         return URL(string: trimmed.contains("://") ? trimmed : "https://\(trimmed)")
+    }
+
+    /// Copies the password from a tap on its row while it's hidden.
+    func copyPassword() {
+        copy(.password, perform: onCopyPassword)
     }
 
     func copyButton(_ field: Field, perform: @escaping () -> Void) -> some View {
