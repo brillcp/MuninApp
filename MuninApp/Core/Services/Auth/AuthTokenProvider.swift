@@ -13,7 +13,9 @@ final class AuthTokenProvider: TokenProvidable {
 
     /// The current access token (JWT).
     private var cachedToken: String?
+    /// The refresh token, which gets a new access token when it expires.
     private var cachedRefreshToken: String?
+    /// The date the access token expires.
     private var cachedExpiresAt: Date?
 
     /// The interval before expiration at which the token refreshes, so an
@@ -26,6 +28,7 @@ final class AuthTokenProvider: TokenProvidable {
     /// parallel refreshes would invalidate each other.
     private var inflightRefresh: Task<Void, Error>?
 
+    /// The service that sends requests to the auth server.
     private let authService: Network.Service
 
     /// Creates a provider with the session saved in the Keychain.

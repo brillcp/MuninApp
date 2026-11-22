@@ -7,10 +7,14 @@ import SwiftUI
 /// only reachable from the forgot-password action, so the field is focused on
 /// appear.
 struct LockRecoveryKeyStep: View {
+    /// The vault session to unlock.
     @Environment(VaultSession.self) private var session
+    /// The recovery key the user entered.
     @State private var recoveryKey = ""
+    /// A Boolean value that indicates whether the recovery key field has focus.
     @FocusState private var isFieldFocused: Bool
 
+    /// The action that returns to the previous step.
     let onCancel: () -> Void
 
     var body: some View {

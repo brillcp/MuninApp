@@ -5,7 +5,9 @@ import SwiftUI
 /// The user enters the current password, then the new one twice. The vault
 /// key doesn't change; it's rewrapped with the new password.
 struct ChangeMasterPasswordView: View {
+    /// The vault session whose master password changes.
     @Environment(VaultSession.self) private var session
+    /// The action that closes the sheet.
     @Environment(\.dismiss) private var dismiss
 
     /// The current master password.

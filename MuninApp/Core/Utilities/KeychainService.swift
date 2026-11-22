@@ -19,9 +19,13 @@ nonisolated enum KeychainService {
     ///
     /// Read from the `MuninKeychainGroup` Info.plist key, which includes the team prefix.
     private static let sharedGroup = Bundle.main.object(forInfoDictionaryKey: "MuninKeychainGroup") as? String
+    /// The account name of the access token.
     private static let accessTokenAccount = "auth.token"
+    /// The account name of the refresh token.
     private static let refreshTokenAccount = "auth.refresh_token"
+    /// The account name of the user identifier.
     private static let userIDAccount = "auth.user_id"
+    /// The account name of the email address.
     private static let emailAccount = "auth.email"
 
     // MARK: - Session
@@ -164,6 +168,7 @@ nonisolated enum KeychainService {
         SecItemAdd(query as CFDictionary, nil)
     }
 
+    /// Deletes an item from the shared group and from the app's own keychain.
     private static func delete(account: String) {
         deleteEverywhere(account: account)
     }

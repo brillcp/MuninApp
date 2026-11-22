@@ -2,11 +2,15 @@ import SwiftUI
 
 /// A step that unlocks with Face ID or Touch ID, with the master password as
 /// an alternative.
+///
+/// Return starts the biometric unlock.
 struct LockBiometricsStep: View {
+    /// The vault session to unlock.
     @Environment(VaultSession.self) private var session
     /// The view model that receives the password list during unlock.
     @Environment(VaultViewModel.self) private var vaultModel
 
+    /// The action that switches to the master password step.
     let onUseMasterPassword: () -> Void
 
     var body: some View {
@@ -17,6 +21,7 @@ struct LockBiometricsStep: View {
                 isLoading: isUnlocking,
                 action: unlockWithBiometrics
             )
+            .keyboardShortcut(.defaultAction)
             LockButton(systemImage: DesignKit.Icon.useMasterPassword, style: .secondary, action: onUseMasterPassword)
                 .buttonSizing(.fitted)
         }

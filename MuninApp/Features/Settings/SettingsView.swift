@@ -6,9 +6,13 @@ import UniformTypeIdentifiers
 ///
 /// On macOS, this is the content of the Settings window. On iOS, it's a tab.
 struct SettingsView: View {
+    /// The sign-in state, which provides the email and signs out.
     @Environment(AuthManager.self) private var auth
+    /// The vault session, which provides the biometric and auto-lock settings.
     @Environment(VaultSession.self) private var session
+    /// The subscription state shown in the Subscription section.
     @Environment(SubscriptionManager.self) private var subscriptions
+    /// The AutoFill setup state shown in the AutoFill row.
     @Environment(AutoFillSetup.self) private var autoFill
     /// The model that restores purchases, exports, and deletes the account.
     @Environment(SettingsViewModel.self) private var model
@@ -202,11 +206,13 @@ private extension SettingsView {
         Task { await model.restorePurchases() }
     }
 
+    /// Asks for confirmation before exporting the passwords.
     func confirmPasswordExport() {
         hapticTaps += 1
         model.pendingExport = .passwords
     }
 
+    /// Asks for confirmation before exporting the 2FA accounts.
     func confirmTwoFactorExport() {
         hapticTaps += 1
         model.pendingExport = .twoFactor
@@ -217,6 +223,7 @@ private extension SettingsView {
         Task { await model.export(kind) }
     }
 
+    /// Opens the AutoFill setup guide.
     func showAutoFillGuide() {
         hapticTaps += 1
         isShowingAutoFillGuide = true
@@ -233,6 +240,7 @@ private extension SettingsView {
         #endif
     }
 
+    /// Asks for confirmation before deleting the account.
     func confirmDeletion() {
         hapticTaps += 1
         isConfirmingDeletion = true
@@ -251,5 +259,6 @@ private extension SettingsView {
 private struct RecoveryKeyItem: Identifiable {
     /// The recovery key, formatted for the user to write down.
     let key: String
+    /// The recovery key, which identifies the sheet.
     var id: String { key }
 }

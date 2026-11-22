@@ -12,7 +12,9 @@ final class TwoFactorViewModel {
     ///
     /// Read on each use, so a lock or a changed master password takes effect immediately.
     private let session: VaultSession
+    /// The API that loads, saves, and deletes the accounts.
     private let api: any MuninAPI
+    /// The signed-in user, whose identifier scopes the accounts.
     private let user: any UserSession
 
     /// The decrypted accounts.

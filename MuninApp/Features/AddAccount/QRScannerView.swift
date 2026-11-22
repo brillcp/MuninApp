@@ -5,6 +5,7 @@ import VisionKit
 
 /// A full-screen camera view that reports the first QR code it detects.
 struct ScannerSheet: View {
+    /// The action that closes the scanner.
     @Environment(\.dismiss) private var dismiss
     /// The action to perform with the QR code's text.
     let onFound: (String) -> Void

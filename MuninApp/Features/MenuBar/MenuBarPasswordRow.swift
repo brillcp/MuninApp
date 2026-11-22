@@ -4,10 +4,13 @@ import SwiftUI
 /// A row in the menu bar list showing a password's icon, name, username, and
 /// copy buttons.
 struct MenuBarPasswordRow: View {
+    /// The item to show.
     let item: PasswordItem
     /// The field just copied from this row, if any.
     let copiedField: Field?
+    /// The action that copies the username.
     let onCopyUsername: () -> Void
+    /// The action that copies the password.
     let onCopyPassword: () -> Void
 
     var body: some View {

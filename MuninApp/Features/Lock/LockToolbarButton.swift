@@ -2,6 +2,7 @@ import SwiftUI
 
 /// A toolbar button that locks the vault, like ⌘L, with a light haptic.
 struct LockToolbarButton: View {
+    /// The vault session to lock.
     @Environment(VaultSession.self) private var session
     /// A counter incremented on every tap to trigger the haptic.
     @State private var taps = 0

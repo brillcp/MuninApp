@@ -6,8 +6,11 @@ import Foundation
 nonisolated struct OTPAccount: Codable, Sendable, Hashable {
     /// The HMAC hash function used to compute codes.
     enum Algorithm: String, Codable, Sendable {
+        /// HMAC-SHA1, the default for most services.
         case sha1 = "SHA1"
+        /// HMAC-SHA256.
         case sha256 = "SHA256"
+        /// HMAC-SHA512.
         case sha512 = "SHA512"
     }
 

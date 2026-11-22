@@ -6,7 +6,9 @@ import Networking
 /// Every call refreshes the access token first if needed. Calls that need the
 /// master password proof send it in a header.
 final class MuninService: MuninAPI {
+    /// The service that sends requests to the Munin server.
     private let service: Network.Service
+    /// The provider of the access token, refreshed before each call.
     private let tokenProvider: AuthTokenProvider
 
     /// Creates a service.

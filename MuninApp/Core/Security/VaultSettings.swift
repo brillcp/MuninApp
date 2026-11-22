@@ -4,9 +4,12 @@ import Observation
 /// The user's vault preferences, stored in user defaults.
 @Observable
 final class VaultSettings {
+    /// The user defaults key for whether biometric unlock is on.
     private static let biometricsKey = "munin.biometrics.enabled"
+    /// The user defaults key for the auto-lock timeout.
     private static let autoLockKey = "munin.autoLock.timeout"
 
+    /// The user defaults the preferences are stored in.
     private let defaults: UserDefaults
 
     /// A Boolean value that indicates whether the user allows biometric unlock.

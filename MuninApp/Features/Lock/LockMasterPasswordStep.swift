@@ -3,6 +3,7 @@ import SwiftUI
 /// A step that unlocks with the master password, with options to use
 /// biometrics or the recovery key.
 struct LockMasterPasswordStep: View {
+    /// The vault session to unlock.
     @Environment(VaultSession.self) private var session
     /// The view model that receives the password list during unlock.
     @Environment(VaultViewModel.self) private var vaultModel
@@ -16,6 +17,7 @@ struct LockMasterPasswordStep: View {
     let focusesField: Bool
     /// The action that switches to biometric unlock, or `nil` to hide the button.
     let onUseBiometrics: (() -> Void)?
+    /// The action that switches to the recovery key step.
     let onForgotPassword: () -> Void
 
     var body: some View {

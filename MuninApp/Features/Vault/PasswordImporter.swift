@@ -7,7 +7,9 @@ import Observation
 /// confirms, uploads the new passwords and then the new 2FA accounts.
 @Observable
 final class PasswordImporter {
+    /// The vault model that compares and uploads the passwords.
     private let vaultModel: VaultViewModel
+    /// The 2FA model that compares and uploads the accounts.
     private let twoFactorModel: TwoFactorViewModel
 
     /// A parsed file waiting for confirmation.

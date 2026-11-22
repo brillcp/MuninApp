@@ -11,6 +11,7 @@ import Observation
 /// the background. ``clear()`` cancels saves still in flight.
 @Observable
 final class VaultViewModel {
+    /// The user defaults key for the sort order.
     private static let sortDefaultsKey = "munin.vault.sort"
     /// The section letters in ascending order: #, A–Z, then Å, Ä, and Ö.
     private static let sectionLetters = ["#"] + "ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖ".map(String.init)
@@ -21,8 +22,11 @@ final class VaultViewModel {
     ///
     /// Read on each use, so a lock or a changed master password takes effect immediately.
     private let session: VaultSession
+    /// The API that loads, saves, and deletes the passwords.
     private let api: any MuninAPI
+    /// The signed-in user, whose identifier scopes the passwords.
     private let user: any UserSession
+    /// The user defaults the sort order is stored in.
     private let defaults: UserDefaults
     /// Encrypted passwords fetched during an unlock, so the list can appear as
     /// soon as the unlock succeeds. Consumed once by ``refresh()``.
@@ -385,7 +389,9 @@ extension VaultViewModel {
 private extension VaultViewModel {
     /// The items an import saved before one failed, and the failure.
     nonisolated struct ImportFailure: Error {
+        /// The items saved before the failure.
         let saved: [PasswordItem]
+        /// The error that stopped the import.
         let error: any Error
     }
 
@@ -463,10 +469,12 @@ private extension VaultViewModel {
         sections = sortColumn == .title ? Self.sections(for: visibleItems, order: sortDirection) : []
     }
 
+    /// Updates ``selectedItem`` to match the selection.
     func recomputeSelectedItem() {
         selectedItem = selection.flatMap { id in items.first { $0.id == id } }
     }
 
+    /// Stores the sort order so it's restored at the next launch.
     func saveSortOrder() {
         guard let primary = sortOrder.first else { return }
         let column = primary.keyPath == \PasswordItem.name as PartialKeyPath<PasswordItem> ? "name" : "lastUpdated"
@@ -499,6 +507,12 @@ private extension VaultViewModel {
         return sectionLetters.contains(folded) ? folded : "#"
     }
 
+    /// Returns the comparator that sorts items by a column.
+    ///
+    /// - Parameters:
+    ///   - column: The column to sort by.
+    ///   - order: The sort direction.
+    /// - Returns: The comparator.
     static func comparator(for column: SortColumn, order: SortOrder) -> KeyPathComparator<PasswordItem> {
         switch column {
         case .title: KeyPathComparator(\PasswordItem.name, order: order)

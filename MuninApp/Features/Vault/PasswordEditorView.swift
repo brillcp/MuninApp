@@ -6,6 +6,7 @@ import SwiftUI
 /// ``PasswordInspector``. When creating an item, the name field starts with
 /// focus.
 struct PasswordEditorView: View {
+    /// The action that closes the editor.
     @Environment(\.dismiss) private var dismiss
     /// The fields being edited, in plain text while the sheet is open.
     @State private var fields: PasswordFields

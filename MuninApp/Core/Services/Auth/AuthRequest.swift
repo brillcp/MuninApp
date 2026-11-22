@@ -47,8 +47,11 @@ struct RefreshTokenRequest: Requestable {
 
 /// The request body of ``AppleIDTokenRequest``.
 nonisolated private struct IDTokenBody: Encodable, Sendable {
+    /// The identity provider, `apple`.
     let provider: String
+    /// The identity token from Sign in with Apple.
     let idToken: String
+    /// The unhashed nonce whose hash is in the identity token.
     let nonce: String
 
     enum CodingKeys: String, CodingKey {
@@ -59,6 +62,7 @@ nonisolated private struct IDTokenBody: Encodable, Sendable {
 
 /// The request body of ``RefreshTokenRequest``.
 nonisolated private struct RefreshBody: Encodable, Sendable {
+    /// The refresh token to exchange for a new session.
     let refreshToken: String
 
     enum CodingKeys: String, CodingKey {

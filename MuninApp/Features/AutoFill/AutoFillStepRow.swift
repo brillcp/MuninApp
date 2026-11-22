@@ -4,6 +4,7 @@ import SwiftUI
 struct AutoFillStepRow: View {
     /// The step's one-based number.
     let number: Int
+    /// The step's instruction.
     let text: LocalizedStringKey
 
     var body: some View {

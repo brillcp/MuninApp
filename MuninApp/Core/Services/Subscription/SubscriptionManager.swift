@@ -13,7 +13,9 @@ final class SubscriptionManager {
     /// The product identifier of the monthly subscription in App Store Connect.
     static let productID = "munin.monthly.sub"
 
+    /// The API that links purchases and loads the subscription status.
     private let api: any MuninAPI
+    /// The signed-in user, whose identifier tags purchases.
     private let user: any UserSession
     /// The task that listens to `Transaction.updates` while the vault is unlocked.
     private var updatesTask: Task<Void, Never>?
@@ -131,6 +133,8 @@ private extension SubscriptionManager {
         }
     }
 
+    /// Sends every verified Munin entitlement to the server, such as a
+    /// subscription bought on another device or before signing in.
     func linkCurrentEntitlements() async {
         for await entitlement in Transaction.currentEntitlements {
             guard case .verified(let transaction) = entitlement,

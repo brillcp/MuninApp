@@ -2,6 +2,7 @@ import SwiftUI
 
 /// A row that shows a password item's website icon, name, and username.
 struct AutoFillPasswordRow: View {
+    /// The item to show.
     let item: PasswordItem
     /// The action that fills the password.
     let onChoose: () -> Void

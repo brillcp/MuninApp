@@ -9,6 +9,7 @@ import SwiftUI
 /// View and Slide Over.
 struct LockView: View {
     #if os(iOS)
+    /// The horizontal size class, which picks the layout.
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     #endif
 

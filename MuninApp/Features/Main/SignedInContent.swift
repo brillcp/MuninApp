@@ -5,6 +5,7 @@ import SwiftUI
 /// The locked, checking, and failed states render nothing, because
 /// ``ContentView`` shows the lock screen for them instead.
 struct SignedInContent: View {
+    /// The vault session, whose state decides what shows.
     @Environment(VaultSession.self) private var session
 
     /// A pending two-factor setup link, passed to the main view.

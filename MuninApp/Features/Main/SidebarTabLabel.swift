@@ -7,7 +7,9 @@ import SwiftUI
 /// symbol is rendered into a non-template image in fixed colors, which the
 /// sidebar can't recolor.
 struct SidebarTabLabel: View {
+    /// The tab's name.
     let title: LocalizedStringKey
+    /// The SF Symbol name of the tab's icon.
     let systemImage: String
     /// A Boolean value that indicates whether the tab is selected, which turns the macOS icon white.
     let isSelected: Bool

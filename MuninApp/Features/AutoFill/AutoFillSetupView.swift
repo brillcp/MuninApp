@@ -5,7 +5,9 @@ import SwiftUI
 /// Explains the benefit, lists the steps for the current platform, and offers
 /// buttons for the system prompt and for opening Settings.
 struct AutoFillSetupView: View {
+    /// The AutoFill setup state, which tells whether AutoFill is on.
     @Environment(AutoFillSetup.self) private var autoFill
+    /// The action that closes the guide.
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {

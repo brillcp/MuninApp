@@ -74,9 +74,13 @@ struct MainView: View {
 extension MainView {
     /// The app's top-level tabs.
     enum Section: Hashable {
+        /// The passwords.
         case vault
+        /// The 2FA accounts.
         case twoFactor
+        /// Search, on iOS.
         case search
+        /// Settings, on iOS.
         case settings
     }
 }

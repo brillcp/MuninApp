@@ -28,7 +28,9 @@ nonisolated enum VaultKeyStore {
 
     /// The stored format of the biometric copy: the key and proof, base64-encoded.
     private struct StoredVault: Codable {
+        /// The vault key, base64-encoded.
         let key: String
+        /// The master password proof, base64-encoded.
         let proof: String
     }
 

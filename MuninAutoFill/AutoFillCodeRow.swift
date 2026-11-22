@@ -2,6 +2,7 @@ import SwiftUI
 
 /// A row that shows a 2FA account's issuer, name, and current code.
 struct AutoFillCodeRow: View {
+    /// The account whose code is shown.
     let account: OTPAccount
     /// The date used to compute the code, updated every second.
     let date: Date

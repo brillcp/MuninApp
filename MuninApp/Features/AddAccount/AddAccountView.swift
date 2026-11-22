@@ -10,6 +10,7 @@ import VisionKit
 ///
 /// A Google Authenticator export QR code adds all of its accounts at once.
 struct AddAccountView: View {
+    /// The action that closes the sheet.
     @Environment(\.dismiss) private var dismiss
 
     /// The most recent error, shown at the bottom of the form.

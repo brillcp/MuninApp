@@ -91,6 +91,7 @@ private extension PasswordGeneratorView {
         }
     }
 
+    /// Generates a new password with the current settings.
     func regenerate() {
         password = generator.generate()
     }

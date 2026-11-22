@@ -3,7 +3,9 @@ import SwiftUI
 
 /// A step that offers Sign in with Apple.
 struct LockSignInStep: View {
+    /// The sign-in state that handles the Sign in with Apple request.
     @Environment(AuthManager.self) private var auth
+    /// The color scheme, which picks the button's style.
     @Environment(\.colorScheme) private var colorScheme
 
     /// The action that returns to unlocking, or `nil` to hide Cancel.

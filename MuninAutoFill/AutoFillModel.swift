@@ -28,9 +28,11 @@ protocol AutoFillHandler: AnyObject {
 /// Passwords stay encrypted until the user chooses one.
 @Observable
 final class AutoFillModel {
+    /// The API that loads the vault key and items.
     private let api: any MuninAPI
     /// The unlocked vault key, held while AutoFill is open.
     private var vault: UnlockedVault?
+    /// The object that completes or cancels the request.
     private weak var handler: AutoFillHandler?
 
     /// The signed-in user's ID, read from the shared Keychain.

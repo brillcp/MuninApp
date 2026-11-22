@@ -6,9 +6,11 @@ import SwiftUI
 /// The caller sets the tap action. While copied, the value briefly reads
 /// “Copied”.
 struct DetailRow<Value: View, Actions: View>: View {
+    /// The field's name, shown above the value.
     let label: LocalizedStringKey
     /// A Boolean value that indicates whether to show “Copied” in place of the value.
     let isCopied: Bool
+    /// The field's value.
     @ViewBuilder let value: Value
     /// Icon buttons on the trailing edge.
     @ViewBuilder let actions: Actions

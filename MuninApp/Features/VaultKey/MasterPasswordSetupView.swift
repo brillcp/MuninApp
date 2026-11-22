@@ -2,6 +2,7 @@ import SwiftUI
 
 /// A view for choosing a master password, during first setup or after unlocking with the recovery key.
 struct MasterPasswordSetupView: View {
+    /// The vault session that sets the master password.
     @Environment(VaultSession.self) private var session
 
     /// The new master password.

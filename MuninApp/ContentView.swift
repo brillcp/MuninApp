@@ -14,10 +14,16 @@ import SwiftUI
 /// separately, so an inserted or removed child never observes the value change
 /// and its transition doesn't run.
 struct ContentView: View {
+    /// The sign-in state, which decides whether the lock screen shows.
     @Environment(AuthManager.self) private var auth
+    /// The vault session, which is prepared after sign-in and decides whether
+    /// the vault is locked.
     @Environment(VaultSession.self) private var session
+    /// The vault model, cleared when the vault locks.
     @Environment(VaultViewModel.self) private var vaultModel
+    /// The 2FA model, cleared when the vault locks.
     @Environment(TwoFactorViewModel.self) private var twoFactorModel
+    /// The subscription state, stopped when the vault locks.
     @Environment(SubscriptionManager.self) private var subscriptions
     /// The app's AutoFill status, refreshed whenever the app becomes active.
     @Environment(AutoFillSetup.self) private var autoFill

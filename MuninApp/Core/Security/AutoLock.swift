@@ -59,11 +59,13 @@ extension View {
 
 /// The view modifier that implements ``SwiftUI/View/autoLock(_:)``.
 private struct AutoLockModifier: ViewModifier {
+    /// The scene phase, which tells when the app moves to the background on iOS.
     @Environment(\.scenePhase) private var scenePhase
     /// The date the app moved to the background on iOS, or stopped being the
     /// active app on macOS. Used to measure how long the user was away.
     @State private var backgroundedAt: Date?
 
+    /// The vault session to lock.
     let session: VaultSession
 
     func body(content: Content) -> some View {
@@ -116,6 +118,7 @@ private struct AutoLockModifier: ViewModifier {
 private extension AutoLockModifier {
     /// The selected timeout in seconds, or `nil` if auto-lock is off.
     var timeout: TimeInterval? { session.autoLockTimeout.seconds }
+    /// A Boolean value that indicates whether the vault is unlocked.
     var isUnlocked: Bool { session.state == .unlocked }
 
     #if os(macOS)
@@ -124,8 +127,11 @@ private extension AutoLockModifier {
     /// The timer restarts whenever an input changes. Clearing `backgroundedAt`
     /// when the app becomes active again cancels it.
     struct BackgroundCheck: Equatable {
+        /// A Boolean value that indicates whether the vault is unlocked.
         let isUnlocked: Bool
+        /// The selected timeout in seconds, or `nil` if auto-lock is off.
         let timeout: TimeInterval?
+        /// The date the app stopped being active, or `nil` while it's active.
         let backgroundedAt: Date?
     }
 

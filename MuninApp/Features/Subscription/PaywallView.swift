@@ -8,7 +8,9 @@ import SwiftUI
 /// user's identifier as their app account token and sent to the server for
 /// verification. The view dismisses itself once the server confirms the subscription.
 struct PaywallView: View {
+    /// The subscription state that tags and verifies purchases.
     @Environment(SubscriptionManager.self) private var subscriptions
+    /// The action that closes the paywall once the subscription is confirmed.
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {

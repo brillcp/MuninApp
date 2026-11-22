@@ -3,7 +3,9 @@ import SwiftUI
 /// A form section for adding accounts from an `otpauth://` or
 /// `otpauth-migration://` URL.
 struct LinkSection: View {
+    /// The pasted link.
     @State private var link = ""
+    /// The action that adds the accounts in the link.
     let onSubmit: (String) -> Void
 
     var body: some View {

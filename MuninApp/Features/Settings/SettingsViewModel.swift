@@ -8,9 +8,13 @@ import UniformTypeIdentifiers
 /// The Settings window on macOS and the Settings tab on iOS share one instance.
 @Observable
 final class SettingsViewModel {
+    /// The API that deletes the account.
     private let api: any MuninAPI
+    /// The sign-in state, signed out after the account is deleted.
     private let auth: AuthManager
+    /// The vault session that provides the vault key for exports.
     private let session: VaultSession
+    /// The subscription state that restores purchases.
     private let subscriptions: SubscriptionManager
 
     /// A Boolean value that indicates whether purchases are being restored.
@@ -59,6 +63,7 @@ extension SettingsViewModel {
         /// Two-factor accounts, as `otpauth` links.
         case twoFactor
 
+        /// The kind itself, which identifies the export.
         var id: Self { self }
     }
 

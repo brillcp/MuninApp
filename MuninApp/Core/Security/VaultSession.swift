@@ -18,10 +18,13 @@ final class VaultSession {
     /// The shortest master password accepted.
     static let minimumPasswordLength = 8
 
+    /// The API that loads and saves the wrapped vault key.
     private let api: any MuninAPI
+    /// The signed-in user, whose identifier scopes the stored keys.
     private let user: any UserSession
     /// An override for biometric availability, used by previews and simulators.
     private let biometricsOverride: Bool?
+    /// The identifier of the user the vault was last prepared for.
     private var userID: String?
     /// The wrapped vault key fetched from the server.
     private var record: VaultKeyRecord?
@@ -90,6 +93,7 @@ extension VaultSession {
     struct NewRecoveryKey: Identifiable {
         /// The recovery key, formatted for the user to write down.
         let key: String
+        /// The recovery key, which identifies the sheet.
         var id: String { key }
     }
 
