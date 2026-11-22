@@ -20,6 +20,7 @@ struct MainView: View {
     /// The 2FA model shared by the 2FA and Search tabs.
     @Environment(TwoFactorViewModel.self) private var twoFactorModel
 
+    /// The selected section, which ⌘1 and ⌘2 also change on macOS.
     @State private var selection: Section = .vault
     /// Accounts from a 2FA setup link, awaiting confirmation.
     @State private var linkedAccounts: LinkedAccounts?
@@ -83,8 +84,9 @@ private extension MainView {
     ///
     /// On macOS, a fixed ``MainSidebar`` floats on the leading edge and the
     /// selected section fills the window behind it, like the password panel.
-    /// The lists inset their content by ``EnvironmentValues/sidebarWidth``. On iOS,
-    /// it's a tab view that shows a sidebar on iPad and a tab bar on iPhone.
+    /// The lists inset their content by ``EnvironmentValues/sidebarWidth``.
+    /// On iOS, it's a tab view that shows a sidebar on iPad and a tab bar on
+    /// iPhone.
     @ViewBuilder
     var sections: some View {
         #if os(macOS)

@@ -93,6 +93,7 @@ private extension PasswordDetail {
         Task { await viewModel.copyPassword(item) }
     }
 
+    /// Asks for confirmation before deleting the item.
     func confirmDeletion() {
         pendingDeletion = item
     }

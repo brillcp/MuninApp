@@ -128,9 +128,9 @@ private extension VaultView {
     /// panel closes, `panelItem` keeps the last item so its content animates
     /// out with it.
     ///
-    /// A nested `NavigationSplitView` adds the outer sidebar's width as a
-    /// leading inset, and `HSplitView` and inspectors don't animate the panel
-    /// smoothly, so the panel is an overlay instead.
+    /// `NavigationSplitView`, `HSplitView`, and inspectors don't animate the
+    /// panel smoothly, so the panel is an overlay instead, like the main
+    /// window's sidebar.
     ///
     /// On iOS, a `NavigationSplitView` pushes the detail when a row is tapped
     /// on iPhone.

@@ -8,17 +8,13 @@ import SwiftUI
 /// purchase or restore.
 struct PaywallHeader: View {
     @Environment(SubscriptionManager.self) private var subscriptions
-    @Environment(\.colorScheme) private var colorScheme
     @Environment(\.openURL) private var openURL
     /// A Boolean value that indicates whether the system's Manage Subscriptions sheet is presented on iOS.
     @State private var isManagingSubscription = false
 
     var body: some View {
         VStack(spacing: DesignKit.Spacing.Primitive.s12) {
-            Image(colorScheme == .light ? DesignKit.Asset.appIcon : DesignKit.Asset.appIconDark)
-                .resizable()
-                .scaledToFit()
-                .frame(width: 128)
+            AppIcon(size: 128)
             Text("subscription.title")
                 .font(.largeTitle.bold())
             Text("subscription.message")

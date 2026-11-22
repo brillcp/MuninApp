@@ -3,8 +3,9 @@ import SwiftUI
 /// A view that shows every field of a password item.
 ///
 /// The password stays encrypted until it's revealed or copied; the note is
-/// decrypted while the item is displayed. Tapping a row copies its value. On
-/// iOS, the background and tint use the website icon's dominant color.
+/// decrypted while the item is displayed. Tapping a row copies its value,
+/// except the password while it's revealed, so it can be selected instead.
+/// On iOS, the background and tint use the website icon's dominant color.
 struct PasswordInspector: View {
     @Environment(\.openURL) private var openURL
     /// The subscription state; Delete is disabled while the vault is read-only.
@@ -177,6 +178,11 @@ private extension PasswordInspector {
         copy(.password, perform: onCopyPassword)
     }
 
+    /// A Copy button for a field's row.
+    ///
+    /// - Parameters:
+    ///   - field: The field the button copies, which shows “Copied” afterward.
+    ///   - perform: The action that copies the field's value.
     func copyButton(_ field: Field, perform: @escaping () -> Void) -> some View {
         Button("global.copy", systemImage: DesignKit.Icon.copy) {
             copy(field, perform: perform)
