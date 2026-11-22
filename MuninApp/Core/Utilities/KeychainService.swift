@@ -35,14 +35,14 @@ nonisolated enum KeychainService {
     /// Returns the saved access token.
     static func loadAccessToken() -> String? { load(account: accessTokenAccount) }
     /// Deletes the access token.
-    static func deleteAccessToken() { delete(account: accessTokenAccount) }
+    static func deleteAccessToken() { deleteEverywhere(account: accessTokenAccount) }
 
     /// Saves the refresh token.
     static func saveRefreshToken(_ token: String) { save(token, account: refreshTokenAccount) }
     /// Returns the saved refresh token.
     static func loadRefreshToken() -> String? { load(account: refreshTokenAccount) }
     /// Deletes the refresh token.
-    static func deleteRefreshToken() { delete(account: refreshTokenAccount) }
+    static func deleteRefreshToken() { deleteEverywhere(account: refreshTokenAccount) }
 
     // MARK: - Signed-in user
 
@@ -51,14 +51,14 @@ nonisolated enum KeychainService {
     /// Returns the saved user identifier.
     static func loadUserID() -> String? { load(account: userIDAccount) }
     /// Deletes the saved user identifier.
-    static func deleteUserID() { delete(account: userIDAccount) }
+    static func deleteUserID() { deleteEverywhere(account: userIDAccount) }
 
     /// Saves the signed-in user's email address.
     static func saveEmail(_ email: String) { save(email, account: emailAccount) }
     /// Returns the saved email address.
     static func loadEmail() -> String? { load(account: emailAccount) }
     /// Deletes the saved email address.
-    static func deleteEmail() { delete(account: emailAccount) }
+    static func deleteEmail() { deleteEverywhere(account: emailAccount) }
 
     // MARK: - Biometrics
 
@@ -166,11 +166,6 @@ nonisolated enum KeychainService {
         query[kSecValueData as String] = Data(value.utf8)
         query[kSecAttrAccessible as String] = kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
         SecItemAdd(query as CFDictionary, nil)
-    }
-
-    /// Deletes an item from the shared group and from the app's own keychain.
-    private static func delete(account: String) {
-        deleteEverywhere(account: account)
     }
 
     /// Deletes the item from every access group the app can reach.
