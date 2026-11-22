@@ -5,18 +5,9 @@ import SwiftUI
 
 /// A view that shows the app's icon, name, and tagline on the lock screen.
 struct LockLogo: View {
-    @Environment(\.colorScheme) private var colorScheme
-
     var body: some View {
         VStack(alignment: .leading, spacing: DesignKit.Spacing.Primitive.s16) {
-            Image(colorScheme == .light ? DesignKit.Asset.appIcon : DesignKit.Asset.appIconDark)
-                .resizable()
-                .scaledToFit()
-                .frame(width: DesignKit.Spacing.Primitive.s64)
-                .overlay {
-                    RoundedRectangle(cornerRadius: DesignKit.Spacing.Primitive.s12, style: .continuous)
-                        .strokeBorder(.tertiary, lineWidth: 1)
-                }
+            AppIcon(size: DesignKit.Spacing.Primitive.s64)
             Text("main.window.title")
                 .font(.title.bold())
                 .foregroundStyle(.primary)
