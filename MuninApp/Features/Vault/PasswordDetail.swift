@@ -46,22 +46,16 @@ struct PasswordDetail: View {
         #else
         .safeAreaInset(edge: .top, spacing: DesignKit.Spacing.Primitive.s0) {
             HStack {
-                LockButton(systemImage: DesignKit.Icon.close, style: .clear) {
-                    hapticTaps += 1
-                    viewModel.selection = nil
-                }
+                LockButton(systemImage: DesignKit.Icon.close, style: .clear, action: close)
                 Spacer()
-                LockButton(systemImage: DesignKit.Icon.edit, style: .clear) {
-                    hapticTaps += 1
-                    startEditing()
-                }
-                .keyboardShortcut("e")
+                LockButton(systemImage: DesignKit.Icon.edit, style: .clear, action: startEditing)
+                    .keyboardShortcut("e")
             }
             .padding([.horizontal, .top], DesignKit.Spacing.Primitive.s12)
         }
         .frame(width: 340)
         .frame(maxHeight: .infinity)
-        .glassEffect(in: .rect(cornerRadius: DesignKit.Spacing.Primitive.s16))
+        .glassPanel()
         .padding(DesignKit.Spacing.Primitive.s12)
         .transition(.opacity.combined(with: .offset(x: DesignKit.Spacing.Primitive.s40)))
         #endif
@@ -92,6 +86,13 @@ private extension PasswordDetail {
         guard let item else { return }
         Task { await viewModel.copyPassword(item) }
     }
+
+    #if os(macOS)
+    /// Closes the panel by deselecting the item.
+    func close() {
+        viewModel.selection = nil
+    }
+    #endif
 
     /// Asks for confirmation before deleting the item.
     func confirmDeletion() {

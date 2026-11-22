@@ -8,23 +8,20 @@ struct AutoFillBanner: View {
     @Environment(AutoFillSetup.self) private var autoFill
 
     var body: some View {
-        HStack(spacing: DesignKit.Spacing.Primitive.s12) {
+        Banner {
             Label("autofill.banner", systemImage: DesignKit.Icon.autoFill)
-                .font(.callout)
-            Spacer()
+        } actions: {
             Button("autofill.banner.setUp", action: showGuide)
                 .buttonStyle(.glassProminent)
             Button("global.close", systemImage: DesignKit.Icon.close, action: dismissBanner)
                 .labelStyle(.iconOnly)
                 .buttonStyle(.plain)
         }
-        .padding(DesignKit.Spacing.Primitive.s12)
-        .glassEffect(in: .rect(cornerRadius: DesignKit.Spacing.Primitive.s16))
-        .padding(DesignKit.Spacing.Primitive.s12)
     }
 }
 
 private extension AutoFillBanner {
+    /// Opens the AutoFill setup guide.
     func showGuide() {
         autoFill.isGuidePresented = true
     }

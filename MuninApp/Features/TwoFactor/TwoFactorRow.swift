@@ -1,9 +1,4 @@
 import SwiftUI
-#if os(iOS)
-import UIKit
-#else
-import AppKit
-#endif
 
 /// A row that shows a two-factor account's name, current code, and countdown.
 ///
@@ -44,12 +39,7 @@ struct TwoFactorRow: View {
 extension TwoFactorRow {
     /// Copies the account's current code to the clipboard.
     static func copyCode(of account: OTPAccount) {
-        #if os(iOS)
-        UIPasteboard.general.string = account.code(at: .now)
-        #else
-        NSPasteboard.general.clearContents()
-        NSPasteboard.general.setString(account.code(at: .now), forType: .string)
-        #endif
+        Pasteboard.copy(account.code(at: .now))
     }
 
     /// Splits a code into two halves for readability.
@@ -76,7 +66,7 @@ private extension TwoFactorRow {
         Self.copyCode(of: account)
         didCopy = true
         Task {
-            try? await Task.sleep(for: .seconds(1.2))
+            try? await Task.sleep(for: DesignKit.Motion.copiedFeedback)
             didCopy = false
         }
     }

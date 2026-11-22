@@ -21,8 +21,6 @@ struct PasswordInspector: View {
     @State private var tint: Color?
     /// The most recently copied field, which briefly shows a “Copied” label.
     @State private var copiedField: Field?
-    /// The opacity of tinted row backgrounds.
-    private var rowOpacity: CGFloat = 0.05
 
     /// The item to display.
     let item: PasswordItem
@@ -195,7 +193,7 @@ private extension PasswordInspector {
         hapticTaps += 1
         withAnimation(DesignKit.Motion.linear) { copiedField = field }
         Task {
-            try? await Task.sleep(for: .seconds(1.2))
+            try? await Task.sleep(for: DesignKit.Motion.copiedFeedback)
             if copiedField == field {
                 withAnimation(DesignKit.Motion.linear) { copiedField = nil }
             }

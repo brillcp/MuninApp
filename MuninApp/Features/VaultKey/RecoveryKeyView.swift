@@ -1,9 +1,4 @@
 import SwiftUI
-#if os(iOS)
-import UIKit
-#else
-import AppKit
-#endif
 
 /// A view that shows the recovery key so the user can store it safely.
 ///
@@ -30,12 +25,7 @@ struct RecoveryKeyView: View {
                     .background(.quaternary, in: RoundedRectangle(cornerRadius: DesignKit.Spacing.Primitive.s12))
 
                 Button(didCopy ? "global.copied" : "vaultKey.recovery.copy", systemImage: didCopy ? DesignKit.Icon.copied : DesignKit.Icon.copy) {
-                    #if os(iOS)
-                    UIPasteboard.general.string = recoveryKey
-                    #else
-                    NSPasteboard.general.clearContents()
-                    NSPasteboard.general.setString(recoveryKey, forType: .string)
-                    #endif
+                    Pasteboard.copy(recoveryKey)
                     didCopy = true
                 }
                 .buttonStyle(.bordered)

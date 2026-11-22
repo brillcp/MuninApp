@@ -6,20 +6,17 @@ struct ReadOnlyBanner: View {
     @Environment(SubscriptionManager.self) private var subscriptions
 
     var body: some View {
-        HStack(spacing: DesignKit.Spacing.Primitive.s12) {
+        Banner {
             Label("subscription.readOnly", systemImage: DesignKit.Icon.locked)
-                .font(.callout)
-            Spacer()
+        } actions: {
             Button("subscription.subscribe", action: showPaywall)
                 .buttonStyle(.glassProminent)
         }
-        .padding(DesignKit.Spacing.Primitive.s12)
-        .glassEffect(in: .rect(cornerRadius: DesignKit.Spacing.Primitive.s16))
-        .padding(DesignKit.Spacing.Primitive.s12)
     }
 }
 
 private extension ReadOnlyBanner {
+    /// Opens the paywall.
     func showPaywall() {
         subscriptions.isPaywallPresented = true
     }

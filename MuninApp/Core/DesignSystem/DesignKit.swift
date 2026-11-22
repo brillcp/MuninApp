@@ -38,6 +38,8 @@ nonisolated enum DesignKit {
         static let listChange: Animation = .bouncy(duration: 0.25)
         /// A slow, smooth curve, for full-screen transitions like the lock screen.
         static let slowSmooth: Animation = .smooth(duration: 0.45)
+        /// How long a “Copied” label shows after copying.
+        static let copiedFeedback: Duration = .seconds(1.2)
     }
 
     /// SF Symbol names, grouped by meaning.
@@ -51,8 +53,6 @@ nonisolated enum DesignKit {
         static let twoFactor = "key.viewfinder"
         /// Settings.
         static let settings = "gearshape"
-        /// Settings, when its sidebar tab is selected.
-        static let settingsSelected = "gearshape.fill"
         /// Search.
         static let search = "magnifyingglass"
 

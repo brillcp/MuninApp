@@ -15,13 +15,7 @@ struct VaultEmptyState: View {
 
     var body: some View {
         if let errorMessage {
-            ContentUnavailableView {
-                Label("errors.loadVault.title", systemImage: DesignKit.Icon.warning)
-            } description: {
-                Text(errorMessage)
-            } actions: {
-                Button("global.tryAgain", action: onRetry)
-            }
+            LoadErrorView(message: errorMessage, systemImage: DesignKit.Icon.warning, onRetry: onRetry)
         } else if isEmpty {
             if hasLoaded {
                 ContentUnavailableView("vault.empty.title", systemImage: DesignKit.Icon.vault)

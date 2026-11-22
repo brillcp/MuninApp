@@ -50,7 +50,7 @@ struct MainSidebar: View {
         }
         .frame(width: Self.width)
         .frame(maxHeight: .infinity)
-        .glassEffect(in: .rect(cornerRadius: DesignKit.Spacing.Primitive.s16))
+        .glassPanel()
         .padding(Self.margin)
     }
 }

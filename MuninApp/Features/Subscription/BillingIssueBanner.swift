@@ -13,17 +13,13 @@ struct BillingIssueBanner: View {
     @State private var isManagingSubscription = false
 
     var body: some View {
-        HStack(spacing: DesignKit.Spacing.Primitive.s12) {
+        Banner {
             Label("subscription.gracePeriod", systemImage: DesignKit.Icon.billingIssue)
-                .font(.callout)
                 .foregroundStyle(.orange)
-            Spacer()
+        } actions: {
             Button("subscription.updatePayment", action: manageSubscription)
                 .buttonStyle(.glass)
         }
-        .padding(DesignKit.Spacing.Primitive.s12)
-        .glassEffect(in: .rect(cornerRadius: DesignKit.Spacing.Primitive.s16))
-        .padding(DesignKit.Spacing.Primitive.s12)
         #if os(iOS)
         .manageSubscriptionsSheet(isPresented: $isManagingSubscription)
         #endif

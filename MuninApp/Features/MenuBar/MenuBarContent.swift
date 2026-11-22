@@ -133,7 +133,7 @@ private extension MenuBarContent {
     func showCopied(_ field: CopiedField) {
         copied = field
         Task {
-            try? await Task.sleep(for: .seconds(1.2))
+            try? await Task.sleep(for: DesignKit.Motion.copiedFeedback)
             if copied == field { copied = nil }
         }
     }

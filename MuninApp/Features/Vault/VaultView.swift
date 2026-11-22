@@ -8,8 +8,8 @@ struct VaultView: View {
     @Environment(SubscriptionManager.self) private var subscriptions
     /// The AutoFill status, which shows a banner while AutoFill is off.
     @Environment(AutoFillSetup.self) private var autoFill
-    /// The width the macOS sidebar covers, which the banners and import
-    /// progress start after.
+    /// The width the macOS sidebar covers, which the import progress starts
+    /// after.
     @Environment(\.sidebarWidth) private var sidebarWidth
     @State private var isCreating = false
     /// The item being edited, with its password and note decrypted for the editor.
@@ -94,7 +94,7 @@ struct VaultView: View {
                         Text(LocalizedKey("import.progress", progress.done, progress.total))
                     }
                     .padding()
-                    .glassEffect(in: .rect(cornerRadius: DesignKit.Spacing.Primitive.s16))
+                    .glassPanel()
                     .padding()
                     .padding(.leading, sidebarWidth)
                 }
@@ -175,16 +175,11 @@ private extension VaultView {
         .navigationSubtitle(LocalizedKey("vault.subtitle", viewModel.items.count))
         .toolbar { toolbarContent }
         .safeAreaInset(edge: .bottom) {
-            Group {
-                if subscriptions.isReadOnly {
-                    ReadOnlyBanner()
-                } else if subscriptions.isInGracePeriod {
-                    BillingIssueBanner()
-                } else if autoFill.showsBanner {
+            SubscriptionBanners {
+                if autoFill.showsBanner {
                     AutoFillBanner()
                 }
             }
-            .padding(.leading, sidebarWidth)
         }
         #if os(macOS)
         .dropDestination(for: URL.self) { urls, _ in

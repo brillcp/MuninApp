@@ -8,8 +8,7 @@ struct TwoFactorView: View {
     /// The subscription state. Without an active subscription, the vault is
     /// read-only.
     @Environment(SubscriptionManager.self) private var subscriptions
-    /// The width the macOS sidebar covers, which the empty state and banners
-    /// start after.
+    /// The width the macOS sidebar covers, which the empty state starts after.
     @Environment(\.sidebarWidth) private var sidebarWidth
     /// A Boolean value that indicates whether the Add Account sheet is presented.
     @State private var isAdding = false
@@ -47,14 +46,7 @@ struct TwoFactorView: View {
                 .navigationSplitViewStyle(.prominentDetail)
                 .toolbar { toolbarContent }
                 .safeAreaInset(edge: .bottom) {
-                    Group {
-                        if subscriptions.isReadOnly {
-                            ReadOnlyBanner()
-                        } else if subscriptions.isInGracePeriod {
-                            BillingIssueBanner()
-                        }
-                    }
-                    .padding(.leading, sidebarWidth)
+                    SubscriptionBanners()
                 }
                 .refreshable { await viewModel.refresh() }
                 .task { await viewModel.refresh() }
