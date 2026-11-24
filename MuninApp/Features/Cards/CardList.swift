@@ -60,7 +60,7 @@ private extension CardList {
     /// A row that pushes or selects its card.
     func row(_ item: CardItem) -> some View {
         NavigationLink(value: item.id) {
-            CardRow(item: item)
+            CardRow(name: item.name, lastDigits: item.lastDigits)
                 .padding(.leading, sidebarWidth)
         }
     }

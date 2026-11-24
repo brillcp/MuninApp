@@ -2,8 +2,10 @@ import SwiftUI
 
 /// A row that shows a card's name and the last four digits of its number.
 struct CardRow: View {
-    /// The card to display.
-    let item: CardItem
+    /// The card's name.
+    let name: String
+    /// The last four digits of the card number.
+    let lastDigits: String
 
     var body: some View {
         #if os(iOS)
@@ -19,9 +21,9 @@ struct CardRow: View {
                 .foregroundStyle(.tint)
                 .frame(width: DesignKit.Spacing.Primitive.s40)
             VStack(alignment: .leading, spacing: DesignKit.Spacing.Primitive.s4) {
-                Text(item.name)
-                if !item.lastDigits.isEmpty {
-                    Text(verbatim: "•••• \(item.lastDigits)")
+                Text(name)
+                if !lastDigits.isEmpty {
+                    Text(verbatim: "•••• \(lastDigits)")
                         .font(.subheadline.monospaced())
                         .foregroundStyle(.secondary)
                 }

@@ -3,18 +3,14 @@ import SwiftUI
 /// A view that shows every field of a stored card.
 ///
 /// The number and security code stay encrypted until they're revealed or
-/// copied; the expiry date and note are decrypted while the card is
-/// displayed. Tapping a row copies its value, except a revealed number or
-/// code, so it can be selected instead. Copied numbers and codes are cleared
-/// from the clipboard after a minute.
+/// copied, each in its own ``CardSecretRow``; the expiry date and note are
+/// decrypted while the card is displayed. Tapping a row copies its value,
+/// except a revealed number or code, so it can be selected instead. Copied
+/// numbers and codes are cleared from the clipboard after a minute.
 struct CardInspector: View {
     /// The subscription state; Delete is disabled while the vault is read-only.
     @Environment(SubscriptionManager.self) private var subscriptions
 
-    /// The decrypted card number while it's revealed.
-    @State private var revealedNumber: String?
-    /// The decrypted security code while it's revealed.
-    @State private var revealedCVV: String?
     /// The decrypted expiry date while the card is displayed.
     @State private var expiry: String?
     /// The decrypted note while the card is displayed.
@@ -36,20 +32,7 @@ struct CardInspector: View {
 
     var body: some View {
         Form {
-            Section {
-                VStack(spacing: DesignKit.Spacing.Primitive.s16) {
-                    Image(systemName: DesignKit.Icon.cards)
-                        .font(.system(size: DesignKit.Spacing.Primitive.s48))
-                        .foregroundStyle(.tint)
-                    Text(item.name)
-                        .font(.title2.bold())
-                        .multilineTextAlignment(.leading)
-                        .textSelection(.enabled)
-                }
-                .frame(maxWidth: .infinity)
-                .listRowBackground(Color.clear)
-                .padding(.vertical, DesignKit.Spacing.Primitive.s8)
-            }
+            CardInspectorHeader(name: item.name)
 
             Section {
                 if !item.holder.isEmpty {
@@ -61,20 +44,15 @@ struct CardInspector: View {
                     .onTapGesture { copy(.holder, perform: copyHolder) }
                 }
 
-                DetailRow(label: "card.field.number", isCopied: copiedField == .number) {
-                    if let revealedNumber {
-                        Text(verbatim: CardItem.formatted(revealedNumber))
-                            .font(.body.monospaced())
-                            .textSelection(.enabled)
-                    } else {
-                        Text(verbatim: "•••• \(item.lastDigits)")
-                            .font(.body.monospaced())
-                    }
-                } actions: {
-                    revealButton(isRevealed: revealedNumber != nil, action: toggleNumber)
-                    copyButton(.number, perform: copyNumber)
-                }
-                .gesture(TapGesture().onEnded(copyNumberFromRow), isEnabled: revealedNumber == nil)
+                CardSecretRow(
+                    label: "card.field.number",
+                    maskedValue: "•••• \(item.lastDigits)",
+                    ciphertext: item.encryptedNumber,
+                    field: .number,
+                    isCopied: copiedField == .number,
+                    decrypt: decrypt,
+                    onCopy: copyNumberWithFeedback
+                )
 
                 if let expiry, !expiry.isEmpty {
                     DetailRow(label: "card.field.expiry", isCopied: copiedField == .expiry) {
@@ -86,20 +64,15 @@ struct CardInspector: View {
                     .onTapGesture { copy(.expiry, perform: copyExpiry) }
                 }
 
-                DetailRow(label: "card.field.cvv", isCopied: copiedField == .cvv) {
-                    if let revealedCVV {
-                        Text(revealedCVV)
-                            .font(.body.monospaced())
-                            .textSelection(.enabled)
-                    } else {
-                        Text(verbatim: "•••")
-                            .font(.body.monospaced())
-                    }
-                } actions: {
-                    revealButton(isRevealed: revealedCVV != nil, action: toggleCVV)
-                    copyButton(.cvv, perform: copyCVV)
-                }
-                .gesture(TapGesture().onEnded(copyCVVFromRow), isEnabled: revealedCVV == nil)
+                CardSecretRow(
+                    label: "card.field.cvv",
+                    maskedValue: "•••",
+                    ciphertext: item.encryptedCVV,
+                    field: .cvv,
+                    isCopied: copiedField == .cvv,
+                    decrypt: decrypt,
+                    onCopy: copyCVVWithFeedback
+                )
             }
 
             if let note, !note.isEmpty {
@@ -139,8 +112,6 @@ struct CardInspector: View {
         #endif
         .task(id: item.encryptedExpiry, loadExpiry)
         .task(id: item.encryptedNote, loadNote)
-        .onChange(of: item.encryptedNumber, hideNumber)
-        .onChange(of: item.encryptedCVV, hideCVV)
         .onDisappear(perform: clearDecrypted)
     }
 }
@@ -156,34 +127,12 @@ private extension CardInspector {
         note = try? decrypt(item.encryptedNote, .note)
     }
 
-    /// Hides a revealed number once an edit changes it.
-    func hideNumber() {
-        revealedNumber = nil
-    }
-
-    /// Hides a revealed security code once an edit changes it.
-    func hideCVV() {
-        revealedCVV = nil
-    }
-
-    /// Drops every decrypted value when the inspector goes away.
+    /// Drops the decrypted expiry date and note when the inspector goes away.
+    ///
+    /// Each ``CardSecretRow`` drops its own revealed value.
     func clearDecrypted() {
-        revealedNumber = nil
-        revealedCVV = nil
         expiry = nil
         note = nil
-    }
-
-    /// Reveals or hides the card number.
-    func toggleNumber() {
-        hapticTaps += 1
-        revealedNumber = revealedNumber == nil ? try? decrypt(item.encryptedNumber, .number) : nil
-    }
-
-    /// Reveals or hides the security code.
-    func toggleCVV() {
-        hapticTaps += 1
-        revealedCVV = revealedCVV == nil ? try? decrypt(item.encryptedCVV, .cvv) : nil
     }
 
     /// Copies the cardholder name.
@@ -206,25 +155,14 @@ private extension CardInspector {
         onCopySensitive(item.encryptedCVV, .cvv)
     }
 
-    /// Copies the number from a tap on its row while it's hidden.
-    func copyNumberFromRow() {
+    /// Copies the number and briefly shows “Copied” on its row.
+    func copyNumberWithFeedback() {
         copy(.number, perform: copyNumber)
     }
 
-    /// Copies the security code from a tap on its row while it's hidden.
-    func copyCVVFromRow() {
+    /// Copies the security code and briefly shows “Copied” on its row.
+    func copyCVVWithFeedback() {
         copy(.cvv, perform: copyCVV)
-    }
-
-    /// A Show or Hide button for a hidden field's row.
-    ///
-    /// - Parameters:
-    ///   - isRevealed: Whether the field is revealed.
-    ///   - action: The action that reveals or hides the field.
-    func revealButton(isRevealed: Bool, action: @escaping () -> Void) -> some View {
-        Button(isRevealed ? "passwordInspector.hide" : "passwordInspector.show",
-               systemImage: isRevealed ? DesignKit.Icon.hidePassword : DesignKit.Icon.showPassword,
-               action: action)
     }
 
     /// A Copy button for a field's row.

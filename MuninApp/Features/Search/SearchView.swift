@@ -55,7 +55,7 @@ struct SearchView: View {
                     Section("search.section.cards") {
                         ForEach(cards) { item in
                             NavigationLink(value: CardRoute(id: item.id)) {
-                                CardRow(item: item)
+                                CardRow(name: item.name, lastDigits: item.lastDigits)
                             }
                         }
                     }
