@@ -4,6 +4,7 @@ import SwiftUI
 ///
 /// Fields are encrypted before they're sent. The sections match
 /// ``CardInspector``. When creating a card, the name field starts with focus.
+/// The card number is grouped in fours as it's typed.
 struct CardEditorView: View {
     /// The action that closes the editor.
     @Environment(\.dismiss) private var dismiss
@@ -82,6 +83,7 @@ struct CardEditorView: View {
             }
             .formStyle(.grouped)
             .onAppear(perform: focusName)
+            .onChange(of: fields.number, formatNumber)
             .sensoryFeedback(.impact(weight: .light), trigger: hapticTaps)
             .disabled(isSaving)
             .navigationTitle(isEditing ? "cardEditor.editTitle" : "cardEditor.newTitle")
@@ -109,6 +111,13 @@ private extension CardEditorView {
     /// Focuses the name field when creating a card.
     func focusName() {
         isNameFocused = !isEditing
+    }
+
+    /// Groups the card number in fours while it's typed or pasted, such as
+    /// `4242 4242 4242 4242`, dropping anything that isn't a digit.
+    func formatNumber() {
+        let formatted = CardItem.formatted(fields.number)
+        if formatted != fields.number { fields.number = formatted }
     }
 
     /// Closes the editor without saving.
