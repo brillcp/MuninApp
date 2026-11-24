@@ -4,7 +4,7 @@
 "account.delete" = "Удалить учетную запись";
 "account.delete.failed" = "Не удалось удалить учетную запись";
 "account.delete.locked" = "Разблокируйте Munin, чтобы удалить учетную запись.";
-"account.delete.message" = "Ваша учетная запись Munin, пароли и учетные записи 2FA будут удалены навсегда. Это действие нельзя отменить. Вы подтвердите удаление с помощью Аккаунта Apple — при этом Munin также будет удален из «Входа с Apple».\n\nПодписка App Store не отменяется. Сначала отмените ее в разделе «Управлять подпиской».";
+"account.delete.message" = "Ваша учетная запись Munin, пароли, карты и учетные записи 2FA будут удалены навсегда. Это действие нельзя отменить. Вы подтвердите удаление с помощью Аккаунта Apple — при этом Munin также будет удален из «Входа с Apple».\n\nПодписка App Store не отменяется. Сначала отмените ее в разделе «Управлять подпиской».";
 "account.delete.title" = "Удалить учетную запись Munin?";
 "account.showRecoveryKey" = "Показать ключ восстановления";
 "account.signOut" = "Выйти";
@@ -230,10 +230,10 @@
 "settings.version" = "Версия";
 
 /** Search **/
-"search.empty.message" = "Ищите пароли и коды 2FA по названию, имени пользователя или сайту.";
+"search.empty.message" = "Ищите пароли, карты и коды 2FA по названию, имени пользователя или сайту.";
 "search.empty.title" = "Поиск";
 "search.find" = "Найти";
-"search.prompt" = "Пароли и 2FA";
+"search.prompt" = "Пароли, карты и 2FA";
 "search.section.codes" = "2FA";
 "search.section.passwords" = "Пароли";
 "search.title" = "Поиск";
@@ -298,3 +298,19 @@
 "update.now" = "Обновить сейчас";
 "update.snooze" = "Не спрашивать некоторое время";
 "update.later" = "Позже";
+
+/** Cards **/
+"main.tab.cards" = "Карты";
+"cards.title" = "Карты";
+"search.section.cards" = "Карты";
+"cards.createItem" = "Новая карта";
+"cards.empty.title" = "Нет карт";
+"cards.search.prompt" = "Поиск карт";
+"cards.delete.title" = "Удалить карту?";
+"cards.copyNumber" = "Скопировать номер карты";
+"card.field.holder" = "Владелец карты";
+"card.field.number" = "Номер карты";
+"card.field.expiry" = "Срок действия";
+"card.field.cvv" = "Код безопасности";
+"cardEditor.newTitle" = "Новая карта";
+"cardEditor.editTitle" = "Изменить карту";

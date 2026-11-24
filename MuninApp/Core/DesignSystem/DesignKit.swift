@@ -51,6 +51,8 @@ nonisolated enum DesignKit {
         static let vault = "lock.rectangle.stack"
         /// 2FA accounts.
         static let twoFactor = "key.viewfinder"
+        /// Stored cards.
+        static let cards = "creditcard"
         /// Settings.
         static let settings = "gearshape"
         /// Search.
@@ -61,6 +63,8 @@ nonisolated enum DesignKit {
         static let add = "plus"
         /// Create a password.
         static let createPassword = "plus.square.on.square"
+        /// Create a card.
+        static let createCard = "plus.rectangle.on.rectangle"
         /// Copy a value.
         static let copy = "square.on.square"
         /// A value was just copied.

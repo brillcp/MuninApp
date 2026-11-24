@@ -4,7 +4,7 @@
 "account.delete" = "Eyða aðgangi";
 "account.delete.failed" = "Ekki tókst að eyða aðganginum";
 "account.delete.locked" = "Taktu Munin úr lás til að eyða aðganginum.";
-"account.delete.message" = "Munin-aðganginum þínum, aðgangsorðum og 2FA-aðgöngum verður eytt varanlega. Ekki er hægt að afturkalla þetta. Þú staðfestir með Apple-aðganginum þínum, sem fjarlægir Munin einnig úr „Innskráning með Apple“.\n\nÁskriftinni þinni í App Store er ekki sagt upp. Segðu henni fyrst upp undir „Stjórna áskrift“.";
+"account.delete.message" = "Munin-aðganginum þínum, aðgangsorðum, kortum og 2FA-aðgöngum verður eytt varanlega. Ekki er hægt að afturkalla þetta. Þú staðfestir með Apple-aðganginum þínum, sem fjarlægir Munin einnig úr „Innskráning með Apple“.\n\nÁskriftinni þinni í App Store er ekki sagt upp. Segðu henni fyrst upp undir „Stjórna áskrift“.";
 "account.delete.title" = "Eyða Munin-aðganginum?";
 "account.showRecoveryKey" = "Sýna endurheimtarlykil";
 "account.signOut" = "Skrá út";
@@ -230,10 +230,10 @@
 "settings.version" = "Útgáfa";
 
 /** Search **/
-"search.empty.message" = "Finndu aðgangsorð og 2FA-kóða eftir heiti, notandanafni eða vefsvæði.";
+"search.empty.message" = "Finndu aðgangsorð, kort og 2FA-kóða eftir heiti, notandanafni eða vefsvæði.";
 "search.empty.title" = "Leitaðu að hverju sem er";
 "search.find" = "Finna";
-"search.prompt" = "Aðgangsorð og 2FA";
+"search.prompt" = "Aðgangsorð, kort og 2FA";
 "search.section.codes" = "2FA";
 "search.section.passwords" = "Aðgangsorð";
 "search.title" = "Leita";
@@ -298,3 +298,19 @@
 "update.now" = "Uppfæra núna";
 "update.snooze" = "Ekki spyrja í bili";
 "update.later" = "Seinna";
+
+/** Cards **/
+"main.tab.cards" = "Kort";
+"cards.title" = "Kort";
+"search.section.cards" = "Kort";
+"cards.createItem" = "Nýtt kort";
+"cards.empty.title" = "Engin kort";
+"cards.search.prompt" = "Leita í kortum";
+"cards.delete.title" = "Eyða korti?";
+"cards.copyNumber" = "Afrita kortanúmer";
+"card.field.holder" = "Korthafi";
+"card.field.number" = "Kortanúmer";
+"card.field.expiry" = "Gildistími";
+"card.field.cvv" = "Öryggiskóði";
+"cardEditor.newTitle" = "Nýtt kort";
+"cardEditor.editTitle" = "Breyta korti";

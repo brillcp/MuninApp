@@ -4,7 +4,7 @@
 "account.delete" = "Radera konto";
 "account.delete.failed" = "Kunde inte radera kontot";
 "account.delete.locked" = "Lås upp Munin för att radera ditt konto.";
-"account.delete.message" = "Detta raderar ditt Munin-konto, dina lösenord och 2FA-konton permanent. Det går inte att ångra. Du bekräftar med ditt Apple-konto, vilket också tar bort Munin från Logga in med Apple.\n\nDin App Store-prenumeration avslutas inte. Avsluta den under Hantera prenumeration först.";
+"account.delete.message" = "Detta raderar ditt Munin-konto, dina lösenord, kort och 2FA-konton permanent. Det går inte att ångra. Du bekräftar med ditt Apple-konto, vilket också tar bort Munin från Logga in med Apple.\n\nDin App Store-prenumeration avslutas inte. Avsluta den under Hantera prenumeration först.";
 "account.delete.title" = "Radera ditt Munin-konto?";
 "account.showRecoveryKey" = "Visa återställningsnyckel";
 "account.signOut" = "Logga ut";
@@ -230,10 +230,10 @@
 "settings.version" = "Version";
 
 /** Search **/
-"search.empty.message" = "Hitta lösenord och 2FA-koder efter namn, användarnamn eller webbplats.";
+"search.empty.message" = "Hitta lösenord, kort och 2FA-koder efter namn, användarnamn eller webbplats.";
 "search.empty.title" = "Sök";
 "search.find" = "Hitta";
-"search.prompt" = "Lösenord och 2FA";
+"search.prompt" = "Lösenord, kort och 2FA";
 "search.section.codes" = "2FA";
 "search.section.passwords" = "Lösenord";
 "search.title" = "Sök";
@@ -298,3 +298,19 @@
 "update.now" = "Uppdatera nu";
 "update.snooze" = "Fråga inte på ett tag";
 "update.later" = "Senare";
+
+/** Cards **/
+"main.tab.cards" = "Kort";
+"cards.title" = "Kort";
+"search.section.cards" = "Kort";
+"cards.createItem" = "Nytt kort";
+"cards.empty.title" = "Inga kort";
+"cards.search.prompt" = "Sök kort";
+"cards.delete.title" = "Radera kort?";
+"cards.copyNumber" = "Kopiera kortnummer";
+"card.field.holder" = "Kortinnehavare";
+"card.field.number" = "Kortnummer";
+"card.field.expiry" = "Utgångsdatum";
+"card.field.cvv" = "Säkerhetskod";
+"cardEditor.newTitle" = "Nytt kort";
+"cardEditor.editTitle" = "Redigera kort";

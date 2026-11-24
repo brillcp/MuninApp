@@ -30,6 +30,17 @@ protocol MuninAPI: AnyObject, Sendable {
     /// Updates a password item's modification date, such as after its password is copied.
     func touchPassword(id: UUID) async throws -> EncryptedPassword
 
+    // MARK: - Cards
+
+    /// Fetches the user's encrypted cards.
+    func cards() async throws -> [EncryptedCard]
+    /// Stores a new card.
+    func createCard(_ body: CardFieldsBody) async throws -> EncryptedCard
+    /// Replaces a card's fields.
+    func updateCard(id: UUID, _ body: CardFieldsBody, proof: String) async throws -> EncryptedCard
+    /// Deletes a card.
+    func deleteCard(id: UUID, proof: String) async throws
+
     // MARK: - Vault key
 
     /// Fetches the wrapped vault key, or `nil` if no master password is set up.

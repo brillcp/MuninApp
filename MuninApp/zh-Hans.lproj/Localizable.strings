@@ -4,7 +4,7 @@
 "account.delete" = "删除账户";
 "account.delete.failed" = "无法删除账户";
 "account.delete.locked" = "请解锁 Munin 以删除账户。";
-"account.delete.message" = "你的 Munin 账户、密码和 2FA 账户将被永久删除，且无法撤销。你需要使用 Apple 账户确认，这也会将 Munin 从“通过 Apple 登录”中移除。\n\n你的 App Store 订阅不会被取消。请先在“管理订阅”中取消。";
+"account.delete.message" = "你的 Munin 账户、密码、卡片和 2FA 账户将被永久删除，且无法撤销。你需要使用 Apple 账户确认，这也会将 Munin 从“通过 Apple 登录”中移除。\n\n你的 App Store 订阅不会被取消。请先在“管理订阅”中取消。";
 "account.delete.title" = "要删除你的 Munin 账户吗？";
 "account.showRecoveryKey" = "显示恢复密钥";
 "account.signOut" = "退出登录";
@@ -230,10 +230,10 @@
 "settings.version" = "版本";
 
 /** Search **/
-"search.empty.message" = "按名称、用户名或网站查找密码和 2FA 代码。";
+"search.empty.message" = "按名称、用户名或网站查找密码、卡片和 2FA 代码。";
 "search.empty.title" = "搜索";
 "search.find" = "查找";
-"search.prompt" = "密码和 2FA";
+"search.prompt" = "密码、卡片和 2FA";
 "search.section.codes" = "2FA";
 "search.section.passwords" = "密码";
 "search.title" = "搜索";
@@ -298,3 +298,19 @@
 "update.now" = "立即更新";
 "update.snooze" = "暂时不要提醒";
 "update.later" = "稍后";
+
+/** Cards **/
+"main.tab.cards" = "卡片";
+"cards.title" = "卡片";
+"search.section.cards" = "卡片";
+"cards.createItem" = "新建卡片";
+"cards.empty.title" = "没有卡片";
+"cards.search.prompt" = "搜索卡片";
+"cards.delete.title" = "删除卡片？";
+"cards.copyNumber" = "拷贝卡号";
+"card.field.holder" = "持卡人";
+"card.field.number" = "卡号";
+"card.field.expiry" = "有效期";
+"card.field.cvv" = "安全码";
+"cardEditor.newTitle" = "新建卡片";
+"cardEditor.editTitle" = "编辑卡片";

@@ -4,7 +4,7 @@
 "account.delete" = "Smazat účet";
 "account.delete.failed" = "Účet nelze smazat";
 "account.delete.locked" = "Chcete-li smazat účet, odemkněte Munin.";
-"account.delete.message" = "Váš účet Munin, hesla a účty 2FA budou trvale smazány. Tuto akci nelze vrátit. Potvrdíte ji svým Apple účtem, čímž se Munin odebere i z „Přihlášení přes Apple“.\n\nPředplatné v App Storu se nezruší. Nejprve ho zrušte v části Spravovat předplatné.";
+"account.delete.message" = "Váš účet Munin, hesla, karty a účty 2FA budou trvale smazány. Tuto akci nelze vrátit. Potvrdíte ji svým Apple účtem, čímž se Munin odebere i z „Přihlášení přes Apple“.\n\nPředplatné v App Storu se nezruší. Nejprve ho zrušte v části Spravovat předplatné.";
 "account.delete.title" = "Smazat účet Munin?";
 "account.showRecoveryKey" = "Zobrazit klíč pro obnovení";
 "account.signOut" = "Odhlásit se";
@@ -230,10 +230,10 @@
 "settings.version" = "Verze";
 
 /** Search **/
-"search.empty.message" = "Hledejte hesla a kódy 2FA podle názvu, uživatelského jména nebo webu.";
+"search.empty.message" = "Hledejte hesla, karty a kódy 2FA podle názvu, uživatelského jména nebo webu.";
 "search.empty.title" = "Hledat";
 "search.find" = "Najít";
-"search.prompt" = "Hesla a 2FA";
+"search.prompt" = "Hesla, karty a 2FA";
 "search.section.codes" = "2FA";
 "search.section.passwords" = "Hesla";
 "search.title" = "Hledat";
@@ -298,3 +298,19 @@
 "update.now" = "Aktualizovat nyní";
 "update.snooze" = "Neptat se po nějakou dobu";
 "update.later" = "Později";
+
+/** Cards **/
+"main.tab.cards" = "Karty";
+"cards.title" = "Karty";
+"search.section.cards" = "Karty";
+"cards.createItem" = "Nová karta";
+"cards.empty.title" = "Žádné karty";
+"cards.search.prompt" = "Hledat karty";
+"cards.delete.title" = "Smazat kartu?";
+"cards.copyNumber" = "Kopírovat číslo karty";
+"card.field.holder" = "Držitel karty";
+"card.field.number" = "Číslo karty";
+"card.field.expiry" = "Platnost";
+"card.field.cvv" = "Bezpečnostní kód";
+"cardEditor.newTitle" = "Nová karta";
+"cardEditor.editTitle" = "Upravit kartu";

@@ -4,7 +4,7 @@
 "account.delete" = "Konto löschen";
 "account.delete.failed" = "Konto konnte nicht gelöscht werden";
 "account.delete.locked" = "Entsperre Munin, um dein Konto zu löschen.";
-"account.delete.message" = "Dadurch werden dein Munin-Konto, deine Passwörter und 2FA-Konten dauerhaft gelöscht. Das lässt sich nicht rückgängig machen. Du bestätigst mit deinem Apple Account, wodurch Munin auch aus „Mit Apple anmelden“ entfernt wird.\n\nDein App Store-Abo wird nicht gekündigt. Kündige es zuerst unter „Abo verwalten“.";
+"account.delete.message" = "Dadurch werden dein Munin-Konto, deine Passwörter, Karten und 2FA-Konten dauerhaft gelöscht. Das lässt sich nicht rückgängig machen. Du bestätigst mit deinem Apple Account, wodurch Munin auch aus „Mit Apple anmelden“ entfernt wird.\n\nDein App Store-Abo wird nicht gekündigt. Kündige es zuerst unter „Abo verwalten“.";
 "account.delete.title" = "Munin-Konto löschen?";
 "account.showRecoveryKey" = "Wiederherstellungsschlüssel anzeigen";
 "account.signOut" = "Abmelden";
@@ -230,10 +230,10 @@
 "settings.version" = "Version";
 
 /** Search **/
-"search.empty.message" = "Finde Passwörter und 2FA-Codes nach Name, Benutzername oder Website.";
+"search.empty.message" = "Finde Passwörter, Karten und 2FA-Codes nach Name, Benutzername oder Website.";
 "search.empty.title" = "Suchen";
 "search.find" = "Suchen";
-"search.prompt" = "Passwörter und 2FA";
+"search.prompt" = "Passwörter, Karten und 2FA";
 "search.section.codes" = "2FA";
 "search.section.passwords" = "Passwörter";
 "search.title" = "Suchen";
@@ -298,3 +298,19 @@
 "update.now" = "Jetzt aktualisieren";
 "update.snooze" = "Eine Weile nicht fragen";
 "update.later" = "Später";
+
+/** Cards **/
+"main.tab.cards" = "Karten";
+"cards.title" = "Karten";
+"search.section.cards" = "Karten";
+"cards.createItem" = "Neue Karte";
+"cards.empty.title" = "Keine Karten";
+"cards.search.prompt" = "Karten durchsuchen";
+"cards.delete.title" = "Karte löschen?";
+"cards.copyNumber" = "Kartennummer kopieren";
+"card.field.holder" = "Karteninhaber";
+"card.field.number" = "Kartennummer";
+"card.field.expiry" = "Ablaufdatum";
+"card.field.cvv" = "Sicherheitscode";
+"cardEditor.newTitle" = "Neue Karte";
+"cardEditor.editTitle" = "Karte bearbeiten";

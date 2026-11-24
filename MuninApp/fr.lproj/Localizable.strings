@@ -4,7 +4,7 @@
 "account.delete" = "Supprimer le compte";
 "account.delete.failed" = "Impossible de supprimer le compte";
 "account.delete.locked" = "Déverrouillez Munin pour supprimer votre compte.";
-"account.delete.message" = "Votre compte Munin, vos mots de passe et vos comptes 2FA seront définitivement supprimés. Cette action est irréversible. Vous confirmerez avec votre compte Apple, ce qui retire aussi Munin de « Se connecter avec Apple ».\n\nVotre abonnement App Store n’est pas résilié. Résiliez-le d’abord dans Gérer l’abonnement.";
+"account.delete.message" = "Votre compte Munin, vos mots de passe, vos cartes et vos comptes 2FA seront définitivement supprimés. Cette action est irréversible. Vous confirmerez avec votre compte Apple, ce qui retire aussi Munin de « Se connecter avec Apple ».\n\nVotre abonnement App Store n’est pas résilié. Résiliez-le d’abord dans Gérer l’abonnement.";
 "account.delete.title" = "Supprimer votre compte Munin ?";
 "account.showRecoveryKey" = "Afficher la clé de récupération";
 "account.signOut" = "Se déconnecter";
@@ -230,10 +230,10 @@
 "settings.version" = "Version";
 
 /** Search **/
-"search.empty.message" = "Trouvez mots de passe et codes 2FA par nom, nom d’utilisateur ou site web.";
+"search.empty.message" = "Trouvez mots de passe, cartes et codes 2FA par nom, nom d’utilisateur ou site web.";
 "search.empty.title" = "Rechercher";
 "search.find" = "Rechercher";
-"search.prompt" = "Mots de passe et 2FA";
+"search.prompt" = "Mots de passe, cartes et 2FA";
 "search.section.codes" = "2FA";
 "search.section.passwords" = "Mots de passe";
 "search.title" = "Rechercher";
@@ -298,3 +298,19 @@
 "update.now" = "Mettre à jour maintenant";
 "update.snooze" = "Ne pas redemander avant un moment";
 "update.later" = "Plus tard";
+
+/** Cards **/
+"main.tab.cards" = "Cartes";
+"cards.title" = "Cartes";
+"search.section.cards" = "Cartes";
+"cards.createItem" = "Nouvelle carte";
+"cards.empty.title" = "Aucune carte";
+"cards.search.prompt" = "Rechercher des cartes";
+"cards.delete.title" = "Supprimer la carte ?";
+"cards.copyNumber" = "Copier le numéro de carte";
+"card.field.holder" = "Titulaire";
+"card.field.number" = "Numéro de carte";
+"card.field.expiry" = "Date d’expiration";
+"card.field.cvv" = "Code de sécurité";
+"cardEditor.newTitle" = "Nouvelle carte";
+"cardEditor.editTitle" = "Modifier la carte";

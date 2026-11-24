@@ -4,7 +4,7 @@
 "account.delete" = "Slett konto";
 "account.delete.failed" = "Kunne ikke slette kontoen";
 "account.delete.locked" = "Lås opp Munin for å slette kontoen din.";
-"account.delete.message" = "Munin-kontoen din, passordene og 2FA-kontoene dine slettes for godt. Dette kan ikke angres. Du bekrefter med Apple-kontoen din, som også fjerner Munin fra Logg på med Apple.\n\nApp Store-abonnementet ditt blir ikke avsluttet. Avslutt det først under Administrer abonnement.";
+"account.delete.message" = "Munin-kontoen din, passordene, kortene og 2FA-kontoene dine slettes for godt. Dette kan ikke angres. Du bekrefter med Apple-kontoen din, som også fjerner Munin fra Logg på med Apple.\n\nApp Store-abonnementet ditt blir ikke avsluttet. Avslutt det først under Administrer abonnement.";
 "account.delete.title" = "Slette Munin-kontoen din?";
 "account.showRecoveryKey" = "Vis gjenopprettingsnøkkel";
 "account.signOut" = "Logg ut";
@@ -230,10 +230,10 @@
 "settings.version" = "Versjon";
 
 /** Search **/
-"search.empty.message" = "Finn passord og 2FA-koder etter navn, brukernavn eller nettsted.";
+"search.empty.message" = "Finn passord, kort og 2FA-koder etter navn, brukernavn eller nettsted.";
 "search.empty.title" = "Søk";
 "search.find" = "Søk";
-"search.prompt" = "Passord og 2FA";
+"search.prompt" = "Passord, kort og 2FA";
 "search.section.codes" = "2FA";
 "search.section.passwords" = "Passord";
 "search.title" = "Søk";
@@ -298,3 +298,19 @@
 "update.now" = "Oppdater nå";
 "update.snooze" = "Ikke spør på en stund";
 "update.later" = "Senere";
+
+/** Cards **/
+"main.tab.cards" = "Kort";
+"cards.title" = "Kort";
+"search.section.cards" = "Kort";
+"cards.createItem" = "Nytt kort";
+"cards.empty.title" = "Ingen kort";
+"cards.search.prompt" = "Søk i kort";
+"cards.delete.title" = "Slette kortet?";
+"cards.copyNumber" = "Kopier kortnummer";
+"card.field.holder" = "Kortinnehaver";
+"card.field.number" = "Kortnummer";
+"card.field.expiry" = "Utløpsdato";
+"card.field.cvv" = "Sikkerhetskode";
+"cardEditor.newTitle" = "Nytt kort";
+"cardEditor.editTitle" = "Rediger kort";

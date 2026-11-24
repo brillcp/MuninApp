@@ -72,6 +72,31 @@ extension MuninService {
         return try await service.request(MuninRequest.touchPassword(id))
     }
 
+    /// Fetches the user's encrypted cards.
+    func cards() async throws -> [EncryptedCard] {
+        try await tokenProvider.ensureFresh()
+        let response: CardsResponse = try await service.request(MuninRequest.cards)
+        return response.cards
+    }
+
+    /// Stores a new card.
+    func createCard(_ body: CardFieldsBody) async throws -> EncryptedCard {
+        try await tokenProvider.ensureFresh()
+        return try await service.request(MuninRequest.createCard(body))
+    }
+
+    /// Replaces a card's fields.
+    func updateCard(id: UUID, _ body: CardFieldsBody, proof: String) async throws -> EncryptedCard {
+        try await tokenProvider.ensureFresh()
+        return try await authorizedService(proof: proof).request(MuninRequest.updateCard(id, body))
+    }
+
+    /// Deletes a card.
+    func deleteCard(id: UUID, proof: String) async throws {
+        try await tokenProvider.ensureFresh()
+        _ = try await authorizedService(proof: proof).response(MuninRequest.deleteCard(id))
+    }
+
     /// Fetches the wrapped vault key.
     ///
     /// - Returns: The key record, or `nil` if the user hasn't set up a master password.
@@ -122,8 +147,8 @@ extension MuninService {
         return try await service.request(MuninRequest.linkSubscription(LinkSubscriptionBody(transactionId: transactionID)))
     }
 
-    /// Deletes the account, including the vault key, passwords, 2FA accounts,
-    /// and subscription link.
+    /// Deletes the account, including the vault key, passwords, cards, 2FA
+    /// accounts, and subscription link.
     ///
     /// Requires a proof once a master password is set up.
     ///

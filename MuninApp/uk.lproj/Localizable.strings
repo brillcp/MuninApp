@@ -4,7 +4,7 @@
 "account.delete" = "Видалити обліковий запис";
 "account.delete.failed" = "Не вдалося видалити обліковий запис";
 "account.delete.locked" = "Розблокуйте Munin, щоб видалити обліковий запис.";
-"account.delete.message" = "Ваш обліковий запис Munin, паролі та облікові записи 2FA буде видалено назавжди. Цю дію не можна скасувати. Ви підтвердите її своїм обліковим записом Apple, і Munin також зникне зі «Входу через Apple».\n\nПідписку в App Store не буде скасовано. Спочатку скасуйте її в розділі «Керувати підпискою».";
+"account.delete.message" = "Ваш обліковий запис Munin, паролі, картки та облікові записи 2FA буде видалено назавжди. Цю дію не можна скасувати. Ви підтвердите її своїм обліковим записом Apple, і Munin також зникне зі «Входу через Apple».\n\nПідписку в App Store не буде скасовано. Спочатку скасуйте її в розділі «Керувати підпискою».";
 "account.delete.title" = "Видалити обліковий запис Munin?";
 "account.showRecoveryKey" = "Показати ключ відновлення";
 "account.signOut" = "Вийти";
@@ -230,10 +230,10 @@
 "settings.version" = "Версія";
 
 /** Search **/
-"search.empty.message" = "Знаходьте паролі та коди 2FA за назвою, іменем користувача або сайтом.";
+"search.empty.message" = "Знаходьте паролі, картки та коди 2FA за назвою, іменем користувача або сайтом.";
 "search.empty.title" = "Шукайте що завгодно";
 "search.find" = "Знайти";
-"search.prompt" = "Паролі та 2FA";
+"search.prompt" = "Паролі, картки та 2FA";
 "search.section.codes" = "2FA";
 "search.section.passwords" = "Паролі";
 "search.title" = "Пошук";
@@ -298,3 +298,19 @@
 "update.now" = "Оновити зараз";
 "update.snooze" = "Не питати деякий час";
 "update.later" = "Пізніше";
+
+/** Cards **/
+"main.tab.cards" = "Картки";
+"cards.title" = "Картки";
+"search.section.cards" = "Картки";
+"cards.createItem" = "Нова картка";
+"cards.empty.title" = "Немає карток";
+"cards.search.prompt" = "Пошук карток";
+"cards.delete.title" = "Видалити картку?";
+"cards.copyNumber" = "Скопіювати номер картки";
+"card.field.holder" = "Власник картки";
+"card.field.number" = "Номер картки";
+"card.field.expiry" = "Термін дії";
+"card.field.cvv" = "Код безпеки";
+"cardEditor.newTitle" = "Нова картка";
+"cardEditor.editTitle" = "Редагувати картку";

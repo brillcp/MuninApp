@@ -16,6 +16,9 @@ for iPhone, iPad, and Mac.
 
 - **Passwords.** Store names, websites, usernames, passwords, and notes.
   Generate passwords, search, and sort the vault.
+- **Cards.** Store payment cards with the cardholder, number, expiry date,
+  security code, and a note. Numbers and codes are copied to a clipboard that
+  clears itself.
 - **Two-factor codes.** TOTP codes (SHA-1, SHA-256, SHA-512), added by scanning
   a QR code, opening an `otpauth://` link, or entering the setup key. Google
   Authenticator exports (`otpauth-migration://`) import several accounts at
@@ -54,6 +57,7 @@ MuninApp/              The app target
 └── Features/
     ├── AddAccount/    Adding 2FA accounts by QR code, link, or setup key
     ├── AutoFill/      AutoFill setup guide and banner
+    ├── Cards/         The card list, detail, and editor
     ├── Lock/          Sign-in and lock screen
     ├── Main/          The main window: sidebar and tabs
     ├── MenuBar/       The Mac menu bar extra

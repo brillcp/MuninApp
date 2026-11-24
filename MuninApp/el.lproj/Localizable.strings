@@ -4,7 +4,7 @@
 "account.delete" = "Διαγραφή λογαριασμού";
 "account.delete.failed" = "Δεν ήταν δυνατή η διαγραφή του λογαριασμού";
 "account.delete.locked" = "Ξεκλειδώστε το Munin για να διαγράψετε τον λογαριασμό σας.";
-"account.delete.message" = "Ο λογαριασμός σας Munin, οι κωδικοί σας και οι λογαριασμοί 2FA θα διαγραφούν οριστικά. Αυτό δεν αναιρείται. Θα επιβεβαιώσετε με τον Λογαριασμό Apple, κάτι που αφαιρεί επίσης το Munin από τη «Σύνδεση μέσω Apple».\n\nΗ συνδρομή σας στο App Store δεν ακυρώνεται. Ακυρώστε την πρώτα στη Διαχείριση συνδρομής.";
+"account.delete.message" = "Ο λογαριασμός σας Munin, οι κωδικοί σας, οι κάρτες σας και οι λογαριασμοί 2FA θα διαγραφούν οριστικά. Αυτό δεν αναιρείται. Θα επιβεβαιώσετε με τον Λογαριασμό Apple, κάτι που αφαιρεί επίσης το Munin από τη «Σύνδεση μέσω Apple».\n\nΗ συνδρομή σας στο App Store δεν ακυρώνεται. Ακυρώστε την πρώτα στη Διαχείριση συνδρομής.";
 "account.delete.title" = "Διαγραφή του λογαριασμού σας Munin;";
 "account.showRecoveryKey" = "Εμφάνιση κλειδιού ανάκτησης";
 "account.signOut" = "Αποσύνδεση";
@@ -230,10 +230,10 @@
 "settings.version" = "Έκδοση";
 
 /** Search **/
-"search.empty.message" = "Βρείτε κωδικούς και κωδικούς 2FA με όνομα, όνομα χρήστη ή ιστότοπο.";
+"search.empty.message" = "Βρείτε κωδικούς, κάρτες και κωδικούς 2FA με όνομα, όνομα χρήστη ή ιστότοπο.";
 "search.empty.title" = "Αναζήτηση";
 "search.find" = "Εύρεση";
-"search.prompt" = "Κωδικοί και 2FA";
+"search.prompt" = "Κωδικοί, κάρτες και 2FA";
 "search.section.codes" = "2FA";
 "search.section.passwords" = "Κωδικοί";
 "search.title" = "Αναζήτηση";
@@ -298,3 +298,19 @@
 "update.now" = "Ενημέρωση τώρα";
 "update.snooze" = "Μην ρωτήσεις για λίγο";
 "update.later" = "Αργότερα";
+
+/** Cards **/
+"main.tab.cards" = "Κάρτες";
+"cards.title" = "Κάρτες";
+"search.section.cards" = "Κάρτες";
+"cards.createItem" = "Νέα κάρτα";
+"cards.empty.title" = "Καμία κάρτα";
+"cards.search.prompt" = "Αναζήτηση καρτών";
+"cards.delete.title" = "Διαγραφή κάρτας;";
+"cards.copyNumber" = "Αντιγραφή αριθμού κάρτας";
+"card.field.holder" = "Κάτοχος κάρτας";
+"card.field.number" = "Αριθμός κάρτας";
+"card.field.expiry" = "Ημερομηνία λήξης";
+"card.field.cvv" = "Κωδικός ασφαλείας";
+"cardEditor.newTitle" = "Νέα κάρτα";
+"cardEditor.editTitle" = "Επεξεργασία κάρτας";

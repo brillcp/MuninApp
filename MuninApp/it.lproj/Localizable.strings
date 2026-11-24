@@ -4,7 +4,7 @@
 "account.delete" = "Elimina account";
 "account.delete.failed" = "Impossibile eliminare l’account";
 "account.delete.locked" = "Sblocca Munin per eliminare il tuo account.";
-"account.delete.message" = "Il tuo account Munin, le password e gli account 2FA verranno eliminati definitivamente. L’operazione non può essere annullata. Confermerai con il tuo Apple Account, e Munin verrà rimosso anche da “Accedi con Apple”.\n\nL’abbonamento App Store non viene annullato. Annullalo prima in Gestisci abbonamento.";
+"account.delete.message" = "Il tuo account Munin, le password, le carte e gli account 2FA verranno eliminati definitivamente. L’operazione non può essere annullata. Confermerai con il tuo Apple Account, e Munin verrà rimosso anche da “Accedi con Apple”.\n\nL’abbonamento App Store non viene annullato. Annullalo prima in Gestisci abbonamento.";
 "account.delete.title" = "Eliminare l’account Munin?";
 "account.showRecoveryKey" = "Mostra chiave di recupero";
 "account.signOut" = "Esci";
@@ -230,10 +230,10 @@
 "settings.version" = "Versione";
 
 /** Search **/
-"search.empty.message" = "Trova password e codici 2FA per nome, nome utente o sito web.";
+"search.empty.message" = "Trova password, carte e codici 2FA per nome, nome utente o sito web.";
 "search.empty.title" = "Cerca";
 "search.find" = "Trova";
-"search.prompt" = "Password e 2FA";
+"search.prompt" = "Password, carte e 2FA";
 "search.section.codes" = "2FA";
 "search.section.passwords" = "Password";
 "search.title" = "Cerca";
@@ -298,3 +298,19 @@
 "update.now" = "Aggiorna ora";
 "update.snooze" = "Non chiedere per un po'";
 "update.later" = "Più tardi";
+
+/** Cards **/
+"main.tab.cards" = "Carte";
+"cards.title" = "Carte";
+"search.section.cards" = "Carte";
+"cards.createItem" = "Nuova carta";
+"cards.empty.title" = "Nessuna carta";
+"cards.search.prompt" = "Cerca carte";
+"cards.delete.title" = "Eliminare la carta?";
+"cards.copyNumber" = "Copia numero carta";
+"card.field.holder" = "Titolare";
+"card.field.number" = "Numero carta";
+"card.field.expiry" = "Scadenza";
+"card.field.cvv" = "Codice di sicurezza";
+"cardEditor.newTitle" = "Nuova carta";
+"cardEditor.editTitle" = "Modifica carta";

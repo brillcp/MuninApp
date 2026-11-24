@@ -20,6 +20,14 @@ enum MuninRequest: Requestable {
     case touchPassword(UUID)
     /// Deletes a password item.
     case deletePassword(UUID)
+    /// Fetches the signed-in user's encrypted cards.
+    case cards
+    /// Creates a card with every field encrypted.
+    case createCard(CardFieldsBody)
+    /// Replaces a card's fields and updates its modification date.
+    case updateCard(UUID, CardFieldsBody)
+    /// Deletes a card.
+    case deleteCard(UUID)
     /// Fetches the user's wrapped vault key and key derivation settings.
     case vaultKey
     /// Stores the wrapped vault key when the user first sets a master password.
@@ -40,18 +48,18 @@ enum MuninRequest: Requestable {
     /// The HTTP method for the request.
     var httpMethod: HTTP.Method {
         switch self {
-        case .entries, .passwords, .vaultKey, .subscription: return .get
-        case .createEntry, .createPassword, .touchPassword, .createVaultKey, .linkSubscription: return .post
-        case .deleteEntry, .deletePassword, .deleteAccount: return .delete
-        case .updatePassword, .replaceVaultKey:       return .put
+        case .entries, .passwords, .cards, .vaultKey, .subscription: return .get
+        case .createEntry, .createPassword, .touchPassword, .createCard, .createVaultKey, .linkSubscription: return .post
+        case .deleteEntry, .deletePassword, .deleteCard, .deleteAccount: return .delete
+        case .updatePassword, .updateCard, .replaceVaultKey: return .put
         }
     }
 
     /// How the request's parameters and body are encoded.
     var encoding: Request.Encoding {
         switch self {
-        case .entries, .deleteEntry, .passwords, .touchPassword, .deletePassword, .vaultKey, .subscription: return .query
-        case .createEntry, .createPassword, .updatePassword, .createVaultKey, .replaceVaultKey, .linkSubscription, .deleteAccount: return .json
+        case .entries, .deleteEntry, .passwords, .touchPassword, .deletePassword, .cards, .deleteCard, .vaultKey, .subscription: return .query
+        case .createEntry, .createPassword, .updatePassword, .createCard, .updateCard, .createVaultKey, .replaceVaultKey, .linkSubscription, .deleteAccount: return .json
         }
     }
 
@@ -66,10 +74,12 @@ enum MuninRequest: Requestable {
         case .createEntry(let body):    return body
         case .createPassword(let body): return body
         case .updatePassword(_, let body): return body
+        case .createCard(let body):     return body
+        case .updateCard(_, let body):  return body
         case .createVaultKey(let body), .replaceVaultKey(let body): return body
         case .linkSubscription(let body): return body
         case .deleteAccount(let body): return body
-        case .entries, .deleteEntry, .passwords, .touchPassword, .deletePassword, .vaultKey, .subscription: return nil
+        case .entries, .deleteEntry, .passwords, .touchPassword, .deletePassword, .cards, .deleteCard, .vaultKey, .subscription: return nil
         }
     }
 
@@ -82,6 +92,9 @@ enum MuninRequest: Requestable {
         case .touchPassword(let id):     return MuninEndpoint.passwordTouch(id)
         case .updatePassword(let id, _): return MuninEndpoint.password(id)
         case .deletePassword(let id):    return MuninEndpoint.password(id)
+        case .cards, .createCard:        return MuninEndpoint.cards
+        case .updateCard(let id, _):     return MuninEndpoint.card(id)
+        case .deleteCard(let id):        return MuninEndpoint.card(id)
         case .vaultKey, .createVaultKey, .replaceVaultKey: return MuninEndpoint.vaultKey
         case .subscription, .linkSubscription: return MuninEndpoint.subscription
         case .deleteAccount:             return MuninEndpoint.account
@@ -153,6 +166,54 @@ nonisolated struct EncryptedPassword: Sendable, Decodable {
     /// The encrypted note.
     let note: String
     /// The date the item was last modified.
+    let updatedAt: Date
+}
+
+// MARK: - Cards
+
+/// The body of `POST /v1/cards` and `PUT /v1/cards/{id}`.
+///
+/// Every field is ciphertext.
+nonisolated struct CardFieldsBody: Encodable, Sendable {
+    /// The encrypted name.
+    let name: String
+    /// The encrypted cardholder name.
+    let holder: String
+    /// The encrypted card number.
+    let number: String
+    /// The encrypted expiry date.
+    let expiry: String
+    /// The encrypted security code.
+    let cvv: String
+    /// The encrypted note.
+    let note: String
+}
+
+/// The response from `GET /v1/cards`.
+nonisolated struct CardsResponse: Sendable, Decodable {
+    /// The user's encrypted cards.
+    let cards: [EncryptedCard]
+}
+
+/// A card as the server stores it.
+///
+/// Every field except `id` and `updatedAt` is ciphertext.
+nonisolated struct EncryptedCard: Sendable, Decodable {
+    /// The card's server identifier.
+    let id: UUID
+    /// The encrypted name.
+    let name: String
+    /// The encrypted cardholder name.
+    let holder: String
+    /// The encrypted card number.
+    let number: String
+    /// The encrypted expiry date.
+    let expiry: String
+    /// The encrypted security code.
+    let cvv: String
+    /// The encrypted note.
+    let note: String
+    /// The date the card was last modified.
     let updatedAt: Date
 }
 

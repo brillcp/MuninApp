@@ -4,7 +4,7 @@
 "account.delete" = "アカウントを削除";
 "account.delete.failed" = "アカウントを削除できませんでした";
 "account.delete.locked" = "アカウントを削除するには Munin のロックを解除してください。";
-"account.delete.message" = "Munin アカウント、パスワード、2FA アカウントが完全に削除されます。この操作は取り消せません。Apple アカウントで確認すると、「Apple でサインイン」からも Munin が削除されます。\n\nApp Store のサブスクリプションは解約されません。先に「サブスクリプションを管理」で解約してください。";
+"account.delete.message" = "Munin アカウント、パスワード、カード、2FA アカウントが完全に削除されます。この操作は取り消せません。Apple アカウントで確認すると、「Apple でサインイン」からも Munin が削除されます。\n\nApp Store のサブスクリプションは解約されません。先に「サブスクリプションを管理」で解約してください。";
 "account.delete.title" = "Munin アカウントを削除しますか？";
 "account.showRecoveryKey" = "復旧キーを表示";
 "account.signOut" = "サインアウト";
@@ -230,10 +230,10 @@
 "settings.version" = "バージョン";
 
 /** Search **/
-"search.empty.message" = "名前、ユーザ名、Web サイトでパスワードや 2FA コードを検索できます。";
+"search.empty.message" = "名前、ユーザ名、Web サイトでパスワード、カード、2FA コードを検索できます。";
 "search.empty.title" = "検索";
 "search.find" = "検索";
-"search.prompt" = "パスワードと 2FA";
+"search.prompt" = "パスワード、カード、2FA";
 "search.section.codes" = "2FA";
 "search.section.passwords" = "パスワード";
 "search.title" = "検索";
@@ -298,3 +298,19 @@
 "update.now" = "今すぐアップデート";
 "update.snooze" = "しばらく表示しない";
 "update.later" = "後で";
+
+/** Cards **/
+"main.tab.cards" = "カード";
+"cards.title" = "カード";
+"search.section.cards" = "カード";
+"cards.createItem" = "新規カード";
+"cards.empty.title" = "カードがありません";
+"cards.search.prompt" = "カードを検索";
+"cards.delete.title" = "カードを削除しますか?";
+"cards.copyNumber" = "カード番号をコピー";
+"card.field.holder" = "カード名義人";
+"card.field.number" = "カード番号";
+"card.field.expiry" = "有効期限";
+"card.field.cvv" = "セキュリティコード";
+"cardEditor.newTitle" = "新規カード";
+"cardEditor.editTitle" = "カードを編集";

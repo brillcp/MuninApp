@@ -1,12 +1,13 @@
 #if os(iOS)
 import SwiftUI
 
-/// A view that searches passwords and two-factor accounts in a single list on iOS.
+/// A view that searches passwords, two-factor accounts, and cards in a single
+/// list on iOS.
 ///
-/// Selecting a password opens it in this view's own navigation stack, where it
-/// can be edited or deleted without affecting the Vault tab.
+/// Selecting a password or a card opens it in this view's own navigation
+/// stack, where it can be edited or deleted without affecting its tab.
 ///
-/// Results aren't kept between searches. Both data sources load on appear in
+/// Results aren't kept between searches. Every data source loads on appear in
 /// case their tabs haven't been opened yet. The `searchable` modifier is
 /// applied to the `NavigationStack` rather than its content, so the tab bar can
 /// turn the Search tab into a search field.
@@ -19,6 +20,8 @@ struct SearchView: View {
     @State private var passwords: [PasswordItem] = []
     /// The two-factor accounts matching the query.
     @State private var codes: [VaultItem] = []
+    /// The cards matching the query.
+    @State private var cards: [CardItem] = []
     /// The clock shared by all code rows.
     @State private var clock = TwoFactorClock()
 
@@ -26,6 +29,8 @@ struct SearchView: View {
     let vaultModel: VaultViewModel
     /// The two-factor accounts to search.
     let twoFactorModel: TwoFactorViewModel
+    /// The cards to search.
+    let cardsModel: CardsViewModel
 
     var body: some View {
         NavigationStack {
@@ -46,12 +51,21 @@ struct SearchView: View {
                         }
                     }
                 }
+                if !cards.isEmpty {
+                    Section("search.section.cards") {
+                        ForEach(cards) { item in
+                            NavigationLink(value: CardRoute(id: item.id)) {
+                                CardRow(item: item)
+                            }
+                        }
+                    }
+                }
             }
             .listStyle(.plain)
             .overlay {
                 if trimmedQuery.isEmpty {
                     ContentUnavailableView("search.empty.title", systemImage: DesignKit.Icon.search, description: Text("search.empty.message"))
-                } else if passwords.isEmpty && codes.isEmpty {
+                } else if passwords.isEmpty && codes.isEmpty && cards.isEmpty {
                     ContentUnavailableView.search(text: trimmedQuery)
                 }
             }
@@ -59,9 +73,13 @@ struct SearchView: View {
             .navigationDestination(for: PasswordItem.ID.self) { id in
                 PasswordDetail(item: vaultModel.items.first { $0.id == id }, viewModel: vaultModel, dismissesWhenDeleted: true)
             }
+            .navigationDestination(for: CardRoute.self) { route in
+                CardDetail(item: cardsModel.items.first { $0.id == route.id }, viewModel: cardsModel, dismissesWhenDeleted: true)
+            }
             .task {
                 if !vaultModel.hasLoaded { await vaultModel.refresh() }
                 if !twoFactorModel.hasLoaded { await twoFactorModel.refresh() }
+                if !cardsModel.hasLoaded { await cardsModel.refresh() }
             }
             .task(clock.run)
         }
@@ -69,23 +87,35 @@ struct SearchView: View {
         .onChange(of: query, initial: true) { updateResults() }
         .onChange(of: vaultModel.items) { updateResults() }
         .onChange(of: twoFactorModel.items) { updateResults() }
+        .onChange(of: cardsModel.items) { updateResults() }
     }
 }
 
 private extension SearchView {
+    /// A card opened from the results.
+    ///
+    /// A separate type, so it doesn't collide with the passwords' `UUID`
+    /// navigation values.
+    struct CardRoute: Hashable {
+        /// The card's identifier.
+        let id: UUID
+    }
+
     /// The search text without leading and trailing spaces.
     var trimmedQuery: String {
         query.trimmingCharacters(in: .whitespaces)
     }
 
-    /// Filters passwords and two-factor accounts by the query.
+    /// Filters passwords, two-factor accounts, and cards by the query.
     ///
     /// Passwords match on name, username, or URL; accounts match on title or
-    /// subtitle. An empty query clears the results.
+    /// subtitle; cards match on name or cardholder. An empty query clears the
+    /// results.
     func updateResults() {
         guard !trimmedQuery.isEmpty else {
             passwords = []
             codes = []
+            cards = []
             return
         }
         passwords = vaultModel.items.filter {
@@ -96,6 +126,10 @@ private extension SearchView {
         codes = twoFactorModel.items.filter {
             $0.account.title.localizedCaseInsensitiveContains(trimmedQuery)
                 || ($0.account.subtitle?.localizedCaseInsensitiveContains(trimmedQuery) ?? false)
+        }
+        cards = cardsModel.items.filter {
+            $0.name.localizedCaseInsensitiveContains(trimmedQuery)
+                || $0.holder.localizedCaseInsensitiveContains(trimmedQuery)
         }
     }
 }

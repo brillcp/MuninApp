@@ -6,7 +6,14 @@ import Foundation
 /// the app through the `Info.plist` keys `MuninAPIHost`, `SupabaseHost`, and `SupabasePublishableKey`.
 enum APIConfig {
     /// The base URL of the Munin API.
-    static let apiBaseURL = URL(string: "https://\(infoValue("MuninAPIHost"))/v1")!
+    ///
+    /// A local server, such as `localhost:8080` in Debug builds, is reached
+    /// over plain HTTP; every other host over HTTPS.
+    static let apiBaseURL: URL = {
+        let host = infoValue("MuninAPIHost")
+        let scheme = host.hasPrefix("localhost") ? "http" : "https"
+        return URL(string: "\(scheme)://\(host)/v1")!
+    }()
     /// The URL of the authentication project.
     static let authProjectURL = "https://\(infoValue("SupabaseHost"))"
     /// The base URL for authentication, used to exchange Apple identity tokens

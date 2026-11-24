@@ -13,6 +13,10 @@ enum MuninEndpoint: EndpointType {
     case password(UUID)
     /// `/passwords/{id}/touch`: updates an item's last-updated date.
     case passwordTouch(UUID)
+    /// `/cards`: the stored cards.
+    case cards
+    /// `/cards/{id}`: a single card.
+    case card(UUID)
     /// `/vault-key`: the wrapped vault key.
     case vaultKey
 
@@ -28,6 +32,8 @@ enum MuninEndpoint: EndpointType {
         case .passwords:              return "passwords"
         case .password(let id):       return "passwords/\(id.uuidString)"
         case .passwordTouch(let id):  return "passwords/\(id.uuidString)/touch"
+        case .cards:                  return "cards"
+        case .card(let id):           return "cards/\(id.uuidString)"
         case .vaultKey:               return "vault-key"
         case .subscription:           return "subscription"
         case .account:                return "account"

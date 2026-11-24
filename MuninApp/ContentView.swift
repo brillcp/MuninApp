@@ -23,6 +23,8 @@ struct ContentView: View {
     @Environment(VaultViewModel.self) private var vaultModel
     /// The 2FA model, cleared when the vault locks.
     @Environment(TwoFactorViewModel.self) private var twoFactorModel
+    /// The cards model, cleared when the vault locks.
+    @Environment(CardsViewModel.self) private var cardsModel
     /// The subscription state, stopped when the vault locks.
     @Environment(SubscriptionManager.self) private var subscriptions
     /// The app's AutoFill status, refreshed whenever the app becomes active.
@@ -96,7 +98,7 @@ private extension ContentView {
         await session.prepare()
     }
 
-    /// Clears the decrypted passwords, 2FA accounts, and subscription state on lock or sign-out.
+    /// Clears the decrypted passwords, 2FA accounts, cards, and subscription state on lock or sign-out.
     ///
     /// Animations are disabled so the list's rows don't animate away during the lock transition.
     func clearOnLock() {
@@ -105,6 +107,7 @@ private extension ContentView {
         withTransaction(transaction) {
             vaultModel.clear()
             twoFactorModel.clear()
+            cardsModel.clear()
             subscriptions.stop()
         }
     }

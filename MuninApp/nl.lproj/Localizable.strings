@@ -4,7 +4,7 @@
 "account.delete" = "Verwijder account";
 "account.delete.failed" = "Kan account niet verwijderen";
 "account.delete.locked" = "Ontgrendel Munin om je account te verwijderen.";
-"account.delete.message" = "Je Munin-account, wachtwoorden en 2FA-accounts worden definitief verwijderd. Dit kan niet ongedaan worden gemaakt. Je bevestigt met je Apple Account, waardoor Munin ook uit ‘Log in met Apple’ wordt verwijderd.\n\nJe App Store-abonnement wordt niet opgezegd. Zeg het eerst op via Beheer abonnement.";
+"account.delete.message" = "Je Munin-account, wachtwoorden, kaarten en 2FA-accounts worden definitief verwijderd. Dit kan niet ongedaan worden gemaakt. Je bevestigt met je Apple Account, waardoor Munin ook uit ‘Log in met Apple’ wordt verwijderd.\n\nJe App Store-abonnement wordt niet opgezegd. Zeg het eerst op via Beheer abonnement.";
 "account.delete.title" = "Je Munin-account verwijderen?";
 "account.showRecoveryKey" = "Toon herstelsleutel";
 "account.signOut" = "Log uit";
@@ -230,10 +230,10 @@
 "settings.version" = "Versie";
 
 /** Search **/
-"search.empty.message" = "Vind wachtwoorden en 2FA-codes op naam, gebruikersnaam of website.";
+"search.empty.message" = "Vind wachtwoorden, kaarten en 2FA-codes op naam, gebruikersnaam of website.";
 "search.empty.title" = "Zoek";
 "search.find" = "Zoek";
-"search.prompt" = "Wachtwoorden en 2FA";
+"search.prompt" = "Wachtwoorden, kaarten en 2FA";
 "search.section.codes" = "2FA";
 "search.section.passwords" = "Wachtwoorden";
 "search.title" = "Zoek";
@@ -298,3 +298,19 @@
 "update.now" = "Nu bijwerken";
 "update.snooze" = "Niet vragen voor een tijdje";
 "update.later" = "Later";
+
+/** Cards **/
+"main.tab.cards" = "Kaarten";
+"cards.title" = "Kaarten";
+"search.section.cards" = "Kaarten";
+"cards.createItem" = "Nieuwe kaart";
+"cards.empty.title" = "Geen kaarten";
+"cards.search.prompt" = "Zoek kaarten";
+"cards.delete.title" = "Kaart verwijderen?";
+"cards.copyNumber" = "Kopieer kaartnummer";
+"card.field.holder" = "Kaarthouder";
+"card.field.number" = "Kaartnummer";
+"card.field.expiry" = "Vervaldatum";
+"card.field.cvv" = "Beveiligingscode";
+"cardEditor.newTitle" = "Nieuwe kaart";
+"cardEditor.editTitle" = "Wijzig kaart";

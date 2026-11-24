@@ -23,6 +23,7 @@ final class FakeMuninAPI: MuninAPI {
     var record: VaultKeyRecord?
     var storedEntries: [EncryptedEntry] = []
     var storedPasswords: [EncryptedPassword] = []
+    var storedCards: [EncryptedCard] = []
     /// The proofs sent with each call that requires one.
     private(set) var receivedProofs: [String] = []
     /// The error every write throws, if set.
@@ -75,6 +76,36 @@ final class FakeMuninAPI: MuninAPI {
     func touchPassword(id: UUID) async throws -> EncryptedPassword {
         guard let stored = storedPasswords.first(where: { $0.id == id }) else { throw URLError(.fileDoesNotExist) }
         return stored
+    }
+
+    func cards() async throws -> [EncryptedCard] { storedCards }
+
+    func createCard(_ body: CardFieldsBody) async throws -> EncryptedCard {
+        if let writeError { throw writeError }
+        let saved = EncryptedCard(
+            id: UUID(), name: body.name, holder: body.holder, number: body.number,
+            expiry: body.expiry, cvv: body.cvv, note: body.note, updatedAt: .now
+        )
+        storedCards.append(saved)
+        return saved
+    }
+
+    func updateCard(id: UUID, _ body: CardFieldsBody, proof: String) async throws -> EncryptedCard {
+        receivedProofs.append(proof)
+        if let writeError { throw writeError }
+        let saved = EncryptedCard(
+            id: id, name: body.name, holder: body.holder, number: body.number,
+            expiry: body.expiry, cvv: body.cvv, note: body.note, updatedAt: .now
+        )
+        storedCards.removeAll { $0.id == id }
+        storedCards.append(saved)
+        return saved
+    }
+
+    func deleteCard(id: UUID, proof: String) async throws {
+        receivedProofs.append(proof)
+        if let writeError { throw writeError }
+        storedCards.removeAll { $0.id == id }
     }
 
     func vaultKey() async throws -> VaultKeyRecord? { record }

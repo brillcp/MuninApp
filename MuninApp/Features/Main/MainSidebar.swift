@@ -15,7 +15,7 @@ extension EnvironmentValues {
 /// The main window's sidebar on macOS: a fixed glass panel, like the password
 /// panel, that's always shown and can't be resized or collapsed.
 ///
-/// It lists the vault and 2FA sections. At the bottom, the user's initials
+/// It lists the vault, 2FA, and cards sections. At the bottom, the user's initials
 /// open the Settings window.
 struct MainSidebar: View {
     /// The sign-in state, which provides the email the initials come from.
@@ -36,6 +36,8 @@ struct MainSidebar: View {
                     .tag(MainView.Section.vault)
                 SidebarTabLabel(title: "main.tab.codes", systemImage: DesignKit.Icon.twoFactor, isSelected: selection == .twoFactor)
                     .tag(MainView.Section.twoFactor)
+                SidebarTabLabel(title: "main.tab.cards", systemImage: DesignKit.Icon.cards, isSelected: selection == .cards)
+                    .tag(MainView.Section.cards)
             }
         }
         .listStyle(.sidebar)

@@ -50,8 +50,8 @@ proofs.
   wraps the vault key with each wrapping key, and uploads both wrapped copies,
   the KDF parameters, and both proofs.
 - **Saving an item.** The app encrypts the item with the vault key on the
-  device (each password field separately, or a 2FA account as one item), then
-  uploads the ciphertext.
+  device (each password or card field separately, or a 2FA account as one
+  item), then uploads the ciphertext.
 - **Unlocking on a new device.** After Sign in with Apple, the app downloads
   the wrapped vault key and the KDF parameters, derives the wrapping key from
   the master password you enter, and unwraps the vault key locally. A wrong
@@ -69,7 +69,7 @@ proofs.
 ### Keys
 
 - **Vault key.** A random 256-bit key, created on the device when a new vault
-  is set up. It encrypts every password field and 2FA account.
+  is set up. It encrypts every password field, card field, and 2FA account.
 - **Master password.** Normalized to Unicode NFC, then stretched with
   PBKDF2-HMAC-SHA256 (600,000 iterations, random 16-byte salt) into 32 bytes.
   HKDF-SHA256 splits the result into two independent keys:
@@ -107,12 +107,18 @@ returns only the wrapped keys and KDF parameters to the app, with
   encrypted separately with AES-256-GCM. The associated data binds each
   ciphertext to the user ID and to its field, so ciphertext can't be moved
   between users or fields.
+- **Cards.** Each field (name, cardholder, number, expiry date, security
+  code, note) is encrypted separately with AES-256-GCM, bound to the user ID
+  and to its field in the same way as password fields.
 - **2FA accounts.** Each account (issuer, name, secret, algorithm, digits,
   period) is encoded as JSON and encrypted as one item with AES-256-GCM,
   bound to the user ID. Codes are calculated on the device.
 - **In memory.** While the vault is unlocked, names, websites, and usernames
   are decrypted for the list and search. Passwords and notes stay encrypted
-  until they're shown, copied, or edited.
+  until they're shown, copied, or edited. For cards, the name, cardholder,
+  and the last four digits of the number are decrypted; the full number,
+  expiry date, security code, and note stay encrypted until they're shown,
+  copied, or edited.
 
 ### Authorization
 
@@ -120,7 +126,7 @@ Every request carries a Supabase access token from Sign in with Apple. The
 server verifies its signature, expiration, and audience, and scopes every
 query to the token's user.
 
-Editing or deleting a password, deleting a 2FA account, replacing the vault
+Editing or deleting a password or a card, deleting a 2FA account, replacing the vault
 key, and deleting the account also require a proof in the `X-Munin-Proof`
 header. The app sends the master password's proof, or the recovery key's
 proof when resetting a forgotten master password. The server accepts either
@@ -130,7 +136,7 @@ After five wrong proofs within an hour, the server rejects further proofs for
 that user with `429 Too Many Requests` until the hour has passed. A correct
 proof resets the count.
 
-Deleting the account removes the user's passwords, 2FA accounts,
+Deleting the account removes the user's passwords, cards, 2FA accounts,
 subscription link, and wrapped vault key, then the user and their sign-in
 identities, in one database transaction. When the app provides a fresh Sign
 in with Apple authorization code, the server first revokes the user's Sign in
@@ -165,7 +171,8 @@ never.
 
 ### Clipboard
 
-A copied password is cleared after 60 seconds, and when the vault locks. The
+A copied password, card number, or security code is cleared after 60
+seconds, and when the vault locks. The
 app clears only its own value, never something copied afterward.
 
 - On iOS, the item has an expiration date and is local only, so it doesn't
@@ -173,8 +180,8 @@ app clears only its own value, never something copied afterward.
 - On macOS, the value is cleared after 60 seconds if nothing else was copied
   in the meantime. If the app quits first, the value stays on the clipboard.
 
-Usernames, websites, notes, 2FA codes, and the recovery key are copied
-without clearing.
+Usernames, websites, notes, cardholder names, expiry dates, 2FA codes, and
+the recovery key are copied without clearing.
 
 ### What the server can see
 
@@ -182,8 +189,8 @@ The server can't read vault data, but it does see:
 
 - the account from Sign in with Apple, including the email address you chose
   to share,
-- how many passwords and 2FA accounts you have, their sizes, and when they
-  were created and changed,
+- how many passwords, cards, and 2FA accounts you have, their sizes, and when
+  they were created and changed,
 - when a password was last copied: copying a password in the app updates its
   timestamp on the server,
 - your subscription status.

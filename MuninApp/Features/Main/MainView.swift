@@ -3,7 +3,7 @@ import SwiftUI
 /// The root view of the unlocked app, with a sidebar on macOS and iPad and a
 /// tab bar on iPhone.
 ///
-/// The main section holds the vault and 2FA tabs. On iOS, Settings and Search
+/// The main section holds the vault, 2FA, and cards tabs. On iOS, Settings and Search
 /// are tabs too; on macOS, the sidebar is a fixed ``MainSidebar``, and
 /// Settings is a separate window opened from the user's initials at its
 /// bottom. The Search tab uses the `.search` role, so the system places it at
@@ -21,8 +21,10 @@ struct MainView: View {
     @Environment(AutoFillSetup.self) private var autoFill
     /// The 2FA model shared by the 2FA and Search tabs.
     @Environment(TwoFactorViewModel.self) private var twoFactorModel
+    /// The cards model shared by the Cards and Search tabs.
+    @Environment(CardsViewModel.self) private var cardsModel
 
-    /// The selected section, which ⌘1 and ⌘2 also change on macOS.
+    /// The selected section, which ⌘1, ⌘2, and ⌘3 also change on macOS.
     @State private var selection: Section = .vault
     /// Accounts from a 2FA setup link, awaiting confirmation.
     @State private var linkedAccounts: LinkedAccounts?
@@ -35,6 +37,7 @@ struct MainView: View {
     var body: some View {
         @Bindable var subscriptions = subscriptions
         @Bindable var vaultModel = vaultModel
+        @Bindable var cardsModel = cardsModel
         @Bindable var autoFill = autoFill
         sections
         .scrollIndicators(.never)
@@ -46,6 +49,11 @@ struct MainView: View {
             AutoFillSetupView()
         }
         .alert("vault.saveFailed.title", item: $vaultModel.failureMessage) { _ in
+            Button("global.done") {}
+        } message: { message in
+            Text(message)
+        }
+        .alert("vault.saveFailed.title", item: $cardsModel.failureMessage) { _ in
             Button("global.done") {}
         } message: { message in
             Text(message)
@@ -78,6 +86,8 @@ extension MainView {
         case vault
         /// The 2FA accounts.
         case twoFactor
+        /// The stored cards.
+        case cards
         /// Search, on iOS.
         case search
         /// Settings, on iOS.
@@ -114,6 +124,11 @@ private extension MainView {
                 } label: {
                     SidebarTabLabel(title: "main.tab.codes", systemImage: DesignKit.Icon.twoFactor, isSelected: selection == .twoFactor)
                 }
+                Tab(value: Section.cards) {
+                    CardsView(viewModel: cardsModel)
+                } label: {
+                    SidebarTabLabel(title: "main.tab.cards", systemImage: DesignKit.Icon.cards, isSelected: selection == .cards)
+                }
             }
             Tab("settings.title", systemImage: DesignKit.Icon.settings, value: Section.settings) {
                 NavigationStack {
@@ -123,7 +138,7 @@ private extension MainView {
                 }
             }
             Tab(value: Section.search, role: .search) {
-                SearchView(vaultModel: vaultModel, twoFactorModel: twoFactorModel)
+                SearchView(vaultModel: vaultModel, twoFactorModel: twoFactorModel, cardsModel: cardsModel)
             }
         }
         .tabViewStyle(.sidebarAdaptable)
@@ -137,6 +152,8 @@ private extension MainView {
         switch selection {
         case .twoFactor:
             TwoFactorView(viewModel: twoFactorModel)
+        case .cards:
+            CardsView(viewModel: cardsModel)
         default:
             VaultView(viewModel: vaultModel, twoFactorModel: twoFactorModel)
         }

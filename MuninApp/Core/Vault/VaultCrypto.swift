@@ -13,6 +13,19 @@ nonisolated enum PasswordField: String, Sendable, CaseIterable {
     case note
 }
 
+/// An encrypted field of a stored card.
+///
+/// The raw value is bound into each field's ciphertext, so a value can't be
+/// moved to another field. Don't change the raw values.
+nonisolated enum CardField: String, Sendable, CaseIterable {
+    case name
+    case holder
+    case number
+    case expiry
+    case cvv
+    case note
+}
+
 /// End-to-end encryption for vault entries.
 ///
 /// Entries are sealed with AES-256-GCM using a key that exists only on the
@@ -71,6 +84,38 @@ nonisolated enum VaultCrypto {
         guard let data = Data(base64Encoded: ciphertext) else { throw CryptoError.invalidCiphertext }
         let box = try AES.GCM.SealedBox(combined: data)
         let plaintext = try AES.GCM.open(box, using: key, authenticating: passwordAssociatedData(field: field, userID: userID))
+        return String(decoding: plaintext, as: UTF8.self)
+    }
+
+    // MARK: - Card fields
+
+    /// Returns associated data that binds a card field's ciphertext to its
+    /// owner and column, so ciphertext can't move between users or fields.
+    private static func cardAssociatedData(field: CardField, userID: String) -> Data {
+        Data("munin.card.v1:\(userID.lowercased()):\(field.rawValue)".utf8)
+    }
+
+    /// Encrypts a card field.
+    ///
+    /// - Parameters:
+    ///   - value: The plaintext value.
+    ///   - field: The field the value belongs to.
+    ///   - key: The vault key.
+    ///   - userID: The owner's user ID.
+    /// - Returns: The sealed box, base64-encoded.
+    static func seal(_ value: String, field: CardField, key: SymmetricKey, userID: String) throws -> String {
+        let box = try AES.GCM.seal(Data(value.utf8), using: key, authenticating: cardAssociatedData(field: field, userID: userID))
+        guard let combined = box.combined else { throw CryptoError.invalidCiphertext }
+        return combined.base64EncodedString()
+    }
+
+    /// Decrypts a card field.
+    ///
+    /// - Throws: An error if the key, user, or field doesn't match.
+    static func open(_ ciphertext: String, field: CardField, key: SymmetricKey, userID: String) throws -> String {
+        guard let data = Data(base64Encoded: ciphertext) else { throw CryptoError.invalidCiphertext }
+        let box = try AES.GCM.SealedBox(combined: data)
+        let plaintext = try AES.GCM.open(box, using: key, authenticating: cardAssociatedData(field: field, userID: userID))
         return String(decoding: plaintext, as: UTF8.self)
     }
 

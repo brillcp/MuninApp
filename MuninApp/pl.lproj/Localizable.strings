@@ -4,7 +4,7 @@
 "account.delete" = "Usuń konto";
 "account.delete.failed" = "Nie można usunąć konta";
 "account.delete.locked" = "Odblokuj Munin, aby usunąć konto.";
-"account.delete.message" = "Twoje konto Munin, hasła i konta 2FA zostaną trwale usunięte. Tej operacji nie można cofnąć. Potwierdzisz ją kontem Apple, co usunie też Munin z „Zaloguj się, używając konta Apple”.\n\nSubskrypcja w App Store nie zostanie anulowana. Najpierw anuluj ją w sekcji Zarządzaj subskrypcją.";
+"account.delete.message" = "Twoje konto Munin, hasła, karty i konta 2FA zostaną trwale usunięte. Tej operacji nie można cofnąć. Potwierdzisz ją kontem Apple, co usunie też Munin z „Zaloguj się, używając konta Apple”.\n\nSubskrypcja w App Store nie zostanie anulowana. Najpierw anuluj ją w sekcji Zarządzaj subskrypcją.";
 "account.delete.title" = "Usunąć konto Munin?";
 "account.showRecoveryKey" = "Pokaż klucz odzyskiwania";
 "account.signOut" = "Wyloguj się";
@@ -230,10 +230,10 @@
 "settings.version" = "Wersja";
 
 /** Search **/
-"search.empty.message" = "Znajduj hasła i kody 2FA po nazwie, nazwie użytkownika lub witrynie.";
+"search.empty.message" = "Znajduj hasła, karty i kody 2FA po nazwie, nazwie użytkownika lub witrynie.";
 "search.empty.title" = "Szukaj";
 "search.find" = "Znajdź";
-"search.prompt" = "Hasła i 2FA";
+"search.prompt" = "Hasła, karty i 2FA";
 "search.section.codes" = "2FA";
 "search.section.passwords" = "Hasła";
 "search.title" = "Szukaj";
@@ -298,3 +298,19 @@
 "update.now" = "Zaktualizuj teraz";
 "update.snooze" = "Nie pytaj przez jakiś czas";
 "update.later" = "Później";
+
+/** Cards **/
+"main.tab.cards" = "Karty";
+"cards.title" = "Karty";
+"search.section.cards" = "Karty";
+"cards.createItem" = "Nowa karta";
+"cards.empty.title" = "Brak kart";
+"cards.search.prompt" = "Szukaj kart";
+"cards.delete.title" = "Usunąć kartę?";
+"cards.copyNumber" = "Kopiuj numer karty";
+"card.field.holder" = "Posiadacz karty";
+"card.field.number" = "Numer karty";
+"card.field.expiry" = "Data ważności";
+"card.field.cvv" = "Kod bezpieczeństwa";
+"cardEditor.newTitle" = "Nowa karta";
+"cardEditor.editTitle" = "Edytuj kartę";

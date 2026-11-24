@@ -4,7 +4,7 @@
 "account.delete" = "Apagar conta";
 "account.delete.failed" = "Não foi possível apagar a conta";
 "account.delete.locked" = "Desbloqueie o Munin para apagar sua conta.";
-"account.delete.message" = "Sua conta Munin, suas senhas e suas contas 2FA serão apagadas permanentemente. Não é possível desfazer. Você confirmará com sua Conta Apple, o que também remove o Munin de “Iniciar Sessão com a Apple”.\n\nSua assinatura da App Store não é cancelada. Cancele-a antes em Gerenciar Assinatura.";
+"account.delete.message" = "Sua conta Munin, suas senhas, seus cartões e suas contas 2FA serão apagadas permanentemente. Não é possível desfazer. Você confirmará com sua Conta Apple, o que também remove o Munin de “Iniciar Sessão com a Apple”.\n\nSua assinatura da App Store não é cancelada. Cancele-a antes em Gerenciar Assinatura.";
 "account.delete.title" = "Apagar sua conta Munin?";
 "account.showRecoveryKey" = "Mostrar Chave de Recuperação";
 "account.signOut" = "Sair";
@@ -230,10 +230,10 @@
 "settings.version" = "Versão";
 
 /** Search **/
-"search.empty.message" = "Encontre senhas e códigos 2FA por nome, nome de usuário ou site.";
+"search.empty.message" = "Encontre senhas, cartões e códigos 2FA por nome, nome de usuário ou site.";
 "search.empty.title" = "Buscar";
 "search.find" = "Buscar";
-"search.prompt" = "Senhas e 2FA";
+"search.prompt" = "Senhas, cartões e 2FA";
 "search.section.codes" = "2FA";
 "search.section.passwords" = "Senhas";
 "search.title" = "Buscar";
@@ -298,3 +298,19 @@
 "update.now" = "Atualizar agora";
 "update.snooze" = "Não perguntar por um tempo";
 "update.later" = "Mais tarde";
+
+/** Cards **/
+"main.tab.cards" = "Cartões";
+"cards.title" = "Cartões";
+"search.section.cards" = "Cartões";
+"cards.createItem" = "Novo cartão";
+"cards.empty.title" = "Nenhum cartão";
+"cards.search.prompt" = "Buscar cartões";
+"cards.delete.title" = "Apagar cartão?";
+"cards.copyNumber" = "Copiar número do cartão";
+"card.field.holder" = "Titular";
+"card.field.number" = "Número do cartão";
+"card.field.expiry" = "Validade";
+"card.field.cvv" = "Código de segurança";
+"cardEditor.newTitle" = "Novo cartão";
+"cardEditor.editTitle" = "Editar cartão";

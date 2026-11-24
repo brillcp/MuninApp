@@ -4,7 +4,7 @@
 "account.delete" = "Eliminar cuenta";
 "account.delete.failed" = "No se pudo eliminar la cuenta";
 "account.delete.locked" = "Desbloquea Munin para eliminar tu cuenta.";
-"account.delete.message" = "Se eliminarán de forma permanente tu cuenta de Munin, tus contraseñas y tus cuentas 2FA. No se puede deshacer. Confirmarás con tu cuenta de Apple, lo que también quita Munin de «Iniciar sesión con Apple».\n\nTu suscripción del App Store no se cancela. Cancélala primero en Gestionar suscripción.";
+"account.delete.message" = "Se eliminarán de forma permanente tu cuenta de Munin, tus contraseñas, tus tarjetas y tus cuentas 2FA. No se puede deshacer. Confirmarás con tu cuenta de Apple, lo que también quita Munin de «Iniciar sesión con Apple».\n\nTu suscripción del App Store no se cancela. Cancélala primero en Gestionar suscripción.";
 "account.delete.title" = "¿Eliminar tu cuenta de Munin?";
 "account.showRecoveryKey" = "Mostrar clave de recuperación";
 "account.signOut" = "Cerrar sesión";
@@ -230,10 +230,10 @@
 "settings.version" = "Versión";
 
 /** Search **/
-"search.empty.message" = "Encuentra contraseñas y códigos 2FA por nombre, nombre de usuario o sitio web.";
+"search.empty.message" = "Encuentra contraseñas, tarjetas y códigos 2FA por nombre, nombre de usuario o sitio web.";
 "search.empty.title" = "Buscar";
 "search.find" = "Buscar";
-"search.prompt" = "Contraseñas y 2FA";
+"search.prompt" = "Contraseñas, tarjetas y 2FA";
 "search.section.codes" = "2FA";
 "search.section.passwords" = "Contraseñas";
 "search.title" = "Buscar";
@@ -298,3 +298,19 @@
 "update.now" = "Actualizar ahora";
 "update.snooze" = "No preguntar por un tiempo";
 "update.later" = "Más tarde";
+
+/** Cards **/
+"main.tab.cards" = "Tarjetas";
+"cards.title" = "Tarjetas";
+"search.section.cards" = "Tarjetas";
+"cards.createItem" = "Nueva tarjeta";
+"cards.empty.title" = "No hay tarjetas";
+"cards.search.prompt" = "Buscar tarjetas";
+"cards.delete.title" = "¿Eliminar tarjeta?";
+"cards.copyNumber" = "Copiar número de tarjeta";
+"card.field.holder" = "Titular";
+"card.field.number" = "Número de tarjeta";
+"card.field.expiry" = "Fecha de caducidad";
+"card.field.cvv" = "Código de seguridad";
+"cardEditor.newTitle" = "Nueva tarjeta";
+"cardEditor.editTitle" = "Editar tarjeta";

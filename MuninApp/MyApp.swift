@@ -15,6 +15,8 @@ import SwiftUI
     @State private var vaultModel: VaultViewModel
     /// The 2FA accounts, shared by the 2FA tab, Search, and imports.
     @State private var twoFactorModel: TwoFactorViewModel
+    /// The stored cards, shared by the Cards tab and Search.
+    @State private var cardsModel: CardsViewModel
     /// The App Store subscription, shared by the main window and Settings.
     @State private var subscriptions: SubscriptionManager
     /// The model behind Settings.
@@ -35,6 +37,7 @@ import SwiftUI
         _session = State(initialValue: session)
         _vaultModel = State(initialValue: VaultViewModel(session: session, api: api, user: auth))
         _twoFactorModel = State(initialValue: TwoFactorViewModel(session: session, api: api, user: auth))
+        _cardsModel = State(initialValue: CardsViewModel(session: session, api: api, user: auth))
         _subscriptions = State(initialValue: subscriptions)
         _settingsModel = State(initialValue: SettingsViewModel(api: api, auth: auth, session: session, subscriptions: subscriptions))
         #if os(macOS)
@@ -98,6 +101,7 @@ import SwiftUI
             .environment(session)
             .environment(vaultModel)
             .environment(twoFactorModel)
+            .environment(cardsModel)
             .environment(subscriptions)
             .environment(settingsModel)
             .environment(autoFill)
