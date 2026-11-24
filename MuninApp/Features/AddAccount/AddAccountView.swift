@@ -49,7 +49,12 @@ struct AddAccountView: View {
             .formStyle(.grouped)
             .disabled(isSaving)
             .overlay {
-                if isSaving { ProgressView("addAccount.encrypting") }
+                if isSaving {
+                    VStack(spacing: DesignKit.Spacing.Primitive.s12) {
+                        AccentSpinner(size: DesignKit.Spacing.Primitive.s24)
+                        Text("addAccount.encrypting")
+                    }
+                }
             }
             .navigationTitle("addAccount.title")
             .toolbar {

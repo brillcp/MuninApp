@@ -20,8 +20,7 @@ struct VaultEmptyState: View {
             if hasLoaded {
                 ContentUnavailableView("vault.empty.title", systemImage: DesignKit.Icon.vault)
             } else {
-                ProgressView()
-                    .tint(.primary)
+                AccentSpinner(size: DesignKit.Spacing.Primitive.s24)
             }
         } else if let searchText {
             ContentUnavailableView.search(text: searchText)

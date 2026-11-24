@@ -246,9 +246,7 @@ private extension LockButton {
                 .opacity(isLoading ? 0 : 1)
                 .overlay {
                     if isLoading {
-                        ProgressView()
-                            .controlSize(.small)
-                            .tint(.primary)
+                        AccentSpinner(size: DesignKit.Spacing.Primitive.s16, color: spinnerColor)
                     }
                 }
                 .padding(labelPadding)
@@ -286,6 +284,12 @@ private extension LockButton {
             Image(systemName: systemImage)
                 .font(.title2)
         }
+    }
+
+    /// The spinner's color: white on the accent-colored primary button, where
+    /// an accent-colored arc wouldn't show, and the accent color otherwise.
+    var spinnerColor: Color {
+        style == .primary ? .white : AccentSpinner.accentColor
     }
 
     /// The padding around the label, inside the button so the whole glass

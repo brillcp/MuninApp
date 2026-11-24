@@ -54,7 +54,7 @@ nonisolated enum CardDecoder {
     /// Encrypts each field separately, binding its ciphertext to the field.
     static func seal(_ fields: CardFields, vault: UnlockedVault) throws -> CardFieldsBody {
         func seal(_ value: String, _ field: CardField) throws -> String {
-            try VaultCrypto.seal(value, field: field, key: vault.key, userID: vault.userID)
+            try VaultCrypto.seal(value, cardField: field, key: vault.key, userID: vault.userID)
         }
         return CardFieldsBody(
             name: try seal(fields.name, .name),
@@ -68,6 +68,6 @@ nonisolated enum CardDecoder {
 
     /// Decrypts one field of a card, such as its number or security code.
     static func open(_ ciphertext: String, _ field: CardField, vault: UnlockedVault) throws -> String {
-        try VaultCrypto.open(ciphertext, field: field, key: vault.key, userID: vault.userID)
+        try VaultCrypto.open(ciphertext, cardField: field, key: vault.key, userID: vault.userID)
     }
 }

@@ -29,8 +29,7 @@ struct TwoFactorEmptyState: View {
                         .buttonStyle(.borderedProminent)
                 }
             } else {
-                ProgressView()
-                    .tint(.primary)
+                AccentSpinner(size: DesignKit.Spacing.Primitive.s24)
             }
         }
     }

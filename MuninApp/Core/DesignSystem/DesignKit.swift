@@ -40,6 +40,8 @@ nonisolated enum DesignKit {
         static let slowSmooth: Animation = .smooth(duration: 0.45)
         /// How long a “Copied” label shows after copying.
         static let copiedFeedback: Duration = .seconds(1.2)
+        /// How long ``AccentSpinner`` takes for one full turn.
+        static let spinDuration: CFTimeInterval = 0.4
     }
 
     /// SF Symbol names, grouped by meaning.

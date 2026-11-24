@@ -72,6 +72,7 @@
 			membershipExceptions = (
 				"/Localized: Localizable.strings",
 				"/Localized: Localizable.stringsdict",
+				Core/DesignSystem/AccentSpinner.swift,
 				Core/DesignSystem/DesignKit.swift,
 				Core/Domain/PasswordItem.swift,
 				Core/Security/Biometry.swift,

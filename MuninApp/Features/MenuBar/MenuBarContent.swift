@@ -75,7 +75,7 @@ private extension MenuBarContent {
         .listStyle(.sidebar)
         .overlay {
             if !vaultModel.hasLoaded {
-                ProgressView()
+                AccentSpinner(size: DesignKit.Spacing.Primitive.s24)
             } else if filteredItems.isEmpty {
                 ContentUnavailableView.search(text: query)
             }

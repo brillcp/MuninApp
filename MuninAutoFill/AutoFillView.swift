@@ -38,10 +38,8 @@ private extension AutoFillView {
         case .locked:
             unlockPrompt
         case .working:
-            ProgressView()
-                .controlSize(.large)
+            AccentSpinner(size: DesignKit.Spacing.Primitive.s32, color: Self.accent)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .tint(.primary)
         case .ready:
             switch model.mode {
             case .passwords: passwordList

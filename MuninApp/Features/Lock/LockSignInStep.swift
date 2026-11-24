@@ -26,7 +26,7 @@ struct LockSignInStep: View {
             .clipShape(.capsule)
             .opacity(auth.isSigningIn ? 0.6 : 1)
             .overlay {
-                if auth.isSigningIn { ProgressView().tint(.primary) }
+                if auth.isSigningIn { AccentSpinner(size: DesignKit.Spacing.Primitive.s24) }
             }
 
             if let onCancel {

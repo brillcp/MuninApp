@@ -49,9 +49,7 @@ struct MasterPasswordSetupView: View {
                     .buttonStyle(.borderedProminent)
                     .disabled(!isValid || session.isWorking)
                 if session.isWorking {
-                    ProgressView()
-                        .controlSize(.small)
-                        .tint(.primary)
+                    AccentSpinner(size: DesignKit.Spacing.Primitive.s16)
                 }
             }
         }

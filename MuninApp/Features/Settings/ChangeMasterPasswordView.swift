@@ -58,9 +58,7 @@ struct ChangeMasterPasswordView: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     if session.isWorking {
-                        ProgressView()
-                            .controlSize(.small)
-                            .tint(.primary)
+                        AccentSpinner(size: DesignKit.Spacing.Primitive.s16)
                     } else {
                         Button("global.save", action: save)
                             .disabled(!isValid)

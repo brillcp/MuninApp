@@ -21,7 +21,7 @@ struct LockBiometricsStep: View {
                 isLoading: isUnlocking,
                 action: unlockWithBiometrics
             )
-            .keyboardShortcut(.defaultAction)
+            .keyboardShortcut(.return, modifiers: [])
             LockButton(systemImage: DesignKit.Icon.useMasterPassword, style: .secondary, action: onUseMasterPassword)
                 .buttonSizing(.fitted)
         }

@@ -20,8 +20,7 @@ struct CardsEmptyState: View {
             if hasLoaded {
                 ContentUnavailableView("cards.empty.title", systemImage: DesignKit.Icon.cards)
             } else {
-                ProgressView()
-                    .tint(.primary)
+                AccentSpinner(size: DesignKit.Spacing.Primitive.s24)
             }
         } else if let searchText {
             ContentUnavailableView.search(text: searchText)

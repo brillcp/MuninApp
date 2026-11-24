@@ -97,14 +97,17 @@ nonisolated enum VaultCrypto {
 
     /// Encrypts a card field.
     ///
+    /// The `cardField` label keeps calls distinct from the password field
+    /// variant, since both field types have cases like `name` and `note`.
+    ///
     /// - Parameters:
     ///   - value: The plaintext value.
-    ///   - field: The field the value belongs to.
+    ///   - cardField: The field the value belongs to.
     ///   - key: The vault key.
     ///   - userID: The owner's user ID.
     /// - Returns: The sealed box, base64-encoded.
-    static func seal(_ value: String, field: CardField, key: SymmetricKey, userID: String) throws -> String {
-        let box = try AES.GCM.seal(Data(value.utf8), using: key, authenticating: cardAssociatedData(field: field, userID: userID))
+    static func seal(_ value: String, cardField: CardField, key: SymmetricKey, userID: String) throws -> String {
+        let box = try AES.GCM.seal(Data(value.utf8), using: key, authenticating: cardAssociatedData(field: cardField, userID: userID))
         guard let combined = box.combined else { throw CryptoError.invalidCiphertext }
         return combined.base64EncodedString()
     }
@@ -112,10 +115,10 @@ nonisolated enum VaultCrypto {
     /// Decrypts a card field.
     ///
     /// - Throws: An error if the key, user, or field doesn't match.
-    static func open(_ ciphertext: String, field: CardField, key: SymmetricKey, userID: String) throws -> String {
+    static func open(_ ciphertext: String, cardField: CardField, key: SymmetricKey, userID: String) throws -> String {
         guard let data = Data(base64Encoded: ciphertext) else { throw CryptoError.invalidCiphertext }
         let box = try AES.GCM.SealedBox(combined: data)
-        let plaintext = try AES.GCM.open(box, using: key, authenticating: cardAssociatedData(field: field, userID: userID))
+        let plaintext = try AES.GCM.open(box, using: key, authenticating: cardAssociatedData(field: cardField, userID: userID))
         return String(decoding: plaintext, as: UTF8.self)
     }
 
