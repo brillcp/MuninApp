@@ -49,7 +49,7 @@ struct MasterPasswordSetupView: View {
                     .buttonStyle(.borderedProminent)
                     .disabled(!isValid || session.isWorking)
                 if session.isWorking {
-                    AccentSpinner(size: DesignKit.Spacing.Primitive.s16)
+                    AccentSpinner(size: DesignKit.Spacing.Primitive.s24)
                 }
             }
         }

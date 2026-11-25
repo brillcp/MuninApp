@@ -246,7 +246,7 @@ private extension LockButton {
                 .opacity(isLoading ? 0 : 1)
                 .overlay {
                     if isLoading {
-                        AccentSpinner(size: DesignKit.Spacing.Primitive.s16, color: spinnerColor)
+                        AccentSpinner(size: DesignKit.Spacing.Primitive.s24, color: spinnerColor)
                     }
                 }
                 .padding(labelPadding)

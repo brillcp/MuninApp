@@ -58,7 +58,7 @@ struct ChangeMasterPasswordView: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     if session.isWorking {
-                        AccentSpinner(size: DesignKit.Spacing.Primitive.s16)
+                        AccentSpinner(size: DesignKit.Spacing.Primitive.s24)
                     } else {
                         Button("global.save", action: save)
                             .disabled(!isValid)
