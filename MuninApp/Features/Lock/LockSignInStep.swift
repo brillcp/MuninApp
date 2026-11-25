@@ -31,6 +31,9 @@ struct LockSignInStep: View {
 
             if let onCancel {
                 LockButton("global.cancel", style: .tertiary, action: onCancel)
+                    #if os(iOS)
+                    .frame(maxWidth: .infinity)
+                    #endif
             }
         }
     }
