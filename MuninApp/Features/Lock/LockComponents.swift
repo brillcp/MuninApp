@@ -178,7 +178,6 @@ private extension LockPanel {
             LockBiometricsStep { go(to: .masterPassword) }
         case .masterPassword:
             LockMasterPasswordStep(
-                focusesField: chosenStep == .masterPassword,
                 onUseBiometrics: session.offersBiometricUnlock ? { go(to: .biometrics) } : nil,
                 onForgotPassword: { go(to: .recoveryKey) }
             )

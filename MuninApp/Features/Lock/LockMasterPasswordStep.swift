@@ -14,6 +14,10 @@ struct LockMasterPasswordStep: View {
     /// The horizontal size class, which decides where Forgot Password sits.
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     #endif
+    /// A Boolean value that indicates whether the step is enabled; the lock
+    /// panel disables it while it works, such as while the vault is checked at
+    /// launch.
+    @Environment(\.isEnabled) private var isEnabled
     /// The vault session to unlock.
     @Environment(VaultSession.self) private var session
     /// The view model that receives the password list during unlock.
@@ -23,10 +27,6 @@ struct LockMasterPasswordStep: View {
     /// A Boolean value that indicates whether the password field has focus.
     @FocusState private var isFieldFocused: Bool
 
-    /// A Boolean value that indicates whether to focus the field on appear.
-    ///
-    /// True when the user chose this step instead of landing on it by default.
-    let focusesField: Bool
     /// The action that switches to biometric unlock, or `nil` to hide the button.
     let onUseBiometrics: (() -> Void)?
     /// The action that switches to the recovery key step.
@@ -37,7 +37,7 @@ struct LockMasterPasswordStep: View {
             HStack(spacing: DesignKit.Spacing.Primitive.s12) {
                 SecureField("lock.masterPassword.placeholder", text: $password)
                     .focused($isFieldFocused)
-                    .task(focusFieldIfChosen)
+                    .task(id: isEnabled, focusField)
                     .textFieldStyle(.roundedBorder)
                     #if os(iOS)
                     .textContentType(.password)
@@ -88,9 +88,10 @@ private extension LockMasterPasswordStep {
         #endif
     }
 
-    /// Focuses the field when the user chose this step.
-    func focusFieldIfChosen() {
-        if focusesField { isFieldFocused = true }
+    /// Focuses the field when the step appears, and again once it's enabled.
+    func focusField() {
+        guard isEnabled else { return }
+        isFieldFocused = true
     }
 
     /// A Boolean value that indicates whether an unlock or vault check is in progress.
