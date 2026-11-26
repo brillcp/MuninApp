@@ -2,8 +2,8 @@
 
 // The version shown on the App Store, and the build number. The release
 // workflow updates both.
-MARKETING_VERSION = 1.1
-CURRENT_PROJECT_VERSION = 2517.1950
+MARKETING_VERSION = 1.2
+CURRENT_PROJECT_VERSION = 2521.1525
 
 // The Apple developer team that signs the app.
 DEVELOPMENT_TEAM = V39999UVRP
