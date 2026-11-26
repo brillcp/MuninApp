@@ -111,14 +111,14 @@ struct SettingsView: View {
             }
 
             Section("settings.about") {
-                LabeledContent("settings.version") {
-                    Text(verbatim: Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "")
-                }
                 Link(destination: AppLinks.privacyPolicy) {
                     Label("settings.privacyPolicy", systemImage: DesignKit.Icon.privacyPolicy)
                 }
                 Link(destination: AppLinks.termsOfUse) {
                     Label("settings.termsOfUse", systemImage: DesignKit.Icon.termsOfUse)
+                }
+                LabeledContent("settings.version") {
+                    Text(verbatim: Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "")
                 }
             }
 
