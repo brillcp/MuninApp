@@ -89,4 +89,5 @@ jobs:
     uses: ./.github/workflows/testflight.yml
     with:
       version: ${{ needs.release.outputs.version }}
+      app_store: true
     secrets: inherit

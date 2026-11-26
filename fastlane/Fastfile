@@ -62,6 +62,35 @@ def use_manual_signing(configuration, profile:)
   File.write(path, updated)
 end
 
+# A setting from Config/Base.xcconfig, such as MARKETING_VERSION, where the release workflow sets
+# the version and build number.
+def base_setting(name)
+  path = File.expand_path("../Config/Base.xcconfig", __dir__)
+  value = File.read(path)[/^#{name} = (.+)$/, 1]
+  UI.user_error!("#{name} not found in #{path}") unless value
+  value.strip
+end
+
+# Creates the App Store version of the project's version on `platform` ("ios" or "osx") if it
+# doesn't exist, and attaches the build just uploaded. Changes no texts or screenshots, and never submits.
+#
+# Fails if that version can't be edited, such as while it's in review.
+def attach_to_app_store_version(key:, platform:)
+  deliver(
+    api_key: key,
+    app_identifier: APP_ID,
+    platform: platform,
+    app_version: base_setting("MARKETING_VERSION"),
+    build_number: base_setting("CURRENT_PROJECT_VERSION"),
+    skip_binary_upload: true,
+    skip_metadata: true,
+    skip_screenshots: true,
+    submit_for_review: false,
+    force: true,
+    run_precheck_before_submit: false
+  )
+end
+
 desc "Creates or updates the App Store certificates and profiles for iOS and macOS. Run locally once."
 lane :certificates do
   key = api_key
@@ -71,7 +100,9 @@ end
 
 platform :ios do
   desc "Archives the iOS app and uploads it to TestFlight"
-  lane :release_testflight do
+  desc "With app_store:true, waits for Apple to process it and attaches it to the App Store version"
+  lane :release_testflight do |options|
+    app_store = options[:app_store].to_s == "true"
     setup_ci if is_ci
     key = api_key
     profiles = install_signing(platform: "ios", key: key)
@@ -86,13 +117,17 @@ platform :ios do
       output_directory: "build/ios"
     )
 
-    upload_to_testflight(api_key: key, skip_waiting_for_build_processing: true)
+    # A build can only be attached to the App Store version once Apple has processed it.
+    upload_to_testflight(api_key: key, skip_waiting_for_build_processing: !app_store)
+    attach_to_app_store_version(key: key, platform: "ios") if app_store
   end
 end
 
 platform :mac do
   desc "Archives the macOS app and uploads it to TestFlight"
-  lane :release_testflight do
+  desc "With app_store:true, waits for Apple to process it and attaches it to the App Store version"
+  lane :release_testflight do |options|
+    app_store = options[:app_store].to_s == "true"
     setup_ci if is_ci
     key = api_key
     profiles = install_signing(platform: "macos", key: key)
@@ -111,7 +146,8 @@ platform :mac do
       api_key: key,
       app_platform: "osx",
       pkg: lane_context[SharedValues::PKG_OUTPUT_PATH],
-      skip_waiting_for_build_processing: true
+      skip_waiting_for_build_processing: !app_store
     )
+    attach_to_app_store_version(key: key, platform: "osx") if app_store
   end
 end
