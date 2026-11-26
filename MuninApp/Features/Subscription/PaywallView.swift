@@ -24,6 +24,7 @@ struct PaywallView: View {
         .inAppPurchaseOptions(purchaseOptions)
         .onInAppPurchaseCompletion(perform: purchaseCompleted)
         .tint(.accent)
+        .scrollEdgeEffectStyle(.soft, for: .top)
         #if os(macOS)
         .frame(minWidth: 460, minHeight: 560)
         #endif

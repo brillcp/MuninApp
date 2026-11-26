@@ -27,6 +27,7 @@ struct AutoFillView: View {
         }
         .tint(Self.accent)
         .task(model.unlockWithBiometrics)
+        .scrollEdgeEffectStyle(.soft, for: .top)
     }
 }
 

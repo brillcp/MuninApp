@@ -10,8 +10,10 @@ extension View {
     /// back button shows it. A `subtitle`, such as an item count, goes below
     /// it in a smaller, secondary font.
     ///
-    /// On macOS, the title and subtitle show in the window's toolbar, with
-    /// Lock at its leading edge and Cancel as the sheet's cancel button.
+    /// On macOS, the title shows in the window's toolbar, with Lock at its
+    /// leading edge and Cancel as the sheet's cancel button. With a
+    /// `subtitle`, both are drawn by this modifier, so the subtitle's numbers
+    /// roll when they change, as on iOS.
     ///
     /// - Parameters:
     ///   - titleKey: The title's localization key.
@@ -56,30 +58,16 @@ private struct LeadingNavigationTitle: ViewModifier {
                     }
                 }
                 ToolbarItem(placement: .topBarLeading) {
-                    MaximumWidth(DesignKit.Size.navigationTitleMaximumWidth) {
-                        VStack(alignment: .leading, spacing: DesignKit.Spacing.Primitive.s0) {
-                            title
-                                .font(.title3.weight(.semibold))
-                            if let subtitle {
-                                subtitle
-                                    .font(.subheadline)
-                                    .foregroundStyle(.secondary)
-                                    .contentTransition(.numericText())
-                            }
-                        }
-                        .lineLimit(1)
-                        .truncationMode(.tail)
-                        .animation(DesignKit.Motion.quickBouncy, value: subtitle)
-                    }
+                    MaximumWidth(DesignKit.Size.navigationTitleMaximumWidth) { titleStack }
                 }
                 .sharedBackgroundVisibility(.hidden)
             }
         #else
         Group {
-            if let subtitle {
+            if subtitle != nil {
                 content
                     .navigationTitle(title)
-                    .navigationSubtitle(subtitle)
+                    .toolbar(removing: .title)
             } else {
                 content
                     .navigationTitle(title)
@@ -94,13 +82,44 @@ private struct LeadingNavigationTitle: ViewModifier {
                     Button(role: .cancel, action: onCancel)
                 }
             }
+            if subtitle != nil {
+                ToolbarItem(placement: .navigation) { titleStack }
+                    .sharedBackgroundVisibility(.hidden)
+            }
         }
+        #endif
+    }
+
+    /// The title, with the subtitle below it in a smaller, secondary font.
+    ///
+    /// The subtitle's numbers roll when they change, such as when the items load.
+    private var titleStack: some View {
+        VStack(alignment: .leading, spacing: DesignKit.Spacing.Primitive.s0) {
+            title
+                .font(titleFont)
+            if let subtitle {
+                subtitle
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                    .contentTransition(.numericText())
+            }
+        }
+        .lineLimit(1)
+        .truncationMode(.tail)
+        .animation(DesignKit.Motion.quickBouncy, value: subtitle)
+    }
+
+    /// The title's font: larger on iOS, the toolbar's title size on macOS.
+    private var titleFont: Font {
+        #if os(iOS)
+        .title3.weight(.semibold)
+        #else
+        .headline
         #endif
     }
 }
 
 #if os(iOS)
-
 /// Sizes its content to its natural width, but no wider than `maximum`, where
 /// its text truncates, so a long title stays on one line in the bar.
 private struct MaximumWidth: Layout {

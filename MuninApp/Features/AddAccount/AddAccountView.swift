@@ -74,6 +74,7 @@ struct AddAccountView: View {
             }
             #endif
         }
+        .scrollEdgeEffectStyle(.soft, for: .top)
         #if os(macOS)
         .frame(minWidth: 460, minHeight: 540)
         #endif

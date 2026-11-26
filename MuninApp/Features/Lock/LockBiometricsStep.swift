@@ -24,13 +24,8 @@ struct LockBiometricsStep: View {
             )
             LockButton(systemImage: DesignKit.Icon.useMasterPassword, style: .secondary, action: onUseMasterPassword)
                 .buttonSizing(.fitted)
-            #if os(macOS)
-            if isUnlocking {
-                AccentSpinner(size: DesignKit.Spacing.Primitive.s16)
-                    .transition(.opacity)
-            }
-            #endif
         }
+        .lockSpinner(isShown: isUnlocking && !showsButtonSpinner)
         .animation(DesignKit.Motion.linear, value: isUnlocking)
     }
 }

@@ -44,6 +44,7 @@ struct RecoveryKeyView: View {
                 }
             }
         }
+        .scrollEdgeEffectStyle(.soft, for: .top)
         #if os(macOS)
         .frame(minWidth: 440, minHeight: 360)
         #endif

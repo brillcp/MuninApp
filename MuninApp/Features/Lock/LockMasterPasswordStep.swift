@@ -3,16 +3,15 @@ import SwiftUI
 /// A step that unlocks with the master password, with options to use
 /// biometrics or the recovery key.
 ///
-/// On iPhone, and on iPad in a compact-width window, Forgot Password is an
-/// icon beside the field, and the buttons fill the row below it. On macOS and
-/// in a regular-width iPad window, Forgot Password is a text button at the
-/// trailing end of the button row.
+/// On macOS, iPhone, and iPad in a compact-width window, Forgot Password is
+/// an icon beside the field. In a regular-width iPad window, it's a text
+/// button at the trailing end of the button row.
 ///
 /// While unlocking, a spinner replaces the Unlock button's title on iOS, and
 /// sits to the right of the buttons on macOS.
 struct LockMasterPasswordStep: View {
     #if os(iOS)
-    /// The horizontal size class, which picks the compact or regular layout.
+    /// The horizontal size class, which decides where Forgot Password sits.
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     #endif
     /// The vault session to unlock.
@@ -46,32 +45,29 @@ struct LockMasterPasswordStep: View {
                     .onSubmit(unlock)
                     .colorScheme(.light)
 
-                if usesCompactLayout {
+                if usesForgotPasswordIcon {
                     LockButton(systemImage: DesignKit.Icon.forgotPassword, style: .clear, action: onForgotPassword)
                         .accessibilityLabel(Text("lock.forgotMasterPassword"))
                 }
             }
 
             HStack {
-                LockButton("lock.unlock", isLoading: showsButtonSpinner, action: unlock)
-                    .disabled(password.isEmpty)
+                HStack {
+                    LockButton("lock.unlock", isLoading: showsButtonSpinner, action: unlock)
+                        .disabled(password.isEmpty)
 
-                if let onUseBiometrics {
-                    LockButton(
-                        systemImage: session.usesFaceID ? DesignKit.Icon.faceID : DesignKit.Icon.touchID,
-                        style: .secondary,
-                        action: onUseBiometrics
-                    )
-                    .buttonSizing(.fitted)
+                    if let onUseBiometrics {
+                        LockButton(
+                            systemImage: session.usesFaceID ? DesignKit.Icon.faceID : DesignKit.Icon.touchID,
+                            style: .secondary,
+                            action: onUseBiometrics
+                        )
+                        .buttonSizing(.fitted)
+                    }
                 }
-                #if os(macOS)
-                if isUnlocking {
-                    AccentSpinner(size: DesignKit.Spacing.Primitive.s16)
-                        .transition(.opacity)
-                }
-                #endif
+                .lockSpinner(isShown: isUnlocking && !showsButtonSpinner)
 
-                if !usesCompactLayout {
+                if !usesForgotPasswordIcon {
                     Spacer()
                     LockButton("lock.forgotMasterPassword", style: .tertiary, action: onForgotPassword)
                 }
@@ -82,13 +78,13 @@ struct LockMasterPasswordStep: View {
 }
 
 private extension LockMasterPasswordStep {
-    /// A Boolean value that indicates whether the compact layout is used: on
-    /// iPhone, and on iPad in a compact-width window.
-    var usesCompactLayout: Bool {
+    /// A Boolean value that indicates whether Forgot Password is an icon
+    /// beside the field: on macOS, iPhone, and iPad in a compact-width window.
+    var usesForgotPasswordIcon: Bool {
         #if os(iOS)
         horizontalSizeClass == .compact
         #else
-        false
+        true
         #endif
     }
 

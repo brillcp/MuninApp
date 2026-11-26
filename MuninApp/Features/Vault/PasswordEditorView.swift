@@ -101,6 +101,7 @@ struct PasswordEditorView: View {
                 }
             }
         }
+        .scrollEdgeEffectStyle(.soft, for: .top)
         #if os(macOS)
         .frame(minWidth: 440, minHeight: 420)
         #endif

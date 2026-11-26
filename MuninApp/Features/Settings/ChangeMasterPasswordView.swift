@@ -62,6 +62,7 @@ struct ChangeMasterPasswordView: View {
         }
         .onAppear(perform: session.clearError)
         .onDisappear(perform: session.clearError)
+        .scrollEdgeEffectStyle(.soft, for: .top)
         #if os(macOS)
         .frame(minWidth: 420, minHeight: 320)
         #endif

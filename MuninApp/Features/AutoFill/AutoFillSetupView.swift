@@ -49,6 +49,7 @@ struct AutoFillSetupView: View {
             }
         }
         .task(autoFill.refresh)
+        .scrollEdgeEffectStyle(.soft, for: .top)
         #if os(macOS)
         .frame(width: 460, height: 560)
         #endif

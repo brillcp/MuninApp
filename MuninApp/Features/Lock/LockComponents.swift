@@ -48,8 +48,12 @@ enum LockStep: Hashable {
 /// Step changes animate, including the size of the glass card on iPhone. When
 /// the vault can't be opened, for example because the server is unreachable,
 /// an alert offers to try again or sign out. The card is disabled while work
-/// is in progress. After Sign in with Apple,
-/// biometric unlock starts automatically once the vault is ready.
+/// is in progress. After Sign in with Apple, biometric unlock starts
+/// automatically once the vault is ready.
+///
+/// While a step unlocks, the card can show a spinner to the right of the
+/// step's buttons, marked with ``SwiftUI/View/lockSpinner(isShown:)``. It's
+/// drawn over the card, so it keeps the accent color while the card is disabled.
 struct LockPanel: View {
     /// The sign-in state, which decides the first step and provides the email
     /// shown on the switch account button.
@@ -109,6 +113,7 @@ struct LockPanel: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .modifier(LockPanelGlass(isEnabled: isOnGlass))
         .disabled(isWorking)
+        .overlayPreferenceValue(LockSpinnerAnchorKey.self, unlockSpinner)
         .animation(DesignKit.Motion.bouncy, value: step)
         .animation(DesignKit.Motion.bouncy, value: errorMessage)
         .onChange(of: auth.userID) { chosenStep = nil }
@@ -129,6 +134,22 @@ struct LockPanel: View {
 }
 
 private extension LockPanel {
+    /// The spinner to the right of the buttons that a step marked with
+    /// ``SwiftUI/View/lockSpinner(isShown:)``, if any.
+    func unlockSpinner(_ anchor: Anchor<CGRect>?) -> some View {
+        GeometryReader { proxy in
+            if let anchor {
+                let buttons = proxy[anchor]
+                AccentSpinner(size: DesignKit.Spacing.Primitive.s16)
+                    .position(
+                        x: buttons.maxX + DesignKit.Spacing.Primitive.s12 + DesignKit.Spacing.Primitive.s8,
+                        y: buttons.midY
+                    )
+            }
+        }
+        .allowsHitTesting(false)
+    }
+
     /// Goes to Sign in with Apple, to sign in with another Apple Account.
     ///
     /// The button shows the current email, truncated in the middle when it's
@@ -198,6 +219,25 @@ private extension LockPanel {
 /// Pads the lock panel and places it on a glass card, when enabled.
 ///
 /// The card resizes with the same animation as the step.
+extension View {
+    /// Shows the lock panel's spinner to the right of this view while
+    /// `isShown` is `true`.
+    ///
+    /// - Parameter isShown: Whether the spinner shows.
+    func lockSpinner(isShown: Bool) -> some View {
+        anchorPreference(key: LockSpinnerAnchorKey.self, value: .bounds) { isShown ? $0 : nil }
+    }
+}
+
+/// The bounds of the view that ``LockPanel`` shows its spinner beside, if any.
+nonisolated private struct LockSpinnerAnchorKey: PreferenceKey {
+    static var defaultValue: Anchor<CGRect>? { nil }
+
+    static func reduce(value: inout Anchor<CGRect>?, nextValue: () -> Anchor<CGRect>?) {
+        value = value ?? nextValue()
+    }
+}
+
 private struct LockPanelGlass: ViewModifier {
     /// A Boolean value that indicates whether to draw the card.
     let isEnabled: Bool
