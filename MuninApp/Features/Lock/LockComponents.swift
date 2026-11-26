@@ -65,14 +65,12 @@ struct LockPanel: View {
 
     var body: some View {
         @Bindable var session = session
-        VStack(alignment: .leading, spacing: DesignKit.Spacing.Primitive.s24) {
+        VStack(alignment: .leading, spacing: DesignKit.Spacing.Primitive.s32) {
             if let title = step.title {
-                Text(title)
-                    .font(.title2.weight(.semibold))
+                Text(title).font(.title2.weight(.semibold))
             }
 
-            stepView
-                .transition(.blurReplace)
+            stepView.transition(.blurReplace)
 
             if auth.isSignedIn {
                 if step == .biometrics || step == .masterPassword, let email = auth.email {
@@ -305,10 +303,13 @@ private extension LockButton {
     func styled(_ button: some View) -> some View {
         switch style {
         case .primary:
-            button.buttonStyle(.glassProminent)
+            button
+                .buttonStyle(.glassProminent)
+                .fontWeight(.semibold)
         case .secondary:
             button
                 .buttonStyle(.glass)
+                .fontWeight(.semibold)
                 .tint(.primary)
         case .clear:
             button
@@ -320,6 +321,7 @@ private extension LockButton {
                 .buttonStyle(.plain)
                 .foregroundStyle(.primary)
                 .tint(.primary)
+                .font(.subheadline)
         }
     }
 }

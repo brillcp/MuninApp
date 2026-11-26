@@ -58,11 +58,11 @@ struct PasswordInspector: View {
                 DetailRow(label: "password.field.password", isCopied: copiedField == .password) {
                     if let revealedPassword {
                         Text(revealedPassword)
-                            .font(.body.monospaced())
+                            .monospaced()
                             .textSelection(.enabled)
                     } else {
                         Text("••••••••••••")
-                            .font(.body.monospaced())
+                            .monospaced()
                     }
                 } actions: {
                     Button(revealedPassword == nil ? "passwordInspector.show" : "passwordInspector.hide",

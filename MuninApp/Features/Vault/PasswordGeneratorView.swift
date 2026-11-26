@@ -18,7 +18,7 @@ struct PasswordGeneratorView: View {
         VStack(alignment: .leading, spacing: DesignKit.Spacing.Primitive.s0) {
             VStack(alignment: .leading, spacing: DesignKit.Spacing.Primitive.s16) {
                 Text(password)
-                    .font(.system(.title2, design: .monospaced, weight: .semibold))
+                    .font(.title3.monospaced())
                     .textSelection(.enabled)
                     .frame(maxWidth: .infinity, minHeight: 60, alignment: .topLeading)
 

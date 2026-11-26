@@ -7,13 +7,13 @@ struct AccountHeader: View {
 
     var body: some View {
         HStack(spacing: DesignKit.Spacing.Primitive.s12) {
-            AccountAvatar(email: email, size: DesignKit.Spacing.Primitive.s64)
+            AccountAvatar(email: email, size: DesignKit.Spacing.Primitive.s56)
             if let email {
                 Text(verbatim: email)
                     .font(.subheadline.weight(.semibold))
                     .textSelection(.enabled)
             }
         }
-        .frame(maxWidth: .infinity)
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 }

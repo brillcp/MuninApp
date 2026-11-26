@@ -39,6 +39,7 @@ struct SettingsView: View {
                     AccountHeader(email: auth.email)
                         .listRowBackground(Color.clear)
                 }
+                .listSectionMargins([.leading, .top], DesignKit.Spacing.Primitive.s8)
 
                 if let status = subscriptions.status, status.required {
                     Section("settings.subscription") {

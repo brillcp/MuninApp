@@ -291,7 +291,7 @@ private extension VaultView {
 }
 
 /// A row that shows a password's website icon, name, and username.
-struct PasswordTitleCell: View {
+struct PasswordItemRow: View {
     /// The item to display.
     let item: PasswordItem
 

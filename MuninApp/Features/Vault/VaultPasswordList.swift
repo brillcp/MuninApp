@@ -92,7 +92,7 @@ private extension VaultPasswordList {
     /// A row that pushes or selects its item.
     func row(_ item: PasswordItem) -> some View {
         NavigationLink(value: item.id) {
-            PasswordTitleCell(item: item)
+            PasswordItemRow(item: item)
                 .padding(.leading, sidebarWidth)
         }
     }

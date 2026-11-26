@@ -51,7 +51,7 @@ struct CardEditorView: View {
                         .textContentType(.creditCardName)
                         #endif
                     TextField("card.field.number", text: $fields.number)
-                        .font(.body.monospaced())
+                        .monospaced()
                         .autocorrectionDisabled()
                         #if os(iOS)
                         .keyboardType(.numberPad)

@@ -21,7 +21,7 @@ struct RecoveryKeyView: View {
                     .foregroundStyle(.secondary)
 
                 Text(recoveryKey)
-                    .font(.system(.body, design: .monospaced, weight: .regular))
+                    .monospaced()
                     .textSelection(.enabled)
                     .padding()
                     .frame(maxWidth: .infinity, alignment: .leading)

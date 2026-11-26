@@ -39,7 +39,7 @@ struct SearchView: View {
                     Section("search.section.passwords") {
                         ForEach(passwords) { item in
                             NavigationLink(value: item.id) {
-                                PasswordTitleCell(item: item)
+                                PasswordItemRow(item: item)
                             }
                         }
                     }
