@@ -19,7 +19,9 @@ struct DetailRow<Value: View, Actions: View>: View {
         HStack(spacing: DesignKit.Spacing.Primitive.s16) {
             VStack(alignment: .leading, spacing: DesignKit.Spacing.Primitive.s4) {
                 Text(label)
+                    #if os(iOS)
                     .font(.subheadline)
+                    #endif
                     .foregroundStyle(.secondary)
                 Group {
                     if isCopied {

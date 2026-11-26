@@ -16,7 +16,9 @@ struct AutoFillCodeRow: View {
                     Text(account.title)
                     if let subtitle = account.subtitle {
                         Text(subtitle)
+                            #if os(iOS)
                             .font(.subheadline)
+                            #endif
                             .foregroundStyle(.secondary)
                     }
                 }

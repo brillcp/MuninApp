@@ -15,7 +15,9 @@ struct AutoFillPasswordRow: View {
                     Text(item.name)
                     if !item.username.isEmpty {
                         Text(item.username)
+                            #if os(iOS)
                             .font(.subheadline)
+                            #endif
                             .foregroundStyle(.secondary)
                     }
                 }

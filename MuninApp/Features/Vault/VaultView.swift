@@ -313,7 +313,9 @@ struct PasswordItemRow: View {
                         .foregroundStyle(.secondary)
                 }
             }
+            #if os(iOS)
             .font(.subheadline)
+            #endif
         }
         .padding(.vertical, vertical)
     }

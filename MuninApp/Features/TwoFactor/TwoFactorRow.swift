@@ -90,7 +90,9 @@ struct AccountLabel: View, Equatable {
                     .foregroundStyle(.secondary)
             }
         }
+        #if os(iOS)
         .font(.subheadline)
+        #endif
         .lineLimit(1)
     }
 }
