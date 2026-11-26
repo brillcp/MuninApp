@@ -40,42 +40,42 @@ struct MainView: View {
         @Bindable var cardsModel = cardsModel
         @Bindable var autoFill = autoFill
         sections
-        .scrollIndicators(.never)
-        .task { await subscriptions.start() }
-        .sheet(isPresented: $subscriptions.isPaywallPresented) {
-            PaywallView()
-        }
-        .sheet(isPresented: $autoFill.isGuidePresented) {
-            AutoFillSetupView()
-        }
-        .alert("vault.saveFailed.title", item: $vaultModel.failureMessage) { _ in
-            Button("global.done") {}
-        } message: { message in
-            Text(message)
-        }
-        .alert("vault.saveFailed.title", item: $cardsModel.failureMessage) { _ in
-            Button("global.done") {}
-        } message: { message in
-            Text(message)
-        }
-        .onChange(of: pendingCodeLink, initial: true, openPendingCodeLink)
-        .onChange(of: canPresentAutoFillGuide, initial: true, presentAutoFillGuide)
-        .confirmationDialog("codes.link.title", item: $linkedAccounts, titleVisibility: .visible) { linked in
-            Button("codes.link.add") { addLinkedAccounts(linked.accounts) }
-        } message: { linked in
-            Text(LocalizedKey("codes.link.message", linked.accounts.map(\.title).joined(separator: ", ")))
-        }
-        .alert("codes.link.failed", item: $linkError) { _ in
-            Button("global.done") {}
-        } message: { message in
-            Text(message)
-        }
-        #if os(macOS)
-        .focusedSceneValue(\.mainSection, $selection)
-        #endif
-        #if os(iOS)
-        .tabViewSearchActivation(.searchTabSelection)
-        #endif
+            .task { await subscriptions.start() }
+            .sheet(isPresented: $subscriptions.isPaywallPresented) {
+                PaywallView()
+            }
+            .sheet(isPresented: $autoFill.isGuidePresented) {
+                AutoFillSetupView()
+            }
+            .alert("vault.saveFailed.title", item: $vaultModel.failureMessage) { _ in
+                Button("global.done") {}
+            } message: { message in
+                Text(message)
+            }
+            .alert("vault.saveFailed.title", item: $cardsModel.failureMessage) { _ in
+                Button("global.done") {}
+            } message: { message in
+                Text(message)
+            }
+            .onChange(of: pendingCodeLink, initial: true, openPendingCodeLink)
+            .onChange(of: canPresentAutoFillGuide, initial: true, presentAutoFillGuide)
+            .confirmationDialog("codes.link.title", item: $linkedAccounts, titleVisibility: .visible) { linked in
+                Button("codes.link.add") { addLinkedAccounts(linked.accounts) }
+            } message: { linked in
+                Text(LocalizedKey("codes.link.message", linked.accounts.map(\.title).joined(separator: ", ")))
+            }
+            .alert("codes.link.failed", item: $linkError) { _ in
+                Button("global.done") {}
+            } message: { message in
+                Text(message)
+            }
+            #if os(macOS)
+            .focusedSceneValue(\.mainSection, $selection)
+            #endif
+            #if os(iOS)
+            .tabViewSearchActivation(.searchTabSelection)
+            .scrollIndicators(.never)
+            #endif
     }
 }
 
