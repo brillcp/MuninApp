@@ -34,7 +34,6 @@ struct AutoFillSetupView: View {
                             Button("autofill.setup.turnOn", action: turnOn)
                                 .buttonStyle(.glassProminent)
                             Button("autofill.setup.openSettings", action: openSettings)
-                                .buttonStyle(.glass)
                         }
                         .buttonSizing(.flexible)
                         .controlSize(.large)
