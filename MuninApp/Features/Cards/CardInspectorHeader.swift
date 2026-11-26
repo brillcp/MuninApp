@@ -12,7 +12,7 @@ struct CardInspectorHeader: View {
                     .font(.system(size: DesignKit.Spacing.Primitive.s48))
                     .foregroundStyle(.tint)
                 Text(name)
-                    .font(.title2.bold())
+                    .font(.title2.weight(.semibold))
                     .multilineTextAlignment(.leading)
                     .textSelection(.enabled)
             }

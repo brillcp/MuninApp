@@ -21,6 +21,7 @@ nonisolated enum DesignKit {
             static let s56: CGFloat = 56
             static let s64: CGFloat = 64
             static let s72: CGFloat = 72
+            static let s80: CGFloat = 80
         }
     }
 

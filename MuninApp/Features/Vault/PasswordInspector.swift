@@ -38,7 +38,7 @@ struct PasswordInspector: View {
                 VStack(spacing: DesignKit.Spacing.Primitive.s16) {
                     WebsiteIcon(url: item.url, size: DesignKit.Spacing.Primitive.s72)
                     Text(item.name)
-                        .font(.title2.bold())
+                        .font(.title2.weight(.semibold))
                         .multilineTextAlignment(.leading)
                         .textSelection(.enabled)
                 }

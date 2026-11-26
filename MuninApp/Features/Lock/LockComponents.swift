@@ -9,7 +9,7 @@ struct LockLogo: View {
         VStack(alignment: .leading, spacing: DesignKit.Spacing.Primitive.s16) {
             AppIcon(size: DesignKit.Spacing.Primitive.s64)
             Text("main.window.title")
-                .font(.title.bold())
+                .font(.title2.weight(.semibold))
                 .foregroundStyle(.primary)
             Text("subscription.message")
                 .font(.title3)
@@ -68,7 +68,7 @@ struct LockPanel: View {
         VStack(alignment: .leading, spacing: DesignKit.Spacing.Primitive.s24) {
             if let title = step.title {
                 Text(title)
-                    .font(.title.bold())
+                    .font(.title2.weight(.semibold))
             }
 
             stepView

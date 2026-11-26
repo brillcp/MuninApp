@@ -6,11 +6,11 @@ struct AccountHeader: View {
     let email: String?
 
     var body: some View {
-        VStack(spacing: DesignKit.Spacing.Primitive.s12) {
-            AccountAvatar(email: email, size: 88)
+        HStack(spacing: DesignKit.Spacing.Primitive.s12) {
+            AccountAvatar(email: email, size: DesignKit.Spacing.Primitive.s64)
             if let email {
                 Text(verbatim: email)
-                    .font(.headline)
+                    .font(.subheadline.weight(.semibold))
                     .textSelection(.enabled)
             }
         }

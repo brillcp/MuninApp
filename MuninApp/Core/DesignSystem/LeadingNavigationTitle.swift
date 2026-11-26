@@ -8,7 +8,7 @@ extension View {
     ///
     /// It's still the screen's navigation title, hidden from the bar, so the
     /// next screen's back button shows it. A `subtitle`, such as an item
-    /// count, goes below it in a smaller, secondary font. From Birdwatch.
+    /// count, goes below it in a smaller, secondary font.
     ///
     /// - Parameters:
     ///   - titleKey: The title's localization key.
@@ -46,10 +46,12 @@ private struct LeadingNavigationTitle: ViewModifier {
                                 subtitle
                                     .font(.subheadline)
                                     .foregroundStyle(.secondary)
+                                    .contentTransition(.numericText())
                             }
                         }
                         .lineLimit(1)
                         .truncationMode(.tail)
+                        .animation(DesignKit.Motion.quickBouncy, value: subtitle)
                     }
                 }
                 .sharedBackgroundVisibility(.hidden)

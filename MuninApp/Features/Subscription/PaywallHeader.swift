@@ -19,7 +19,7 @@ struct PaywallHeader: View {
         VStack(spacing: DesignKit.Spacing.Primitive.s12) {
             AppIcon(size: 128)
             Text("subscription.title")
-                .font(.largeTitle.bold())
+                .font(.largeTitle.weight(.semibold))
             Text("subscription.message")
                 .multilineTextAlignment(.center)
                 .foregroundStyle(.secondary)

@@ -13,7 +13,7 @@ struct MasterPasswordSetupView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: DesignKit.Spacing.Primitive.s24) {
             Text(session.isResettingMasterPassword ? "masterPassword.reset.title" : "masterPassword.create.title")
-                .font(.largeTitle.bold())
+                .font(.largeTitle.weight(.semibold))
             Text("masterPassword.create.message")
                 .foregroundStyle(.secondary)
 

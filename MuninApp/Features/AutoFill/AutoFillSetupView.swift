@@ -18,7 +18,7 @@ struct AutoFillSetupView: View {
                         .font(.largeTitle)
                         .foregroundStyle(.tint)
                     Text("autofill.setup.turnOn")
-                        .font(.title.bold())
+                        .font(.title.weight(.semibold))
                     Text("autofill.setup.message")
                         .foregroundStyle(.secondary)
                     VStack(alignment: .leading, spacing: DesignKit.Spacing.Primitive.s16) {
