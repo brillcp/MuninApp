@@ -110,6 +110,7 @@ struct LockPanel: View {
         .modifier(LockPanelGlass(isEnabled: isOnGlass))
         .disabled(isWorking)
         .animation(DesignKit.Motion.bouncy, value: step)
+        .animation(DesignKit.Motion.bouncy, value: errorMessage)
         .onChange(of: auth.userID) { chosenStep = nil }
         .onChange(of: auth.isSigningIn) { wasSigningIn, isSigningIn in
             guard wasSigningIn, !isSigningIn, auth.isSignedIn, auth.signInError == nil else { return }
