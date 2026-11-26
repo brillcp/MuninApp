@@ -92,24 +92,21 @@ struct PasswordEditorView: View {
             .onAppear { isNameFocused = !isEditing }
             .sensoryFeedback(.impact(weight: .light), trigger: hapticTaps)
             .disabled(isSaving)
-            .navigationTitle(isEditing ? "passwordEditor.editTitle" : "passwordEditor.newTitle")
             #if os(iOS)
-            .navigationBarTitleDisplayMode(.inline)
+            .leadingNavigationTitle(isEditing ? "passwordEditor.editTitle" : "passwordEditor.newTitle", onCancel: cancel)
+            #else
+            .navigationTitle(isEditing ? "passwordEditor.editTitle" : "passwordEditor.newTitle")
             #endif
             .toolbar {
+                #if os(macOS)
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("global.cancel") {
-                        hapticTaps += 1
-                        dismiss()
-                    }
+                    Button(role: .cancel, action: cancel)
                 }
+                #endif
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("global.save") {
-                        hapticTaps += 1
-                        save()
-                    }
-                    .buttonStyle(.glassProminent)
-                    .disabled(fields.name.trimmingCharacters(in: .whitespaces).isEmpty || isSaving)
+                    Button(role: .confirm, action: save)
+                        .buttonStyle(.glassProminent)
+                        .disabled(fields.name.trimmingCharacters(in: .whitespaces).isEmpty || isSaving)
                 }
             }
         }
@@ -120,8 +117,15 @@ struct PasswordEditorView: View {
 }
 
 private extension PasswordEditorView {
+    /// Closes the editor without saving.
+    func cancel() {
+        hapticTaps += 1
+        dismiss()
+    }
+
     /// Saves the fields and dismisses the sheet, or shows the error.
     func save() {
+        hapticTaps += 1
         isSaving = true
         errorMessage = nil
         Task {

@@ -45,7 +45,8 @@ enum LockStep: Hashable {
 /// A view that shows the lock screen's card: the title, the current step, and
 /// any error.
 ///
-/// Step changes animate. When the vault can't be opened, for example because
+/// Step changes animate, including the size of the glass card on iPhone, which
+/// is drawn here so the animation covers it. When the vault can't be opened, for example because
 /// the server is unreachable, an alert offers to try again or sign out. The
 /// card is disabled while work is in progress. After Sign in with Apple,
 /// biometric unlock starts automatically once the vault is ready.
@@ -63,6 +64,18 @@ struct LockPanel: View {
     /// vault is ready, set after Sign in with Apple.
     @State private var unlocksAfterSignIn = false
 
+    /// A Boolean value that indicates whether the panel sits on a padded glass
+    /// card, as on iPhone.
+    let isOnGlass: Bool
+
+    /// Creates the panel.
+    ///
+    /// - Parameter isOnGlass: Whether the panel sits on a padded glass card,
+    ///   as on iPhone.
+    init(isOnGlass: Bool = false) {
+        self.isOnGlass = isOnGlass
+    }
+
     var body: some View {
         @Bindable var session = session
         VStack(alignment: .leading, spacing: DesignKit.Spacing.Primitive.s32) {
@@ -74,7 +87,13 @@ struct LockPanel: View {
 
             if auth.isSignedIn {
                 if step == .biometrics || step == .masterPassword, let email = auth.email {
-                    LockButton(LocalizedKey("lock.switchAccount", email), style: .tertiary) { go(to: .signIn) }
+                    LockButton(LocalizedKey("lock.switchAccount", email), style: .tertiary, action: switchAccount)
+                        .lineLimit(1)
+                        .truncationMode(.middle)
+                        #if os(iOS)
+                        .buttonSizing(.fitted)
+                        .frame(maxWidth: .infinity)
+                        #endif
                 }
             }
 
@@ -82,10 +101,13 @@ struct LockPanel: View {
                 Text(errorMessage)
                     .font(.footnote)
                     .foregroundStyle(.red)
+                    #if os(iOS)
+                    .frame(maxWidth: .infinity)
+                    #endif
             }
         }
-        .padding()
         .frame(maxWidth: .infinity, alignment: .leading)
+        .modifier(LockPanelGlass(isEnabled: isOnGlass))
         .disabled(isWorking)
         .animation(DesignKit.Motion.bouncy, value: step)
         .onChange(of: auth.userID) { chosenStep = nil }
@@ -106,6 +128,14 @@ struct LockPanel: View {
 }
 
 private extension LockPanel {
+    /// Goes to Sign in with Apple, to sign in with another Apple Account.
+    ///
+    /// The button shows the current email, truncated in the middle when it's
+    /// long, and is centered on iOS.
+    func switchAccount() {
+        go(to: .signIn)
+    }
+
     /// The step to show.
     ///
     /// Sign-in while signed out; otherwise the user's choice, then biometrics
@@ -161,6 +191,25 @@ private extension LockPanel {
     func go(to step: LockStep?) {
         session.clearError()
         chosenStep = step
+    }
+}
+
+/// Pads the lock panel and places it on a glass card, when enabled.
+///
+/// Applied inside ``LockPanel``, before its step animation, so the card
+/// resizes with the same animation as the step.
+private struct LockPanelGlass: ViewModifier {
+    /// A Boolean value that indicates whether to draw the card.
+    let isEnabled: Bool
+
+    func body(content: Content) -> some View {
+        if isEnabled {
+            content
+                .padding()
+                .glassEffect(in: .rect(cornerRadius: DesignKit.Spacing.Primitive.s24))
+        } else {
+            content
+        }
     }
 }
 
@@ -332,6 +381,5 @@ struct LockVersionLabel: View {
         Text(LocalizedKey("lock.version", Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? ""))
             .font(.footnote)
             .foregroundStyle(.primary)
-            .padding(.leading)
     }
 }

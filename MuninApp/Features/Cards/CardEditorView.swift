@@ -86,16 +86,19 @@ struct CardEditorView: View {
             .onChange(of: fields.number, formatNumber)
             .sensoryFeedback(.impact(weight: .light), trigger: hapticTaps)
             .disabled(isSaving)
-            .navigationTitle(isEditing ? "cardEditor.editTitle" : "cardEditor.newTitle")
             #if os(iOS)
-            .navigationBarTitleDisplayMode(.inline)
+            .leadingNavigationTitle(isEditing ? "cardEditor.editTitle" : "cardEditor.newTitle", onCancel: cancel)
+            #else
+            .navigationTitle(isEditing ? "cardEditor.editTitle" : "cardEditor.newTitle")
             #endif
             .toolbar {
+                #if os(macOS)
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("global.cancel", action: cancel)
+                    Button(role: .cancel, action: cancel)
                 }
+                #endif
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("global.save", action: save)
+                    Button(role: .confirm, action: save)
                         .buttonStyle(.glassProminent)
                         .disabled(fields.name.trimmingCharacters(in: .whitespaces).isEmpty || isSaving)
                 }

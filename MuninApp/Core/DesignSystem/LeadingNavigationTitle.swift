@@ -14,12 +14,19 @@ extension View {
     ///   - titleKey: The title's localization key.
     ///   - subtitle: Text below the title, if any.
     ///   - showsLockButton: Whether a Lock button sits to the left of the title.
-    func leadingNavigationTitle(_ titleKey: LocalizedStringKey, subtitle: Text? = nil, showsLockButton: Bool = false) -> some View {
-        modifier(LeadingNavigationTitle(title: Text(titleKey), subtitle: subtitle, showsLockButton: showsLockButton))
+    ///   - onCancel: The action of a Cancel button (an xmark) to the left of
+    ///     the title, for sheets, or `nil` for none.
+    func leadingNavigationTitle(
+        _ titleKey: LocalizedStringKey,
+        subtitle: Text? = nil,
+        showsLockButton: Bool = false,
+        onCancel: (() -> Void)? = nil
+    ) -> some View {
+        modifier(LeadingNavigationTitle(title: Text(titleKey), subtitle: subtitle, showsLockButton: showsLockButton, onCancel: onCancel))
     }
 }
 
-/// The modifier behind ``SwiftUI/View/leadingNavigationTitle(_:subtitle:showsLockButton:)``.
+/// The modifier behind ``SwiftUI/View/leadingNavigationTitle(_:subtitle:showsLockButton:onCancel:)``.
 private struct LeadingNavigationTitle: ViewModifier {
     /// The title, which is also the navigation title for the back button.
     let title: Text
@@ -27,6 +34,8 @@ private struct LeadingNavigationTitle: ViewModifier {
     let subtitle: Text?
     /// A Boolean value that indicates whether a Lock button sits to the left of the title.
     let showsLockButton: Bool
+    /// The action of a Cancel button to the left of the title, if any.
+    let onCancel: (() -> Void)?
 
     func body(content: Content) -> some View {
         content
@@ -36,6 +45,11 @@ private struct LeadingNavigationTitle: ViewModifier {
             .toolbar {
                 if showsLockButton {
                     ToolbarItem(placement: .topBarLeading) { LockToolbarButton() }
+                }
+                if let onCancel {
+                    ToolbarItem(placement: .topBarLeading) {
+                        Button(role: .cancel, action: onCancel)
+                    }
                 }
                 ToolbarItem(placement: .topBarLeading) {
                     MaximumWidth(DesignKit.Size.navigationTitleMaximumWidth) {

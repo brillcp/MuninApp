@@ -132,6 +132,8 @@ nonisolated enum DesignKit {
         static let masterPassword = "lock.shield"
         /// Unlock with the master password instead of biometrics.
         static let useMasterPassword = "lock.shield.fill"
+        /// Reset a forgotten master password with the recovery key.
+        static let forgotPassword = "questionmark.circle"
         /// The recovery key.
         static let recoveryKey = "key"
         /// Set up AutoFill.

@@ -21,6 +21,7 @@ struct LockRecoveryKeyStep: View {
         VStack(alignment: .leading, spacing: DesignKit.Spacing.Primitive.s24) {
             Text("lock.recovery.message")
                 .foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
             TextField("lock.recovery.placeholder", text: $recoveryKey, axis: .vertical)
                 .focused($isFieldFocused)
                 .task { isFieldFocused = true }
@@ -35,6 +36,9 @@ struct LockRecoveryKeyStep: View {
             LockButton("lock.recovery.continue") { session.unlock(recoveryKey: recoveryKey) }
                 .disabled(recoveryKey.isEmpty)
             LockButton("global.cancel", style: .tertiary, action: onCancel)
+                #if os(iOS)
+                .frame(maxWidth: .infinity)
+                #endif
         }
     }
 }

@@ -8,8 +8,7 @@ struct LockFullScreenLayout: View {
     var body: some View {
         Color.clear
             .safeAreaBar(edge: .bottom) {
-                LockPanel()
-                    .glassEffect(in: .rect(cornerRadius: DesignKit.Spacing.Primitive.s24))
+                LockPanel(isOnGlass: true)
                     .buttonSizing(.flexible)
             }
             .padding()

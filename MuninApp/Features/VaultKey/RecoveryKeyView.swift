@@ -2,7 +2,8 @@ import SwiftUI
 
 /// A view that shows the recovery key so the user can store it safely.
 ///
-/// The recovery key resets a forgotten master password.
+/// The recovery key resets a forgotten master password. The content scrolls,
+/// so nothing is cut off on small screens or with large text.
 struct RecoveryKeyView: View {
     /// The action that closes the view.
     @Environment(\.dismiss) private var dismiss
@@ -15,34 +16,35 @@ struct RecoveryKeyView: View {
 
     var body: some View {
         NavigationStack {
-            VStack(alignment: .leading, spacing: DesignKit.Spacing.Primitive.s24) {
-                Text("vaultKey.recovery.explanation")
-                Text("vaultKey.recovery.backup")
-                    .foregroundStyle(.secondary)
+            ScrollView {
+                VStack(alignment: .leading, spacing: DesignKit.Spacing.Primitive.s24) {
+                    Text("vaultKey.recovery.explanation")
+                    Text("vaultKey.recovery.backup")
+                        .foregroundStyle(.secondary)
 
-                Text(recoveryKey)
-                    .monospaced()
-                    .textSelection(.enabled)
-                    .padding()
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(.quaternary, in: RoundedRectangle(cornerRadius: DesignKit.Spacing.Primitive.s12))
+                    Text(recoveryKey)
+                        .monospaced()
+                        .textSelection(.enabled)
+                        .padding()
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .background(.quaternary, in: RoundedRectangle(cornerRadius: DesignKit.Spacing.Primitive.s12))
 
-                Button(didCopy ? "global.copied" : "vaultKey.recovery.copy", systemImage: didCopy ? DesignKit.Icon.copied : DesignKit.Icon.copy) {
-                    Pasteboard.copy(recoveryKey)
-                    didCopy = true
+                    Button(didCopy ? "global.copied" : "vaultKey.recovery.copy", systemImage: didCopy ? DesignKit.Icon.copied : DesignKit.Icon.copy) {
+                        Pasteboard.copy(recoveryKey)
+                        didCopy = true
+                    }
+                    .buttonStyle(.bordered)
                 }
-                .buttonStyle(.bordered)
-
-                Spacer()
+                .padding()
             }
-            .padding()
-            .navigationTitle("vaultKey.recovery.title")
             #if os(iOS)
-            .navigationBarTitleDisplayMode(.inline)
+            .leadingNavigationTitle("vaultKey.recovery.title")
+            #else
+            .navigationTitle("vaultKey.recovery.title")
             #endif
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("global.done", action: dismiss.callAsFunction)
+                    Button(role: .confirm, action: dismiss.callAsFunction)
                 }
             }
         }

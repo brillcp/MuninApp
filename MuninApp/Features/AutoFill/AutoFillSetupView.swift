@@ -44,7 +44,7 @@ struct AutoFillSetupView: View {
             }
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("global.done", action: dismiss.callAsFunction)
+                    Button(role: .confirm, action: dismiss.callAsFunction)
                 }
             }
         }

@@ -21,7 +21,7 @@ struct AutoFillView: View {
                 #endif
                 .toolbar {
                     ToolbarItem(placement: .cancellationAction) {
-                        Button("global.cancel", action: model.cancel)
+                        Button(role: .cancel, action: model.cancel)
                     }
                 }
         }
