@@ -67,6 +67,7 @@ import SwiftUI
                 .environment(settingsModel)
                 .environment(autoFill)
                 .tint(.accent)
+                .scrollEdgeEffectStyle(.soft, for: .top)
         }
 
         MenuBarExtra("main.window.title", image: DesignKit.Asset.menuBarIcon) {
@@ -75,6 +76,7 @@ import SwiftUI
                 .environment(session)
                 .environment(vaultModel)
                 .tint(.accent)
+                .scrollEdgeEffectStyle(.soft, for: .top)
         }
         .menuBarExtraStyle(.window)
         #else
@@ -93,8 +95,9 @@ import SwiftUI
 
     /// The root view with the shared models in its environment.
     ///
-    /// The app's tint is set once here; views override it only where they
-    /// need a different color, such as the countdown gauge.
+    /// The app's tint and the soft top scroll edge are set once here; views
+    /// override the tint only where they need a different color, such as the
+    /// countdown gauge.
     private var root: some View {
         ContentView()
             .environment(auth)
@@ -107,5 +110,6 @@ import SwiftUI
             .environment(autoFill)
             .environment(updateChecker)
             .tint(.accent)
+            .scrollEdgeEffectStyle(.soft, for: .top)
     }
 }

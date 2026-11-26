@@ -171,8 +171,12 @@ private extension VaultView {
             pendingDeletion: $pendingDeletion,
             onEdit: startEditing
         )
+        #if os(iOS)
+        .leadingNavigationTitle("vault.title", subtitle: Text(LocalizedKey("vault.subtitle", viewModel.items.count)), showsLockButton: true)
+        #else
         .navigationTitle("vault.title")
         .navigationSubtitle(LocalizedKey("vault.subtitle", viewModel.items.count))
+        #endif
         .toolbar { toolbarContent }
         .safeAreaInset(edge: .bottom) {
             SubscriptionBanners {
@@ -198,13 +202,14 @@ private extension VaultView {
 
     /// The toolbar's buttons.
     ///
-    /// On macOS, Create follows the title, and Import and Lock sit at the
-    /// trailing edge; Edit and Delete live in the detail panel. On iOS, the
-    /// toolbar shows Sort, Import, and Create.
+    /// On macOS, Lock leads, Create follows the title, and Import and Sort sit
+    /// at the trailing edge; Edit and Delete live in the detail panel. On iOS,
+    /// the toolbar shows Sort, Import, and Create; Lock sits beside the
+    /// leading title.
     @ToolbarContentBuilder
     var toolbarContent: some ToolbarContent {
-        ToolbarItem(placement: .navigation) { LockToolbarButton() }
         #if os(macOS)
+        ToolbarItem(placement: .navigation) { LockToolbarButton() }
         ToolbarItem(placement: .primaryAction) { createButton }
         ToolbarSpacer(.flexible, placement: .primaryAction)
         ToolbarItemGroup(placement: .primaryAction) {

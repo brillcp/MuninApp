@@ -133,8 +133,7 @@ private extension MainView {
             Tab("settings.title", systemImage: DesignKit.Icon.settings, value: Section.settings) {
                 NavigationStack {
                     SettingsView()
-                        .navigationTitle("settings.title")
-                        .navigationBarTitleDisplayMode(.inline)
+                        .leadingNavigationTitle("settings.title")
                 }
             }
             Tab(value: Section.search, role: .search) {

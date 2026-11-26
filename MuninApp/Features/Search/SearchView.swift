@@ -69,7 +69,7 @@ struct SearchView: View {
                     ContentUnavailableView.search(text: trimmedQuery)
                 }
             }
-            .navigationTitle("search.title")
+            .leadingNavigationTitle("search.title")
             .navigationDestination(for: PasswordItem.ID.self) { id in
                 PasswordDetail(item: vaultModel.items.first { $0.id == id }, viewModel: vaultModel, dismissesWhenDeleted: true)
             }

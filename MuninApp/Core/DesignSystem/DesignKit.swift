@@ -169,6 +169,12 @@ nonisolated enum DesignKit {
         static let undecryptable = "exclamationmark.lock"
     }
 
+    /// Fixed sizes of interface elements.
+    enum Size {
+        /// The widest a leading navigation title can be before it truncates, on iOS.
+        static let navigationTitleMaximumWidth: CGFloat = 250
+    }
+
     /// Image names in the asset catalog.
     enum Asset {
         /// The app icon, shown on the lock screen and the paywall.
