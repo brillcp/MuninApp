@@ -2,6 +2,9 @@ import SwiftUI
 
 /// A step that unlocks with the master password, with options to use
 /// biometrics or the recovery key.
+///
+/// While unlocking, a spinner replaces the Unlock button's title on iOS, and
+/// sits to the right of the buttons on macOS.
 struct LockMasterPasswordStep: View {
     /// The vault session to unlock.
     @Environment(VaultSession.self) private var session
@@ -33,7 +36,7 @@ struct LockMasterPasswordStep: View {
                 .colorScheme(.light)
 
             HStack {
-                LockButton("lock.unlock", isLoading: session.isWorking || session.state == .checking, action: unlock)
+                LockButton("lock.unlock", isLoading: showsButtonSpinner, action: unlock)
                     .disabled(password.isEmpty)
 
                 if let onUseBiometrics {
@@ -44,13 +47,36 @@ struct LockMasterPasswordStep: View {
                     )
                     .buttonSizing(.fitted)
                 }
+                #if os(macOS)
+                if isUnlocking {
+                    AccentSpinner(size: DesignKit.Spacing.Primitive.s24)
+                        .transition(.opacity)
+                }
+                #endif
             }
+            .animation(DesignKit.Motion.linear, value: isUnlocking)
             LockButton("lock.forgotMasterPassword", style: .tertiary, action: onForgotPassword)
         }
     }
 }
 
 private extension LockMasterPasswordStep {
+    /// A Boolean value that indicates whether an unlock or vault check is in progress.
+    var isUnlocking: Bool {
+        session.isWorking || session.state == .checking
+    }
+
+    /// A Boolean value that indicates whether the Unlock button shows its own
+    /// spinner: on iOS while unlocking. On macOS, the spinner sits to the
+    /// right of the buttons instead.
+    var showsButtonSpinner: Bool {
+        #if os(iOS)
+        isUnlocking
+        #else
+        false
+        #endif
+    }
+
     /// Clears the field and unlocks with the entered password.
     func unlock() {
         guard !password.isEmpty else { return }

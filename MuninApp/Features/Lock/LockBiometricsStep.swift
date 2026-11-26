@@ -3,7 +3,8 @@ import SwiftUI
 /// A step that unlocks with Face ID or Touch ID, with the master password as
 /// an alternative.
 ///
-/// Return starts the biometric unlock.
+/// Return starts the biometric unlock. While unlocking, a spinner replaces
+/// the button's title on iOS, and sits to the right of the buttons on macOS.
 struct LockBiometricsStep: View {
     /// The vault session to unlock.
     @Environment(VaultSession.self) private var session
@@ -18,12 +19,19 @@ struct LockBiometricsStep: View {
             LockButton(
                 session.usesFaceID ? "settings.biometrics.face" : "settings.biometrics.touch",
                 systemImage: session.usesFaceID ? DesignKit.Icon.faceID : DesignKit.Icon.touchID,
-                isLoading: isUnlocking,
+                isLoading: showsButtonSpinner,
                 action: unlockWithBiometrics
             )
             LockButton(systemImage: DesignKit.Icon.useMasterPassword, style: .secondary, action: onUseMasterPassword)
                 .buttonSizing(.fitted)
+            #if os(macOS)
+            if isUnlocking {
+                AccentSpinner(size: DesignKit.Spacing.Primitive.s24)
+                    .transition(.opacity)
+            }
+            #endif
         }
+        .animation(DesignKit.Motion.linear, value: isUnlocking)
     }
 }
 
@@ -31,6 +39,17 @@ private extension LockBiometricsStep {
     /// A Boolean value that indicates whether an unlock or vault check is in progress.
     var isUnlocking: Bool {
         session.isWorking || session.state == .checking
+    }
+
+    /// A Boolean value that indicates whether the unlock button shows its own
+    /// spinner: on iOS while unlocking. On macOS, the spinner sits to the
+    /// right of the buttons instead.
+    var showsButtonSpinner: Bool {
+        #if os(iOS)
+        isUnlocking
+        #else
+        false
+        #endif
     }
 
     /// Unlocks with Face ID or Touch ID and downloads the password list.
