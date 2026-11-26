@@ -79,10 +79,6 @@ jobs:
           git push origin "v$VERSION"
           gh release create "v$VERSION" --title "Munin $VERSION" --generate-notes --verify-tag
 
-      - name: Delete the release branch
-        if: github.event_name == 'push'
-        run: git push origin --delete "$GITHUB_REF_NAME"
-
   testflight:
     name: TestFlight
     needs: release
@@ -91,3 +87,17 @@ jobs:
       version: ${{ needs.release.outputs.version }}
       app_store: true
     secrets: inherit
+
+  # Last, once the builds are on TestFlight and attached to the App Store version: a release
+  # branch that's gone means the release is done. After a failure it stays, to show it isn't.
+  delete-branch:
+    name: Delete the release branch
+    needs: testflight
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Delete the release branch
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api -X DELETE "repos/$GITHUB_REPOSITORY/git/refs/heads/$GITHUB_REF_NAME"
