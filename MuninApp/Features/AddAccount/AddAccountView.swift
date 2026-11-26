@@ -56,8 +56,8 @@ struct AddAccountView: View {
                     }
                 }
             }
-            #if os(iOS)
             .leadingNavigationTitle("addAccount.title", onCancel: dismiss.callAsFunction)
+            #if os(iOS)
             .fullScreenCover(isPresented: $isScanning) {
                 ScannerSheet { value in
                     isScanning = false
@@ -69,12 +69,6 @@ struct AddAccountView: View {
                 Task { await loadPhoto(item) }
             }
             #else
-            .navigationTitle("addAccount.title")
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button(role: .cancel, action: dismiss.callAsFunction)
-                }
-            }
             .fileImporter(isPresented: $isImportingFile, allowedContentTypes: [.image]) { result in
                 importFile(result)
             }

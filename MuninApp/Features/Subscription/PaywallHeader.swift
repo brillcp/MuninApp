@@ -1,4 +1,3 @@
-import StoreKit
 import SwiftUI
 
 /// A view that shows the paywall's header.
@@ -10,9 +9,7 @@ struct PaywallHeader: View {
     /// The subscription state, which provides the billing issue and the
     /// last error.
     @Environment(SubscriptionManager.self) private var subscriptions
-    /// The action that opens the App Store's subscription page on macOS.
-    @Environment(\.openURL) private var openURL
-    /// A Boolean value that indicates whether the system's Manage Subscriptions sheet is presented on iOS.
+    /// A Boolean value that indicates whether subscription management is open.
     @State private var isManagingSubscription = false
 
     var body: some View {
@@ -37,19 +34,13 @@ struct PaywallHeader: View {
             }
         }
         .padding(DesignKit.Spacing.Primitive.s24)
-        #if os(iOS)
-        .manageSubscriptionsSheet(isPresented: $isManagingSubscription)
-        #endif
+        .manageSubscriptions(isPresented: $isManagingSubscription)
     }
 }
 
 private extension PaywallHeader {
     /// Opens subscription management so the user can update their payment method.
     func manageSubscription() {
-        #if os(iOS)
         isManagingSubscription = true
-        #else
-        openURL(AppLinks.manageSubscriptions)
-        #endif
     }
 }

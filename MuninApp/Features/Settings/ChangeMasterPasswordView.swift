@@ -48,17 +48,8 @@ struct ChangeMasterPasswordView: View {
             }
             .formStyle(.grouped)
             .disabled(session.isWorking)
-            #if os(iOS)
             .leadingNavigationTitle("settings.changeMasterPassword", onCancel: dismiss.callAsFunction)
-            #else
-            .navigationTitle("settings.changeMasterPassword")
-            #endif
             .toolbar {
-                #if os(macOS)
-                ToolbarItem(placement: .cancellationAction) {
-                    Button(role: .cancel, action: dismiss.callAsFunction)
-                }
-                #endif
                 ToolbarItem(placement: .confirmationAction) {
                     if session.isWorking {
                         AccentSpinner(size: DesignKit.Spacing.Primitive.s24)

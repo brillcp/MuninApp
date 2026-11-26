@@ -1,20 +1,24 @@
-#if os(iOS)
 import SwiftUI
 
 extension View {
-    /// Shows a localized title as plain text in the navigation bar's top-left
-    /// corner, where it stays when the content scrolls.
+    /// Shows a screen's title, an optional subtitle, and optional Lock and
+    /// Cancel buttons.
     ///
-    /// It's still the screen's navigation title, hidden from the bar, so the
-    /// next screen's back button shows it. A `subtitle`, such as an item
-    /// count, goes below it in a smaller, secondary font.
+    /// On iOS, the title is plain text in the navigation bar's top-left
+    /// corner, where it stays when the content scrolls. It's still the
+    /// screen's navigation title, hidden from the bar, so the next screen's
+    /// back button shows it. A `subtitle`, such as an item count, goes below
+    /// it in a smaller, secondary font.
+    ///
+    /// On macOS, the title and subtitle show in the window's toolbar, with
+    /// Lock at its leading edge and Cancel as the sheet's cancel button.
     ///
     /// - Parameters:
     ///   - titleKey: The title's localization key.
     ///   - subtitle: Text below the title, if any.
     ///   - showsLockButton: Whether a Lock button sits to the left of the title.
-    ///   - onCancel: The action of a Cancel button (an xmark) to the left of
-    ///     the title, for sheets, or `nil` for none.
+    ///   - onCancel: The action of a Cancel button (an xmark), for sheets, or
+    ///     `nil` for none.
     func leadingNavigationTitle(
         _ titleKey: LocalizedStringKey,
         subtitle: Text? = nil,
@@ -33,10 +37,11 @@ private struct LeadingNavigationTitle: ViewModifier {
     let subtitle: Text?
     /// A Boolean value that indicates whether a Lock button sits to the left of the title.
     let showsLockButton: Bool
-    /// The action of a Cancel button to the left of the title, if any.
+    /// The action of a Cancel button, if any.
     let onCancel: (() -> Void)?
 
     func body(content: Content) -> some View {
+        #if os(iOS)
         content
             .navigationTitle(title)
             .toolbarTitleDisplayMode(.inline)
@@ -69,8 +74,32 @@ private struct LeadingNavigationTitle: ViewModifier {
                 }
                 .sharedBackgroundVisibility(.hidden)
             }
+        #else
+        Group {
+            if let subtitle {
+                content
+                    .navigationTitle(title)
+                    .navigationSubtitle(subtitle)
+            } else {
+                content
+                    .navigationTitle(title)
+            }
+        }
+        .toolbar {
+            if showsLockButton {
+                ToolbarItem(placement: .navigation) { LockToolbarButton() }
+            }
+            if let onCancel {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button(role: .cancel, action: onCancel)
+                }
+            }
+        }
+        #endif
     }
 }
+
+#if os(iOS)
 
 /// Sizes its content to its natural width, but no wider than `maximum`, where
 /// its text truncates, so a long title stays on one line in the bar.

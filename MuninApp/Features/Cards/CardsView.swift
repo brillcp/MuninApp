@@ -86,12 +86,7 @@ private extension CardsView {
     /// banners, and on macOS, the search field.
     var listColumn: some View {
         CardList(viewModel: viewModel, pendingDeletion: $pendingDeletion, onEdit: startEditing)
-            #if os(iOS)
             .leadingNavigationTitle("cards.title", subtitle: Text(LocalizedKey("vault.subtitle", viewModel.items.count)), showsLockButton: true)
-            #else
-            .navigationTitle("cards.title")
-            .navigationSubtitle(LocalizedKey("vault.subtitle", viewModel.items.count))
-            #endif
             .toolbar { toolbarContent }
             .safeAreaInset(edge: .bottom) {
                 SubscriptionBanners()
@@ -104,13 +99,10 @@ private extension CardsView {
             #endif
     }
 
-    /// The toolbar's New Card button, and Lock on macOS.
-    ///
-    /// On iOS, Lock sits beside the leading title.
+    /// The toolbar's New Card button.
     @ToolbarContentBuilder
     var toolbarContent: some ToolbarContent {
         #if os(macOS)
-        ToolbarItem(placement: .navigation) { LockToolbarButton() }
         ToolbarItem(placement: .primaryAction) { createButton }
         #else
         ToolbarItem(placement: .confirmationAction) { createButton }

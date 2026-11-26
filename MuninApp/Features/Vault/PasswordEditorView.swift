@@ -92,17 +92,8 @@ struct PasswordEditorView: View {
             .onAppear { isNameFocused = !isEditing }
             .sensoryFeedback(.impact(weight: .light), trigger: hapticTaps)
             .disabled(isSaving)
-            #if os(iOS)
             .leadingNavigationTitle(isEditing ? "passwordEditor.editTitle" : "passwordEditor.newTitle", onCancel: cancel)
-            #else
-            .navigationTitle(isEditing ? "passwordEditor.editTitle" : "passwordEditor.newTitle")
-            #endif
             .toolbar {
-                #if os(macOS)
-                ToolbarItem(placement: .cancellationAction) {
-                    Button(role: .cancel, action: cancel)
-                }
-                #endif
                 ToolbarItem(placement: .confirmationAction) {
                     Button(role: .confirm, action: save)
                         .buttonStyle(.glassProminent)

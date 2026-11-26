@@ -68,12 +68,11 @@ struct MainView: View {
             } message: { message in
                 Text(message)
             }
-            #if os(macOS)
-            .focusedSceneValue(\.mainSection, $selection)
-            #endif
             #if os(iOS)
             .tabViewSearchActivation(.searchTabSelection)
             .scrollIndicators(.never)
+            #else
+            .focusedSceneValue(\.mainSection, $selection)
             #endif
     }
 }

@@ -1,4 +1,3 @@
-import StoreKit
 import SwiftUI
 
 /// A banner shown during the billing grace period.
@@ -7,10 +6,7 @@ import SwiftUI
 /// functional during the grace period. The Manage Subscription button lets
 /// the user update their payment method.
 struct BillingIssueBanner: View {
-    /// The action that opens the App Store's subscription page on macOS.
-    @Environment(\.openURL) private var openURL
-    /// A Boolean value that indicates whether the Manage Subscriptions sheet is
-    /// presented (iOS).
+    /// A Boolean value that indicates whether subscription management is open.
     @State private var isManagingSubscription = false
 
     var body: some View {
@@ -21,20 +17,13 @@ struct BillingIssueBanner: View {
             Button("subscription.updatePayment", action: manageSubscription)
                 .buttonStyle(.glass)
         }
-        #if os(iOS)
-        .manageSubscriptionsSheet(isPresented: $isManagingSubscription)
-        #endif
+        .manageSubscriptions(isPresented: $isManagingSubscription)
     }
 }
 
 private extension BillingIssueBanner {
-    /// Opens subscription management: the system sheet on iOS, or the App Store
-    /// page on macOS.
+    /// Opens subscription management so the user can update their payment method.
     func manageSubscription() {
-        #if os(iOS)
         isManagingSubscription = true
-        #else
-        openURL(AppLinks.manageSubscriptions)
-        #endif
     }
 }

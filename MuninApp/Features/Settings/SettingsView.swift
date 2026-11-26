@@ -16,7 +16,6 @@ struct SettingsView: View {
     @Environment(AutoFillSetup.self) private var autoFill
     /// The model that restores purchases, exports, and deletes the account.
     @Environment(SettingsViewModel.self) private var model
-    @Environment(\.openURL) private var openURL
 
     /// A Boolean value that indicates whether the Change Master Password sheet is presented.
     @State private var isChangingPassword = false
@@ -25,7 +24,7 @@ struct SettingsView: View {
     /// A counter that triggers a light haptic when incremented.
     @State private var hapticTaps = 0
     @State private var isShowingPaywall = false
-    /// A Boolean value that indicates whether the system's Manage Subscriptions sheet is presented on iOS.
+    /// A Boolean value that indicates whether subscription management is open.
     @State private var isManagingSubscription = false
     @State private var isShowingAutoFillGuide = false
     @State private var isConfirmingDeletion = false
@@ -56,16 +55,10 @@ struct SettingsView: View {
                         }
                         Button("settings.subscription.restore", systemImage: DesignKit.Icon.restorePurchases, action: restorePurchases)
                             .disabled(model.isRestoring)
-                        #if os(iOS)
                         Button("settings.subscription.manage", systemImage: DesignKit.Icon.manageSubscription) {
                             hapticTaps += 1
                             isManagingSubscription = true
                         }
-                        #else
-                        Link(destination: AppLinks.manageSubscriptions) {
-                            Label("settings.subscription.manage", systemImage: DesignKit.Icon.manageSubscription)
-                        }
-                        #endif
                     }
                 }
 
@@ -192,9 +185,7 @@ struct SettingsView: View {
         } message: { message in
             Text(message)
         }
-        #if os(iOS)
-        .manageSubscriptionsSheet(isPresented: $isManagingSubscription)
-        #endif
+        .manageSubscriptions(isPresented: $isManagingSubscription)
         .buttonStyle(.plain)
         #if os(macOS)
         .frame(width: 460, height: 620)
@@ -233,14 +224,8 @@ private extension SettingsView {
     }
 
     /// Opens subscription management.
-    ///
-    /// On iOS, this presents the system sheet. On macOS, it opens the App Store page.
     func manageSubscription() {
-        #if os(iOS)
         isManagingSubscription = true
-        #else
-        openURL(AppLinks.manageSubscriptions)
-        #endif
     }
 
     /// Asks for confirmation before deleting the account.

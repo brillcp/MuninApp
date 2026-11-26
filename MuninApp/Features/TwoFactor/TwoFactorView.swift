@@ -41,12 +41,7 @@ struct TwoFactorView: View {
                     )
                     .padding(.leading, sidebarWidth)
                 }
-                #if os(iOS)
                 .leadingNavigationTitle("codes.title", subtitle: Text(LocalizedKey("codes.subtitle", viewModel.items.count)), showsLockButton: true)
-                #else
-                .navigationTitle("codes.title")
-                .navigationSubtitle(LocalizedKey("codes.subtitle", viewModel.items.count))
-                #endif
                 .navigationSplitViewStyle(.prominentDetail)
                 .toolbar { toolbarContent }
                 .safeAreaInset(edge: .bottom) {
@@ -87,13 +82,10 @@ struct TwoFactorView: View {
 }
 
 private extension TwoFactorView {
-    /// The toolbar's buttons: add and import, plus lock and refresh on macOS.
-    ///
-    /// On iOS, Lock sits beside the leading title.
+    /// The toolbar's buttons: add and import, plus refresh on macOS.
     @ToolbarContentBuilder
     var toolbarContent: some ToolbarContent {
         #if os(macOS)
-        ToolbarItem(placement: .navigation) { LockToolbarButton() }
         ToolbarItem(placement: .primaryAction) { addButton }
         ToolbarSpacer(.flexible, placement: .primaryAction)
         ToolbarItemGroup(placement: .primaryAction) {
