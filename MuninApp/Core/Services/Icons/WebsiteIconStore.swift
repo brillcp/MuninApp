@@ -36,6 +36,16 @@ actor WebsiteIconStore {
     private var inFlight: [String: Task<Data?, Never>] = [:]
     /// Each icon's dominant color keyed by host; `nil` when there's no icon.
     private var colors: [String: Color?] = [:]
+    /// Decoded icons keyed by host and pixel size; `nil` when there's no icon.
+    private var images: [String: WebsiteIconImage?] = [:]
+}
+
+/// A website icon that's already decoded and scaled down, so drawing it
+/// doesn't decode the image on the main thread.
+nonisolated struct WebsiteIconImage: @unchecked Sendable {
+    /// The decoded bitmap. A `CGImage` can't be changed after it's created,
+    /// so it's safe to pass between threads.
+    let cgImage: CGImage
 }
 
 extension WebsiteIconStore {
@@ -56,6 +66,23 @@ extension WebsiteIconStore {
         return data
     }
 
+    /// Returns a URL's icon, decoded and scaled down off the main thread.
+    ///
+    /// - Parameters:
+    ///   - urlString: A URL such as `example.com` or `https://example.com/login`.
+    ///   - maxPixelSize: The most pixels the icon's longer side can have.
+    /// - Returns: The decoded icon, or `nil` if none was found.
+    func image(for urlString: String, maxPixelSize: Int) async -> WebsiteIconImage? {
+        guard let host = Self.host(from: urlString) else { return nil }
+        let key = "\(host)@\(maxPixelSize)"
+        if let cached = images[key] { return cached }
+        let image = await icon(for: urlString)
+            .flatMap { Self.thumbnail(from: $0, maxPixelSize: maxPixelSize) }
+            .map(WebsiteIconImage.init(cgImage:))
+        images[key] = .some(image)
+        return image
+    }
+
     /// Returns the dominant color of a URL's icon, used for tinting.
     func dominantColor(for urlString: String) async -> Color? {
         guard let host = Self.host(from: urlString) else { return nil }
@@ -71,6 +98,7 @@ extension WebsiteIconStore {
         inFlight = [:]
         icons = [:]
         colors = [:]
+        images = [:]
     }
 
     /// Returns icon URLs from an HTML document's `<link>` tags, apple-touch-icon first.
@@ -102,6 +130,19 @@ extension WebsiteIconStore {
 }
 
 private extension WebsiteIconStore {
+    /// Decodes image data into a bitmap no larger than `maxPixelSize` on its
+    /// longer side.
+    static func thumbnail(from data: Data, maxPixelSize: Int) -> CGImage? {
+        guard let source = CGImageSourceCreateWithData(data as CFData, nil) else { return nil }
+        let options: [CFString: Any] = [
+            kCGImageSourceCreateThumbnailFromImageAlways: true,
+            kCGImageSourceCreateThumbnailWithTransform: true,
+            kCGImageSourceShouldCacheImmediately: true,
+            kCGImageSourceThumbnailMaxPixelSize: maxPixelSize,
+        ]
+        return CGImageSourceCreateThumbnailAtIndex(source, 0, options as CFDictionary)
+    }
+
     /// Computes an icon's dominant color.
     ///
     /// Averages the icon's pixels at 24×24, weighting each by opacity and
