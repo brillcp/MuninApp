@@ -3,8 +3,7 @@ import SwiftUI
 
 extension View {
     /// Shows a localized title as plain text in the navigation bar's top-left
-    /// corner, where it stays when the content scrolls, unlike the system's
-    /// title, which moves to the middle.
+    /// corner, where it stays when the content scrolls.
     ///
     /// It's still the screen's navigation title, hidden from the bar, so the
     /// next screen's back button shows it. A `subtitle`, such as an item
@@ -74,11 +73,7 @@ private struct LeadingNavigationTitle: ViewModifier {
 }
 
 /// Sizes its content to its natural width, but no wider than `maximum`, where
-/// its text truncates.
-///
-/// A toolbar item isn't offered a width, so the title would take its full
-/// width, and a long one would be moved into the bar's overflow menu instead
-/// of shortened.
+/// its text truncates, so a long title stays on one line in the bar.
 private struct MaximumWidth: Layout {
     /// The widest the content can be.
     let maximum: CGFloat

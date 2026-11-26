@@ -2,9 +2,7 @@ import SwiftUI
 
 /// A list of two-factor codes.
 ///
-/// A separate view, so the screen's toolbar and overlays don't re-evaluate
-/// when the codes change. Each row has a context menu to copy the code or
-/// delete the account.
+/// Each row has a context menu to copy the code or delete the account.
 struct TwoFactorList: View {
     /// The subscription state. Delete is disabled while the vault is read-only.
     @Environment(SubscriptionManager.self) private var subscriptions

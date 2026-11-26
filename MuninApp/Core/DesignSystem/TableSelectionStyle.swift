@@ -1,12 +1,10 @@
 #if os(macOS)
 import AppKit
 
-/// Applies a custom color to the table row selection highlight.
+/// Draws the selected row of every table in the app in a custom color on
+/// macOS, such as the password list's selection.
 ///
-/// On macOS, SwiftUI's `Table` ignores `tint(_:)` for selection and always
-/// uses the system accent color. This type swizzles
-/// `NSTableRowView.drawSelection(in:)` once, so every table row in the app
-/// draws the custom color.
+/// It replaces `NSTableRowView.drawSelection(in:)` once at launch.
 @MainActor
 enum TableSelectionStyle {
     /// A Boolean value that indicates whether the method has been swizzled.

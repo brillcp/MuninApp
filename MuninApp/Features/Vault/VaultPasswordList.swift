@@ -3,8 +3,7 @@ import SwiftUI
 /// A view that shows the passwords with a context menu and empty states.
 ///
 /// On macOS, it's a sortable table, and Escape deselects the password to close
-/// its detail. On iOS, it's a list whose rows push the detail column, because
-/// a `Table` doesn't navigate when the split view is collapsed.
+/// its detail. On iOS, it's a list whose rows open the password's detail.
 struct VaultPasswordList: View {
     /// The subscription state. Edit and Delete are disabled while the vault
     /// is read-only.

@@ -120,17 +120,11 @@ private extension VaultView {
     /// The list and the detail.
     ///
     /// On macOS, the detail floats over the list's trailing edge as a glass
-    /// panel with Close and Edit (⌘E) buttons. The panel stays in the view
-    /// hierarchy and is hidden rather than removed, because inserting it with a
-    /// transition also animates the form's first layout. Selecting a password
-    /// fills the panel without animation; one update later, the panel slides
-    /// and fades in. Switching between passwords doesn't animate. While the
+    /// panel with Close and Edit (⌘E) buttons. Selecting a password fills the
+    /// panel without animation; one update later, the panel slides and fades
+    /// in. Switching between passwords doesn't animate. While the
     /// panel closes, `panelItem` keeps the last item so its content animates
     /// out with it.
-    ///
-    /// `NavigationSplitView`, `HSplitView`, and inspectors don't animate the
-    /// panel smoothly, so the panel is an overlay instead, like the main
-    /// window's sidebar.
     ///
     /// On iOS, a `NavigationSplitView` pushes the detail when a row is tapped
     /// on iPhone.
@@ -163,8 +157,7 @@ private extension VaultView {
     /// search field and CSV drop target.
     ///
     /// The search field gains focus when the vault unlocks, and ⌘F focuses it
-    /// again. The list itself is ``VaultPasswordList``, a separate view that
-    /// limits invalidation.
+    /// again. The list itself is ``VaultPasswordList``.
     var listColumn: some View {
         VaultPasswordList(
             viewModel: viewModel,
@@ -278,8 +271,7 @@ private extension VaultView {
         Task { await importer.run(plan) }
     }
 
-    /// Registers the AutoFill credential identities once AutoFill is on,
-    /// because the system keeps them only while it's enabled.
+    /// Offers the vault's passwords to AutoFill once AutoFill is turned on.
     func autoFillChanged() {
         if autoFill.isEnabled == true { AutoFillIdentities.replaceAll(with: viewModel.items) }
     }

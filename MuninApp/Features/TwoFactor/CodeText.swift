@@ -1,8 +1,6 @@
 import SwiftUI
 
 /// A view that shows a two-factor code.
-///
-/// Equatable, so it redraws only when the code changes or is copied.
 struct CodeText: View, Equatable {
     /// The current code.
     let code: String

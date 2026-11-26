@@ -45,10 +45,10 @@ enum LockStep: Hashable {
 /// A view that shows the lock screen's card: the title, the current step, and
 /// any error.
 ///
-/// Step changes animate, including the size of the glass card on iPhone, which
-/// is drawn here so the animation covers it. When the vault can't be opened, for example because
-/// the server is unreachable, an alert offers to try again or sign out. The
-/// card is disabled while work is in progress. After Sign in with Apple,
+/// Step changes animate, including the size of the glass card on iPhone. When
+/// the vault can't be opened, for example because the server is unreachable,
+/// an alert offers to try again or sign out. The card is disabled while work
+/// is in progress. After Sign in with Apple,
 /// biometric unlock starts automatically once the vault is ready.
 struct LockPanel: View {
     /// The sign-in state, which decides the first step and provides the email
@@ -197,8 +197,7 @@ private extension LockPanel {
 
 /// Pads the lock panel and places it on a glass card, when enabled.
 ///
-/// Applied inside ``LockPanel``, before its step animation, so the card
-/// resizes with the same animation as the step.
+/// The card resizes with the same animation as the step.
 private struct LockPanelGlass: ViewModifier {
     /// A Boolean value that indicates whether to draw the card.
     let isEnabled: Bool
@@ -309,8 +308,8 @@ private extension LockButton {
         action()
     }
 
-    /// Treats a tap on a link that Markdown found in the title, such as an
-    /// email address, as a tap on the button instead of opening it.
+    /// Treats a tap on an email address in the title as a tap on the button
+    /// instead of opening it.
     func openLink(_ url: URL) -> OpenURLAction.Result {
         tap()
         return .handled

@@ -75,10 +75,8 @@ private extension AppUpdateChecker {
         Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0"
     }
 
-    /// Returns the URL that opens an App Store page in the App Store app.
-    ///
-    /// On macOS, the `macappstore` scheme opens the Mac App Store instead of
-    /// the browser.
+    /// Returns the URL that opens Munin's page in the App Store app, on macOS
+    /// in the Mac App Store.
     static func storeURL(for url: URL) -> URL {
         #if os(macOS)
         var components = URLComponents(url: url, resolvingAgainstBaseURL: false)

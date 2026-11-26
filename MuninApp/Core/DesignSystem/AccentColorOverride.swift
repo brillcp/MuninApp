@@ -1,14 +1,13 @@
 #if os(macOS)
 import AppKit
 
-/// Makes AppKit use the app's accent color instead of the system accent color.
+/// Draws the macOS sidebar selection and other accents in the app's accent
+/// color instead of the system accent color.
 ///
-/// The macOS sidebar selection ignores `.tint()` and the AccentColor asset
-/// unless the system accent is Multicolor, and draws with
-/// `NSColor.controlAccentColor` and `NSColor.selectedContentBackgroundColor`.
-/// This type swizzles both class getters once at launch, as
-/// ``TableSelectionStyle`` does for table selection. Elements that AppKit
-/// renders internally may still use the system color.
+/// It replaces `NSColor.controlAccentColor` and
+/// `NSColor.selectedContentBackgroundColor` once at launch, as
+/// ``TableSelectionStyle`` does for table selection. Some system-drawn
+/// elements may still use the system color.
 @MainActor
 enum AccentColorOverride {
     /// A Boolean value that indicates whether the getters are swizzled.

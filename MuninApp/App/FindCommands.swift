@@ -3,9 +3,8 @@ import SwiftUI
 
 /// An object that lets a command ask a screen to focus its search field.
 ///
-/// A model is used instead of a closure because closures in focused values
-/// can't be compared and so invalidate on every update. The screen that owns
-/// the search field observes ``count`` and focuses the field when it changes.
+/// The screen that owns the search field observes ``count`` and focuses the
+/// field when it changes.
 @Observable
 final class SearchFocusRequest {
     /// A counter incremented on every request; observers react to the change, not the value.

@@ -8,10 +8,7 @@ import AppKit
 /// A thin ring with a short arc spinning round it, in the accent color: the
 /// app's loading indicator, used instead of `ProgressView`.
 ///
-/// From Birdwatch and Oden. It's drawn with Core Animation, so the spin keeps
-/// running while the main thread is busy. On macOS, a view's layer has its
-/// y-axis pointing up, so the rotation is reversed there to spin clockwise on
-/// both platforms.
+/// The arc spins clockwise on both platforms.
 struct AccentSpinner: View {
     /// The app's accent color, from its asset catalog.
     ///
@@ -93,7 +90,7 @@ private extension AccentSpinner {
             applyColors()
         }
 
-        /// Resolves the colors for light or dark mode, which layers can't do themselves.
+        /// Resolves the colors for light or dark mode.
         private func applyColors() {
             layers.setColors(
                 track: UIColor.tertiaryLabel.resolvedColor(with: traitCollection).cgColor,
@@ -138,8 +135,7 @@ private extension AccentSpinner {
         }
 
         /// Starts the spin again when the view comes back on screen, in case
-        /// it was removed meanwhile. The rotation is negative because the
-        /// layer's y-axis points up on macOS.
+        /// it was removed meanwhile.
         override func viewDidMoveToWindow() {
             super.viewDidMoveToWindow()
             layers.addSpinIfNeeded(clockwiseRotation: -2 * .pi)
@@ -158,7 +154,7 @@ private extension AccentSpinner {
             applyColors()
         }
 
-        /// Resolves the colors for light or dark mode, which layers can't do themselves.
+        /// Resolves the colors for light or dark mode.
         private func applyColors() {
             effectiveAppearance.performAsCurrentDrawingAppearance {
                 layers.setColors(track: NSColor.tertiaryLabelColor.cgColor, arc: color.cgColor)
@@ -213,8 +209,8 @@ private extension AccentSpinner {
 
         /// Starts the spin unless it's already running.
         ///
-        /// - Parameter clockwiseRotation: One full turn in the direction that
-        ///   looks clockwise on the platform: `2π` on iOS, `-2π` on macOS.
+        /// - Parameter clockwiseRotation: One full clockwise turn on the
+        ///   platform: `2π` on iOS, `-2π` on macOS.
         func addSpinIfNeeded(clockwiseRotation: Double) {
             guard arc.animation(forKey: Self.spinKey) == nil else { return }
             let animation = CABasicAnimation(keyPath: "transform.rotation.z")

@@ -8,9 +8,8 @@ import SwiftUI
 /// stack, where it can be edited or deleted without affecting its tab.
 ///
 /// Results aren't kept between searches. Every data source loads on appear in
-/// case their tabs haven't been opened yet. The `searchable` modifier is
-/// applied to the `NavigationStack` rather than its content, so the tab bar can
-/// turn the Search tab into a search field.
+/// case their tabs haven't been opened yet. The search field sits in the tab
+/// bar, in place of the Search tab.
 struct SearchView: View {
     /// The search text.
     @State private var query = ""

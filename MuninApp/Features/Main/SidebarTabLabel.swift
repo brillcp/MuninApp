@@ -2,10 +2,8 @@ import SwiftUI
 
 /// A tab's label in the sidebar or tab bar.
 ///
-/// The macOS sidebar tints SF Symbols with the system accent color and ignores
-/// `tint`, `listItemTint`, and `foregroundStyle`. To use the app's accent, the
-/// symbol is rendered into a non-template image in fixed colors, which the
-/// sidebar can't recolor.
+/// On macOS, the symbol is drawn into an image in the app's accent color, so
+/// the sidebar shows it in that color rather than the system accent.
 struct SidebarTabLabel: View {
     /// The tab's name.
     let title: LocalizedStringKey

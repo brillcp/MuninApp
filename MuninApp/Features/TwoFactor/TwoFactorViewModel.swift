@@ -66,7 +66,7 @@ extension TwoFactorViewModel {
         } catch is CancellationError {
             return
         } catch where Task.isCancelled {
-            // URLSession reports a cancelled task as a network error.
+            // A cancelled load isn't shown as an error.
             return
         } catch let error where error.isMuninAuthRejection {
             user.signOut()

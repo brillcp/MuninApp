@@ -73,8 +73,6 @@ private extension TwoFactorRow {
 }
 
 /// A view that shows a two-factor account's issuer and name.
-///
-/// Equatable, so it doesn't redraw when the clock ticks.
 struct AccountLabel: View, Equatable {
     /// The issuer, or the account name when there's no issuer.
     let title: String

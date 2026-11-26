@@ -7,12 +7,8 @@ import SwiftUI
 /// card can animate between steps. This view also prepares the session for the
 /// signed-in user, applies auto-lock, and clears decrypted data on lock and
 /// sign-out. The password list outlives the main view, because the macOS menu
-/// bar uses it too, so it must be cleared explicitly.
-///
-/// The swap between the lock screen and the content is wrapped in a `ZStack`
-/// rather than a `Group`. A `Group` applies its animation to each child
-/// separately, so an inserted or removed child never observes the value change
-/// and its transition doesn't run.
+/// bar uses it too, so it must be cleared explicitly. The switch between the
+/// lock screen and the content animates.
 struct ContentView: View {
     /// The sign-in state, which decides whether the lock screen shows.
     @Environment(AuthManager.self) private var auth

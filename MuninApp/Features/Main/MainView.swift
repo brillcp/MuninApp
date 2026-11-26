@@ -6,9 +6,8 @@ import SwiftUI
 /// The main section holds the vault, 2FA, and cards tabs. On iOS, Settings and Search
 /// are tabs too; on macOS, the sidebar is a fixed ``MainSidebar``, and
 /// Settings is a separate window opened from the user's initials at its
-/// bottom. The Search tab uses the `.search` role, so the system places it at
-/// the trailing edge of the tab bar, and it opens passwords in its own
-/// navigation stack.
+/// bottom. On iOS, the Search tab sits at the trailing edge of the tab bar and
+/// opens passwords in its own navigation stack.
 struct MainView: View {
     /// The vault session, used to hold the AutoFill guide while a new recovery
     /// key is shown.
