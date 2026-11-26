@@ -11,9 +11,10 @@ struct CodeText: View, Equatable {
 
     var body: some View {
         (didCopy ? Text("global.copied") : Text(verbatim: TwoFactorRow.formatted(code)))
-            .font(.system(.title2, design: .monospaced, weight: .semibold))
+            .font(.system(.title3, design: .monospaced, weight: .semibold))
             .foregroundStyle(didCopy ? .accent : .primary)
             .monospacedDigit()
             .animation(DesignKit.Motion.linear, value: code)
+            .contentTransition(.numericText())
     }
 }

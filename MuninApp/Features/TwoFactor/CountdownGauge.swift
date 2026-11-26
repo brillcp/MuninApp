@@ -17,7 +17,7 @@ struct CountdownGauge: View, Equatable {
                 .contentTransition(.numericText())
         }
         .gaugeStyle(.accessoryCircularCapacity)
-        .tint(remaining <= 5 ? Color.red : Color.green)
+        .tint(remaining <= 5 ? Color.red : .accent)
         .scaleEffect(0.6)
         .accessibilityLabel(LocalizedKey("codes.row.secondsLeft", remaining))
         .animation(DesignKit.Motion.quickBouncy, value: remaining)

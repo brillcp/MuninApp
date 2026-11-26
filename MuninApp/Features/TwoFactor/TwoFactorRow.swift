@@ -20,7 +20,7 @@ struct TwoFactorRow: View {
         HStack(spacing: DesignKit.Spacing.Primitive.s12) {
             AccountLabel(title: account.title, subtitle: account.subtitle)
                 .equatable()
-            Spacer(minLength: 8)
+            Spacer(minLength: DesignKit.Spacing.Primitive.s8)
             CodeText(code: account.code(at: now), didCopy: didCopy)
                 .equatable()
             CountdownGauge(remaining: account.secondsRemaining(at: now), period: account.period)
@@ -84,13 +84,13 @@ struct AccountLabel: View, Equatable {
     var body: some View {
         VStack(alignment: .leading, spacing: DesignKit.Spacing.Primitive.s2) {
             Text(title)
-                .font(.headline)
+                .fontWeight(.semibold)
             if let subtitle {
                 Text(subtitle)
-                    .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
         }
+        .font(.subheadline)
         .lineLimit(1)
     }
 }

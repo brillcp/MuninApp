@@ -305,14 +305,15 @@ struct PasswordTitleCell: View {
         #endif
         HStack(spacing: spacing) {
             WebsiteIcon(url: item.url)
-            VStack(alignment: .leading, spacing: DesignKit.Spacing.Primitive.s4) {
+            VStack(alignment: .leading, spacing: DesignKit.Spacing.Primitive.s2) {
                 Text(item.name)
+                    .fontWeight(.semibold)
                 if !item.username.isEmpty {
                     Text(item.username)
-                        .font(.subheadline)
                         .foregroundStyle(.secondary)
                 }
             }
+            .font(.subheadline)
         }
         .padding(.vertical, vertical)
     }

@@ -20,14 +20,16 @@ struct CardRow: View {
                 .font(.title2)
                 .foregroundStyle(.tint)
                 .frame(width: DesignKit.Spacing.Primitive.s40)
-            VStack(alignment: .leading, spacing: DesignKit.Spacing.Primitive.s4) {
+            VStack(alignment: .leading, spacing: DesignKit.Spacing.Primitive.s2) {
                 Text(name)
+                    .fontWeight(.semibold)
                 if !lastDigits.isEmpty {
                     Text(verbatim: "•••• \(lastDigits)")
-                        .font(.subheadline.monospaced())
+                        .monospaced()
                         .foregroundStyle(.secondary)
                 }
             }
+            .font(.subheadline)
         }
         .padding(.vertical, vertical)
     }
