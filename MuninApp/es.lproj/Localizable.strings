@@ -63,14 +63,14 @@
 "errors.munin.appStoreUnavailable" = "No se pudo comprobar tu suscripción con el App Store. Inténtalo más tarde.";
 "errors.munin.badRequest" = "No se pudo crear la solicitud.";
 "errors.munin.http" = "Munin respondió con HTTP %lld.";
-"errors.munin.notFound" = "No hay ninguna API de Munin en %@.";
+"errors.munin.notFound" = "No se encontró en el servidor.";
 "errors.munin.proof" = "Munin no pudo verificar tu contraseña maestra. Bloquea Munin, desbloquéalo con tu contraseña maestra e inténtalo de nuevo.";
 "errors.munin.subscriptionLinkedElsewhere" = "Esta suscripción ya la usa otra cuenta de Munin.";
 "errors.munin.subscriptionOtherAccount" = "Esta suscripción se compró para otra cuenta de Munin.";
 "errors.munin.subscriptionRequired" = "Sin suscripción, Munin es de solo lectura. Suscríbete para añadir o cambiar elementos.";
 "errors.munin.tooManyAttempts" = "Demasiados intentos. Inténtalo de nuevo en una hora.";
 "errors.munin.transactionNotFound" = "El App Store no reconoce esta compra.";
-"errors.munin.unexpectedResponse" = "Respuesta inesperada del servidor. ¿Es %@ Munin?";
+"errors.munin.unexpectedResponse" = "No se entendió la respuesta del servidor.";
 "errors.munin.unreachable" = "No se puede conectar con Munin. %@";
 "errors.munin.vaultFull" = "Tu bóveda está llena (50 cuentas).";
 "errors.notSignedIn" = "Vuelve a iniciar sesión para añadir cuentas.";

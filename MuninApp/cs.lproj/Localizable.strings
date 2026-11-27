@@ -63,14 +63,14 @@
 "errors.munin.appStoreUnavailable" = "Předplatné nelze ověřit v App Storu. Zkuste to později.";
 "errors.munin.badRequest" = "Požadavek nelze sestavit.";
 "errors.munin.http" = "Munin odpověděl kódem HTTP %lld.";
-"errors.munin.notFound" = "Na adrese %@ není žádné API Muninu.";
+"errors.munin.notFound" = "Na serveru se to nepodařilo najít.";
 "errors.munin.proof" = "Munin nemohl ověřit vaše hlavní heslo. Zamkněte Munin, odemkněte ho hlavním heslem a zkuste to znovu.";
 "errors.munin.subscriptionLinkedElsewhere" = "Toto předplatné už používá jiný účet Munin.";
 "errors.munin.subscriptionOtherAccount" = "Toto předplatné bylo zakoupeno pro jiný účet Munin.";
 "errors.munin.subscriptionRequired" = "Bez předplatného je Munin jen pro čtení. Předplaťte si ho, abyste mohli přidávat nebo měnit položky.";
 "errors.munin.tooManyAttempts" = "Příliš mnoho pokusů. Zkuste to znovu za hodinu.";
 "errors.munin.transactionNotFound" = "App Store tento nákup nerozpoznal.";
-"errors.munin.unexpectedResponse" = "Neočekávaná odpověď serveru. Je %@ Munin?";
+"errors.munin.unexpectedResponse" = "Odpovědi serveru se nepodařilo porozumět.";
 "errors.munin.unreachable" = "K Muninu se nelze připojit. %@";
 "errors.munin.vaultFull" = "Váš trezor je plný (50 účtů).";
 "errors.notSignedIn" = "Chcete-li přidávat účty, přihlaste se znovu.";

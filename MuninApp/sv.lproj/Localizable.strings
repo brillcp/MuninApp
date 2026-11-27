@@ -63,14 +63,14 @@
 "errors.munin.appStoreUnavailable" = "Kunde inte kontrollera din prenumeration hos App Store. Försök igen senare.";
 "errors.munin.badRequest" = "Kunde inte skapa förfrågan.";
 "errors.munin.http" = "Munin svarade med HTTP %lld.";
-"errors.munin.notFound" = "Inget Munin-API på %@.";
+"errors.munin.notFound" = "Det hittades inte på servern.";
 "errors.munin.proof" = "Munin kunde inte verifiera ditt huvudlösenord. Lås Munin, lås upp med ditt huvudlösenord och försök igen.";
 "errors.munin.subscriptionLinkedElsewhere" = "Den här prenumerationen används redan av ett annat Munin-konto.";
 "errors.munin.subscriptionOtherAccount" = "Den här prenumerationen köptes för ett annat Munin-konto.";
 "errors.munin.subscriptionRequired" = "Munin är skrivskyddat utan prenumeration. Prenumerera för att lägga till eller ändra objekt.";
 "errors.munin.tooManyAttempts" = "För många försök. Försök igen om en timme.";
 "errors.munin.transactionNotFound" = "App Store känner inte till det här köpet.";
-"errors.munin.unexpectedResponse" = "Oväntat svar från servern. Är %@ Munin?";
+"errors.munin.unexpectedResponse" = "Serverns svar gick inte att tolka.";
 "errors.munin.unreachable" = "Kan inte nå Munin. %@";
 "errors.munin.vaultFull" = "Ditt valv är fullt (50 konton).";
 "errors.notSignedIn" = "Logga in igen för att lägga till konton.";

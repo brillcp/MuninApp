@@ -63,14 +63,14 @@
 "errors.munin.appStoreUnavailable" = "App Store でサブスクリプションを確認できませんでした。後でもう一度お試しください。";
 "errors.munin.badRequest" = "リクエストを作成できませんでした。";
 "errors.munin.http" = "Munin が HTTP %lld を返しました。";
-"errors.munin.notFound" = "%@ に Munin API がありません。";
+"errors.munin.notFound" = "サーバ上に見つかりませんでした。";
 "errors.munin.proof" = "Munin はマスターパスワードを確認できませんでした。Munin をロックし、マスターパスワードでロック解除してからもう一度お試しください。";
 "errors.munin.subscriptionLinkedElsewhere" = "このサブスクリプションはすでに別の Munin アカウントで使用されています。";
 "errors.munin.subscriptionOtherAccount" = "このサブスクリプションは別の Munin アカウント用に購入されました。";
 "errors.munin.subscriptionRequired" = "サブスクリプションがない場合、Munin は読み取り専用です。項目を追加・変更するには登録してください。";
 "errors.munin.tooManyAttempts" = "試行回数が多すぎます。1 時間後にもう一度お試しください。";
 "errors.munin.transactionNotFound" = "App Store はこの購入を認識できません。";
-"errors.munin.unexpectedResponse" = "サーバから予期しない応答がありました。%@ は Munin ですか？";
+"errors.munin.unexpectedResponse" = "サーバの応答を解釈できませんでした。";
 "errors.munin.unreachable" = "Munin に接続できません。%@";
 "errors.munin.vaultFull" = "保管庫がいっぱいです（50 アカウント）。";
 "errors.notSignedIn" = "アカウントを追加するには再度サインインしてください。";

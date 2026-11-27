@@ -63,14 +63,14 @@
 "errors.munin.appStoreUnavailable" = "无法通过 App Store 检查你的订阅。请稍后再试。";
 "errors.munin.badRequest" = "无法生成请求。";
 "errors.munin.http" = "Munin 返回了 HTTP %lld。";
-"errors.munin.notFound" = "%@ 上没有 Munin API。";
+"errors.munin.notFound" = "在服务器上找不到。";
 "errors.munin.proof" = "Munin 无法验证你的主密码。请锁定 Munin，用主密码解锁后再试。";
 "errors.munin.subscriptionLinkedElsewhere" = "此订阅已被另一个 Munin 账户使用。";
 "errors.munin.subscriptionOtherAccount" = "此订阅是为另一个 Munin 账户购买的。";
 "errors.munin.subscriptionRequired" = "未订阅时 Munin 为只读。订阅后即可添加或更改项目。";
 "errors.munin.tooManyAttempts" = "尝试次数过多。请在一小时后再试。";
 "errors.munin.transactionNotFound" = "App Store 无法识别此购买。";
-"errors.munin.unexpectedResponse" = "服务器返回了意外响应。%@ 是 Munin 吗？";
+"errors.munin.unexpectedResponse" = "无法理解服务器的响应。";
 "errors.munin.unreachable" = "无法连接 Munin。%@";
 "errors.munin.vaultFull" = "你的保险库已满（50 个账户）。";
 "errors.notSignedIn" = "请重新登录以添加账户。";

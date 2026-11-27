@@ -63,14 +63,14 @@
 "errors.munin.appStoreUnavailable" = "Tilausta ei voitu tarkistaa App Storesta. Yritä myöhemmin uudelleen.";
 "errors.munin.badRequest" = "Pyyntöä ei voitu muodostaa.";
 "errors.munin.http" = "Munin vastasi HTTP-koodilla %lld.";
-"errors.munin.notFound" = "Osoitteessa %@ ei ole Munin-rajapintaa.";
+"errors.munin.notFound" = "Sitä ei löytynyt palvelimelta.";
 "errors.munin.proof" = "Munin ei voinut vahvistaa pääsalasanaasi. Lukitse Munin, avaa se pääsalasanalla ja yritä uudelleen.";
 "errors.munin.subscriptionLinkedElsewhere" = "Tämä tilaus on jo toisen Munin-tilin käytössä.";
 "errors.munin.subscriptionOtherAccount" = "Tämä tilaus ostettiin toiselle Munin-tilille.";
 "errors.munin.subscriptionRequired" = "Ilman tilausta Munin on vain luku -tilassa. Tilaa lisätäksesi tai muuttaaksesi kohteita.";
 "errors.munin.tooManyAttempts" = "Liian monta yritystä. Yritä uudelleen tunnin kuluttua.";
 "errors.munin.transactionNotFound" = "App Store ei tunnista tätä ostoa.";
-"errors.munin.unexpectedResponse" = "Odottamaton vastaus palvelimelta. Onko %@ Munin?";
+"errors.munin.unexpectedResponse" = "Palvelimen vastausta ei ymmärretty.";
 "errors.munin.unreachable" = "Muniniin ei saada yhteyttä. %@";
 "errors.munin.vaultFull" = "Holvisi on täynnä (50 tiliä).";
 "errors.notSignedIn" = "Kirjaudu uudelleen sisään lisätäksesi tilejä.";

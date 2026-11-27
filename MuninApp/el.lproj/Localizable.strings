@@ -63,14 +63,14 @@
 "errors.munin.appStoreUnavailable" = "Δεν ήταν δυνατός ο έλεγχος της συνδρομής σας στο App Store. Δοκιμάστε ξανά αργότερα.";
 "errors.munin.badRequest" = "Δεν ήταν δυνατή η δημιουργία του αιτήματος.";
 "errors.munin.http" = "Το Munin απάντησε με HTTP %lld.";
-"errors.munin.notFound" = "Δεν υπάρχει API του Munin στο %@.";
+"errors.munin.notFound" = "Δεν βρέθηκε στον διακομιστή.";
 "errors.munin.proof" = "Το Munin δεν μπόρεσε να επαληθεύσει τον κύριο κωδικό σας. Κλειδώστε το Munin, ξεκλειδώστε το με τον κύριο κωδικό και δοκιμάστε ξανά.";
 "errors.munin.subscriptionLinkedElsewhere" = "Αυτή η συνδρομή χρησιμοποιείται ήδη από άλλον λογαριασμό Munin.";
 "errors.munin.subscriptionOtherAccount" = "Αυτή η συνδρομή αγοράστηκε για άλλον λογαριασμό Munin.";
 "errors.munin.subscriptionRequired" = "Χωρίς συνδρομή, το Munin είναι μόνο για ανάγνωση. Εγγραφείτε για να προσθέτετε ή να αλλάζετε στοιχεία.";
 "errors.munin.tooManyAttempts" = "Πάρα πολλές προσπάθειες. Δοκιμάστε ξανά σε μία ώρα.";
 "errors.munin.transactionNotFound" = "Το App Store δεν αναγνωρίζει αυτήν την αγορά.";
-"errors.munin.unexpectedResponse" = "Μη αναμενόμενη απάντηση από τον διακομιστή. Είναι το %@ το Munin;";
+"errors.munin.unexpectedResponse" = "Η απάντηση του διακομιστή δεν ήταν κατανοητή.";
 "errors.munin.unreachable" = "Δεν είναι δυνατή η σύνδεση στο Munin. %@";
 "errors.munin.vaultFull" = "Το θησαυροφυλάκιό σας είναι γεμάτο (50 λογαριασμοί).";
 "errors.notSignedIn" = "Συνδεθείτε ξανά για να προσθέσετε λογαριασμούς.";

@@ -63,14 +63,14 @@
 "errors.munin.appStoreUnavailable" = "Dein Abo konnte nicht beim App Store geprüft werden. Versuche es später erneut.";
 "errors.munin.badRequest" = "Die Anfrage konnte nicht erstellt werden.";
 "errors.munin.http" = "Munin hat mit HTTP %lld geantwortet.";
-"errors.munin.notFound" = "Keine Munin-API unter %@.";
+"errors.munin.notFound" = "Das wurde auf dem Server nicht gefunden.";
 "errors.munin.proof" = "Munin konnte dein Master-Passwort nicht überprüfen. Sperre Munin, entsperre es mit deinem Master-Passwort und versuche es erneut.";
 "errors.munin.subscriptionLinkedElsewhere" = "Dieses Abo wird bereits von einem anderen Munin-Konto verwendet.";
 "errors.munin.subscriptionOtherAccount" = "Dieses Abo wurde für ein anderes Munin-Konto gekauft.";
 "errors.munin.subscriptionRequired" = "Ohne Abo ist Munin schreibgeschützt. Abonniere, um Einträge hinzuzufügen oder zu ändern.";
 "errors.munin.tooManyAttempts" = "Zu viele Versuche. Versuche es in einer Stunde erneut.";
 "errors.munin.transactionNotFound" = "Der App Store kennt diesen Kauf nicht.";
-"errors.munin.unexpectedResponse" = "Unerwartete Antwort vom Server. Ist %@ Munin?";
+"errors.munin.unexpectedResponse" = "Die Antwort des Servers wurde nicht verstanden.";
 "errors.munin.unreachable" = "Munin ist nicht erreichbar. %@";
 "errors.munin.vaultFull" = "Dein Tresor ist voll (50 Konten).";
 "errors.notSignedIn" = "Melde dich erneut an, um Konten hinzuzufügen.";

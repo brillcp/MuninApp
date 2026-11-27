@@ -63,14 +63,14 @@
 "errors.munin.appStoreUnavailable" = "Impossible de vérifier votre abonnement auprès de l’App Store. Réessayez plus tard.";
 "errors.munin.badRequest" = "Impossible de créer la requête.";
 "errors.munin.http" = "Munin a répondu avec HTTP %lld.";
-"errors.munin.notFound" = "Aucune API Munin à %@.";
+"errors.munin.notFound" = "Introuvable sur le serveur.";
 "errors.munin.proof" = "Munin n’a pas pu vérifier votre mot de passe principal. Verrouillez Munin, déverrouillez-le avec votre mot de passe principal et réessayez.";
 "errors.munin.subscriptionLinkedElsewhere" = "Cet abonnement est déjà utilisé par un autre compte Munin.";
 "errors.munin.subscriptionOtherAccount" = "Cet abonnement a été acheté pour un autre compte Munin.";
 "errors.munin.subscriptionRequired" = "Sans abonnement, Munin est en lecture seule. Abonnez-vous pour ajouter ou modifier des éléments.";
 "errors.munin.tooManyAttempts" = "Trop de tentatives. Réessayez dans une heure.";
 "errors.munin.transactionNotFound" = "L’App Store ne connaît pas cet achat.";
-"errors.munin.unexpectedResponse" = "Réponse inattendue du serveur. %@ est-il bien Munin ?";
+"errors.munin.unexpectedResponse" = "La réponse du serveur n’a pas été comprise.";
 "errors.munin.unreachable" = "Impossible de joindre Munin. %@";
 "errors.munin.vaultFull" = "Votre coffre est plein (50 comptes).";
 "errors.notSignedIn" = "Reconnectez-vous pour ajouter des comptes.";

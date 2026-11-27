@@ -63,14 +63,14 @@
 "errors.munin.appStoreUnavailable" = "Не удалось проверить подписку в App Store. Повторите попытку позже.";
 "errors.munin.badRequest" = "Не удалось сформировать запрос.";
 "errors.munin.http" = "Munin ответил HTTP %lld.";
-"errors.munin.notFound" = "По адресу %@ нет API Munin.";
+"errors.munin.notFound" = "Не найдено на сервере.";
 "errors.munin.proof" = "Munin не удалось проверить мастер-пароль. Заблокируйте Munin, разблокируйте мастер-паролем и повторите попытку.";
 "errors.munin.subscriptionLinkedElsewhere" = "Эта подписка уже используется другой учетной записью Munin.";
 "errors.munin.subscriptionOtherAccount" = "Эта подписка была куплена для другой учетной записи Munin.";
 "errors.munin.subscriptionRequired" = "Без подписки Munin доступен только для чтения. Оформите подписку, чтобы добавлять или изменять объекты.";
 "errors.munin.tooManyAttempts" = "Слишком много попыток. Повторите через час.";
 "errors.munin.transactionNotFound" = "App Store не распознает эту покупку.";
-"errors.munin.unexpectedResponse" = "Неожиданный ответ сервера. %@ — это Munin?";
+"errors.munin.unexpectedResponse" = "Не удалось разобрать ответ сервера.";
 "errors.munin.unreachable" = "Не удается подключиться к Munin. %@";
 "errors.munin.vaultFull" = "Хранилище заполнено (50 учетных записей).";
 "errors.notSignedIn" = "Войдите снова, чтобы добавлять учетные записи.";

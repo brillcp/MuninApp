@@ -24,10 +24,8 @@ struct TwoFactorEmptyState: View {
                     Label("codes.empty.title", systemImage: DesignKit.Icon.noAccounts)
                 } description: {
                     Text("codes.empty.message")
-                } actions: {
-                    Button("codes.empty.add", action: onAdd)
-                        .buttonStyle(.borderedProminent)
                 }
+                .padding(.horizontal, DesignKit.Spacing.Primitive.s32)
             } else {
                 AccentSpinner(size: DesignKit.Spacing.Primitive.s24)
             }

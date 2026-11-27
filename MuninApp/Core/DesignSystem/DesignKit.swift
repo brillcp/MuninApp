@@ -121,7 +121,7 @@ nonisolated enum DesignKit {
         /// Choose an image or screenshot with a QR code.
         static let chooseImage = "photo"
         /// No 2FA accounts yet.
-        static let noAccounts = "lock.shield"
+        static let noAccounts = "key.viewfinder"
 
         // MARK: Lock and security
         /// Lock the vault.

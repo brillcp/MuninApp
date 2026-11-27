@@ -63,14 +63,14 @@
 "errors.munin.appStoreUnavailable" = "Kan je abonnement niet controleren bij de App Store. Probeer het later opnieuw.";
 "errors.munin.badRequest" = "Kan het verzoek niet opbouwen.";
 "errors.munin.http" = "Munin antwoordde met HTTP %lld.";
-"errors.munin.notFound" = "Er is geen Munin-API op %@.";
+"errors.munin.notFound" = "Niet gevonden op de server.";
 "errors.munin.proof" = "Munin kon je hoofdwachtwoord niet verifiëren. Vergrendel Munin, ontgrendel met je hoofdwachtwoord en probeer het opnieuw.";
 "errors.munin.subscriptionLinkedElsewhere" = "Dit abonnement wordt al gebruikt door een ander Munin-account.";
 "errors.munin.subscriptionOtherAccount" = "Dit abonnement is gekocht voor een ander Munin-account.";
 "errors.munin.subscriptionRequired" = "Zonder abonnement is Munin alleen-lezen. Neem een abonnement om items toe te voegen of te wijzigen.";
 "errors.munin.tooManyAttempts" = "Te veel pogingen. Probeer het over een uur opnieuw.";
 "errors.munin.transactionNotFound" = "De App Store herkent deze aankoop niet.";
-"errors.munin.unexpectedResponse" = "Onverwacht antwoord van de server. Is %@ Munin?";
+"errors.munin.unexpectedResponse" = "Het antwoord van de server werd niet begrepen.";
 "errors.munin.unreachable" = "Kan Munin niet bereiken. %@";
 "errors.munin.vaultFull" = "Je kluis is vol (50 accounts).";
 "errors.notSignedIn" = "Log opnieuw in om accounts toe te voegen.";

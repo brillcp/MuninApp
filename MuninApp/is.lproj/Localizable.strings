@@ -63,14 +63,14 @@
 "errors.munin.appStoreUnavailable" = "Ekki tókst að athuga áskriftina hjá App Store. Reyndu aftur síðar.";
 "errors.munin.badRequest" = "Ekki tókst að búa til beiðnina.";
 "errors.munin.http" = "Munin svaraði með HTTP %lld.";
-"errors.munin.notFound" = "Ekkert Munin-API á %@.";
+"errors.munin.notFound" = "Þetta fannst ekki á þjóninum.";
 "errors.munin.proof" = "Munin gat ekki staðfest aðalaðgangsorðið þitt. Læstu Munin, taktu úr lás með aðalaðgangsorðinu og reyndu aftur.";
 "errors.munin.subscriptionLinkedElsewhere" = "Annar Munin-aðgangur notar þegar þessa áskrift.";
 "errors.munin.subscriptionOtherAccount" = "Þessi áskrift var keypt fyrir annan Munin-aðgang.";
 "errors.munin.subscriptionRequired" = "Án áskriftar er aðeins hægt að lesa í Munin. Fáðu áskrift til að bæta við eða breyta atriðum.";
 "errors.munin.tooManyAttempts" = "Of margar tilraunir. Reyndu aftur eftir klukkustund.";
 "errors.munin.transactionNotFound" = "App Store þekkir ekki þessi kaup.";
-"errors.munin.unexpectedResponse" = "Óvænt svar frá þjóninum. Er %@ Munin?";
+"errors.munin.unexpectedResponse" = "Svar þjónsins var ekki skilið.";
 "errors.munin.unreachable" = "Ekki næst samband við Munin. %@";
 "errors.munin.vaultFull" = "Hvelfingin þín er full (50 aðgangar).";
 "errors.notSignedIn" = "Skráðu þig aftur inn til að bæta við aðgöngum.";

@@ -52,7 +52,7 @@
 "codes.link.failed" = "Couldn't Add Code";
 "codes.link.message" = "%@ will be encrypted and added to Munin.";
 "codes.link.title" = "Add 2FA Account?";
-"codes.empty.message" = "Scan a 2FA QR code or import from Google Authenticator.";
+"codes.empty.message" = "Scan a 2FA QR code or import from another Authenticator.";
 "codes.empty.title" = "No accounts yet";
 "codes.row.copyHint" = "Copies the code";
 "codes.title" = "2FA";
@@ -63,14 +63,14 @@
 "errors.munin.appStoreUnavailable" = "Couldn't check your subscription with the App Store. Try again later.";
 "errors.munin.badRequest" = "Couldn't build the request.";
 "errors.munin.http" = "Munin responded with HTTP %lld.";
-"errors.munin.notFound" = "No Munin API at %@.";
+"errors.munin.notFound" = "Couldn't find it on the server.";
 "errors.munin.proof" = "Munin couldn't verify your master password. Lock Munin, unlock with your master password and try again.";
 "errors.munin.subscriptionLinkedElsewhere" = "This subscription is already used by another Munin account.";
 "errors.munin.subscriptionOtherAccount" = "This subscription was bought for another Munin account.";
 "errors.munin.subscriptionRequired" = "Munin is read-only without a subscription. Subscribe to add or change items.";
 "errors.munin.tooManyAttempts" = "Too many attempts. Try again in an hour.";
 "errors.munin.transactionNotFound" = "The App Store doesn't know this purchase.";
-"errors.munin.unexpectedResponse" = "Unexpected response from the server. Is %@ Munin?";
+"errors.munin.unexpectedResponse" = "The server's answer wasn't understood.";
 "errors.munin.unreachable" = "Can't reach Munin. %@";
 "errors.munin.vaultFull" = "Your vault is full (50 accounts).";
 "errors.notSignedIn" = "Sign in again to add accounts.";
