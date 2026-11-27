@@ -10,10 +10,8 @@ extension View {
     /// back button shows it. A `subtitle`, such as an item count, goes below
     /// it in a smaller, secondary font.
     ///
-    /// On macOS, the title shows in the window's toolbar, with Lock at its
-    /// leading edge and Cancel as the sheet's cancel button. With a
-    /// `subtitle`, both are drawn by this modifier, so the subtitle's numbers
-    /// roll when they change, as on iOS.
+    /// On macOS, it's the window's standard title and subtitle, with Lock at
+    /// the toolbar's leading edge and Cancel as the sheet's cancel button.
     ///
     /// - Parameters:
     ///   - titleKey: The title's localization key.
@@ -64,10 +62,10 @@ private struct LeadingNavigationTitle: ViewModifier {
             }
         #else
         Group {
-            if subtitle != nil {
+            if let subtitle {
                 content
                     .navigationTitle(title)
-                    .toolbar(removing: .title)
+                    .navigationSubtitle(subtitle)
             } else {
                 content
                     .navigationTitle(title)
@@ -82,21 +80,17 @@ private struct LeadingNavigationTitle: ViewModifier {
                     Button(role: .cancel, action: onCancel)
                 }
             }
-            if subtitle != nil {
-                ToolbarItem(placement: .navigation) { titleStack }
-                    .sharedBackgroundVisibility(.hidden)
-            }
         }
         #endif
     }
 
+    #if os(iOS)
     /// The title, with the subtitle below it in a smaller, secondary font.
     ///
     /// The subtitle's numbers roll when they change, such as when the items load.
     private var titleStack: some View {
         VStack(alignment: .leading, spacing: DesignKit.Spacing.Primitive.s0) {
-            title
-                .font(titleFont)
+            title.font(.title3.weight(.semibold))
             if let subtitle {
                 subtitle
                     .font(.subheadline)
@@ -108,15 +102,7 @@ private struct LeadingNavigationTitle: ViewModifier {
         .truncationMode(.tail)
         .animation(DesignKit.Motion.quickBouncy, value: subtitle)
     }
-
-    /// The title's font: larger on iOS, the toolbar's title size on macOS.
-    private var titleFont: Font {
-        #if os(iOS)
-        .title3.weight(.semibold)
-        #else
-        .headline
-        #endif
-    }
+    #endif
 }
 
 #if os(iOS)

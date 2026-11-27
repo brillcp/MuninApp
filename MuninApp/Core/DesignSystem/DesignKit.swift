@@ -63,7 +63,7 @@ nonisolated enum DesignKit {
 
         // MARK: Actions
         /// Add a 2FA account.
-        static let add = "plus"
+        static let createCode = "plus.viewfinder"
         /// Create a password.
         static let createPassword = "plus.square.on.square"
         /// Create a card.
