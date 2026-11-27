@@ -153,7 +153,7 @@ private extension TwoFactorView {
     ///
     /// Disabled until accounts have loaded, and while the vault is read-only.
     var addButton: some View {
-        Button("codes.add", systemImage: DesignKit.Icon.add) {
+        Button("codes.add", systemImage: DesignKit.Icon.createCode) {
             hapticTaps += 1
             isAdding = true
         }
