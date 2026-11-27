@@ -193,7 +193,7 @@ extension Error {
                 default: break
                 }
                 switch status {
-                case .notFound: return Localized("errors.munin.notFound", APIConfig.apiBaseURL.absoluteString)
+                case .notFound: return Localized("errors.munin.notFound")
                 case .unprocessableEntity: return Localized("errors.munin.vaultFull")
                 case .forbidden: return Localized("errors.munin.proof")
                 case .tooManyRequests: return Localized("errors.munin.tooManyAttempts")
@@ -201,7 +201,7 @@ extension Error {
                 default: return Localized("errors.munin.http", status.rawValue)
                 }
             case .decodingError:
-                return Localized("errors.munin.unexpectedResponse", APIConfig.apiBaseURL.absoluteString)
+                return Localized("errors.munin.unexpectedResponse")
             case .networkError(let underlying):
                 return Localized("errors.munin.unreachable", underlying.localizedDescription)
             case .encodingError:

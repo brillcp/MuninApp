@@ -86,8 +86,8 @@ enum MuninRequest: Requestable {
     /// The server path for the request.
     var endpoint: EndpointType {
         switch self {
-        case .entries, .createEntry:     return MuninEndpoint.entries
-        case .deleteEntry(let id):       return MuninEndpoint.entry(id)
+        case .entries, .createEntry:     return MuninEndpoint.codes
+        case .deleteEntry(let id):       return MuninEndpoint.code(id)
         case .passwords, .createPassword: return MuninEndpoint.passwords
         case .touchPassword(let id):     return MuninEndpoint.passwordTouch(id)
         case .updatePassword(let id, _): return MuninEndpoint.password(id)
@@ -104,13 +104,13 @@ enum MuninRequest: Requestable {
 
 // MARK: - Entries
 
-/// The body of `POST /v1/entries`.
+/// The body of `POST /v1/codes`.
 nonisolated struct CreateEntryBody: Encodable, Sendable {
     /// The account, encrypted with the vault key.
     let ciphertext: String
 }
 
-/// The response from `GET /v1/entries`.
+/// The response from `GET /v1/codes`.
 nonisolated struct EntriesResponse: Sendable, Decodable {
     /// The user's encrypted 2FA entries.
     let entries: [EncryptedEntry]

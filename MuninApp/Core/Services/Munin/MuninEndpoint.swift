@@ -3,10 +3,10 @@ import Networking
 
 /// Endpoints relative to the API's `/v1` base URL.
 enum MuninEndpoint: EndpointType {
-    /// `/entries`: the two-factor accounts.
-    case entries
-    /// `/entries/{id}`: a single two-factor account.
-    case entry(UUID)
+    /// `/codes`: the two-factor accounts.
+    case codes
+    /// `/codes/{id}`: a single two-factor account.
+    case code(UUID)
     /// `/passwords`: the password items.
     case passwords
     /// `/passwords/{id}`: a single password item.
@@ -27,8 +27,8 @@ enum MuninEndpoint: EndpointType {
 
     var path: String {
         switch self {
-        case .entries:                return "entries"
-        case .entry(let id):          return "entries/\(id.uuidString)"
+        case .codes:                  return "codes"
+        case .code(let id):           return "codes/\(id.uuidString)"
         case .passwords:              return "passwords"
         case .password(let id):       return "passwords/\(id.uuidString)"
         case .passwordTouch(let id):  return "passwords/\(id.uuidString)/touch"
